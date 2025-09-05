@@ -64,7 +64,24 @@ export default function AssessmentForm() {
 
   useEffect(() => {
     calculatePriorityScore();
-  }, [watchedValues]);
+    
+    // Fix: Ensure project description doesn't get contaminated with other field values
+    const currentProjectDescription = form.getValues('projectDescription');
+    const currentDeveloperType = form.getValues('developerType');
+    
+    // If project description contains a developer type value, clear it
+    const developerTypes = [
+      "Commercial Developer (Large Projects)",
+      "Government/Municipal Developer", 
+      "Non-Profit Housing Developer",
+      "Private Developer (Medium Projects)"
+    ];
+    
+    if (currentProjectDescription && developerTypes.includes(currentProjectDescription)) {
+      console.log('Clearing contaminated project description:', currentProjectDescription);
+      form.setValue('projectDescription', '', { shouldValidate: false });
+    }
+  }, [watchedValues, form]);
 
   const calculatePriorityScore = () => {
     let score = 0;
@@ -454,24 +471,36 @@ export default function AssessmentForm() {
             <FormField
               control={form.control}
               name="projectDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      rows={4} 
-                      maxLength={1000}
-                      placeholder="Tell us about your project vision, target market, and any specific requirements..."
-                      {...field}
-                      data-testid="textarea-project-description"
-                    />
-                  </FormControl>
-                  <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                    {field.value?.length || 0}/1000 characters
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                // Ensure we only have the correct value and it's not contaminated
+                const safeValue = typeof field.value === 'string' && 
+                  ![
+                    "Commercial Developer (Large Projects)",
+                    "Government/Municipal Developer", 
+                    "Non-Profit Housing Developer",
+                    "Private Developer (Medium Projects)"
+                  ].includes(field.value) ? field.value : '';
+                  
+                return (
+                  <FormItem>
+                    <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        rows={4} 
+                        maxLength={1000}
+                        placeholder="Tell us about your project vision, target market, and any specific requirements..."
+                        value={safeValue}
+                        onChange={field.onChange}
+                        data-testid="textarea-project-description"
+                      />
+                    </FormControl>
+                    <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
+                      {safeValue?.length || 0}/1000 characters
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
             
             {/* Priority Score Display */}
