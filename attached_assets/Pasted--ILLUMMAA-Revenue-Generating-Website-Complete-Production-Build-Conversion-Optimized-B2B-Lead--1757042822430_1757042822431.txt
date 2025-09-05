@@ -1,0 +1,354 @@
+# ILLUMMAA Revenue-Generating Website - Complete Production Build
+## Conversion-Optimized B2B Lead Generation System with v13.1 CRM Integration
+
+You are a senior front-end developer and UX/UI designer. Build the official ILLUMMAA modular homes website that qualifies prospects, nurtures leads, and drives business growth with exact v13.1 technical compliance.
+
+## 1) Core Brief & Revenue Objectives
+**Purpose:** Generate 15+ qualified Canadian developer inquiries/month with 80% lead quality
+**Primary Target:** B2B developers (50-500+ units, $5M+ projects)  
+**Secondary Target:** B2C buyers (brand credibility and lead qualification)
+**Design Vision:** Tesla industrial confidence × Apple sophistication
+
+**Conversion Goals:**
+- Lead qualification system (50+ units minimum for developer track)
+- Automated priority scoring (0-150 points)
+- CRM integration with GoHighLevel webhooks
+- Multi-touch email automation sequences
+- 3% qualified conversion rate target
+
+## 2) Conversion-Optimized Site Flow
+
+**Sticky Header**
+- Left: Ü emblem SVG
+- Right: Assessment • Why • Models • Developers • Partnership • Contact
+
+**Hero Section (Authority First)**
+```
+H1: "The Future of Housing Is Here."
+Subtitle: "Light Living. Elevated."
+Authority Badges: "CSA Certified" • "Government Approved" • "500+ Units Delivered"
+CTA #1: "Qualify for Developer Partnership" (leads to assessment)
+CTA #2: "▶ Watch the Film"
+Background: Professional modular home (industrial confidence aesthetic)
+```
+
+**Social Proof Section (Trust Building)**
+```
+H2: "Trusted by Leading Developers Across Canada"
+- 6-8 developer company logos (anonymized acceptable)
+- Testimonial: "ILLUMMAA delivered 150 units on time and 15% under budget" 
+- Stats: "500+ Units Delivered • 12 Provinces • 99% On-Time Completion"
+```
+
+**Problem/Solution Bridge**
+```
+H2: "The Housing Crisis Demands Industrial Solutions"
+Problem: "Canadian housing shortage: 500,000+ annual shortfall"
+Solution: "Industrial modular: 4x faster, 30-40% cost savings, predictable timelines"
+```
+
+**Why ILLUMMAA (Value Propositions)**
+- Speed at Scale: "72-hour assembly with fewer labor hours"
+- Proven ROI: "30-40% cost savings vs traditional builds"  
+- Sustainability: "Eco-certified, net-zero ready, future-proof"
+
+**Developer Qualification Gate (v13.1 EXACT COMPLIANCE)**
+```
+H2: "Partner Qualification Assessment"
+
+5-Step Form Structure (EXACT v13.1 Requirements):
+
+Step 1: Contact Information
+- firstName (required, 2-50 characters, text validation)
+- lastName (required, 2-50 characters, text validation)
+- email (required, email format validation)
+- phone (required, Canadian format +1XXXXXXXXXX - 10 digits after +1)
+- company (required, 2-100 characters, text validation)
+
+Step 2: Project Details
+- projectUnitCount (required, number, minimum 50, maximum 1000)
+- budgetRange (required dropdown): "Under $5 Million"|"$5M - $15 Million"|"$15M - $30 Million"|"$30M - $50 Million"|"Over $50 Million"
+
+Step 3: Timeline & Location  
+- decisionTimeline (required dropdown): "Immediate (0-3 months)"|"Short-term (3-6 months)"|"Medium-term (6-12 months)"|"Long-term (12+ months)"
+- constructionProvince (required dropdown): Ontario, British Columbia, Alberta, Quebec, Nova Scotia, New Brunswick, Manitoba, Saskatchewan, Newfoundland and Labrador, Prince Edward Island, Northwest Territories, Nunavut, Yukon
+
+Step 4: Developer Classification
+- developerType (required dropdown): "Commercial Developer (Large Projects)"|"Government/Municipal Developer"|"Non-Profit Housing Developer"|"Private Developer (Medium Projects)"
+- governmentPrograms (required dropdown): "Yes - Currently participating"|"Interested - Tell us more"|"No - Private development only"
+
+Step 5: Project Description & Submission
+- projectDescription (optional textarea, max 1000 characters)
+- Real-time priority score display (0-150 points)
+- Professional submission with response time commitment
+
+Step Navigation Features (v13.1 Required):
+- Next/Previous buttons with form data preservation
+- Progress indicator "Step X of 5"
+- Form validation at each step with professional error messages
+- Under 50 units rejection: "We appreciate your interest. Projects under 50 units are handled through our individual home program. Please contact our residential team at..."
+
+Priority Scoring Algorithm (v13.1 EXACT):
+- Unit count: 50+=10, 100+=20, 200+=30, 500+=40, 1000+=50 points
+- Budget: Under $5M=5, $5M-$15M=15, $15M-$30M=25, $30M-$50M=35, Over $50M=40 points
+- Timeline: Immediate=30, Short-term=20, Medium-term=10, Long-term=5 points
+- Government programs: Currently participating=20, Interested=10, No=0 points
+- Developer type: Commercial/Government=10, Private/Non-profit=5 points
+- Geography: Ontario/British Columbia/Alberta=5 points, other provinces=0 points
+
+Priority Messages (v13.1 EXACT):
+- 100+ points: "PRIORITY PROJECT: Senior Sales Manager will contact within 1 hour"
+- 50-99 points: "QUALIFIED PROJECT: Sales Representative will contact within 4 hours"
+- 0-49 points: "FUTURE OPPORTUNITY: Lead Development team will contact within 24 hours"
+```
+
+**Models Showcase (Post-Qualification)**
+```
+Accessible to all visitors:
+- 1BR (600 sq ft): "Starting from $129K CAD"
+- 2BR (900 sq ft): "Starting from $169K CAD"  
+- 3BR (1200 sq ft): "Starting from $199K CAD"
+Note: Vague pricing protects B2B negotiation power
+```
+
+**Partnership Tiers (B2B Focus)**
+```
+H2: "Scale Your Development with Industrial Precision"
+Pioneer (50-99 units): Volume pricing, dedicated support
+Preferred (100-299 units): Custom modifications, financing assistance
+Elite (300+ units): Exclusive designs, turnkey communities
+CTA: "Schedule Partnership Assessment"
+```
+
+**Government Programs Integration**
+```
+H2: "Government-Approved Housing Solutions"
+- Housing Accelerator Fund ($4.4B) compatibility
+- Build Canada Homes ($6B+) program eligibility
+- Provincial incentive programs
+- Municipal fast-track approvals
+```
+
+**Movement Section (Emotional Close)**
+```
+H2: "Building Canada's Housing Future"
+Copy: "From housing shortage to housing abundance. From traditional delays to industrial precision."
+Aerial community visual
+```
+
+## 3) Design System (v13.1 Technical Compliance)
+
+**Color Palette (v13.1 CORRECTED):**
+- Primary: #2C5530 (ILLUMMAA forest green - v13.1 required for GoHighLevel compatibility)
+- Secondary: White #FFFFFF (clarity, sophistication)
+- Accent: Eco-Green #1DB954 (sustainability)
+- Supporting: Sky-Blue #74C0FC (innovation)
+- Natural: Sand-Beige #E5C9A5 (warmth)
+
+**Typography:**
+- Headings: Montserrat (600/700) - Industrial confidence
+- Body: Inter (400/500) - Apple-like readability
+- Wordmark: ILLUMMAA with +0.18em letter-spacing
+
+**Components (Premium Quality):**
+- Rounded-2xl cards with subtle shadows and premium hover effects
+- Authority badges and certification displays
+- Progress indicators for qualification form
+- Professional button styling with micro-interactions
+- Trust signals and social proof elements
+
+**Logo System:**
+```svg
+<svg width="28" height="28" viewBox="0 0 64 64" aria-label="ILLUMMAA emblem">
+  <circle cx="22" cy="10" r="3" fill="#2C5530"/>
+  <circle cx="42" cy="10" r="3" fill="#2C5530"/>
+  <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#2C5530" stroke-width="6" stroke-linecap="round"/>
+</svg>
+```
+
+## 4) Backend Implementation (v13.1 EXACT COMPLIANCE)
+
+**Dependencies (v13.1 Verified Versions):**
+```json
+{
+  "dependencies": {
+    "express": "4.19.2",
+    "helmet": "8.1.0",
+    "cors": "2.8.5",
+    "express-rate-limit": "7.1.5",
+    "express-validator": "7.0.1",
+    "dompurify": "3.2.6",
+    "jsdom": "24.0.0",
+    "node-fetch": "3.3.2",
+    "dotenv": "16.4.5"
+  }
+}
+```
+
+**Security Configuration (v13.1 Exact):**
+```javascript
+// Rate limiting: 100 requests per 15 minutes per IP
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false
+}));
+
+// Content Security Policy
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://services.leadconnectorhq.com"]
+    }
+  }
+}));
+
+// CORS Configuration
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://illummaa.com', 'https://*.replit.app'] 
+    : '*',
+  credentials: true
+}));
+```
+
+**GoHighLevel Webhook Integration (v13.1 VERIFIED):**
+```javascript
+// Webhook endpoint: /submit-assessment
+// Complete payload structure (flat JSON, NOT nested):
+{
+  "first_name": "sanitized_input",
+  "last_name": "sanitized_input",
+  "email": "validated_email", 
+  "phone": "formatted_canadian_phone",
+  "company": "sanitized_company",
+  "source": "ILLUMMAA Website",
+  "project_unit_count": 500,
+  "budget_range_cad": "Over $50 Million",
+  "decision_timeline": "Immediate (0-3 months)",
+  "construction_province": "Ontario",
+  "developer_type": "Commercial Developer (Large Projects)",
+  "government_programs": "Yes - Currently participating",
+  "project_description": "sanitized_description",
+  "ai_priority_score": 135,
+  "lead_source_details": "ILLUMMAA Website - Advanced Multi-Step Form",
+  "submission_timestamp": "2025-09-04T14:30:00Z",
+  "assigned_to": "Senior Sales Manager",
+  "response_time": "1 hour",
+  "priority_level": "HIGH"
+}
+
+// Webhook delivery with retry logic (v13.1 Required)
+async function deliverToGoHighLevel(formData, priorityData) {
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(process.env.GOHIGHLEVEL_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'ILLUMMAA-Assessment/1.0',
+          'X-Source': 'ILLUMMAA-Website'
+        },
+        body: JSON.stringify(webhookPayload),
+        timeout: 15000
+      });
+      
+      if (response.ok) return await response.json();
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
+}
+```
+
+**Environment Variables (v13.1 Required):**
+```
+GOHIGHLEVEL_WEBHOOK_URL=(from GoHighLevel workflow)
+NODE_ENV=production
+```
+
+## 5) File Structure (v13.1 Compliance)
+
+```
+project/
+  server.js (Express backend with v13.1 security)
+  package.json (exact dependency versions)
+  styles.css (professional ILLUMMAA styling)
+  script.js (5-step form with priority scoring)
+  index.html (complete site structure)
+```
+
+## 6) Testing Protocol (v13.1 Required)
+
+**Test Scenario 1: High Priority (Expected Score 135)**
+```
+Input Data:
+- Name: Priority Test Executive
+- Company: Ultra-High Development Corp
+- Units: 500, Budget: Over $50 Million
+- Timeline: Immediate (0-3 months), Province: Ontario
+- Type: Commercial Developer, Programs: Yes - Currently participating
+
+Expected Results:
+- Priority Score: 135 points
+- Assignment: Senior Sales Manager
+- Response Time: 1 hour
+- Message: "PRIORITY PROJECT: Senior Sales Manager will contact within 1 hour"
+```
+
+**Test Scenario 2: Medium Priority (Expected Score 65)**
+```
+Input Data:
+- Units: 150, Budget: $15M - $30 Million
+- Timeline: Short-term, Province: Alberta
+- Type: Private Developer, Programs: Interested
+
+Expected Results:
+- Priority Score: 65 points
+- Assignment: Sales Representative
+- Response Time: 4 hours
+```
+
+**Test Scenario 3: Under 50 Units Rejection**
+```
+Input Data:
+- Units: 25
+
+Expected Results:
+- Professional rejection message
+- Alternative path provided
+- No webhook submission
+```
+
+## 7) Success Metrics & KPIs
+
+**30-Day Targets:**
+- 15+ qualified developer inquiries (50+ units)
+- 80% lead quality ratio (meeting project minimums)
+- 3% qualification completion rate
+- $2M+ monthly qualified pipeline value
+- Sub-2s mobile load time
+- 99.9% webhook delivery success
+
+## Implementation Instructions
+
+Build a revenue-generating ILLUMMAA website with v13.1 technical compliance that:
+
+1. **Implements Exact 5-Step Form:** All field names, validation rules, and dropdown options as specified
+2. **Uses Correct Color Scheme:** #2C5530 primary green for GoHighLevel compatibility  
+3. **Includes Complete Security:** All v13.1 dependency versions and middleware configuration
+4. **Provides Full Webhook Integration:** Complete payload structure with retry logic
+5. **Ensures Lead Qualification:** 50+ unit threshold with professional rejection handling
+6. **Maintains Premium Design:** Tesla × Apple aesthetic with conversion optimization
+7. **Integrates Canadian Focus:** All 13 provinces/territories and government programs
+8. **Enables Business Growth:** Automated scoring, routing, and lead nurturing
+
+The result should be a sophisticated lead generation system that qualifies prospects, routes opportunities based on priority scoring, and drives measurable business growth while maintaining the highest standards of technical compliance and user experience.
