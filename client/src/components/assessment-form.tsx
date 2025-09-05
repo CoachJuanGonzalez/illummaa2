@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -474,24 +474,16 @@ export default function AssessmentForm() {
               control={form.control}
               name="projectDescription"
               render={({ field }) => {
-                // Force clean project description value
-                const cleanValue = useMemo(() => {
-                  const developerTypes = [
-                    "Commercial Developer (Large Projects)",
-                    "Government/Municipal Developer", 
-                    "Non-Profit Housing Developer",
-                    "Private Developer (Medium Projects)"
-                  ];
-                  
-                  // If current value is a developer type, return empty string
-                  if (field.value && developerTypes.includes(field.value)) {
-                    // Also clear the form value
-                    setTimeout(() => form.setValue('projectDescription', ''), 0);
-                    return '';
-                  }
-                  
-                  return field.value || '';
-                }, [field.value, form]);
+                // Simple contamination check without hooks
+                const developerTypes = [
+                  "Commercial Developer (Large Projects)",
+                  "Government/Municipal Developer", 
+                  "Non-Profit Housing Developer",
+                  "Private Developer (Medium Projects)"
+                ];
+                
+                // Clean value - if it's a developer type, use empty string
+                const displayValue = (field.value && developerTypes.includes(field.value)) ? '' : (field.value || '');
                 
                 return (
                   <FormItem>
@@ -501,13 +493,19 @@ export default function AssessmentForm() {
                         rows={4} 
                         maxLength={1000}
                         placeholder="Tell us about your project vision, target market, and any specific requirements..."
-                        value={cleanValue}
-                        onChange={(e) => field.onChange(e.target.value)}
+                        value={displayValue}
+                        onChange={(e) => {
+                          const newValue = e.target.value;
+                          // Only allow non-developer-type values
+                          if (!developerTypes.includes(newValue)) {
+                            field.onChange(newValue);
+                          }
+                        }}
                         data-testid="textarea-project-description"
                       />
                     </FormControl>
                     <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                      {cleanValue?.length || 0}/1000 characters
+                      {displayValue?.length || 0}/1000 characters
                     </div>
                     <FormMessage />
                   </FormItem>
