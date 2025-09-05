@@ -494,13 +494,7 @@ export default function AssessmentForm() {
                         maxLength={1000}
                         placeholder="Tell us about your project vision, target market, and any specific requirements..."
                         value={displayValue}
-                        onChange={(e) => {
-                          const newValue = e.target.value;
-                          // Only allow non-developer-type values
-                          if (!developerTypes.includes(newValue)) {
-                            field.onChange(newValue);
-                          }
-                        }}
+                        onChange={field.onChange}
                         data-testid="textarea-project-description"
                       />
                     </FormControl>
