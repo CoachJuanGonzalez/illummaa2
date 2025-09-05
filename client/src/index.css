@@ -94,7 +94,7 @@
   }
   
   .hero-bg {
-    background: linear-gradient(135deg, rgba(44, 85, 48, 0.9) 0%, rgba(44, 85, 48, 0.7) 100%);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.90) 100%);
   }
   
   .priority-score {
@@ -112,6 +112,26 @@
   .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(44, 85, 48, 0.3);
+  }
+  
+  .hero-badge {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(44, 85, 48, 0.15);
+    color: #1a365d;
+  }
+  
+  .hero-secondary-btn {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(44, 85, 48, 0.15);
+    color: #1a365d;
+  }
+  
+  .hero-secondary-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
   
   .card-hover {
