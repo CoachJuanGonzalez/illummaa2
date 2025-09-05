@@ -138,11 +138,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   function sanitizeObject(obj: any): void {
     for (const key in obj) {
       if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
-        // Remove potentially harmful characters while preserving legitimate input
-        obj[key] = validator.escape(obj[key]).trim();
+        // Light sanitization - only trim whitespace and limit length
+        // Don't escape HTML entities as it breaks enum validation
+        obj[key] = obj[key].trim();
         // Limit string length to prevent DoS
         if (obj[key].length > 10000) {
           obj[key] = obj[key].substring(0, 10000);
+        }
+        // Only remove potentially dangerous patterns
+        if (obj[key].includes('<script') || obj[key].includes('javascript:')) {
+          obj[key] = obj[key].replace(/<script[^>]*>.*?<\/script>/gi, '');
+          obj[key] = obj[key].replace(/javascript:/gi, '');
         }
       } else if (typeof obj[key] === 'object' && obj[key] !== null) {
         sanitizeObject(obj[key]);
@@ -153,26 +159,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   function validateInput(body: any): string[] {
     const errors: string[] = [];
     
-    // Check for required fields
-    if (!body.firstName || typeof body.firstName !== 'string') {
-      errors.push('First name is required and must be a string');
+    // Basic validation - let the main validation handle detailed checks
+    // Only check for obvious malicious patterns
+    const dangerousPatterns = [
+      /<script[^>]*>/i,
+      /javascript:/i,
+      /on\w+\s*=/i, // event handlers like onclick=
+      /<iframe/i,
+      /<object/i,
+      /<embed/i
+    ];
+    
+    function containsDangerousContent(value: string): boolean {
+      return dangerousPatterns.some(pattern => pattern.test(value));
     }
     
-    if (!body.lastName || typeof body.lastName !== 'string') {
-      errors.push('Last name is required and must be a string');
-    }
-    
-    if (!body.email || !validator.isEmail(body.email)) {
-      errors.push('Valid email is required');
-    }
-    
-    if (body.phone && !validator.isMobilePhone(body.phone, 'any')) {
-      errors.push('Invalid phone number format');
-    }
-    
-    // Validate numeric fields
-    if (body.projectUnitCount && (!Number.isInteger(Number(body.projectUnitCount)) || Number(body.projectUnitCount) < 0)) {
-      errors.push('Project unit count must be a positive integer');
+    // Check all string values for dangerous content
+    for (const key in body) {
+      if (typeof body[key] === 'string' && containsDangerousContent(body[key])) {
+        errors.push(`Invalid content detected in ${key}`);
+      }
     }
     
     return errors;
