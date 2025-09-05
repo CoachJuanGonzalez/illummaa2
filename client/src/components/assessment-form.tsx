@@ -62,23 +62,37 @@ export default function AssessmentForm() {
 
   const watchedValues = form.watch();
 
+  // STEP 1: Debug form state corruption
+  useEffect(() => {
+    console.log('=== FORM DEBUG INFO ===');
+    console.log('Current Step:', currentStep);
+    console.log('Form values:', form.getValues());
+    console.log('Form field states:', form.formState);
+    console.log('Registered fields:', Object.keys(form.control._fields || {}));
+    console.log('Project Description Value:', form.getValues('projectDescription'));
+    console.log('=======================');
+  }, [currentStep, form]);
+
   useEffect(() => {
     calculatePriorityScore();
   }, [watchedValues]);
 
-  // Fix field contamination when entering Step 5
+  // STEP 2: Force complete field reset and re-registration
   useEffect(() => {
     if (currentStep === 5) {
-      const currentDesc = form.getValues('projectDescription');
-      if (currentDesc && (
-        currentDesc.includes('Commercial Developer') ||
-        currentDesc.includes('Government/Municipal') ||
-        currentDesc.includes('Non-Profit Housing') ||
-        currentDesc.includes('Private Developer')
-      )) {
-        console.log('Clearing contaminated project description on step 5:', currentDesc);
-        form.setValue('projectDescription', '', { shouldValidate: false });
-      }
+      console.log('=== STEP 5 FIELD RESET ===');
+      
+      // Force unregister the field
+      console.log('Unregistering projectDescription field...');
+      form.unregister('projectDescription');
+      
+      // Wait for next tick, then re-register with empty value
+      setTimeout(() => {
+        console.log('Re-registering projectDescription field with empty value...');
+        form.register('projectDescription', { value: '' });
+        form.setValue('projectDescription', '', { shouldValidate: false, shouldDirty: false });
+        console.log('Field reset complete. New value:', form.getValues('projectDescription'));
+      }, 0);
     }
   }, [currentStep, form]);
 
