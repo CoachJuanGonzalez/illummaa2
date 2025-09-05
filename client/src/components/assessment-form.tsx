@@ -66,6 +66,25 @@ export default function AssessmentForm() {
     calculatePriorityScore();
   }, [watchedValues]);
 
+  // Fix field contamination when entering Step 5
+  useEffect(() => {
+    if (currentStep === 5) {
+      const projectDesc = form.getValues('projectDescription');
+      const developerTypes = [
+        "Commercial Developer (Large Projects)",
+        "Government/Municipal Developer", 
+        "Non-Profit Housing Developer",
+        "Private Developer (Medium Projects)"
+      ];
+      
+      // Clear contaminated project description when entering step 5
+      if (projectDesc && developerTypes.includes(projectDesc)) {
+        console.log('Clearing contaminated project description on step 5:', projectDesc);
+        form.setValue('projectDescription', '', { shouldValidate: false });
+      }
+    }
+  }, [currentStep, form]);
+
   const calculatePriorityScore = () => {
     let score = 0;
     const values = form.getValues();
