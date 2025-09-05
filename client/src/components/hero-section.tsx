@@ -15,7 +15,8 @@ export default function HeroSection() {
         <img 
           src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2075&q=80" 
           alt="Modern modular home with pool and contemporary design" 
-          className="w-full h-full object-cover brightness-110"
+          className="w-full h-full object-cover object-center"
+          style={{opacity: 1.0, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}
           data-testid="img-hero-background"
         />
         <div className="hero-bg absolute inset-0"></div>
