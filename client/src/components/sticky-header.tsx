@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [location, navigate] = useLocation();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -13,13 +14,24 @@ export default function StickyHeader() {
     setMobileMenuOpen(false);
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    // If already on home page, scroll to top instead of navigating
+    if (location === "/" || location === "") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // Navigate to home page
+      navigate("/");
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border" data-testid="header-main">
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="cursor-pointer" data-testid="logo-link">
-            <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity" data-testid="logo-container">
+          <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
+            <div className="flex items-center space-x-3 hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
               <div className="w-8 h-8">
                 <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem" data-testid="logo-svg">
                   <circle cx="22" cy="10" r="3" fill="#2C5530"/>
