@@ -64,7 +64,7 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: DOMPurify.sanitize(rawData.constructionProvince || ''),
       developerType: DOMPurify.sanitize(rawData.developerType || ''),
       governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms || ''),
-      projectDescription: rawData.projectDescriptionText ? 
+      projectDescriptionText: rawData.projectDescriptionText ? 
         DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
         "",
     };
