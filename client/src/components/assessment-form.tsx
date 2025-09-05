@@ -556,13 +556,11 @@ export default function AssessmentForm() {
           {/* Assessment Form */}
           <Form {...form}>
             <form onSubmit={(e) => {
-              // Prevent default form submission except on final step
-              if (currentStep !== TOTAL_STEPS) {
-                e.preventDefault();
-                return false;
-              }
-              // Allow normal form submission on final step
-              form.handleSubmit(onSubmit)(e);
+              // Always prevent default form submission - we handle it manually via buttons
+              e.preventDefault();
+              e.stopPropagation();
+              console.log('Form submit prevented, current step:', currentStep);
+              return false;
             }} className="bg-card rounded-2xl p-8 shadow-xl" data-testid="form-assessment">
               {renderStep()}
               
@@ -584,7 +582,11 @@ export default function AssessmentForm() {
                 {currentStep < TOTAL_STEPS ? (
                   <Button
                     type="button"
-                    onClick={nextStep}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      nextStep();
+                    }}
                     className="btn-primary"
                     data-testid="button-next"
                   >
@@ -593,7 +595,11 @@ export default function AssessmentForm() {
                   </Button>
                 ) : (
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      form.handleSubmit(onSubmit)(e);
+                    }}
                     className="btn-primary"
                     disabled={submitMutation.isPending}
                     data-testid="button-submit"
