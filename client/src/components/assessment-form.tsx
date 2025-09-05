@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -473,24 +473,46 @@ export default function AssessmentForm() {
             <FormField
               control={form.control}
               name="projectDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea 
-                      rows={4} 
-                      maxLength={1000}
-                      placeholder="Tell us about your project vision, target market, and any specific requirements..."
-                      {...field}
-                      data-testid="textarea-project-description"
-                    />
-                  </FormControl>
-                  <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                    {field.value?.length || 0}/1000 characters
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                // Force clean project description value
+                const cleanValue = useMemo(() => {
+                  const developerTypes = [
+                    "Commercial Developer (Large Projects)",
+                    "Government/Municipal Developer", 
+                    "Non-Profit Housing Developer",
+                    "Private Developer (Medium Projects)"
+                  ];
+                  
+                  // If current value is a developer type, return empty string
+                  if (field.value && developerTypes.includes(field.value)) {
+                    // Also clear the form value
+                    setTimeout(() => form.setValue('projectDescription', ''), 0);
+                    return '';
+                  }
+                  
+                  return field.value || '';
+                }, [field.value, form]);
+                
+                return (
+                  <FormItem>
+                    <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        rows={4} 
+                        maxLength={1000}
+                        placeholder="Tell us about your project vision, target market, and any specific requirements..."
+                        value={cleanValue}
+                        onChange={(e) => field.onChange(e.target.value)}
+                        data-testid="textarea-project-description"
+                      />
+                    </FormControl>
+                    <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
+                      {cleanValue?.length || 0}/1000 characters
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
             
             {/* Priority Score Display */}
