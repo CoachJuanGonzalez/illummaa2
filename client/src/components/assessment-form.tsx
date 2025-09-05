@@ -454,49 +454,24 @@ export default function AssessmentForm() {
             <FormField
               control={form.control}
               name="projectDescription"
-              render={({ field }) => {
-                // Ensure we only have the correct value and it's not contaminated
-                const developerTypes = [
-                  "Commercial Developer (Large Projects)",
-                  "Government/Municipal Developer", 
-                  "Non-Profit Housing Developer",
-                  "Private Developer (Medium Projects)"
-                ];
-                
-                // If field contains a developer type, clear it and make it empty
-                if (field.value && developerTypes.includes(field.value)) {
-                  field.onChange('');
-                }
-                
-                const safeValue = (field.value && !developerTypes.includes(field.value)) ? field.value : '';
-                  
-                return (
-                  <FormItem>
-                    <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        rows={4} 
-                        maxLength={1000}
-                        placeholder="Tell us about your project vision, target market, and any specific requirements..."
-                        {...field}
-                        value={safeValue}
-                        onChange={(e) => {
-                          // Allow normal editing but prevent developer types from being set
-                          const newValue = e.target.value;
-                          if (!developerTypes.includes(newValue)) {
-                            field.onChange(e);
-                          }
-                        }}
-                        data-testid="textarea-project-description"
-                      />
-                    </FormControl>
-                    <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                      {safeValue?.length || 0}/1000 characters
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea 
+                      rows={4} 
+                      maxLength={1000}
+                      placeholder="Tell us about your project vision, target market, and any specific requirements..."
+                      {...field}
+                      data-testid="textarea-project-description"
+                    />
+                  </FormControl>
+                  <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
+                    {field.value?.length || 0}/1000 characters
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
             
             {/* Priority Score Display */}
