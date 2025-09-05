@@ -8,13 +8,48 @@ const app = express();
 // Configure for Replit's specific proxy setup
 app.set('trust proxy', 1);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Enhanced body parsing with security limits
+app.use(express.json({ 
+  limit: '10mb',
+  strict: true,
+  verify: (req, res, buf) => {
+    // Prevent prototype pollution
+    const body = buf.toString();
+    if (body.includes('__proto__') || body.includes('constructor') || body.includes('prototype')) {
+      throw new Error('Potential prototype pollution attempt detected');
+    }
+  }
+}));
+app.use(express.urlencoded({ 
+  extended: false, 
+  limit: '10mb',
+  parameterLimit: 100
+}));
 
+// Enhanced security and logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  // Security headers for all responses
+  res.set({
+    'X-Powered-By': '', // Remove Express fingerprinting
+    'Server': '', // Remove server fingerprinting  
+    'X-Request-ID': Date.now().toString(36)
+  });
+
+  // Enhanced logging for security monitoring
+  if (path.startsWith("/api")) {
+    const clientInfo = {
+      ip: req.ip,
+      userAgent: req.get('User-Agent')?.substring(0, 200),
+      referer: req.get('Referer'),
+      method: req.method,
+      path: path
+    };
+    console.log(`[SECURITY] API Request: ${JSON.stringify(clientInfo)}`);
+  }
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -26,8 +61,17 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      
+      // Enhanced logging for errors and slow requests
+      if (res.statusCode >= 400 || duration > 5000) {
+        console.log(`[SECURITY] Slow/Error Response: ${logLine} from IP: ${req.ip}`);
+      }
+      
+      if (capturedJsonResponse && !capturedJsonResponse.error) {
+        // Only log success responses in development
+        if (process.env.NODE_ENV === 'development') {
+          logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+        }
       }
 
       if (logLine.length > 80) {

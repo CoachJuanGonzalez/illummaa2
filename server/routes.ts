@@ -1,54 +1,207 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
+import slowDown from "express-slow-down";
+import ExpressBrute from "express-brute";
 import helmet from "helmet";
 import cors from "cors";
+import validator from "validator";
 import { validateFormData, submitToGoHighLevel } from "./storage";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // v13.1 Security Configuration
+  // Enterprise Security Configuration v13.2
   
-  // Rate limiting: 100 requests per 15 minutes per IP
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // 100 requests per window
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: "Too many requests, please try again later." },
-    skip: (req) => {
-      // Skip rate limiting for development environment
-      return process.env.NODE_ENV === 'development';
-    }
-  });
-  
-  app.use(limiter);
-  
-  // Helmet security headers with CSP
+  // Enhanced Helmet security headers with comprehensive CSP
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "https://images.unsplash.com", "data:", "blob:"],
-        connectSrc: ["'self'", "https://services.leadconnectorhq.com"]
+        connectSrc: ["'self'", "https://services.leadconnectorhq.com"],
+        frameSrc: ["'none'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        upgradeInsecureRequests: []
       }
-    }
+    },
+    crossOriginEmbedderPolicy: false,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    },
+    noSniff: true,
+    frameguard: { action: 'deny' },
+    xssFilter: true
   }));
   
-  // CORS Configuration
+  // Enhanced CORS Configuration with security features
   app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://illummaa.com', 'https://*.replit.app', 'https://*.replit.dev'] 
-      : true,
-    credentials: true
+    origin: (origin, callback) => {
+      const allowedOrigins = process.env.NODE_ENV === 'production' 
+        ? ['https://illummaa.com', /\.replit\.app$/, /\.replit\.dev$/]
+        : [true];
+      
+      if (process.env.NODE_ENV === 'development') {
+        return callback(null, true);
+      }
+      
+      if (!origin || allowedOrigins.some(allowed => 
+        typeof allowed === 'string' ? allowed === origin :
+        allowed instanceof RegExp ? allowed.test(origin) : allowed
+      )) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    maxAge: 86400, // 24 hours
+    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining']
   }));
+  
+  // Brute force protection for sensitive endpoints
+  const store = new ExpressBrute.MemoryStore();
+  const bruteforce = new ExpressBrute(store, {
+    freeRetries: 3,
+    minWait: 5 * 60 * 1000, // 5 minutes
+    maxWait: 60 * 60 * 1000, // 1 hour
+    failCallback: (req: any, res: any) => {
+      res.status(429).json({
+        error: 'Too many failed attempts',
+        message: 'Please try again later',
+        retryAfter: '5 minutes'
+      });
+    }
+  });
+  
+  // Multi-tier rate limiting
+  const strictLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: process.env.NODE_ENV === 'development' ? 1000 : 50,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { 
+      error: "Rate limit exceeded", 
+      message: "Too many requests from this IP, please try again later.",
+      retryAfter: '15 minutes'
+    },
+    // Use default key generator which properly handles IPv6
+    keyGenerator: undefined
+  });
+  
+  // Slow down repeated requests
+  const speedLimiter = slowDown({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    delayAfter: process.env.NODE_ENV === 'development' ? 100 : 10,
+    delayMs: () => 500, // 500ms delay per request after threshold
+    maxDelayMs: 20000, // Maximum delay of 20 seconds
+  });
+  
+  // Apply security middleware
+  app.use('/api', strictLimiter);
+  app.use('/api', speedLimiter);
+  
+  // Input validation middleware for all API routes
+  app.use('/api', (req, res, next) => {
+    // Security headers for API responses
+    res.set({
+      'X-Content-Type-Options': 'nosniff',
+      'X-Frame-Options': 'DENY',
+      'X-XSS-Protection': '1; mode=block',
+      'Referrer-Policy': 'strict-origin-when-cross-origin',
+      'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+    });
+    
+    // Validate Content-Type for POST requests
+    if (req.method === 'POST' && !req.is('application/json')) {
+      return res.status(400).json({
+        error: 'Invalid content type',
+        message: 'Content-Type must be application/json'
+      });
+    }
+    
+    // Basic input sanitization
+    if (req.body && typeof req.body === 'object') {
+      sanitizeObject(req.body);
+    }
+    
+    next();
+  });
+  
+  // Utility functions for input validation and sanitization
+  function sanitizeObject(obj: any): void {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && typeof obj[key] === 'string') {
+        // Remove potentially harmful characters while preserving legitimate input
+        obj[key] = validator.escape(obj[key]).trim();
+        // Limit string length to prevent DoS
+        if (obj[key].length > 10000) {
+          obj[key] = obj[key].substring(0, 10000);
+        }
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        sanitizeObject(obj[key]);
+      }
+    }
+  }
+  
+  function validateInput(body: any): string[] {
+    const errors: string[] = [];
+    
+    // Check for required fields
+    if (!body.firstName || typeof body.firstName !== 'string') {
+      errors.push('First name is required and must be a string');
+    }
+    
+    if (!body.lastName || typeof body.lastName !== 'string') {
+      errors.push('Last name is required and must be a string');
+    }
+    
+    if (!body.email || !validator.isEmail(body.email)) {
+      errors.push('Valid email is required');
+    }
+    
+    if (body.phone && !validator.isMobilePhone(body.phone, 'any')) {
+      errors.push('Invalid phone number format');
+    }
+    
+    // Validate numeric fields
+    if (body.projectUnitCount && (!Number.isInteger(Number(body.projectUnitCount)) || Number(body.projectUnitCount) < 0)) {
+      errors.push('Project unit count must be a positive integer');
+    }
+    
+    return errors;
+  }
 
-  // Assessment submission endpoint
-  app.post("/api/submit-assessment", async (req, res) => {
+  // Assessment submission endpoint with enhanced security
+  app.post("/api/submit-assessment", bruteforce.prevent, async (req, res) => {
+    const requestStart = Date.now();
+    
+    // Enhanced request logging for security monitoring
+    console.log(`[SECURITY] Assessment submission attempt from IP: ${req.ip}, User-Agent: ${req.get('User-Agent')?.substring(0, 100)}`);
     try {
+      // Enhanced validation and sanitization
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({
+          error: 'Empty request body',
+          message: 'Request body cannot be empty'
+        });
+      }
+      
+      // Additional input validation
+      const validationErrors = validateInput(req.body);
+      if (validationErrors.length > 0) {
+        return res.status(400).json({
+          error: 'Input validation failed',
+          details: validationErrors
+        });
+      }
+      
       // Validate and sanitize form data
       const { isValid, data, errors, priorityScore } = await validateFormData(req.body);
       
@@ -89,12 +242,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
     } catch (error) {
-      console.error("Assessment submission error:", error);
+      const duration = Date.now() - requestStart;
+      console.error(`[SECURITY] Assessment submission error from IP ${req.ip} after ${duration}ms:`, error);
+      
+      // Don't expose internal error details in production
+      const errorMessage = process.env.NODE_ENV === 'development' 
+        ? (error as Error).message 
+        : 'Please try again later';
+        
       res.status(500).json({
         error: "Internal server error",
-        message: "Please try again later"
+        message: errorMessage,
+        requestId: Date.now().toString(36)
       });
     }
+  });
+  
+  // Health check endpoint (minimal exposure)
+  app.get('/api/health', rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10, // 10 requests per minute
+  }), (req, res) => {
+    res.json({ 
+      status: 'healthy', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    });
   });
 
   const httpServer = createServer(app);
