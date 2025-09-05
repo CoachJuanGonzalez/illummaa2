@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { Link } from "wouter";
 
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -17,16 +18,18 @@ export default function StickyHeader() {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-3" data-testid="logo-container">
-            <div className="w-8 h-8">
-              <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem" data-testid="logo-svg">
-                <circle cx="22" cy="10" r="3" fill="#2C5530"/>
-                <circle cx="42" cy="10" r="3" fill="#2C5530"/>
-                <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#2C5530" strokeWidth="6" strokeLinecap="round"/>
-              </svg>
+          <Link href="/" className="cursor-pointer" data-testid="logo-link">
+            <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity" data-testid="logo-container">
+              <div className="w-8 h-8">
+                <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem" data-testid="logo-svg">
+                  <circle cx="22" cy="10" r="3" fill="#2C5530"/>
+                  <circle cx="42" cy="10" r="3" fill="#2C5530"/>
+                  <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#2C5530" strokeWidth="6" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <span className="logo-text text-2xl text-primary font-bold" data-testid="logo-text">ILLÜMMAA</span>
             </div>
-            <span className="logo-text text-2xl text-primary font-bold" data-testid="logo-text">ILLÜMMAA</span>
-          </div>
+          </Link>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8" data-testid="nav-desktop">
