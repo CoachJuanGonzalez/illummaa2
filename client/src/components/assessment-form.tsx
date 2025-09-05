@@ -473,13 +473,19 @@ export default function AssessmentForm() {
               name="projectDescription"
               render={({ field }) => {
                 // Ensure we only have the correct value and it's not contaminated
-                const safeValue = typeof field.value === 'string' && 
-                  ![
-                    "Commercial Developer (Large Projects)",
-                    "Government/Municipal Developer", 
-                    "Non-Profit Housing Developer",
-                    "Private Developer (Medium Projects)"
-                  ].includes(field.value) ? field.value : '';
+                const developerTypes = [
+                  "Commercial Developer (Large Projects)",
+                  "Government/Municipal Developer", 
+                  "Non-Profit Housing Developer",
+                  "Private Developer (Medium Projects)"
+                ];
+                
+                // If field contains a developer type, clear it and make it empty
+                if (field.value && developerTypes.includes(field.value)) {
+                  field.onChange('');
+                }
+                
+                const safeValue = (field.value && !developerTypes.includes(field.value)) ? field.value : '';
                   
                 return (
                   <FormItem>
@@ -489,8 +495,15 @@ export default function AssessmentForm() {
                         rows={4} 
                         maxLength={1000}
                         placeholder="Tell us about your project vision, target market, and any specific requirements..."
+                        {...field}
                         value={safeValue}
-                        onChange={field.onChange}
+                        onChange={(e) => {
+                          // Allow normal editing but prevent developer types from being set
+                          const newValue = e.target.value;
+                          if (!developerTypes.includes(newValue)) {
+                            field.onChange(e);
+                          }
+                        }}
                         data-testid="textarea-project-description"
                       />
                     </FormControl>
