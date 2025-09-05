@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222, 84%, 5%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222, 84%, 5%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222, 84%, 5%);
+  --primary: hsl(124, 28%, 25%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222, 47%, 11%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --accent: hsl(142, 69%, 58%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(356, 91%, 54%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --ring: hsl(124, 28%, 25%);
+  --chart-1: hsl(124, 28%, 25%);
+  --chart-2: hsl(142, 69%, 58%);
+  --chart-3: hsl(196, 100%, 70%);
+  --chart-4: hsl(39, 86%, 83%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(210, 40%, 96%);
+  --sidebar-foreground: hsl(222, 84%, 5%);
+  --sidebar-primary: hsl(124, 28%, 25%);
+  --sidebar-primary-foreground: hsl(0, 0%, 98%);
+  --sidebar-accent: hsl(210, 40%, 96%);
+  --sidebar-accent-foreground: hsl(222, 47%, 11%);
+  --sidebar-border: hsl(214, 32%, 91%);
+  --sidebar-ring: hsl(124, 28%, 25%);
+  --radius: 1rem;
+  
+  /* ILLÜMMAA Specific Colors */
+  --illummaa-primary: hsl(124, 28%, 25%);
+  --illummaa-eco-green: hsl(142, 69%, 58%);
+  --illummaa-sky-blue: hsl(196, 100%, 70%);
+  --illummaa-sand-beige: hsl(39, 86%, 83%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 5%);
+  --foreground: hsl(0, 0%, 98%);
+  --card: hsl(222, 47%, 11%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --popover: hsl(222, 84%, 5%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --primary: hsl(124, 28%, 25%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(222, 47%, 11%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --muted: hsl(215, 16%, 47%);
+  --muted-foreground: hsl(215, 20%, 65%);
+  --accent: hsl(142, 69%, 58%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(215, 27%, 32%);
+  --input: hsl(215, 27%, 32%);
+  --ring: hsl(124, 28%, 25%);
+  --chart-1: hsl(124, 28%, 25%);
+  --chart-2: hsl(142, 69%, 58%);
+  --chart-3: hsl(196, 100%, 70%);
+  --chart-4: hsl(39, 86%, 83%);
+  --chart-5: hsl(341, 75%, 51%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+@layer components {
+  .logo-text {
+    letter-spacing: 0.18em;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+  }
+  
+  .hero-bg {
+    background: linear-gradient(135deg, rgba(44, 85, 48, 0.9) 0%, rgba(44, 85, 48, 0.7) 100%);
+  }
+  
+  .priority-score {
+    background: linear-gradient(135deg, #1DB954 0%, #74C0FC 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #2C5530 0%, #1DB954 100%);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(44, 85, 48, 0.3);
+  }
+  
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+}
