@@ -28,6 +28,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "https://images.unsplash.com", "data:", "blob:"],
         connectSrc: ["'self'", "https://services.leadconnectorhq.com"]
       }
     }
