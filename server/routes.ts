@@ -15,7 +15,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     max: 100, // 100 requests per window
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: "Too many requests, please try again later." }
+    message: { error: "Too many requests, please try again later." },
+    skip: (req) => {
+      // Skip rate limiting for development environment
+      return process.env.NODE_ENV === 'development';
+    }
   });
   
   app.use(limiter);
