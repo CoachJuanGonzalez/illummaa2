@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -20,6 +20,7 @@ export default function AssessmentForm() {
   const [priorityScore, setPriorityScore] = useState(0);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [projectDescriptionValue, setProjectDescriptionValue] = useState('');
   const { toast } = useToast();
 
   const form = useForm<AssessmentFormData>({
@@ -232,7 +233,13 @@ export default function AssessmentForm() {
     const isValid = await validateCurrentStep();
     if (!isValid) return;
 
-    submitMutation.mutate(data);
+    // Include the isolated project description value
+    const submissionData = {
+      ...data,
+      projectDescriptionText: projectDescriptionValue
+    };
+    console.log("Form submitted with isolated description:", submissionData);
+    submitMutation.mutate(submissionData);
   };
 
   const renderStep = () => {
@@ -488,41 +495,24 @@ export default function AssessmentForm() {
         return (
           <div className="space-y-6" data-testid="step-submission">
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-5">Project Description & Submission</h3>
-            <FormField
-              control={form.control}
-              name="projectDescriptionText"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
-                  <FormControl>
-                    <textarea
-                      value={field.value || ''}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // Block contamination from developer types
-                        if (value.includes('Commercial Developer') || 
-                            value.includes('Government/Municipal') || 
-                            value.includes('Non-Profit Housing') || 
-                            value.includes('Private Developer')) {
-                          field.onChange('');
-                        } else {
-                          field.onChange(value);
-                        }
-                      }}
-                      placeholder="Describe your project requirements, timeline, or any specific details..."
-                      className="flex min-h-[120px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      maxLength={1000}
-                      rows={4}
-                      data-testid="textarea-project-description"
-                    />
-                  </FormControl>
-                  <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                    {(field.value || '').length}/1000 characters
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* EMERGENCY: Isolated Project Description Component */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" data-testid="label-project-description">
+                Project Description (Optional)
+              </label>
+              <textarea
+                value={projectDescriptionValue}
+                onChange={(e) => setProjectDescriptionValue(e.target.value)}
+                placeholder="Describe your project requirements, timeline, or any specific details..."
+                className="flex min-h-[120px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                maxLength={1000}
+                rows={4}
+                data-testid="textarea-project-description"
+              />
+              <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
+                {projectDescriptionValue.length}/1000 characters
+              </div>
+            </div>
             
             {/* Priority Score Display */}
             <div className="bg-muted rounded-2xl p-6" data-testid="container-priority-score">
