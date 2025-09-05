@@ -91,7 +91,7 @@ export const assessmentSchema = z.object({
     "No - Private development only"
   ], { required_error: "Please select government program participation" }),
   
-  projectDescription: z.string()
+  projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
 });

@@ -64,8 +64,8 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: DOMPurify.sanitize(rawData.constructionProvince || ''),
       developerType: DOMPurify.sanitize(rawData.developerType || ''),
       governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms || ''),
-      projectDescription: rawData.projectDescription ? 
-        DOMPurify.sanitize(rawData.projectDescription).trim().slice(0, 1000) : 
+      projectDescription: rawData.projectDescriptionText ? 
+        DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
         "",
     };
 
@@ -170,7 +170,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     construction_province: formData.constructionProvince,
     developer_type: formData.developerType,
     government_programs: formData.governmentPrograms,
-    project_description: formData.projectDescription || "",
+    project_description: formData.projectDescriptionText || "",
     ai_priority_score: priorityScore,
     lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
     submission_timestamp: new Date().toISOString(),

@@ -36,7 +36,7 @@ export default function AssessmentForm() {
       constructionProvince: undefined,
       developerType: undefined,
       governmentPrograms: undefined,
-      projectDescription: "",
+      projectDescriptionText: "",
     },
   });
 
@@ -69,7 +69,7 @@ export default function AssessmentForm() {
     console.log('Form values:', form.getValues());
     console.log('Form field states:', form.formState);
     console.log('Registered fields:', Object.keys(form.control._fields || {}));
-    console.log('Project Description Value:', form.getValues('projectDescription'));
+    console.log('Project Description Value:', form.getValues('projectDescriptionText'));
     console.log('=======================');
   }, [currentStep, form]);
 
@@ -77,22 +77,29 @@ export default function AssessmentForm() {
     calculatePriorityScore();
   }, [watchedValues]);
 
-  // STEP 2: Force complete field reset and re-registration
+  // STEP 2: Aggressive field contamination fix
   useEffect(() => {
     if (currentStep === 5) {
-      console.log('=== STEP 5 FIELD RESET ===');
+      console.log('=== STEP 5 AGGRESSIVE FIELD RESET ===');
       
-      // Force unregister the field
-      console.log('Unregistering projectDescription field...');
-      form.unregister('projectDescription');
+      // Multiple reset attempts to force clean state
+      const forceCleanField = () => {
+        form.unregister('projectDescriptionText');
+        form.setValue('projectDescriptionText', '', { shouldValidate: false, shouldDirty: false, shouldTouch: false });
+        
+        // Also clear any potential cross-contamination
+        const currentValues = form.getValues();
+        if (currentValues.projectDescriptionText !== '') {
+          console.log('Detected contamination, forcing clean:', currentValues.projectDescriptionText);
+          form.resetField('projectDescriptionText', { defaultValue: '' });
+        }
+      };
       
-      // Wait for next tick, then re-register with empty value
-      setTimeout(() => {
-        console.log('Re-registering projectDescription field with empty value...');
-        form.register('projectDescription', { value: '' });
-        form.setValue('projectDescription', '', { shouldValidate: false, shouldDirty: false });
-        console.log('Field reset complete. New value:', form.getValues('projectDescription'));
-      }, 0);
+      forceCleanField();
+      setTimeout(forceCleanField, 10);
+      setTimeout(forceCleanField, 50);
+      
+      console.log('Aggressive reset complete. Final value:', form.getValues('projectDescriptionText'));
     }
   }, [currentStep, form]);
 
@@ -185,7 +192,7 @@ export default function AssessmentForm() {
       case 4:
         return ["developerType", "governmentPrograms"];
       case 5:
-        return ["projectDescription"];
+        return ["projectDescriptionText"];
       default:
         return [];
     }
@@ -483,7 +490,7 @@ export default function AssessmentForm() {
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-5">Project Description & Submission</h3>
             <FormField
               control={form.control}
-              name="projectDescription"
+              name="projectDescriptionText"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
