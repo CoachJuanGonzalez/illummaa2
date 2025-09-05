@@ -186,6 +186,12 @@ export default function AssessmentForm() {
   };
 
   const onSubmit = async (data: AssessmentFormData) => {
+    // Only allow submission on the final step
+    if (currentStep !== TOTAL_STEPS) {
+      console.warn('Form submission attempted on step', currentStep, 'but should only submit on step', TOTAL_STEPS);
+      return;
+    }
+    
     const isValid = await validateCurrentStep();
     if (!isValid) return;
 
@@ -549,7 +555,15 @@ export default function AssessmentForm() {
           
           {/* Assessment Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="bg-card rounded-2xl p-8 shadow-xl" data-testid="form-assessment">
+            <form onSubmit={(e) => {
+              // Prevent default form submission except on final step
+              if (currentStep !== TOTAL_STEPS) {
+                e.preventDefault();
+                return false;
+              }
+              // Allow normal form submission on final step
+              form.handleSubmit(onSubmit)(e);
+            }} className="bg-card rounded-2xl p-8 shadow-xl" data-testid="form-assessment">
               {renderStep()}
               
               {/* Form Navigation */}

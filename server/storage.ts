@@ -149,10 +149,10 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
 }
 
 export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number): Promise<void> {
-  const webhookUrl = process.env.GOHIGHLEVEL_WEBHOOK_URL;
+  const webhookUrl = process.env.GHL_WEBHOOK_URL;
   
   if (!webhookUrl) {
-    console.warn("GOHIGHLEVEL_WEBHOOK_URL not configured");
+    console.warn("GHL_WEBHOOK_URL not configured");
     return;
   }
 
