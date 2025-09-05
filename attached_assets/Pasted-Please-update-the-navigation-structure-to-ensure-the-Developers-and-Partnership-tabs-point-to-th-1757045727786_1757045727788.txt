@@ -1,0 +1,100 @@
+Please update the navigation structure to ensure the "Developers" and "Partnership" tabs point to the correct sections:
+
+**Navigation Requirements:**
+- "Developers" tab → scroll to `#developer-qualification` (the 5-step qualification form section)
+- "Partnership" tab → scroll to `#partnership-tiers` (the partnership levels section)
+
+**HTML Section IDs needed:**
+```html
+<!-- Developer Qualification Section -->
+<section id="developer-qualification" class="qualification-section">
+  <h2>Partner Qualification Assessment</h2>
+  <!-- 5-step form content here -->
+</section>
+
+<!-- Partnership Tiers Section -->
+<section id="partnership-tiers" class="partnership-section">
+  <h2>Scale Your Development with Industrial Precision</h2>
+  <div class="partnership-tier">
+    <h3>Pioneer (50-99 units)</h3>
+    <p>Volume pricing, dedicated support</p>
+  </div>
+  <div class="partnership-tier">
+    <h3>Preferred (100-299 units)</h3>
+    <p>Custom modifications, financing assistance</p>
+  </div>
+  <div class="partnership-tier">
+    <h3>Elite (300+ units)</h3>
+    <p>Exclusive designs, turnkey communities</p>
+  </div>
+  <button onclick="document.getElementById('developer-qualification').scrollIntoView({behavior: 'smooth'})">
+    Schedule Partnership Assessment
+  </button>
+</section>
+```
+
+**JavaScript for Navigation:**
+```javascript
+// Navigation scroll functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Smooth scrolling for all navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Specific navigation targeting
+    const navLinks = {
+        'Assessment': '#developer-qualification',
+        'Why': '#why-illummaa', 
+        'Models': '#models-showcase',
+        'Developers': '#developer-qualification',  // Entry point for qualification
+        'Partnership': '#partnership-tiers',       // Partnership value proposition
+        'Contact': '#contact-section'
+    };
+
+    // Apply navigation targeting
+    Object.entries(navLinks).forEach(([text, target]) => {
+        const link = document.querySelector(`nav a[href*="${text}"], header a[href*="${text}"]`);
+        if (link) {
+            link.href = target;
+        }
+    });
+});
+```
+
+**Header Navigation HTML:**
+```html
+<header class="sticky-header">
+  <div class="header-content">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 64 64" aria-label="ILLUMMAA emblem">
+        <circle cx="22" cy="10" r="3" fill="#2C5530"/>
+        <circle cx="42" cy="10" r="3" fill="#2C5530"/>
+        <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#2C5530" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <nav class="main-nav">
+      <a href="#developer-qualification">Assessment</a>
+      <a href="#why-illummaa">Why</a>
+      <a href="#models-showcase">Models</a>
+      <a href="#developer-qualification">Developers</a>
+      <a href="#partnership-tiers">Partnership</a>
+      <a href="#contact-section">Contact</a>
+    </nav>
+  </div>
+</header>
+```
+
+Please implement these changes to ensure:
+1. "Developers" leads visitors to start the qualification process immediately
+2. "Partnership" shows the partnership tiers and benefits after qualification
+3. Smooth scrolling works properly for both navigation tabs

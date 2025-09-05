@@ -31,7 +31,7 @@ export default function StickyHeader() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8" data-testid="nav-desktop">
             <button 
-              onClick={() => scrollToSection("assessment")} 
+              onClick={() => scrollToSection("developer-qualification")} 
               className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-assessment"
             >
@@ -52,14 +52,14 @@ export default function StickyHeader() {
               Models
             </button>
             <button 
-              onClick={() => scrollToSection("developers")} 
+              onClick={() => scrollToSection("developer-qualification")} 
               className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-developers"
             >
               Developers
             </button>
             <button 
-              onClick={() => scrollToSection("partnership")} 
+              onClick={() => scrollToSection("partnership-tiers")} 
               className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-partnership"
             >
@@ -89,7 +89,7 @@ export default function StickyHeader() {
           <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
             <div className="flex flex-col space-y-4 pt-4">
               <button 
-                onClick={() => scrollToSection("assessment")} 
+                onClick={() => scrollToSection("developer-qualification")} 
                 className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-assessment"
               >
@@ -110,14 +110,14 @@ export default function StickyHeader() {
                 Models
               </button>
               <button 
-                onClick={() => scrollToSection("developers")} 
+                onClick={() => scrollToSection("developer-qualification")} 
                 className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-developers"
               >
                 Developers
               </button>
               <button 
-                onClick={() => scrollToSection("partnership")} 
+                onClick={() => scrollToSection("partnership-tiers")} 
                 className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-partnership"
               >

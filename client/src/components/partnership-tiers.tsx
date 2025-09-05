@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function PartnershipTiers() {
   const scrollToAssessment = () => {
-    const element = document.getElementById("assessment");
+    const element = document.getElementById("developer-qualification");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
@@ -58,7 +58,7 @@ export default function PartnershipTiers() {
   ];
 
   return (
-    <section id="partnership" className="py-20" data-testid="section-partnership">
+    <section id="partnership-tiers" className="py-20 partnership-section" data-testid="section-partnership">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-partnership-title">

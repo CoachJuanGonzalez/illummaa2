@@ -2,7 +2,7 @@ import { Handshake, Play, Award, CheckCircle, Trophy } from "lucide-react";
 
 export default function HeroSection() {
   const scrollToAssessment = () => {
-    const element = document.getElementById("assessment");
+    const element = document.getElementById("developer-qualification");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }

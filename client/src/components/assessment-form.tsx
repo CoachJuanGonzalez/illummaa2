@@ -498,7 +498,7 @@ export default function AssessmentForm() {
 
   if (isSubmitted) {
     return (
-      <section id="assessment" className="py-20" data-testid="section-assessment-success">
+      <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment-success">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -518,7 +518,7 @@ export default function AssessmentForm() {
   }
 
   return (
-    <section id="assessment" className="py-20" data-testid="section-assessment">
+    <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
