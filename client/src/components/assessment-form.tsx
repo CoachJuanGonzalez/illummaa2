@@ -64,24 +64,7 @@ export default function AssessmentForm() {
 
   useEffect(() => {
     calculatePriorityScore();
-    
-    // Fix: Ensure project description doesn't get contaminated with other field values
-    const currentProjectDescription = form.getValues('projectDescription');
-    const currentDeveloperType = form.getValues('developerType');
-    
-    // If project description contains a developer type value, clear it
-    const developerTypes = [
-      "Commercial Developer (Large Projects)",
-      "Government/Municipal Developer", 
-      "Non-Profit Housing Developer",
-      "Private Developer (Medium Projects)"
-    ];
-    
-    if (currentProjectDescription && developerTypes.includes(currentProjectDescription)) {
-      console.log('Clearing contaminated project description:', currentProjectDescription);
-      form.setValue('projectDescription', '', { shouldValidate: false });
-    }
-  }, [watchedValues, form]);
+  }, [watchedValues]);
 
   const calculatePriorityScore = () => {
     let score = 0;
