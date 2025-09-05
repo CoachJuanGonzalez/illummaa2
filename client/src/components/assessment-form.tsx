@@ -69,17 +69,14 @@ export default function AssessmentForm() {
   // Fix field contamination when entering Step 5
   useEffect(() => {
     if (currentStep === 5) {
-      const projectDesc = form.getValues('projectDescription');
-      const developerTypes = [
-        "Commercial Developer (Large Projects)",
-        "Government/Municipal Developer", 
-        "Non-Profit Housing Developer",
-        "Private Developer (Medium Projects)"
-      ];
-      
-      // Clear contaminated project description when entering step 5
-      if (projectDesc && developerTypes.includes(projectDesc)) {
-        console.log('Clearing contaminated project description on step 5:', projectDesc);
+      const currentDesc = form.getValues('projectDescription');
+      if (currentDesc && (
+        currentDesc.includes('Commercial Developer') ||
+        currentDesc.includes('Government/Municipal') ||
+        currentDesc.includes('Non-Profit Housing') ||
+        currentDesc.includes('Private Developer')
+      )) {
+        console.log('Clearing contaminated project description on step 5:', currentDesc);
         form.setValue('projectDescription', '', { shouldValidate: false });
       }
     }
@@ -477,16 +474,29 @@ export default function AssessmentForm() {
                 <FormItem>
                   <FormLabel data-testid="label-project-description">Project Description (Optional)</FormLabel>
                   <FormControl>
-                    <Textarea 
-                      rows={4} 
+                    <textarea
+                      value={field.value || ''}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Block contamination from developer types
+                        if (value.includes('Commercial Developer') || 
+                            value.includes('Government/Municipal') || 
+                            value.includes('Non-Profit Housing') || 
+                            value.includes('Private Developer')) {
+                          field.onChange('');
+                        } else {
+                          field.onChange(value);
+                        }
+                      }}
+                      placeholder="Describe your project requirements, timeline, or any specific details..."
+                      className="flex min-h-[120px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       maxLength={1000}
-                      placeholder="Tell us about your project vision, target market, and any specific requirements..."
-                      {...field}
+                      rows={4}
                       data-testid="textarea-project-description"
                     />
                   </FormControl>
                   <div className="text-sm text-muted-foreground mt-1" data-testid="text-char-count">
-                    {field.value?.length || 0}/1000 characters
+                    {(field.value || '').length}/1000 characters
                   </div>
                   <FormMessage />
                 </FormItem>
