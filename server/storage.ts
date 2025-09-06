@@ -148,6 +148,24 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   return Math.min(score, 150); // Cap at 150 points
 }
 
+// Add missing formatCanadianPhone function
+function formatCanadianPhone(phone: string): string {
+  if (!phone) return '';
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10) {
+    return `+1${cleaned}`;
+  } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
+    return `+${cleaned}`;
+  }
+  return phone; // Return original if format unclear
+}
+
+// Add missing sanitizeInput function
+function sanitizeInput(input: string): string {
+  if (!input) return '';
+  return DOMPurify.sanitize(input.toString()).trim();
+}
+
 export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number): Promise<void> {
   const webhookUrl = process.env.GHL_WEBHOOK_URL;
   
@@ -156,27 +174,39 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     return;
   }
 
-  // Build webhook payload (flat JSON as required by v13.1)
+  // Priority data for consistency with payload structure
+  const priorityData = {
+    score: priorityScore,
+    assignedTo: getAssignedTo(priorityScore),
+    responseTime: getResponseTime(priorityScore),
+    priorityLevel: getPriorityLevel(priorityScore)
+  };
+
+  // Build webhook payload (exact structure as verified)
   const webhookPayload = {
-    first_name: formData.firstName,
-    last_name: formData.lastName,
-    email: formData.email,
-    phone: formData.phone,
-    company: formData.company,
+    // Standard contact fields (VERIFIED CORRECT)
+    first_name: sanitizeInput(formData.firstName),
+    last_name: sanitizeInput(formData.lastName),
+    email: sanitizeInput(formData.email),
+    phone: formatCanadianPhone(formData.phone),
+    company: sanitizeInput(formData.company),
     source: "ILLUMMAA Website",
-    project_unit_count: formData.projectUnitCount,
+    
+    // Custom fields
+    project_unit_count: parseInt(formData.projectUnitCount.toString()),
     budget_range_cad: formData.budgetRange,
     decision_timeline: formData.decisionTimeline,
     construction_province: formData.constructionProvince,
     developer_type: formData.developerType,
     government_programs: formData.governmentPrograms,
-    project_description: formData.projectDescriptionText || "",
-    ai_priority_score: priorityScore,
+    project_description: sanitizeInput(formData.projectDescriptionText || ""),
+    ai_priority_score: priorityData.score,
     lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
+    
     submission_timestamp: new Date().toISOString(),
-    assigned_to: getAssignedTo(priorityScore),
-    response_time: getResponseTime(priorityScore),
-    priority_level: getPriorityLevel(priorityScore)
+    assigned_to: priorityData.assignedTo,
+    response_time: priorityData.responseTime,
+    priority_level: priorityData.priorityLevel
   };
 
   // Webhook delivery with retry logic (v13.1 required)

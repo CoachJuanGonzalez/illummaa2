@@ -1,0 +1,48 @@
+Update server.js webhook payload to ensure correct structure and add missing formatCanadianPhone function.
+
+WEBHOOK PAYLOAD VERIFICATION:
+The current webhook payload structure is correct. Ensure the webhookPayload object in server.js matches this exact structure:
+
+const webhookPayload = {
+  // Standard contact fields (VERIFIED CORRECT)
+  first_name: sanitizeInput(formData.firstName),
+  last_name: sanitizeInput(formData.lastName),
+  email: sanitizeInput(formData.email),
+  phone: formatCanadianPhone(formData.phone),
+  company: sanitizeInput(formData.company),
+  source: "ILLUMMAA Website",
+  
+  // Custom fields
+  project_unit_count: parseInt(formData.projectUnitCount),
+  budget_range_cad: formData.budgetRange,
+  decision_timeline: formData.decisionTimeline,
+  construction_province: formData.constructionProvince,
+  developer_type: formData.developerType,
+  government_programs: formData.governmentPrograms,
+  project_description: sanitizeInput(formData.projectDescription),
+  ai_priority_score: priorityData.score,
+  lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
+  
+  submission_timestamp: new Date().toISOString(),
+  assigned_to: priorityData.assignedTo,
+  response_time: priorityData.responseTime,
+  priority_level: priorityData.priorityLevel
+};
+
+ADD MISSING FUNCTION:
+Add the formatCanadianPhone function if it doesn't exist:
+
+function formatCanadianPhone(phone) {
+  if (!phone) return '';
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length === 10) {
+    return `+1${cleaned}`;
+  } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
+    return `+${cleaned}`;
+  }
+  return phone; // Return original if format unclear
+}
+
+VERIFICATION: The webhook field names "company" and "source" correctly map to GoHighLevel's "Business Name" and "Contact Source" fields respectively. Do not change these field names.
+
+Update only the webhook payload creation section and add the missing phone formatting function.
