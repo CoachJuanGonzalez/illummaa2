@@ -42,8 +42,8 @@ export const assessmentSchema = z.object({
       // Remove all non-digit characters
       const cleaned = val.replace(/\D/g, '');
       
-      // If it's exactly 10 digits, add +1 prefix
-      if (cleaned.length === 10) {
+      // If it's exactly 10 digits AND doesn't start with 1, add +1 prefix
+      if (cleaned.length === 10 && !cleaned.startsWith('1')) {
         return `+1${cleaned}`;
       }
       
@@ -52,14 +52,25 @@ export const assessmentSchema = z.object({
         return `+${cleaned}`;
       }
       
-      // For invalid lengths, return original to trigger refine error
+      // For invalid cases, return original to trigger refine error
       return val;
     })
     .refine((val) => {
       const cleaned = val.replace(/\D/g, '');
-      return /^\+1\d{10}$/.test(val) && cleaned.length === 11;
+      
+      // Must result in +1 followed by exactly 10 digits
+      if (!/^\+1\d{10}$/.test(val)) {
+        return false;
+      }
+      
+      // Additional check: reject 10-digit numbers starting with 1 (incomplete 11-digit)
+      if (cleaned.length === 10 && cleaned.startsWith('1')) {
+        return false;
+      }
+      
+      return true;
     }, {
-      message: "Please enter a valid Canadian phone number (must be exactly 10 digits: area code + 7 digits)"
+      message: "Please enter a valid Canadian phone number (10 digits: area code + 7 digits, or 11 digits starting with 1)"
     }),
   
   company: z.string()
