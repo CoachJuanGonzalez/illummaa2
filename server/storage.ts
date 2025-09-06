@@ -151,22 +151,12 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
 // Add missing formatCanadianPhone function
 function formatCanadianPhone(phone: string): string {
   if (!phone) return '';
-  
-  console.log('[PHONE DEBUG] Original phone:', phone);
   const cleaned = phone.replace(/\D/g, '');
-  console.log('[PHONE DEBUG] Cleaned phone:', cleaned, 'Length:', cleaned.length);
-  
   if (cleaned.length === 10) {
-    const formatted = `+1${cleaned}`;
-    console.log('[PHONE DEBUG] 10-digit format applied:', formatted);
-    return formatted;
+    return `+1${cleaned}`;
   } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
-    const formatted = `+${cleaned}`;
-    console.log('[PHONE DEBUG] 11-digit format applied:', formatted);
-    return formatted;
+    return `+${cleaned}`;
   }
-  
-  console.log('[PHONE DEBUG] No format applied, returning original:', phone);
   return phone; // Return original if format unclear
 }
 
