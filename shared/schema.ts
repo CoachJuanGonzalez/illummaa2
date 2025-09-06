@@ -37,26 +37,29 @@ export const assessmentSchema = z.object({
     .email("Please enter a valid email address"),
   
   phone: z.string()
-    .min(10, "Phone number must be at least 10 digits")
+    .min(1, "Phone number is required")
     .transform((val) => {
       // Remove all non-digit characters
       const cleaned = val.replace(/\D/g, '');
       
-      // If it's a 10-digit number, add +1 prefix
+      // If it's exactly 10 digits, add +1 prefix
       if (cleaned.length === 10) {
         return `+1${cleaned}`;
       }
       
-      // If it's an 11-digit number starting with 1, add + prefix
+      // If it's exactly 11 digits starting with 1, add + prefix
       if (cleaned.length === 11 && cleaned.startsWith('1')) {
         return `+${cleaned}`;
       }
       
-      // Return original if it already has +1 format
+      // For invalid lengths, return original to trigger refine error
       return val;
     })
-    .refine((val) => /^\+1\d{10}$/.test(val), {
-      message: "Please enter a valid Canadian phone number (10 digits or +1XXXXXXXXXX)"
+    .refine((val) => {
+      const cleaned = val.replace(/\D/g, '');
+      return /^\+1\d{10}$/.test(val) && cleaned.length === 11;
+    }, {
+      message: "Please enter a valid Canadian phone number (must be exactly 10 digits: area code + 7 digits)"
     }),
   
   company: z.string()
