@@ -35,6 +35,12 @@ export default function AssessmentForm() {
   const [residentialSubmissionSuccess, setResidentialSubmissionSuccess] = useState(false);
   const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
 
+  // Micro-interaction states
+  const [isStepChanging, setIsStepChanging] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
+  const [fieldTouched, setFieldTouched] = useState<Record<string, boolean>>({});
+  const [priorityScoreAnimating, setPriorityScoreAnimating] = useState(false);
+
   const { toast } = useToast();
 
   const form = useForm<AssessmentFormData>({
@@ -91,6 +97,13 @@ export default function AssessmentForm() {
   useEffect(() => {
     calculatePriorityScore();
   }, [watchedValues]);
+
+  // Trigger priority score animation when score changes
+  useEffect(() => {
+    setPriorityScoreAnimating(true);
+    const timer = setTimeout(() => setPriorityScoreAnimating(false), 1500);
+    return () => clearTimeout(timer);
+  }, [priorityScore]);
 
   // STEP 2: Aggressive field contamination fix
   useEffect(() => {
@@ -215,7 +228,20 @@ export default function AssessmentForm() {
 
   const nextStep = async () => {
     const isValid = await validateCurrentStep();
-    if (!isValid) return;
+    if (!isValid) {
+      // Add shake animation for invalid fields
+      const currentFields = getStepFields(currentStep);
+      const newErrors: Record<string, boolean> = {};
+      currentFields.forEach(field => {
+        if (form.formState.errors[field]) {
+          newErrors[field] = true;
+        }
+      });
+      setValidationErrors(newErrors);
+      // Clear errors after animation
+      setTimeout(() => setValidationErrors({}), 500);
+      return;
+    }
 
     // ADD RESIDENTIAL ROUTING LOGIC - When project_unit_count < 50, set showResidentialOptions = true instead of error
     if (currentStep === 2) {
@@ -227,7 +253,12 @@ export default function AssessmentForm() {
     }
 
     if (currentStep < TOTAL_STEPS) {
-      setCurrentStep(currentStep + 1);
+      // Add step transition animation
+      setIsStepChanging(true);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsStepChanging(false);
+      }, 200);
     }
   };
 
@@ -260,17 +291,23 @@ export default function AssessmentForm() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6" data-testid="step-contact-info">
-            <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-1">Contact Information</h3>
+          <div className="space-y-6 fade-in-up" data-testid="step-contact-info">
+            <h3 className="font-display font-bold text-2xl mb-6 slide-in-right" data-testid="heading-step-1">Contact Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel data-testid="label-first-name">First Name *</FormLabel>
+                  <FormItem className={`field-focus ${validationErrors.firstName ? 'error-shake' : ''}`}>
+                    <FormLabel data-testid="label-first-name" className="floating-label">First Name *</FormLabel>
                     <FormControl>
-                      <Input placeholder="John" {...field} data-testid="input-first-name" />
+                      <Input 
+                        placeholder="John" 
+                        {...field} 
+                        data-testid="input-first-name"
+                        className="focus-ring interactive-hover transition-all duration-200"
+                        onFocus={() => setFieldTouched({...fieldTouched, firstName: true})}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -528,13 +565,27 @@ export default function AssessmentForm() {
               </div>
             </div>
             
-            {/* Priority Score Display */}
-            <div className="bg-muted rounded-2xl p-6" data-testid="container-priority-score">
+            {/* Enhanced Priority Score Display with Animation */}
+            <div className="bg-gradient-to-br from-muted to-accent/10 rounded-2xl p-6 bounce-in" data-testid="container-priority-score">
               <div className="text-center">
                 <div className="text-sm font-medium text-muted-foreground mb-2" data-testid="label-priority-score">Your Priority Score</div>
-                <div className="priority-score text-4xl font-bold mb-2" data-testid="text-priority-score">{priorityScore}</div>
+                <div className={`priority-score text-5xl font-bold mb-2 transition-all duration-700 ${priorityScoreAnimating ? 'priority-score-animate scale-110' : 'scale-100'}`} data-testid="text-priority-score">
+                  {priorityScore}
+                </div>
                 <div className="text-sm text-muted-foreground mb-4" data-testid="text-score-range">out of 150 points</div>
-                <div className="text-sm font-medium" data-testid="text-priority-message">{getPriorityMessage()}</div>
+                <div className={`text-sm font-medium transition-all duration-500 ${priorityScore >= 100 ? 'text-green-600 animate-pulse' : priorityScore >= 50 ? 'text-blue-600' : 'text-yellow-600'}`} data-testid="text-priority-message">
+                  {getPriorityMessage()}
+                </div>
+                {/* Visual score indicator */}
+                <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-1000 ${
+                      priorityScore >= 100 ? 'bg-green-500' : 
+                      priorityScore >= 50 ? 'bg-blue-500' : 'bg-yellow-500'
+                    }`}
+                    style={{ width: `${Math.min((priorityScore / 150) * 100, 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
             
@@ -657,20 +708,36 @@ export default function AssessmentForm() {
             </p>
           </div>
           
-          {/* Progress Bar */}
-          <div className="mb-8" data-testid="container-progress">
+          {/* Enhanced Progress Bar with Animation */}
+          <div className="mb-8 fade-in-up" data-testid="container-progress">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm font-medium text-muted-foreground" data-testid="label-progress">Progress</span>
-              <span className="text-sm font-medium text-primary" data-testid="text-step-indicator">
+              <span className={`text-sm font-medium text-primary step-indicator ${currentStep === TOTAL_STEPS ? 'active' : ''}`} data-testid="text-step-indicator">
                 Step {currentStep} of {TOTAL_STEPS}
               </span>
             </div>
-            <div className="w-full bg-border rounded-full h-2">
+            <div className="w-full bg-border rounded-full h-3 overflow-hidden shadow-inner">
               <div 
-                className="bg-primary h-2 rounded-full transition-all duration-300 ease-in-out" 
+                className="bg-gradient-to-r from-primary to-accent h-3 rounded-full progress-bar-fill relative" 
                 style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
                 data-testid="progress-bar"
-              ></div>
+              >
+                <div className="absolute top-0 left-0 w-full h-full bg-white opacity-30 animate-pulse"></div>
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+                <div
+                  key={i}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    i < currentStep 
+                      ? 'bg-primary scale-110 shadow-lg' 
+                      : i === currentStep - 1 
+                        ? 'bg-accent scale-125 animate-pulse' 
+                        : 'bg-border scale-100'
+                  }`}
+                />
+              ))}
             </div>
           </div>
           
@@ -682,19 +749,21 @@ export default function AssessmentForm() {
               e.stopPropagation();
               console.log('Form submit prevented, current step:', currentStep);
               return false;
-            }} className="bg-card rounded-2xl p-8 shadow-xl" data-testid="form-assessment">
-              {renderStep()}
+            }} className={`bg-card rounded-2xl p-8 shadow-xl transition-all duration-500 ${isStepChanging ? 'form-slide-out' : 'form-slide-in'}`} data-testid="form-assessment">
+              <div className={`transition-all duration-300 ${isStepChanging ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+                {renderStep()}
+              </div>
               
-              {/* Form Navigation */}
-              <div className="flex justify-between items-center mt-8 pt-6 border-t border-border" data-testid="container-form-navigation">
+              {/* Enhanced Form Navigation with Animations */}
+              <div className="flex justify-between items-center mt-8 pt-6 border-t border-border fade-in-up" data-testid="container-form-navigation">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={previousStep}
-                  className={currentStep === 1 ? "invisible" : ""}
+                  className={`transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
                   data-testid="button-previous"
                 >
-                  <ArrowLeft className="mr-2" size={16} />
+                  <ArrowLeft className="mr-2 transition-transform duration-200 group-hover:-translate-x-1" size={16} />
                   Previous
                 </Button>
                 
@@ -708,11 +777,21 @@ export default function AssessmentForm() {
                       e.stopPropagation();
                       nextStep();
                     }}
-                    className="btn-primary"
+                    className={`btn-primary group transition-all duration-300 hover:scale-105 ${isStepChanging ? 'button-loading' : ''}`}
+                    disabled={isStepChanging}
                     data-testid="button-next"
                   >
-                    Next
-                    <ArrowRight className="ml-2" size={16} />
+                    {isStepChanging ? (
+                      <>
+                        <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Next
+                        <ArrowRight className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                      </>
+                    )}
                   </Button>
                 ) : (
                   <Button
@@ -721,12 +800,21 @@ export default function AssessmentForm() {
                       e.preventDefault();
                       form.handleSubmit(onSubmit)(e);
                     }}
-                    className="btn-primary"
+                    className={`btn-primary group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
                     disabled={submitMutation.isPending}
                     data-testid="button-submit"
                   >
-                    {submitMutation.isPending ? "Submitting..." : "Submit Assessment"}
-                    <Send className="ml-2" size={16} />
+                    {submitMutation.isPending ? (
+                      <>
+                        <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Submit Assessment
+                        <Send className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
@@ -742,27 +830,27 @@ export default function AssessmentForm() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleInHouseSelection()}>
+                <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-primary/50" onClick={() => handleInHouseSelection()}>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3">In-House First-Time Home Buyer Service</h3>
+                    <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-200">In-House First-Time Home Buyer Service</h3>
                     <ul className="space-y-2 text-gray-600 mb-4">
-                      <li>• Direct consultation with ILLÜMMAA specialists</li>
-                      <li>• No real estate agents involved</li>
-                      <li>• For clients preferring direct builder relationship</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1">• Direct consultation with ILLÜMMAA specialists</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• No real estate agents involved</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• For clients preferring direct builder relationship</li>
                     </ul>
-                    <Button className="w-full">Choose In-House Service</Button>
+                    <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">Choose In-House Service</Button>
                   </CardContent>
                 </Card>
                 
-                <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleRemaxSelection()}>
+                <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-accent/50" onClick={() => handleRemaxSelection()}>
                   <CardContent className="p-6">
-                    <h3 className="text-xl font-semibold mb-3">Remax Partnership Program</h3>
+                    <h3 className="text-xl font-semibold mb-3 group-hover:text-accent transition-colors duration-200">Remax Partnership Program</h3>
                     <ul className="space-y-2 text-gray-600 mb-4">
-                      <li>• Full real estate agent support</li>
-                      <li>• Land acquisition assistance</li>
-                      <li>• Complete guided home buying process</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1">• Full real estate agent support</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Land acquisition assistance</li>
+                      <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Complete guided home buying process</li>
                     </ul>
-                    <Button className="w-full">Choose Remax Partnership</Button>
+                    <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">Choose Remax Partnership</Button>
                   </CardContent>
                 </Card>
               </div>
