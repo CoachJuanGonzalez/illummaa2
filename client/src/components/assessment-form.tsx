@@ -560,18 +560,13 @@ export default function AssessmentForm() {
   };
 
   const handleRemaxSelection = () => {
-    window.open('https://remax.ca/illummaa-partnership', '_blank');
+    window.open('https://www.remax.ca/', '_blank');
     toast({
       title: "Redirecting to Remax Partnership",
       description: "You will be redirected to our Remax partnership program.",
     });
   };
 
-  const handleEditContact = () => {
-    setShowResidentialOptions(false);
-    setResidentialPathway('');
-    setCurrentStep(1);
-  };
 
   const handleResidentialSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -782,19 +777,6 @@ export default function AssessmentForm() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
                 <p className="text-gray-600">We'll connect you with our residential specialists.</p>
               </div>
-              
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-4">Your Contact Information:</h3>
-                  <div className="space-y-2 text-gray-600 mb-4">
-                    <p><strong>Name:</strong> {form.watch('firstName')} {form.watch('lastName')}</p>
-                    <p><strong>Email:</strong> {form.watch('email')}</p>
-                    <p><strong>Phone:</strong> {form.watch('phone')}</p>
-                    <p><strong>Company:</strong> {form.watch('company')}</p>
-                  </div>
-                  <Button variant="outline" onClick={handleEditContact}>Edit Contact Info</Button>
-                </CardContent>
-              </Card>
               
               <form onSubmit={handleResidentialSubmit} className="space-y-4">
                 <div>
