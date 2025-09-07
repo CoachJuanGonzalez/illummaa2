@@ -6,7 +6,8 @@ import ExpressBrute from "express-brute";
 import helmet from "helmet";
 import cors from "cors";
 import validator from "validator";
-import { validateFormData, submitToGoHighLevel } from "./storage";
+import { z } from "zod";
+import { validateFormData, submitToGoHighLevel, submitToGoHighLevelResidential } from "./storage";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -260,6 +261,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: "Internal server error",
         message: errorMessage,
         requestId: Date.now().toString(36)
+      });
+    }
+  });
+
+  // Residential endpoint following exact TypeScript patterns
+  app.post("/api/submit-residential", bruteforce.prevent, async (req, res) => {
+    try {
+      // Residential-specific Zod validation schema
+      const residentialSchema = z.object({
+        first_name: z.string().min(1, "First name required"),
+        last_name: z.string().min(1, "Last name required"), 
+        email: z.string().email("Valid email required"),
+        phone: z.string().min(10, "Valid phone number required"),
+        company: z.string().min(1, "Company name required"),
+        source: z.string(),
+        project_unit_count: z.number().min(1).max(49),
+        construction_province: z.string().min(1, "Province required"),
+        project_description: z.string().optional(),
+        residential_pathway: z.string(),
+        lead_type: z.string(),
+        submission_timestamp: z.string()
+      });
+
+      // Validate incoming data using Zod
+      const validationResult = residentialSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({
+          success: false,
+          errors: validationResult.error.errors
+        });
+      }
+
+      const data = validationResult.data;
+      
+      // Store in database (using same pattern as B2B)
+      const submission = await storage.createResidentialAssessment(data);
+      
+      // Submit to GoHighLevel residential webhook  
+      await submitToGoHighLevelResidential(data);
+      
+      res.json({ 
+        success: true, 
+        submissionId: submission.id,
+        message: 'Residential inquiry submitted successfully'
+      });
+      
+    } catch (error) {
+      console.error('Residential submission error:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error processing residential inquiry' 
       });
     }
   });

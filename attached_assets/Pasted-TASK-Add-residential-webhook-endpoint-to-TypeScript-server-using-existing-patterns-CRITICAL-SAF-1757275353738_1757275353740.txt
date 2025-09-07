@@ -1,0 +1,107 @@
+TASK: Add residential webhook endpoint to TypeScript server using existing patterns.
+
+CRITICAL SAFETY PROTOCOL: 
+Before making ANY changes, confirm you understand this is a TypeScript React project with:
+- Server files: server/index.ts and server/routes.ts (NOT server.js)
+- API endpoints with /api/ prefix
+- Zod validation schemas
+- Modern security middleware
+
+FIRST: Show me the exact structure of the current /api/submit-assessment endpoint in server/routes.ts to confirm the pattern.
+
+SECOND: Show me the submitToGoHighLevel function in server/storage.ts to understand the webhook pattern.
+
+ONLY PROCEED AFTER CONFIRMING: 
+1. You can see the TypeScript import statements
+2. The Zod validation schema structure
+3. The bruteforce.prevent middleware usage
+4. The existing error handling pattern
+
+THEN ADD TO server/routes.ts (after existing /api/submit-assessment endpoint):
+
+// Residential endpoint following exact TypeScript patterns
+app.post("/api/submit-residential", bruteforce.prevent, async (req, res) => {
+  try {
+    // Residential-specific Zod validation schema
+    const residentialSchema = z.object({
+      first_name: z.string().min(1, "First name required"),
+      last_name: z.string().min(1, "Last name required"), 
+      email: z.string().email("Valid email required"),
+      phone: z.string().min(10, "Valid phone number required"),
+      company: z.string().min(1, "Company name required"),
+      source: z.string(),
+      project_unit_count: z.number().min(1).max(49),
+      construction_province: z.string().min(1, "Province required"),
+      project_description: z.string().optional(),
+      residential_pathway: z.string(),
+      lead_type: z.string(),
+      submission_timestamp: z.string()
+    });
+
+    // Validate incoming data using Zod
+    const validationResult = residentialSchema.safeParse(req.body);
+    
+    if (!validationResult.success) {
+      return res.status(400).json({
+        success: false,
+        errors: validationResult.error.errors
+      });
+    }
+
+    const data = validationResult.data;
+    
+    // Store in database (using same pattern as B2B)
+    const submission = await storage.createResidentialAssessment(data);
+    
+    // Submit to GoHighLevel residential webhook  
+    await storage.submitToGoHighLevelResidential(data);
+    
+    res.json({ 
+      success: true, 
+      submissionId: submission.id,
+      message: 'Residential inquiry submitted successfully'
+    });
+    
+  } catch (error) {
+    console.error('Residential submission error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error processing residential inquiry' 
+    });
+  }
+});
+
+THEN ADD TO server/storage.ts (after existing GoHighLevel function):
+
+// Residential GoHighLevel webhook function
+export async function submitToGoHighLevelResidential(data: any): Promise<any> {
+  const webhookUrl = process.env.GHL_RESIDENTIAL_WEBHOOK_URL;
+  
+  if (!webhookUrl) {
+    throw new Error('GHL_RESIDENTIAL_WEBHOOK_URL not configured in environment variables');
+  }
+  
+  const webhookPayload = {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    email: data.email,
+    phone: data.phone,
+    company: data.company,
+    source: data.source,
+    project_unit_count: data.project_unit_count,
+    construction_province: data.construction_province,
+    project_description: data.project_description || '',
+    residential_pathway: data.residential_pathway,
+    lead_type: data.lead_type,
+    submission_timestamp: data.submission_timestamp
+  };
+  
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'ILLÜMMAA-Residential/1.0',
+          'X-Source': 'ILLÜMMAA-We

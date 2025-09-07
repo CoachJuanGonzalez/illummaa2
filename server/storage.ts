@@ -5,6 +5,7 @@ export interface IStorage {
   createAssessment(assessment: InsertAssessment): Promise<AssessmentSubmission>;
   getAssessment(id: string): Promise<AssessmentSubmission | undefined>;
   getAssessmentsByEmail(email: string): Promise<AssessmentSubmission[]>;
+  createResidentialAssessment(data: any): Promise<any>;
 }
 
 export class MemStorage implements IStorage {
@@ -35,6 +36,16 @@ export class MemStorage implements IStorage {
     return Array.from(this.assessments.values()).filter(
       (assessment) => assessment.email === email
     );
+  }
+
+  async createResidentialAssessment(data: any): Promise<any> {
+    // Simple implementation for now - can be enhanced later with database schema
+    return {
+      id: `residential_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      type: 'residential',
+      ...data,
+      created_at: new Date().toISOString()
+    };
   }
 }
 
@@ -258,4 +269,52 @@ function getPriorityLevel(score: number): string {
   if (score >= 100) return "HIGH";
   if (score >= 50) return "MEDIUM";
   return "LOW";
+}
+
+// Residential GoHighLevel webhook function
+export async function submitToGoHighLevelResidential(data: any): Promise<any> {
+  const webhookUrl = process.env.GHL_RESIDENTIAL_WEBHOOK_URL;
+  
+  if (!webhookUrl) {
+    throw new Error('GHL_RESIDENTIAL_WEBHOOK_URL not configured in environment variables');
+  }
+  
+  const webhookPayload = {
+    first_name: data.first_name,
+    last_name: data.last_name,
+    email: data.email,
+    phone: data.phone,
+    company: data.company,
+    source: data.source,
+    project_unit_count: data.project_unit_count,
+    construction_province: data.construction_province,
+    project_description: data.project_description || '',
+    residential_pathway: data.residential_pathway,
+    lead_type: data.lead_type,
+    submission_timestamp: data.submission_timestamp
+  };
+  
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'ILLÜMMAA-Residential/1.0',
+          'X-Source': 'ILLÜMMAA-Website-Residential'
+        },
+        body: JSON.stringify(webhookPayload)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    }
+  }
 }
