@@ -32,6 +32,8 @@ export default function AssessmentForm() {
     province: '',
     description: ''
   });
+  const [residentialSubmissionSuccess, setResidentialSubmissionSuccess] = useState(false);
+  const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
 
   const { toast } = useToast();
 
@@ -561,6 +563,7 @@ export default function AssessmentForm() {
 
   const handleRemaxSelection = () => {
     window.open('https://www.remax.ca/', '_blank');
+    setRemaxRedirectSuccess(true);
     toast({
       title: "Redirecting to Remax Partnership",
       description: "You will be redirected to our Remax partnership program.",
@@ -598,14 +601,11 @@ export default function AssessmentForm() {
       const result = await response.json();
       
       if (result.success) {
+        setResidentialSubmissionSuccess(true);
         toast({
           title: "Residential inquiry submitted successfully!",
           description: "Our residential specialist will contact you within 24-48 hours.",
         });
-        // Reset residential form
-        setResidentialData({ units: '', province: '', description: '' });
-        setResidentialPathway('');
-        setShowResidentialOptions(false);
       } else {
         toast({
           title: "Error",
@@ -733,9 +733,8 @@ export default function AssessmentForm() {
             </form>
           </Form>
 
-          {/* ADD RESIDENTIAL UI COMPONENTS in the existing component return */}
-          {/* RESIDENTIAL OPTIONS SELECTION */}
-          {showResidentialOptions && (
+          {/* REPLACE with conditional success displays matching B2B enterprise styling */}
+          {showResidentialOptions && !remaxRedirectSuccess && (
             <div className="space-y-6 mt-8">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
@@ -770,66 +769,117 @@ export default function AssessmentForm() {
             </div>
           )}
 
-          {/* RESIDENTIAL CONTACT FORM */}
-          {residentialPathway === 'in-house' && (
+          {remaxRedirectSuccess && (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+              <div className="max-w-md w-full space-y-8 text-center">
+                <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-1M14 6h-2a2 2 0 00-2 2v8a2 2 0 002 2h2a2 2 0 002-2V8a2 2 0 00-2-2z" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900">Redirected to Remax Partnership</h1>
+                <p className="text-gray-600">
+                  We've opened the Remax partnership program in a new browser tab. Our Remax partners will guide you through the complete home buying process with full real estate agent support.
+                </p>
+                <div className="bg-white rounded-lg p-6 shadow-sm border">
+                  <p className="text-sm text-gray-700">
+                    <strong>Next steps:</strong> Complete your information on the Remax website to connect with a qualified real estate agent in your area who specializes in new construction projects.
+                  </p>
+                </div>
+                <Button onClick={() => window.location.reload()} className="w-full bg-green-600 hover:bg-green-700">
+                  Start New Assessment
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {residentialPathway === 'in-house' && !remaxRedirectSuccess && (
             <div className="space-y-6 mt-8">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
                 <p className="text-gray-600">We'll connect you with our residential specialists.</p>
               </div>
               
-              <form onSubmit={handleResidentialSubmit} className="space-y-4">
-                <div>
-                  <Label htmlFor="res_units">Number of Units</Label>
-                  <Input 
-                    type="number" 
-                    id="res_units" 
-                    placeholder="Number of Units (1-49)" 
-                    min="1" 
-                    max="49" 
-                    value={residentialData.units}
-                    onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
-                    required 
-                  />
+              {residentialSubmissionSuccess ? (
+                <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+                  <div className="max-w-md w-full space-y-8 text-center">
+                    <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                      <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                    </div>
+                    <h1 className="text-3xl font-bold text-gray-900">Residential Inquiry Submitted Successfully!</h1>
+                    <p className="text-gray-600">
+                      Our residential specialist will contact you within 24-48 hours to discuss your {residentialData.units}-unit project in {residentialData.province}.
+                    </p>
+                    <div className="bg-white rounded-lg p-6 shadow-sm border">
+                      <h3 className="font-semibold text-gray-900 mb-2">What's Next:</h3>
+                      <ul className="text-sm text-gray-700 space-y-1 text-left">
+                        <li>• Confirmation email sent to your inbox</li>
+                        <li>• Residential specialist will review your project</li>
+                        <li>• Direct consultation within 24-48 hours</li>
+                        <li>• Personalized service without real estate agents</li>
+                      </ul>
+                    </div>
+                    <Button onClick={() => window.location.reload()} className="w-full bg-green-600 hover:bg-green-700">
+                      Start New Assessment
+                    </Button>
+                  </div>
                 </div>
-                
-                <div>
-                  <Label htmlFor="res_province">Construction Province</Label>
-                  <Select value={residentialData.province} onValueChange={(value) => setResidentialData({...residentialData, province: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Province..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Ontario">Ontario</SelectItem>
-                      <SelectItem value="British Columbia">British Columbia</SelectItem>
-                      <SelectItem value="Alberta">Alberta</SelectItem>
-                      <SelectItem value="Quebec">Quebec</SelectItem>
-                      <SelectItem value="Nova Scotia">Nova Scotia</SelectItem>
-                      <SelectItem value="New Brunswick">New Brunswick</SelectItem>
-                      <SelectItem value="Manitoba">Manitoba</SelectItem>
-                      <SelectItem value="Saskatchewan">Saskatchewan</SelectItem>
-                      <SelectItem value="Newfoundland and Labrador">Newfoundland and Labrador</SelectItem>
-                      <SelectItem value="Prince Edward Island">Prince Edward Island</SelectItem>
-                      <SelectItem value="Northwest Territories">Northwest Territories</SelectItem>
-                      <SelectItem value="Nunavut">Nunavut</SelectItem>
-                      <SelectItem value="Yukon">Yukon</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="res_description">Project Description (Optional)</Label>
-                  <Textarea 
-                    id="res_description" 
-                    placeholder="Describe your residential project requirements..." 
-                    rows={4}
-                    value={residentialData.description}
-                    onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
-                  />
-                </div>
-                
-                <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
-              </form>
+              ) : (
+                <form onSubmit={handleResidentialSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="res_units">Number of Units</Label>
+                    <Input 
+                      type="number" 
+                      id="res_units" 
+                      placeholder="Number of Units (1-49)" 
+                      min="1" 
+                      max="49" 
+                      value={residentialData.units}
+                      onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
+                      required 
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="res_province">Construction Province</Label>
+                    <Select value={residentialData.province} onValueChange={(value) => setResidentialData({...residentialData, province: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Province..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Ontario">Ontario</SelectItem>
+                        <SelectItem value="British Columbia">British Columbia</SelectItem>
+                        <SelectItem value="Alberta">Alberta</SelectItem>
+                        <SelectItem value="Quebec">Quebec</SelectItem>
+                        <SelectItem value="Nova Scotia">Nova Scotia</SelectItem>
+                        <SelectItem value="New Brunswick">New Brunswick</SelectItem>
+                        <SelectItem value="Manitoba">Manitoba</SelectItem>
+                        <SelectItem value="Saskatchewan">Saskatchewan</SelectItem>
+                        <SelectItem value="Newfoundland and Labrador">Newfoundland and Labrador</SelectItem>
+                        <SelectItem value="Prince Edward Island">Prince Edward Island</SelectItem>
+                        <SelectItem value="Northwest Territories">Northwest Territories</SelectItem>
+                        <SelectItem value="Nunavut">Nunavut</SelectItem>
+                        <SelectItem value="Yukon">Yukon</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="res_description">Project Description (Optional)</Label>
+                    <Textarea 
+                      id="res_description" 
+                      placeholder="Describe your residential project requirements..." 
+                      rows={4}
+                      value={residentialData.description}
+                      onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
+                    />
+                  </div>
+                  
+                  <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
+                </form>
+              )}
             </div>
           )}
         </div>
