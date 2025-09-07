@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ArrowLeft, ArrowRight, Send, Home, Clock } from "lucide-react";
 import { assessmentSchema, type AssessmentFormData } from "@shared/schema";
@@ -21,6 +23,16 @@ export default function AssessmentForm() {
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [projectDescriptionValue, setProjectDescriptionValue] = useState('');
+  
+  // ADD RESIDENTIAL STATE MANAGEMENT (preserve all existing state)
+  const [showResidentialOptions, setShowResidentialOptions] = useState(false);
+  const [residentialPathway, setResidentialPathway] = useState('');
+  const [residentialData, setResidentialData] = useState({
+    units: '',
+    province: '',
+    description: ''
+  });
+
   const { toast } = useToast();
 
   const form = useForm<AssessmentFormData>({
@@ -203,11 +215,11 @@ export default function AssessmentForm() {
     const isValid = await validateCurrentStep();
     if (!isValid) return;
 
-    // Check for under 50 units rejection
+    // ADD RESIDENTIAL ROUTING LOGIC - When project_unit_count < 50, set showResidentialOptions = true instead of error
     if (currentStep === 2) {
       const units = form.getValues("projectUnitCount");
       if (units < 50) {
-        setShowRejectionModal(true);
+        setShowResidentialOptions(true);
         return;
       }
     }
@@ -542,6 +554,80 @@ export default function AssessmentForm() {
     }
   };
 
+  // ADD RESIDENTIAL HANDLERS (do not modify any existing handlers)
+  const handleInHouseSelection = () => {
+    setResidentialPathway('in-house');
+  };
+
+  const handleRemaxSelection = () => {
+    window.open('https://remax.ca/illummaa-partnership', '_blank');
+    toast({
+      title: "Redirecting to Remax Partnership",
+      description: "You will be redirected to our Remax partnership program.",
+    });
+  };
+
+  const handleEditContact = () => {
+    setShowResidentialOptions(false);
+    setResidentialPathway('');
+    setCurrentStep(1);
+  };
+
+  const handleResidentialSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const residentialPayload = {
+      first_name: form.getValues('firstName'),
+      last_name: form.getValues('lastName'),
+      email: form.getValues('email'),
+      phone: form.getValues('phone'),
+      company: form.getValues('company'),
+      source: "ILLÜMMAA Website - Residential",
+      project_unit_count: parseInt(residentialData.units),
+      construction_province: residentialData.province,
+      project_description: residentialData.description,
+      residential_pathway: "In-House Service",
+      lead_type: "B2C Residential",
+      submission_timestamp: new Date().toISOString()
+    };
+    
+    try {
+      const response = await fetch('/api/submit-residential', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(residentialPayload),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        toast({
+          title: "Residential inquiry submitted successfully!",
+          description: "Our residential specialist will contact you within 24-48 hours.",
+        });
+        // Reset residential form
+        setResidentialData({ units: '', province: '', description: '' });
+        setResidentialPathway('');
+        setShowResidentialOptions(false);
+      } else {
+        toast({
+          title: "Error",
+          description: "Error submitting residential inquiry. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Residential submission error:', error);
+      toast({
+        title: "Error",
+        description: "Network error. Please check your connection and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (isSubmitted) {
     return (
       <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment-success">
@@ -651,6 +737,119 @@ export default function AssessmentForm() {
               </div>
             </form>
           </Form>
+
+          {/* ADD RESIDENTIAL UI COMPONENTS in the existing component return */}
+          {/* RESIDENTIAL OPTIONS SELECTION */}
+          {showResidentialOptions && (
+            <div className="space-y-6 mt-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
+                <p className="text-gray-600">ILLÜMMAA offers two pathways for residential projects:</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleInHouseSelection}>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3">In-House First-Time Home Buyer Service</h3>
+                    <ul className="space-y-2 text-gray-600 mb-4">
+                      <li>• Direct consultation with ILLÜMMAA specialists</li>
+                      <li>• No real estate agents involved</li>
+                      <li>• For clients preferring direct builder relationship</li>
+                    </ul>
+                    <Button className="w-full">Choose In-House Service</Button>
+                  </CardContent>
+                </Card>
+                
+                <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={handleRemaxSelection}>
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold mb-3">Remax Partnership Program</h3>
+                    <ul className="space-y-2 text-gray-600 mb-4">
+                      <li>• Full real estate agent support</li>
+                      <li>• Land acquisition assistance</li>
+                      <li>• Complete guided home buying process</li>
+                    </ul>
+                    <Button className="w-full">Choose Remax Partnership</Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* RESIDENTIAL CONTACT FORM */}
+          {residentialPathway === 'in-house' && (
+            <div className="space-y-6 mt-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
+                <p className="text-gray-600">We'll connect you with our residential specialists.</p>
+              </div>
+              
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Your Contact Information:</h3>
+                  <div className="space-y-2 text-gray-600 mb-4">
+                    <p><strong>Name:</strong> {form.watch('firstName')} {form.watch('lastName')}</p>
+                    <p><strong>Email:</strong> {form.watch('email')}</p>
+                    <p><strong>Phone:</strong> {form.watch('phone')}</p>
+                    <p><strong>Company:</strong> {form.watch('company')}</p>
+                  </div>
+                  <Button variant="outline" onClick={handleEditContact}>Edit Contact Info</Button>
+                </CardContent>
+              </Card>
+              
+              <form onSubmit={handleResidentialSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="res_units">Number of Units</Label>
+                  <Input 
+                    type="number" 
+                    id="res_units" 
+                    placeholder="Number of Units (1-49)" 
+                    min="1" 
+                    max="49" 
+                    value={residentialData.units}
+                    onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
+                    required 
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="res_province">Construction Province</Label>
+                  <Select value={residentialData.province} onValueChange={(value) => setResidentialData({...residentialData, province: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Province..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Ontario">Ontario</SelectItem>
+                      <SelectItem value="British Columbia">British Columbia</SelectItem>
+                      <SelectItem value="Alberta">Alberta</SelectItem>
+                      <SelectItem value="Quebec">Quebec</SelectItem>
+                      <SelectItem value="Nova Scotia">Nova Scotia</SelectItem>
+                      <SelectItem value="New Brunswick">New Brunswick</SelectItem>
+                      <SelectItem value="Manitoba">Manitoba</SelectItem>
+                      <SelectItem value="Saskatchewan">Saskatchewan</SelectItem>
+                      <SelectItem value="Newfoundland and Labrador">Newfoundland and Labrador</SelectItem>
+                      <SelectItem value="Prince Edward Island">Prince Edward Island</SelectItem>
+                      <SelectItem value="Northwest Territories">Northwest Territories</SelectItem>
+                      <SelectItem value="Nunavut">Nunavut</SelectItem>
+                      <SelectItem value="Yukon">Yukon</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="res_description">Project Description (Optional)</Label>
+                  <Textarea 
+                    id="res_description" 
+                    placeholder="Describe your residential project requirements..." 
+                    rows={4}
+                    value={residentialData.description}
+                    onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
+                  />
+                </div>
+                
+                <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
+              </form>
+            </div>
+          )}
         </div>
       </div>
 

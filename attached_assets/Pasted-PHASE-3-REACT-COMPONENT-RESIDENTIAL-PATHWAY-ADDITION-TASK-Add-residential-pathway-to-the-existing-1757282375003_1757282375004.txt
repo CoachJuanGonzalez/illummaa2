@@ -1,0 +1,254 @@
+PHASE 3 - REACT COMPONENT RESIDENTIAL PATHWAY ADDITION
+TASK: Add residential pathway to the existing React assessment form component for under-50 unit projects.
+CRITICAL SAFETY PROTOCOL:
+Before making ANY changes, you must analyze every instruction in this prompt and confirm there is NO risk of breaking any ILLÜMMAA website functionality or development setup. If you identify ANY potential risk, STOP and ask for explicit confirmation before proceeding.
+MANDATORY ANALYSIS REQUIRED:
+
+Examine the current client/src/components/assessment-form.tsx structure completely
+Identify all existing B2B form logic that must be preserved unchanged
+Verify that adding residential routing will not interfere with existing functionality
+Confirm that new state variables will not conflict with existing state management
+Ensure that new UI components will not break existing styling or layout
+Validate that new handlers will not override existing form handlers
+
+ONLY PROCEED AFTER CONFIRMING:
+
+Current React component structure and patterns are understood
+Existing B2B form logic (50+ units) will remain completely unchanged
+New residential code will be additive only, not modifying existing code
+All imports, components, and handlers are safe to add
+TypeScript compilation will succeed without breaking changes
+
+THEN MODIFY client/src/components/assessment-form.tsx with the complete implementation:
+typescriptimport React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
+
+// ADD RESIDENTIAL STATE MANAGEMENT (preserve all existing state)
+const [showResidentialOptions, setShowResidentialOptions] = useState(false)
+const [residentialPathway, setResidentialPathway] = useState('')
+const [residentialData, setResidentialData] = useState({
+  units: '',
+  province: '',
+  description: ''
+})
+
+// ADD RESIDENTIAL ROUTING LOGIC in existing unit count validation
+// MODIFY ONLY the unit count validation to add residential routing
+// When project_unit_count < 50, set showResidentialOptions = true instead of error
+// PRESERVE all existing validation for 50+ units
+
+// ADD RESIDENTIAL UI COMPONENTS in the existing component return
+// INSERT after existing form steps but before closing divs
+
+{/* RESIDENTIAL OPTIONS SELECTION */}
+{showResidentialOptions && (
+  <div className="space-y-6">
+    <div className="text-center">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
+      <p className="text-gray-600">ILLÜMMAA offers two pathways for residential projects:</p>
+    </div>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleInHouseSelection()}>
+        <CardContent className="p-6">
+          <h3 className="text-xl font-semibold mb-3">In-House First-Time Home Buyer Service</h3>
+          <ul className="space-y-2 text-gray-600 mb-4">
+            <li>• Direct consultation with ILLÜMMAA specialists</li>
+            <li>• No real estate agents involved</li>
+            <li>• For clients preferring direct builder relationship</li>
+          </ul>
+          <Button className="w-full">Choose In-House Service</Button>
+        </CardContent>
+      </Card>
+      
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow" onClick={() => handleRemaxSelection()}>
+        <CardContent className="p-6">
+          <h3 className="text-xl font-semibold mb-3">Remax Partnership Program</h3>
+          <ul className="space-y-2 text-gray-600 mb-4">
+            <li>• Full real estate agent support</li>
+            <li>• Land acquisition assistance</li>
+            <li>• Complete guided home buying process</li>
+          </ul>
+          <Button className="w-full">Choose Remax Partnership</Button>
+        </CardContent>
+      </Card>
+    </div>
+  </div>
+)}
+
+{/* RESIDENTIAL CONTACT FORM */}
+{residentialPathway === 'in-house' && (
+  <div className="space-y-6">
+    <div className="text-center">
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
+      <p className="text-gray-600">We'll connect you with our residential specialists.</p>
+    </div>
+    
+    <Card>
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold mb-4">Your Contact Information:</h3>
+        <div className="space-y-2 text-gray-600 mb-4">
+          <p><strong>Name:</strong> {form.watch('firstName')} {form.watch('lastName')}</p>
+          <p><strong>Email:</strong> {form.watch('email')}</p>
+          <p><strong>Phone:</strong> {form.watch('phone')}</p>
+          <p><strong>Company:</strong> {form.watch('company')}</p>
+        </div>
+        <Button variant="outline" onClick={() => handleEditContact()}>Edit Contact Info</Button>
+      </CardContent>
+    </Card>
+    
+    <form onSubmit={handleResidentialSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="res_units">Number of Units</Label>
+        <Input 
+          type="number" 
+          id="res_units" 
+          placeholder="Number of Units (1-49)" 
+          min="1" 
+          max="49" 
+          value={residentialData.units}
+          onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
+          required 
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="res_province">Construction Province</Label>
+        <Select value={residentialData.province} onValueChange={(value) => setResidentialData({...residentialData, province: value})}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Province..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Ontario">Ontario</SelectItem>
+            <SelectItem value="British Columbia">British Columbia</SelectItem>
+            <SelectItem value="Alberta">Alberta</SelectItem>
+            <SelectItem value="Quebec">Quebec</SelectItem>
+            <SelectItem value="Nova Scotia">Nova Scotia</SelectItem>
+            <SelectItem value="New Brunswick">New Brunswick</SelectItem>
+            <SelectItem value="Manitoba">Manitoba</SelectItem>
+            <SelectItem value="Saskatchewan">Saskatchewan</SelectItem>
+            <SelectItem value="Newfoundland and Labrador">Newfoundland and Labrador</SelectItem>
+            <SelectItem value="Prince Edward Island">Prince Edward Island</SelectItem>
+            <SelectItem value="Northwest Territories">Northwest Territories</SelectItem>
+            <SelectItem value="Nunavut">Nunavut</SelectItem>
+            <SelectItem value="Yukon">Yukon</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div>
+        <Label htmlFor="res_description">Project Description (Optional)</Label>
+        <Textarea 
+          id="res_description" 
+          placeholder="Describe your residential project requirements..." 
+          rows={4}
+          value={residentialData.description}
+          onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
+        />
+      </div>
+      
+      <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
+    </form>
+  </div>
+)}
+
+// ADD RESIDENTIAL HANDLERS (do not modify any existing handlers)
+const handleInHouseSelection = () => {
+  setResidentialPathway('in-house')
+}
+
+const handleRemaxSelection = () => {
+  window.open('https://remax.ca/illummaa-partnership', '_blank')
+  toast({
+    title: "Redirecting to Remax Partnership",
+    description: "You will be redirected to our Remax partnership program.",
+  })
+}
+
+const handleEditContact = () => {
+  setShowResidentialOptions(false)
+  setResidentialPathway('')
+  // Return to contact step using existing step management
+}
+
+const handleResidentialSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  
+  const residentialPayload = {
+    first_name: form.getValues('firstName'),
+    last_name: form.getValues('lastName'),
+    email: form.getValues('email'),
+    phone: form.getValues('phone'),
+    company: form.getValues('company'),
+    source: "ILLÜMMAA Website - Residential",
+    project_unit_count: parseInt(residentialData.units),
+    construction_province: residentialData.province,
+    project_description: residentialData.description,
+    residential_pathway: "In-House Service",
+    lead_type: "B2C Residential",
+    submission_timestamp: new Date().toISOString()
+  }
+  
+  try {
+    const response = await fetch('/api/submit-residential', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(residentialPayload),
+    })
+    
+    const result = await response.json()
+    
+    if (result.success) {
+      toast({
+        title: "Residential inquiry submitted successfully!",
+        description: "Our residential specialist will contact you within 24-48 hours.",
+      })
+      // Reset residential form
+      setResidentialData({ units: '', province: '', description: '' })
+      setResidentialPathway('')
+      setShowResidentialOptions(false)
+    } else {
+      toast({
+        title: "Error",
+        description: "Error submitting residential inquiry. Please try again.",
+        variant: "destructive",
+      })
+    }
+  } catch (error) {
+    console.error('Residential submission error:', error)
+    toast({
+      title: "Error",
+      description: "Network error. Please check your connection and try again.",
+      variant: "destructive",
+    })
+  }
+}
+CRITICAL REQUIREMENTS:
+
+PRESERVE all existing B2B form functionality (50+ units) unchanged
+ADD residential routing only for <50 units without modifying existing validation
+USE only existing Tailwind classes and shadcn/ui components already in use
+FOLLOW existing React Hook Form patterns and error handling
+MAINTAIN existing TypeScript interfaces and component structure
+DO NOT modify any existing handlers, state management, or form submission logic
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Existing B2B form (50+ units) works identically to before
+Residential routing appears only for <50 units
+No TypeScript compilation errors
+No breaking changes to existing functionality
+All new components render properly with existing styling
+
+If ANY of these verifications fail, STOP immediately and report the issues.
