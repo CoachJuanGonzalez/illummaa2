@@ -699,14 +699,16 @@ export default function AssessmentForm() {
     <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-assessment-title">
-              Partner Qualification Assessment
-            </h2>
-            <p className="text-xl text-muted-foreground" data-testid="text-assessment-subtitle">
-              Join Canada's leading developers. Complete our assessment to unlock partnership opportunities.
-            </p>
-          </div>
+          {!residentialSubmissionSuccess && !remaxRedirectSuccess && (
+            <>
+              <div className="text-center mb-12">
+                <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-assessment-title">
+                  Partner Qualification Assessment
+                </h2>
+                <p className="text-xl text-muted-foreground" data-testid="text-assessment-subtitle">
+                  Join Canada's leading developers. Complete our assessment to unlock partnership opportunities.
+                </p>
+              </div>
           
           {/* Enhanced Progress Bar with Animation */}
           <div className="mb-8 fade-in-up" data-testid="container-progress">
@@ -917,6 +919,8 @@ export default function AssessmentForm() {
                 <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
               </form>
             </div>
+          )}
+            </>
           )}
 
           {/* SUCCESS STATES - REPLACE ALL CONTENT */}
