@@ -386,11 +386,28 @@ export default function AssessmentForm() {
                       type="number" 
                       min="1" 
                       max="1000" 
-                      placeholder="150" 
+                      placeholder="Enter number of units (1-1000)" 
                       {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '') {
+                          field.onChange('');
+                        } else {
+                          const numValue = parseInt(value);
+                          if (!isNaN(numValue) && numValue >= 1 && numValue <= 1000) {
+                            field.onChange(numValue);
+                          }
+                          // Reject values outside 1-1000 range
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (e.target.value === '') {
+                          field.onChange(50); // Default to 50 (commercial pathway)
+                          e.target.value = '50';
+                        }
+                      }}
                       onFocus={(e) => {
-                        e.target.select(); // This safely selects all text for easy editing
+                        e.target.select(); // Select all text for easy editing
                       }}
                       data-testid="input-unit-count"
                     />
