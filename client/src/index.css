@@ -349,4 +349,32 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
+
+  /* CONSERVATIVE MOBILE OPTIMIZATIONS - CSS ONLY */
+  
+  /* 1. Prevent iOS input zoom by ensuring 16px font size */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* 2. Improve touch responsiveness for all interactive elements */
+  button, [role="button"], .btn, .cursor-pointer {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 3. Remove iOS tap highlights globally */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 4. Accessibility - Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
