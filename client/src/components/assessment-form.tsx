@@ -708,6 +708,9 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-developer-type">Developer Type *</FormLabel>
+                  <FormDescription>
+                    Type of development organization for customized sales approach and volume pricing
+                  </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-developer-type">
@@ -731,6 +734,9 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-government-programs">Government Programs *</FormLabel>
+                  <FormDescription>
+                    Government housing program participation for compliance and incentive eligibility
+                  </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-government-programs">
