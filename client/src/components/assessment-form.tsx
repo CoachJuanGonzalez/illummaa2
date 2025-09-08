@@ -130,6 +130,158 @@ export default function AssessmentForm() {
     }
   }, [currentStep, form]);
 
+  // UNIVERSAL AUTO-SCROLL SYSTEM FOR ALL DEVICES
+  interface ScrollOptions {
+    offset?: number;
+    delay?: number;
+    behavior?: 'auto' | 'smooth';
+    block?: 'start' | 'center' | 'end' | 'nearest';
+  }
+
+  // Universal scroll utility with device-specific optimizations
+  const universalScrollToContent = (targetSelector: string, options: ScrollOptions = {}) => {
+    const {
+      offset = -20,
+      delay = 150,
+      behavior = 'smooth',
+      block = 'center'
+    } = options;
+
+    setTimeout(() => {
+      const element = document.querySelector(targetSelector);
+      if (!element) return;
+
+      // Device detection for optimized scrolling
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isAndroid = /Android/.test(navigator.userAgent);
+      const isTablet = /(iPad|tablet)/i.test(navigator.userAgent) || 
+                      (navigator.userAgent.includes('Macintosh') && 'ontouchend' in document);
+
+      // Get viewport dimensions
+      const viewportHeight = window.innerHeight;
+      const elementRect = element.getBoundingClientRect();
+      
+      // Calculate optimal scroll position based on device
+      let scrollPosition;
+      
+      if (isMobile || isTablet) {
+        // Mobile/tablet: account for browser UI and keyboards
+        const safeOffset = isIOS ? -100 : -80; // iOS has different browser UI
+        scrollPosition = elementRect.top + window.pageYOffset + safeOffset;
+      } else {
+        // Desktop: center content in viewport
+        scrollPosition = elementRect.top + window.pageYOffset - (viewportHeight / 2) + (elementRect.height / 2);
+      }
+
+      // Ensure we don't scroll past the top
+      scrollPosition = Math.max(0, scrollPosition);
+
+      // Use appropriate scroll method based on device capabilities
+      if ('scrollBehavior' in document.documentElement.style) {
+        // Modern browsers with smooth scroll support
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: behavior as ScrollBehavior
+        });
+      } else {
+        // Legacy devices fallback
+        window.scrollTo(0, scrollPosition);
+      }
+
+      // Additional handling for iOS viewport issues
+      if (isIOS) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }, delay);
+  };
+
+  // Viewport change handler for mobile devices
+  const handleViewportChange = () => {
+    // Recalculate scroll positions when viewport changes (keyboard, orientation)
+    if (showResidentialOptions || residentialPathway || residentialSubmissionSuccess || remaxRedirectSuccess) {
+      setTimeout(() => {
+        if (showResidentialOptions) {
+          universalScrollToContent('[data-scroll-target="residential-options"]');
+        } else if (residentialPathway === 'in-house') {
+          universalScrollToContent('[data-scroll-target="residential-form"]');
+        } else if (residentialSubmissionSuccess) {
+          universalScrollToContent('[data-scroll-target="residential-success"]');
+        } else if (remaxRedirectSuccess) {
+          universalScrollToContent('[data-scroll-target="remax-success"]');
+        }
+      }, 300);
+    }
+  };
+
+  // Add viewport change listeners
+  useEffect(() => {
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', handleViewportChange);
+    
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('orientationchange', handleViewportChange);
+    };
+  }, [showResidentialOptions, residentialPathway, residentialSubmissionSuccess, remaxRedirectSuccess]);
+
+  // AUTO-SCROLL FOR ALL DYNAMIC CONTENT SCENARIOS
+
+  // 1. Residential pathway display
+  useEffect(() => {
+    if (showResidentialOptions) {
+      universalScrollToContent('[data-scroll-target="residential-options"]', {
+        delay: 200,
+        offset: -50
+      });
+    }
+  }, [showResidentialOptions]);
+
+  // 2. In-House form display
+  useEffect(() => {
+    if (residentialPathway === 'in-house') {
+      universalScrollToContent('[data-scroll-target="residential-form"]', {
+        delay: 200,
+        offset: -30
+      });
+    }
+  }, [residentialPathway]);
+
+  // 3. Residential success state
+  useEffect(() => {
+    if (residentialSubmissionSuccess) {
+      universalScrollToContent('[data-scroll-target="residential-success"]', {
+        delay: 300,
+        block: 'start'
+      });
+    }
+  }, [residentialSubmissionSuccess]);
+
+  // 4. Remax redirect success
+  useEffect(() => {
+    if (remaxRedirectSuccess) {
+      universalScrollToContent('[data-scroll-target="remax-success"]', {
+        delay: 300,
+        block: 'start'
+      });
+    }
+  }, [remaxRedirectSuccess]);
+
+  // 5. B2B success state
+  useEffect(() => {
+    if (isSubmitted) {
+      universalScrollToContent('[data-scroll-target="b2b-success"]', {
+        delay: 300,
+        block: 'start'
+      });
+    }
+  }, [isSubmitted]);
+
   const calculatePriorityScore = () => {
     let score = 0;
     const values = form.getValues();
