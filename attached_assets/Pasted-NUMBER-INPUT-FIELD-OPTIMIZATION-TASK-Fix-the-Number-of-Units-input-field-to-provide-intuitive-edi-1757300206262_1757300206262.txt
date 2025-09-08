@@ -1,0 +1,111 @@
+NUMBER INPUT FIELD OPTIMIZATION
+TASK: Fix the "Number of Units" input field to provide intuitive editing experience with proper validation and default behavior. Reference the attached screenshot showing the current UX issue where users cannot easily edit the field without encountering the "0" blocking problem.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves changing form input behavior, validation logic, and potentially the pathway routing mechanism. There is SIGNIFICANT RISK of breaking existing website functionality.
+YOU MUST:
+
+Analyze EVERY proposed change for potential conflicts with existing form validation
+Identify ANY risk to current B2B/residential pathway routing logic
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Form validation and submission functionality
+Pathway routing logic (< 50 vs >= 50 units)
+Existing form state management
+React Hook Form integration
+Component rendering behavior
+
+
+
+STOP AND REQUEST CONFIRMATION IF YOU DETECT ANY RISK TO:
+
+Current pathway routing mechanism
+Form validation schema
+React Hook Form integration
+Existing onChange/onBlur handlers
+Component state management
+B2B or residential pathway functionality
+
+PROBLEM ANALYSIS (Based on Attached Screenshot):
+The current "Number of Units" field shows a frustrating UX issue where:
+
+Users cannot easily edit the field to enter numbers below 50
+When trying to change the default value, a "0" appears that blocks easy input
+Users must place cursor before the "0" to add numbers, creating poor user experience
+This particularly affects residential pathway users (< 50 units) who need to enter smaller numbers
+
+CRITICAL SAFETY: Analyze this change to ensure it won't break existing form validation or pathway routing logic that depends on the < 50 vs >= 50 unit distinction shown in the screenshot.
+MODIFY client/src/components/assessment-form.tsx:
+REPLACE the current Number of Units input with optimized version that solves the screenshot issue:
+typescript// Enhanced Number of Units input with better UX - fixes the "0" blocking issue
+<div>
+  <Label htmlFor="projectUnitCount">Number of Units *</Label>
+  <div className="relative">
+    <Input
+      type="number"
+      id="projectUnitCount"
+      name="projectUnitCount"
+      placeholder="Enter number of units (1-1000)"
+      min="1"
+      max="1000"
+      defaultValue={50} // Set as defaultValue, not value, for better editing
+      onFocus={(e) => e.target.select()} // Select all on focus - solves editing issue from screenshot
+      onChange={(e) => {
+        const value = e.target.value;
+        form.setValue('projectUnitCount', value === "" ? null : parseInt(value));
+      }}
+      onBlur={(e) => {
+        // Only set default if completely empty
+        if (e.target.value === "" || isNaN(parseInt(e.target.value))) {
+          e.target.value = "50";
+          form.setValue('projectUnitCount', 50);
+        }
+      }}
+      className="text-base pr-24" // Space for pathway indicator
+    />
+    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs font-medium">
+      {(() => {
+        const units = form.watch('projectUnitCount');
+        if (units && units < 50) return <span className="text-blue-600">Residential</span>;
+        if (units && units >= 50) return <span className="text-green-600">Commercial</span>;
+        return <span className="text-gray-400">-</span>;
+      })()}
+    </div>
+  </div>
+  <div className="grid grid-cols-2 gap-4 mt-2 text-xs text-gray-600">
+    <div className="flex items-center">
+      <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+      1-49 units: Residential pathway
+    </div>
+    <div className="flex items-center">
+      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+      50+ units: Commercial pathway
+    </div>
+  </div>
+</div>
+KEY UX IMPROVEMENTS (Addresses Screenshot Issues):
+
+Select-all on focus - Completely solves the editing problem shown in screenshot
+Real-time pathway indicator - Shows which pathway will be triggered as user types
+Clear visual guidance - Visual indicators for the 50-unit threshold
+Proper defaultValue - Uses defaultValue instead of controlled value for better editing
+Professional validation - Maintains 1-1000 range validation without blocking input
+
+CRITICAL REQUIREMENTS:
+
+Preserve ALL existing pathway routing logic (< 50 = residential, >= 50 = B2B)
+Maintain form validation schema compatibility
+Keep React Hook Form integration intact
+Ensure no breaking changes to form submission flow
+Fix the specific UX issue demonstrated in the attached screenshot
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Test that the "0" blocking issue from screenshot is resolved
+Test that entering 49 units triggers residential pathway
+Test that entering 50 units continues B2B pathway
+Verify users can easily edit the field without cursor placement issues
+Confirm form validation still works correctly
+Ensure form submission functionality remains intact
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that these input field optimizations will NOT break any existing pathway routing or form validation functionality while solving the specific UX issue shown in the provided screenshot.
