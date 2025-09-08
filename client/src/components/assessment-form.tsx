@@ -331,7 +331,7 @@ export default function AssessmentForm() {
       score += 5;
     }
 
-    setPriorityScore(score);
+    setPriorityScore(Math.min(score, 150));
   };
 
   const getPriorityMessage = () => {
