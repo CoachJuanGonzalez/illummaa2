@@ -1,0 +1,105 @@
+CUSTOM FIELD NAME UPDATES FOR MODULAR CONSTRUCTION BUSINESS
+TASK: Update all form field names and labels throughout the ILLÜMMAA website to accurately reflect modular construction business terminology and improve user clarity.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves changing form field names, labels, and validation throughout the React application. There is SIGNIFICANT RISK of breaking existing form functionality, validation logic, or webhook integrations.
+YOU MUST:
+
+Analyze EVERY proposed change for potential conflicts with existing form validation and submission logic
+Identify ANY risk to current form state management and React Hook Form integration
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Form field validation and submission functionality
+React Hook Form field names and validation schemas
+Webhook payload structure and GoHighLevel integration
+Form step navigation and user experience
+Priority scoring algorithm calculations
+
+
+
+STOP AND REQUEST CONFIRMATION IF YOU DETECT ANY RISK TO:
+
+Current form validation and submission processes
+React Hook Form integration and field mapping
+GoHighLevel webhook payload compatibility
+Priority scoring calculation logic
+Form navigation and step progression
+
+BUSINESS RATIONALE:
+The current field names don't accurately reflect the modular construction business model. Users need clarity about delivery timelines (not decision timelines) and project budgets for modular construction.
+MODIFY client/src/components/assessment-form.tsx:
+UPDATE FORM FIELD NAMES AND LABELS:
+typescript// CHANGE 1: Budget Range Field Label
+// FROM: "Budget Range (CAD)"
+// TO: "Project Budget Range (CAD)"
+<Label htmlFor="projectBudgetRange">Project Budget Range (CAD) *</Label>
+
+// CHANGE 2: Timeline Field - Complete Rename
+// FROM: "Decision Timeline" 
+// TO: "Delivery Timeline"
+<Label htmlFor="deliveryTimeline">Delivery Timeline *</Label>
+
+// CHANGE 3: Timeline Field Description/Helper Text
+// FROM: "When will you make your final decision?"
+// TO: "When do you need the modular units completed and delivered?"
+
+// CHANGE 4: Timeline Dropdown Options (keep same values, update context)
+<SelectItem value="Immediate (0-3 months)">Immediate delivery (0-3 months)</SelectItem>
+<SelectItem value="Short-term (3-6 months)">Short-term delivery (3-6 months)</SelectItem>
+<SelectItem value="Medium-term (6-12 months)">Medium-term delivery (6-12 months)</SelectItem>
+<SelectItem value="Long-term (12+ months)">Long-term delivery (12+ months)</SelectItem>
+
+// CHANGE 5: Construction Province Field Enhancement
+// FROM: "Construction Province"
+// TO: "Installation Province" 
+<Label htmlFor="constructionProvince">Installation Province *</Label>
+// Helper text: "Province/territory where modular units will be installed"
+
+// CHANGE 6: Step 3 Heading Update
+// FROM: "Timeline & Location"
+// TO: "Delivery Schedule & Location"
+<h2>Delivery Schedule & Location</h2>
+UPDATE PRIORITY SCORING DISPLAY:
+typescript// Update priority score messaging to reflect delivery urgency
+// Change references from "decision timeline" to "delivery timeline"
+const getTimelineText = (timeline) => {
+  const timelineMap = {
+    "Immediate (0-3 months)": "immediate delivery needs",
+    "Short-term (3-6 months)": "short-term delivery requirements", 
+    "Medium-term (6-12 months)": "medium-term delivery schedule",
+    "Long-term (12+ months)": "long-term delivery planning"
+  };
+  return timelineMap[timeline] || timeline;
+};
+UPDATE FORM VALIDATION MESSAGES:
+typescript// Update validation error messages to use new terminology
+const validationMessages = {
+  projectBudgetRange: "Project budget range is required for modular construction planning",
+  deliveryTimeline: "Delivery timeline is required for production scheduling",
+  constructionProvince: "Installation province is required for building code compliance"
+};
+CRITICAL REQUIREMENTS:
+
+Maintain ALL existing form field internal names for React Hook Form compatibility
+Preserve ALL existing validation logic and rules
+Keep ALL existing webhook payload field names unchanged
+Ensure priority scoring algorithm continues using correct field references
+Maintain form step navigation and progression logic
+Preserve mobile optimization and responsive design
+
+BUSINESS TERMINOLOGY IMPROVEMENTS:
+
+Project Budget Range - Clarifies this is total modular construction budget
+Delivery Timeline - Focuses on when units need to be completed/delivered
+Installation Province - Emphasizes where modular units will be installed
+Delivery Schedule - Better reflects production and delivery planning
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Test all form steps navigate correctly with updated labels
+Verify form validation works with new field labels
+Confirm form submission includes correct data for both B2B and residential pathways
+Test priority scoring displays correctly with updated terminology
+Ensure webhook payloads continue sending to GoHighLevel successfully
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that updating form field labels and terminology will NOT break any existing form functionality, validation logic, or webhook integrations while improving user clarity for the modular construction business model.
