@@ -1,0 +1,235 @@
+UNIVERSAL AUTO-SCROLL OPTIMIZATION FOR ALL DEVICES
+TASK: Implement comprehensive auto-scroll behavior for all dynamically appearing content across ALL device types including mobile (legacy iOS & Android), desktop, laptop, and iPad devices.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves adding scroll behavior and DOM manipulation across multiple components and device types. There is SIGNIFICANT RISK of breaking existing form functionality, causing layout issues, or interfering with user interactions across different browsers and devices.
+YOU MUST:
+
+Analyze EVERY proposed change for potential conflicts with existing component behavior
+Identify ANY risk to current form state management or user interactions
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Existing form navigation and step transitions
+Component rendering and state updates
+Cross-device compatibility (iOS Safari, Android Chrome, desktop browsers)
+Mobile viewport handling and touch scrolling
+Legacy device performance and compatibility
+User's ability to manually scroll or navigate
+
+
+
+STOP AND REQUEST CONFIRMATION IF YOU DETECT ANY RISK TO:
+
+Current form functionality across all device types
+Cross-browser compatibility (Safari, Chrome, Firefox, Edge)
+Mobile responsiveness and touch scrolling behavior
+Component state management and rendering
+Performance on legacy devices
+
+DEVICE-SPECIFIC SCROLL REQUIREMENTS:
+Mobile Devices (iOS/Android):
+
+Handle viewport changes and keyboard appearance
+Account for mobile browser UI variations
+Optimize for touch scrolling momentum
+Handle orientation changes
+
+Desktop/Laptop:
+
+Standard scroll behavior with mouse wheel compatibility
+Window resize handling
+Multi-monitor support considerations
+
+iPad/Tablets:
+
+Hybrid touch and cursor input support
+Landscape/portrait orientation handling
+Split-screen compatibility
+
+MODIFY client/src/components/assessment-form.tsx:
+ADD universal auto-scroll utility with device detection:
+typescript// Universal scroll utility with device-specific optimizations
+const universalScrollToContent = (targetSelector: string, options: ScrollOptions = {}) => {
+  const {
+    offset = -20,
+    delay = 150,
+    behavior = 'smooth',
+    block = 'center'
+  } = options;
+
+  setTimeout(() => {
+    const element = document.querySelector(targetSelector);
+    if (!element) return;
+
+    // Device detection for optimized scrolling
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isTablet = /(iPad|tablet)/i.test(navigator.userAgent) || 
+                    (navigator.userAgent.includes('Macintosh') && 'ontouchend' in document);
+
+    // Get viewport dimensions
+    const viewportHeight = window.innerHeight;
+    const elementRect = element.getBoundingClientRect();
+    
+    // Calculate optimal scroll position based on device
+    let scrollPosition;
+    
+    if (isMobile || isTablet) {
+      // Mobile/tablet: account for browser UI and keyboards
+      const safeOffset = isIOS ? -100 : -80; // iOS has different browser UI
+      scrollPosition = elementRect.top + window.pageYOffset + safeOffset;
+    } else {
+      // Desktop: center content in viewport
+      scrollPosition = elementRect.top + window.pageYOffset - (viewportHeight / 2) + (elementRect.height / 2);
+    }
+
+    // Ensure we don't scroll past the top
+    scrollPosition = Math.max(0, scrollPosition);
+
+    // Use appropriate scroll method based on device capabilities
+    if ('scrollBehavior' in document.documentElement.style) {
+      // Modern browsers with smooth scroll support
+      window.scrollTo({
+        top: scrollPosition,
+        behavior: behavior as ScrollBehavior
+      });
+    } else {
+      // Legacy devices fallback
+      window.scrollTo(0, scrollPosition);
+    }
+
+    // Additional handling for iOS viewport issues
+    if (isIOS) {
+      setTimeout(() => {
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
+  }, delay);
+};
+
+// Viewport change handler for mobile devices
+const handleViewportChange = () => {
+  // Recalculate scroll positions when viewport changes (keyboard, orientation)
+  if (showResidentialOptions || residentialPathway || residentialSubmissionSuccess || remaxRedirectSuccess) {
+    setTimeout(() => {
+      if (showResidentialOptions) {
+        universalScrollToContent('[data-scroll-target="residential-options"]');
+      } else if (residentialPathway === 'in-house') {
+        universalScrollToContent('[data-scroll-target="residential-form"]');
+      } else if (residentialSubmissionSuccess) {
+        universalScrollToContent('[data-scroll-target="residential-success"]');
+      } else if (remaxRedirectSuccess) {
+        universalScrollToContent('[data-scroll-target="remax-success"]');
+      }
+    }, 300);
+  }
+};
+
+// Add viewport change listeners
+useEffect(() => {
+  window.addEventListener('resize', handleViewportChange);
+  window.addEventListener('orientationchange', handleViewportChange);
+  
+  return () => {
+    window.removeEventListener('resize', handleViewportChange);
+    window.removeEventListener('orientationchange', handleViewportChange);
+  };
+}, [showResidentialOptions, residentialPathway, residentialSubmissionSuccess, remaxRedirectSuccess]);
+IMPLEMENT auto-scroll for ALL dynamic content scenarios:
+typescript// 1. Residential pathway display
+useEffect(() => {
+  if (showResidentialOptions) {
+    universalScrollToContent('[data-scroll-target="residential-options"]', {
+      delay: 200,
+      offset: -50
+    });
+  }
+}, [showResidentialOptions]);
+
+// 2. In-House form display
+useEffect(() => {
+  if (residentialPathway === 'in-house') {
+    universalScrollToContent('[data-scroll-target="residential-form"]', {
+      delay: 200,
+      offset: -30
+    });
+  }
+}, [residentialPathway]);
+
+// 3. Residential success state
+useEffect(() => {
+  if (residentialSubmissionSuccess) {
+    universalScrollToContent('[data-scroll-target="residential-success"]', {
+      delay: 300,
+      block: 'start'
+    });
+  }
+}, [residentialSubmissionSuccess]);
+
+// 4. Remax redirect success
+useEffect(() => {
+  if (remaxRedirectSuccess) {
+    universalScrollToContent('[data-scroll-target="remax-success"]', {
+      delay: 300,
+      block: 'start'
+    });
+  }
+}, [remaxRedirectSuccess]);
+
+// 5. B2B success state (add this useEffect)
+useEffect(() => {
+  if (/* B2B success state condition */) {
+    universalScrollToContent('[data-scroll-target="b2b-success"]', {
+      delay: 300,
+      block: 'start'
+    });
+  }
+}, [/* B2B success dependencies */]);
+
+// 6. Form step transitions
+const handleNextStep = () => {
+  // ... existing step logic ...
+  universalScrollToContent(`[data-scroll-target="step-${newStep}"]`, {
+    delay: 100
+  });
+};
+ADD scroll target data attributes to ALL relevant sections:
+typescript// All form steps
+<div data-scroll-target="step-1" className="form-step">
+<div data-scroll-target="step-2" className="form-step">
+<div data-scroll-target="step-3" className="form-step">
+<div data-scroll-target="step-4" className="form-step">
+<div data-scroll-target="step-5" className="form-step">
+
+// Dynamic content sections
+<div data-scroll-target="residential-options" className="space-y-6">
+<div data-scroll-target="residential-form" className="space-y-6">
+<div data-scroll-target="residential-success" className="min-h-screen">
+<div data-scroll-target="remax-success" className="min-h-screen">
+<div data-scroll-target="b2b-success" className="min-h-screen">
+CRITICAL CROSS-DEVICE REQUIREMENTS:
+
+Universal compatibility across all iOS, Android, desktop, and tablet devices
+Handle legacy device limitations gracefully
+Account for mobile browser UI variations and keyboard appearances
+Optimize for both portrait and landscape orientations
+Maintain smooth performance on older devices
+Preserve existing touch scrolling and manual navigation
+Handle viewport changes and orientation switches
+
+MANDATORY VERIFICATION ACROSS ALL DEVICES:
+
+Test on iPhone (various models and iOS versions)
+Test on Android devices (various manufacturers and versions)
+Test on iPad (portrait and landscape)
+Test on desktop browsers (Chrome, Firefox, Safari, Edge)
+Test on laptops with different screen sizes
+Verify legacy device compatibility
+Confirm manual scrolling still works properly
+Test orientation changes and viewport adjustments
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that implementing universal auto-scroll will NOT break any existing form functionality, user interactions, or device compatibility while providing consistent enterprise UX behavior across ALL supported devices and browsers.Retry
