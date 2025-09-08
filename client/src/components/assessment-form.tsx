@@ -949,68 +949,241 @@ export default function AssessmentForm() {
                 {renderStep()}
               </div>
               
-              {/* Enhanced Form Navigation with Animations */}
-              <div className="flex justify-between items-center mt-8 pt-6 border-t border-border fade-in-up" data-testid="container-form-navigation">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={previousStep}
-                  className={`transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
-                  data-testid="button-previous"
-                >
-                  <ArrowLeft className="mr-2 transition-transform duration-200 group-hover:-translate-x-1" size={16} />
-                  Previous
-                </Button>
-                
-                <div className="flex-1"></div>
-                
+              {/* Universal Responsive Button Layout - Professional Multi-Device Optimization */}
+              <div className="mt-8 pt-6 border-t border-border fade-in-up w-full" data-testid="container-form-navigation">
                 {currentStep < TOTAL_STEPS ? (
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      nextStep();
-                    }}
-                    className={`btn-primary group transition-all duration-300 hover:scale-105 ${isStepChanging ? 'button-loading' : ''}`}
-                    disabled={isStepChanging}
-                    data-testid="button-next"
-                  >
-                    {isStepChanging ? (
-                      <>
-                        <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        Next
-                        <ArrowRight className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
-                      </>
-                    )}
-                  </Button>
+                  <>
+                    {/* Mobile Layout (< 640px) - Stacked with proper spacing */}
+                    <div className="block sm:hidden space-y-4">
+                      <Button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          nextStep();
+                        }}
+                        className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg min-h-[52px] text-center leading-tight group transition-all duration-300 hover:scale-105 ${isStepChanging ? 'button-loading' : ''}`}
+                        disabled={isStepChanging}
+                        data-testid="button-next"
+                      >
+                        {isStepChanging ? (
+                          <span>Processing...</span>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="text-base font-semibold">Next</div>
+                            <div className="text-sm opacity-90">Continue Assessment</div>
+                          </div>
+                        )}
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`w-full border-2 border-gray-300 hover:border-gray-400 py-3 px-6 min-h-[48px] font-medium transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                    </div>
+                    
+                    {/* Tablet Layout (640px - 1024px) - Horizontal with generous spacing */}
+                    <div className="hidden sm:flex lg:hidden justify-between items-center gap-8">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`border-2 border-gray-300 hover:border-gray-400 py-3 px-8 font-medium min-w-[140px] transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          nextStep();
+                        }}
+                        className={`bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-lg flex-1 max-w-md group transition-all duration-300 hover:scale-105 ${isStepChanging ? 'button-loading' : ''}`}
+                        disabled={isStepChanging}
+                        data-testid="button-next"
+                      >
+                        {isStepChanging ? (
+                          <>
+                            <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            Next - Continue Assessment
+                            <ArrowRight className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    {/* Desktop Layout (1024px+) - Professional spacing and alignment */}
+                    <div className="hidden lg:flex justify-between items-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 py-3 px-8 font-medium min-w-[160px] transition-all duration-200 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                      
+                      <div className="flex-1 flex justify-end">
+                        <Button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            nextStep();
+                          }}
+                          className={`bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-4 px-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 min-w-[300px] text-lg group ${isStepChanging ? 'button-loading' : ''}`}
+                          disabled={isStepChanging}
+                          data-testid="button-next"
+                        >
+                          {isStepChanging ? (
+                            <span className="flex items-center">
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                              Processing...
+                            </span>
+                          ) : (
+                            <>
+                              Next - Continue Assessment
+                              <ArrowRight className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
                 ) : (
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      form.handleSubmit(onSubmit)(e);
-                    }}
-                    className={`w-full bg-green-600 hover:bg-green-700 text-lg py-4 font-semibold group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
-                    disabled={submitMutation.isPending}
-                    data-testid="button-submit"
-                  >
-                    {submitMutation.isPending ? (
-                      <>
-                        <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        Submitting Assessment...
-                      </>
-                    ) : (
-                      <>
-                        Submit Assessment - Secure Your {getPriorityLevel()} Response Time
-                        <Send className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
-                      </>
-                    )}
-                  </Button>
+                  <>
+                    {/* Mobile Layout (< 640px) - Stacked submit button */}
+                    <div className="block sm:hidden space-y-4">
+                      <Button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          form.handleSubmit(onSubmit)(e);
+                        }}
+                        className={`w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg min-h-[52px] text-center leading-tight group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
+                        disabled={submitMutation.isPending}
+                        data-testid="button-submit"
+                      >
+                        {submitMutation.isPending ? (
+                          <span>Submitting Assessment...</span>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="text-base font-semibold">Submit Assessment</div>
+                            <div className="text-sm opacity-90">Secure Your {getPriorityLevel()} Response Time</div>
+                          </div>
+                        )}
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`w-full border-2 border-gray-300 hover:border-gray-400 py-3 px-6 min-h-[48px] font-medium transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                    </div>
+                    
+                    {/* Tablet Layout (640px - 1024px) - Horizontal submit layout */}
+                    <div className="hidden sm:flex lg:hidden justify-between items-center gap-8">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`border-2 border-gray-300 hover:border-gray-400 py-3 px-8 font-medium min-w-[140px] transition-all duration-300 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-2 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          form.handleSubmit(onSubmit)(e);
+                        }}
+                        className={`bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-lg flex-1 max-w-md group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
+                        disabled={submitMutation.isPending}
+                        data-testid="button-submit"
+                      >
+                        {submitMutation.isPending ? (
+                          <>
+                            <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                            Submitting Assessment...
+                          </>
+                        ) : (
+                          <>
+                            Submit Assessment - Secure Your {getPriorityLevel()} Response Time
+                            <Send className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    
+                    {/* Desktop Layout (1024px+) - Professional submit layout */}
+                    <div className="hidden lg:flex justify-between items-center">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={previousStep}
+                        className={`border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 py-3 px-8 font-medium min-w-[160px] transition-all duration-200 interactive-hover ${currentStep === 1 ? "invisible" : "hover:scale-105"}`}
+                        disabled={currentStep === 1}
+                        data-testid="button-previous"
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-3 transition-transform duration-200 group-hover:-translate-x-1" />
+                        Previous
+                      </Button>
+                      
+                      <div className="flex-1 flex justify-end">
+                        <Button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            form.handleSubmit(onSubmit)(e);
+                          }}
+                          className={`bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-4 px-12 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 min-w-[400px] text-lg group ${submitMutation.isPending ? 'button-loading' : ''}`}
+                          disabled={submitMutation.isPending}
+                          data-testid="button-submit"
+                        >
+                          {submitMutation.isPending ? (
+                            <span className="flex items-center">
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+                              Submitting Assessment...
+                            </span>
+                          ) : (
+                            <>
+                              Submit Assessment - Secure Your {getPriorityLevel()} Response Time
+                              <Send className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             </form>
