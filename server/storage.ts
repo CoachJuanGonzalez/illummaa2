@@ -205,8 +205,8 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     
     // Custom fields
     project_unit_count: parseInt(formData.projectUnitCount.toString()),
-    budget_range_cad: formData.budgetRange,
-    decision_timeline: formData.decisionTimeline,
+    project_budget_range: formData.budgetRange,
+    delivery_timeline: formData.decisionTimeline,
     construction_province: formData.constructionProvince,
     developer_type: formData.developerType,
     government_programs: formData.governmentPrograms,
