@@ -28,7 +28,6 @@ export default function AssessmentForm() {
   const [showResidentialOptions, setShowResidentialOptions] = useState(false);
   const [residentialPathway, setResidentialPathway] = useState('');
   const [residentialData, setResidentialData] = useState({
-    units: '',
     province: '',
     description: ''
   });
@@ -652,7 +651,7 @@ export default function AssessmentForm() {
       phone: form.getValues('phone'),
       company: form.getValues('company'),
       source: "ILLÜMMAA Website - Residential",
-      project_unit_count: parseInt(residentialData.units),
+      project_unit_count: form.getValues('projectUnitCount'),
       construction_province: residentialData.province,
       project_description: residentialData.description,
       residential_pathway: "In-House Service",
@@ -888,17 +887,13 @@ export default function AssessmentForm() {
               
               <form onSubmit={handleResidentialSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="res_units">Number of Units</Label>
-                  <Input 
-                    type="number" 
-                    id="res_units" 
-                    placeholder="Number of Units (1-49)" 
-                    min="1" 
-                    max="49" 
-                    value={residentialData.units}
-                    onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
-                    required 
-                  />
+                  <Label>Number of Units</Label>
+                  <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-gray-700">
+                    {form.watch('projectUnitCount')} units (from assessment)
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Using the unit count from your Partner Qualification Assessment
+                  </p>
                 </div>
                 
                 <div>
@@ -954,7 +949,7 @@ export default function AssessmentForm() {
                 </div>
                 <h1 className="text-3xl font-bold text-gray-900">Residential Inquiry Submitted Successfully!</h1>
                 <p className="text-gray-600">
-                  Our residential specialist will contact you within 24-48 hours to discuss your {residentialData.units}-unit project in {residentialData.province}.
+                  Our residential specialist will contact you within 24-48 hours to discuss your {form.getValues('projectUnitCount')}-unit project in {residentialData.province}.
                 </p>
                 <div className="bg-white rounded-lg p-6 shadow-sm border">
                   <h3 className="font-semibold text-gray-900 mb-2">What's Next:</h3>
