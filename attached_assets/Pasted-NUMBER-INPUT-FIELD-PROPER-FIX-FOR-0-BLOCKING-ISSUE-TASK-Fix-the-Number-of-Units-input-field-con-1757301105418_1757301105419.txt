@@ -1,0 +1,93 @@
+NUMBER INPUT FIELD - PROPER FIX FOR "0" BLOCKING ISSUE
+TASK: Fix the Number of Units input field controlled component behavior that causes the "0" blocking problem, preventing users from easily editing the field.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves changing form input behavior, controlled component logic, and potentially the pathway routing mechanism. There is SIGNIFICANT RISK of breaking existing website functionality.
+YOU MUST:
+
+Analyze EVERY proposed change for potential conflicts with existing form validation
+Identify ANY risk to current B2B/residential pathway routing logic
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Form validation and submission functionality
+Pathway routing logic (< 50 vs >= 50 units)
+Existing form state management
+React Hook Form integration
+Component rendering behavior
+
+
+
+STOP AND REQUEST CONFIRMATION IF YOU DETECT ANY RISK TO:
+
+Current pathway routing mechanism
+Form validation schema
+React Hook Form integration
+Existing onChange/onBlur handlers
+Component state management
+B2B or residential pathway functionality
+
+PROBLEM ANALYSIS:
+The minimal onFocus fix did not solve the actual UX issue. Users still encounter the "0" blocking problem when trying to edit the Number of Units field. The root cause is the controlled component behavior that forces a value, making the field impossible to clear and edit naturally.
+CRITICAL SAFETY: Analyze this change to ensure it won't break existing form validation or pathway routing logic that depends on the < 50 vs >= 50 unit distinction.
+MODIFY client/src/components/assessment-form.tsx:
+REPLACE the current Number of Units input with proper controlled component fix:
+typescript// PROPER FIX - Address controlled component behavior causing "0" blocking
+<div>
+  <Label htmlFor="projectUnitCount">Number of Units *</Label>
+  <Input
+    type="number"
+    id="projectUnitCount"
+    name="projectUnitCount"
+    placeholder="Enter number of units (1-1000)"
+    min="1"
+    max="1000"
+    // REMOVE any defaultValue or value prop causing forced controlled behavior
+    onFocus={(e) => e.target.select()}
+    onChange={(e) => {
+      const value = e.target.value;
+      // Allow field to be empty during editing - prevents forced "0"
+      if (value === '') {
+        form.setValue('projectUnitCount', undefined);
+      } else {
+        const numValue = parseInt(value);
+        if (!isNaN(numValue)) {
+          form.setValue('projectUnitCount', numValue);
+        }
+      }
+    }}
+    onBlur={(e) => {
+      // Set default only when user finishes editing an empty field
+      if (e.target.value === '' || e.target.value === '0') {
+        e.target.value = '50';
+        form.setValue('projectUnitCount', 50);
+      }
+    }}
+    className="text-base" // Maintain mobile optimization
+  />
+</div>
+CRITICAL REQUIREMENTS:
+
+Fix the "0" blocking issue that prevents natural editing
+Allow field to be empty during editing process
+Maintain ALL existing pathway routing logic (< 50 = residential, >= 50 = B2B)
+Preserve form validation schema compatibility
+Keep React Hook Form integration intact
+Ensure no breaking changes to form submission flow
+
+KEY IMPROVEMENTS:
+
+Eliminates "0" blocking - Field can be naturally emptied and edited
+Maintains form logic - Proper integration with React Hook Form
+Preserves defaults - Sets 50 as default only when needed
+Keeps validation - All existing validation rules remain intact
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Test that users can easily clear and edit the field without "0" appearing
+Test that entering 49 units triggers residential pathway
+Test that entering 50 units continues B2B pathway
+Verify form validation still works correctly
+Confirm form submission functionality remains intact
+Ensure no console errors or state management issues
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that these controlled component fixes will NOT break any existing pathway routing, form validation, or submission functionality while properly solving the "0" blocking UX issue.
