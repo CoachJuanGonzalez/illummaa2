@@ -1,0 +1,119 @@
+FORM FIELD DESCRIPTION STANDARDIZATION FOR MODULAR CONSTRUCTION BUSINESS
+TASK: Standardize all form field descriptions to match professional terminology for modular construction business and ensure consistent placement throughout the assessment form.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves updating form field descriptions, placeholders, and layout structure. There is RISK of breaking existing form functionality, validation, or mobile responsiveness.
+YOU MUST:
+
+Analyze current form layout structure for potential conflicts
+Identify ANY risk to existing form validation and submission functionality
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Form field validation and React Hook Form integration
+Mobile responsive design and accessibility
+Existing form submission and webhook payload structure
+
+
+
+MODIFY client/src/components/assessment-form.tsx:
+STANDARDIZE all form fields using this consistent pattern:
+typescript// STEP 2: Project Details
+<div className="space-y-2">
+  <Label htmlFor="projectUnitCount">Number of Units *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    Total number of modular units required (50 minimum for commercial projects)
+  </p>
+  <Input 
+    type="number"
+    placeholder="Enter number of units (50-1000)"
+    // ... existing props
+  />
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="projectBudgetRange">Project Budget Range (CAD) *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    Total project budget for modular construction and site preparation
+  </p>
+  <Select>
+    <SelectTrigger>
+      <SelectValue placeholder="Select budget range..." />
+    </SelectTrigger>
+    // ... existing options
+  </Select>
+</div>
+
+// STEP 3: Delivery Schedule & Location
+<div className="space-y-2">
+  <Label htmlFor="deliveryTimeline">Delivery Timeline *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    When modular units need to be completed and delivered for project scheduling
+  </p>
+  <Select>
+    <SelectTrigger>
+      <SelectValue placeholder="Select delivery timeline..." />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="Immediate (0-3 months)">Immediate delivery (0-3 months)</SelectItem>
+      <SelectItem value="Short-term (3-6 months)">Short-term delivery (3-6 months)</SelectItem>
+      <SelectItem value="Medium-term (6-12 months)">Medium-term delivery (6-12 months)</SelectItem>
+      <SelectItem value="Long-term (12+ months)">Long-term delivery (12+ months)</SelectItem>
+    </SelectContent>
+  </Select>
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="constructionProvince">Installation Province *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    Province/territory where modular units will be installed for building code compliance
+  </p>
+  <Select>
+    // ... existing province options
+  </Select>
+</div>
+
+// STEP 4: Developer Classification
+<div className="space-y-2">
+  <Label htmlFor="developerType">Developer Type *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    Type of development organization for customized sales approach and volume pricing
+  </p>
+  <Select>
+    // ... existing developer type options
+  </Select>
+</div>
+
+<div className="space-y-2">
+  <Label htmlFor="governmentPrograms">Government Programs *</Label>
+  <p className="text-sm text-gray-600 leading-relaxed">
+    Government housing program participation for compliance and incentive eligibility
+  </p>
+  <Select>
+    // ... existing government program options
+  </Select>
+</div>
+CRITICAL REQUIREMENTS:
+
+Maintain ALL existing form functionality and validation
+Use consistent spacing: space-y-2 for field groups
+Use standardized description styling: text-sm text-gray-600 leading-relaxed
+Preserve all existing field names and validation rules
+Ensure mobile responsiveness is maintained
+Keep all webhook payload structure unchanged
+
+PROFESSIONAL BENEFITS:
+
+Consistent field description placement and styling
+Clear business terminology aligned with modular construction
+Professional enterprise appearance
+Better user understanding of field requirements
+Improved accessibility for screen readers
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Test all form steps for proper description display
+Verify mobile responsiveness with new descriptions
+Confirm form validation and submission work correctly
+Test field descriptions are accessible with screen readers
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that standardizing field descriptions will NOT break any existing form functionality while creating consistent, professional field descriptions that match the modular construction business model.
