@@ -592,7 +592,7 @@ export default function AssessmentForm() {
               name="budgetRange"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel data-testid="label-budget-range">Budget Range (CAD) *</FormLabel>
+                  <FormLabel data-testid="label-budget-range">Project Budget Range (CAD) *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-budget-range">
@@ -617,24 +617,24 @@ export default function AssessmentForm() {
       case 3:
         return (
           <div className="space-y-6" data-testid="step-timeline-location" data-scroll-target="step-3">
-            <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-3">Timeline & Location</h3>
+            <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-3">Delivery Schedule & Location</h3>
             <FormField
               control={form.control}
               name="decisionTimeline"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel data-testid="label-decision-timeline">Decision Timeline *</FormLabel>
+                  <FormLabel data-testid="label-decision-timeline">Delivery Timeline *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-decision-timeline">
-                        <SelectValue placeholder="Select timeline..." />
+                        <SelectValue placeholder="Select delivery timeline..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="Immediate (0-3 months)">Immediate (0-3 months)</SelectItem>
-                      <SelectItem value="Short-term (3-6 months)">Short-term (3-6 months)</SelectItem>
-                      <SelectItem value="Medium-term (6-12 months)">Medium-term (6-12 months)</SelectItem>
-                      <SelectItem value="Long-term (12+ months)">Long-term (12+ months)</SelectItem>
+                      <SelectItem value="Immediate (0-3 months)">Immediate delivery (0-3 months)</SelectItem>
+                      <SelectItem value="Short-term (3-6 months)">Short-term delivery (3-6 months)</SelectItem>
+                      <SelectItem value="Medium-term (6-12 months)">Medium-term delivery (6-12 months)</SelectItem>
+                      <SelectItem value="Long-term (12+ months)">Long-term delivery (12+ months)</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -646,11 +646,11 @@ export default function AssessmentForm() {
               name="constructionProvince"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel data-testid="label-construction-province">Construction Province *</FormLabel>
+                  <FormLabel data-testid="label-construction-province">Installation Province *</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-construction-province">
-                        <SelectValue placeholder="Select province..." />
+                        <SelectValue placeholder="Select installation province..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
