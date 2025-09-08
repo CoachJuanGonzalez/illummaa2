@@ -364,6 +364,16 @@ export default function AssessmentForm() {
     }
   };
 
+  const getTimelineText = (timeline: string) => {
+    const timelineMap = {
+      "Immediate (0-3 months)": "immediate delivery needs",
+      "Short-term (3-6 months)": "short-term delivery requirements", 
+      "Medium-term (6-12 months)": "medium-term delivery schedule",
+      "Long-term (12+ months)": "long-term delivery planning"
+    };
+    return timelineMap[timeline] || timeline;
+  };
+
   const validateCurrentStep = async () => {
     const fields = getStepFields(currentStep);
     const result = await form.trigger(fields);
