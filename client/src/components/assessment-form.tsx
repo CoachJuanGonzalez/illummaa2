@@ -557,12 +557,15 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-unit-count">Number of Units *</FormLabel>
+                  <FormDescription>
+                    Total number of modular units required (50 minimum for commercial projects)
+                  </FormDescription>
                   <FormControl>
                     <Input 
                       type="number" 
                       min="1" 
                       max="1000" 
-                      placeholder="Enter number of units (1-1000)" 
+                      placeholder="Enter number of units (50-1000)" 
                       {...field}
                       onChange={(e) => {
                         const value = e.target.value;
@@ -603,6 +606,9 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-budget-range">Project Budget Range (CAD) *</FormLabel>
+                  <FormDescription>
+                    Total project budget for modular construction and site preparation
+                  </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-budget-range">
