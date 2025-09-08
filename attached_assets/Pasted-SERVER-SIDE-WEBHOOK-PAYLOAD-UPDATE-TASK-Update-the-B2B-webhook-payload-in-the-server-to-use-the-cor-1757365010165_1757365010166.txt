@@ -1,0 +1,39 @@
+SERVER-SIDE WEBHOOK PAYLOAD UPDATE
+TASK: Update the B2B webhook payload in the server to use the corrected field names for modular construction business.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves changing webhook payload structure sent to GoHighLevel. There is RISK of breaking CRM integration.
+YOU MUST:
+
+Identify the server-side webhook creation function (likely in server/routes.ts or server/storage.ts)
+ASK FOR EXPLICIT CONFIRMATION before changing webhook field names
+Ensure GoHighLevel workflow can handle both old and new field names during transition
+
+MODIFY server webhook payload creation:
+UPDATE the B2B webhook payload structure:
+typescript// FIND and UPDATE the webhook payload creation
+const webhookPayload = {
+  // Contact fields (unchanged)
+  first_name: sanitizeInput(formData.firstName),
+  last_name: sanitizeInput(formData.lastName),
+  email: sanitizeInput(formData.email),
+  phone: formatCanadianPhone(formData.phone),
+  company: sanitizeInput(formData.company),
+  source: "ILLUMMAA Website",
+  
+  // CHANGE these field names:
+  project_unit_count: parseInt(formData.projectUnitCount),
+  project_budget_range: formData.projectBudgetRange,    // WAS: budget_range_cad
+  delivery_timeline: formData.deliveryTimeline,         // WAS: decision_timeline
+  construction_province: formData.constructionProvince,
+  developer_type: formData.developerType,
+  government_programs: formData.governmentPrograms,
+  project_description: sanitizeInput(formData.projectDescription),
+  ai_priority_score: priorityData.score,
+  lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
+  submission_timestamp: new Date().toISOString(),
+  assigned_to: priorityData.assignedTo,
+  response_time: priorityData.responseTime,
+  priority_level: priorityData.priorityLevel
+};
+This server-side change will ensure the JSON payload sent to GoHighLevel uses the correct field names that match your updated custom fields in the CRM.
+The webhook integration will then properly map to the updated GoHighLevel custom fields we configured earlier.
