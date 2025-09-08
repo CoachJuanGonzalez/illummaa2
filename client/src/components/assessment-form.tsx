@@ -641,7 +641,7 @@ export default function AssessmentForm() {
                 <FormItem>
                   <FormLabel data-testid="label-decision-timeline">Delivery Timeline *</FormLabel>
                   <FormDescription>
-                    When do you need the modular units completed and delivered?
+                    When modular units need to be completed and delivered for project scheduling
                   </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
@@ -667,7 +667,7 @@ export default function AssessmentForm() {
                 <FormItem>
                   <FormLabel data-testid="label-construction-province">Installation Province *</FormLabel>
                   <FormDescription>
-                    Province/territory where modular units will be installed
+                    Province/territory where modular units will be installed for building code compliance
                   </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
