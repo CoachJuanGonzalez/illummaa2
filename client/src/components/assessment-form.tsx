@@ -389,6 +389,9 @@ export default function AssessmentForm() {
                       placeholder="150" 
                       {...field}
                       onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                      onFocus={(e) => {
+                        e.target.select(); // This safely selects all text for easy editing
+                      }}
                       data-testid="input-unit-count"
                     />
                   </FormControl>
