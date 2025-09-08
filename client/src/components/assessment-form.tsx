@@ -616,6 +616,13 @@ export default function AssessmentForm() {
                   />
                 </div>
               </div>
+              
+              {/* Visual emphasis for submission requirement */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                <p className="text-blue-800 text-sm font-medium text-center">
+                  Complete your submission below to activate this response timeline
+                </p>
+              </div>
             </div>
             
             {/* Response Time Commitment */}
@@ -831,18 +838,18 @@ export default function AssessmentForm() {
                       e.preventDefault();
                       form.handleSubmit(onSubmit)(e);
                     }}
-                    className={`btn-primary group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
+                    className={`w-full bg-green-600 hover:bg-green-700 text-lg py-4 font-semibold group transition-all duration-300 hover:scale-105 ${submitMutation.isPending ? 'button-loading' : ''}`}
                     disabled={submitMutation.isPending}
                     data-testid="button-submit"
                   >
                     {submitMutation.isPending ? (
                       <>
                         <div className="spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        Submitting...
+                        Submitting Assessment...
                       </>
                     ) : (
                       <>
-                        Submit Assessment
+                        Submit Assessment - Secure Your {getPriorityLevel()} Response Time
                         <Send className="ml-2 transition-transform duration-200 group-hover:translate-x-1" size={16} />
                       </>
                     )}
