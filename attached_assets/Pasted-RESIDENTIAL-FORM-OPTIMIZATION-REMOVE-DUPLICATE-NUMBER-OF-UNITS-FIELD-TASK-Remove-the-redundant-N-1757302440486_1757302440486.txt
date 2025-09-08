@@ -1,0 +1,104 @@
+RESIDENTIAL FORM OPTIMIZATION - REMOVE DUPLICATE NUMBER OF UNITS FIELD
+TASK: Remove the redundant "Number of Units" field from the residential form and use the value already captured in the Partner Qualification Assessment.
+⚠️ CRITICAL SAFETY WARNING ⚠️
+BEFORE MAKING ANY CHANGES: This modification involves changing the residential form structure and data flow. There is SIGNIFICANT RISK of breaking existing residential pathway functionality.
+YOU MUST:
+
+Analyze EVERY proposed change for potential conflicts with existing residential form submission
+Identify ANY risk to residential data collection and GoHighLevel integration
+ASK FOR EXPLICIT CONFIRMATION before implementing changes that could affect:
+
+Residential form validation and submission functionality
+Data mapping to GoHighLevel residential webhook
+Existing residential form state management
+Form field requirements and validation schema
+
+
+
+STOP AND REQUEST CONFIRMATION IF YOU DETECT ANY RISK TO:
+
+Residential form submission to GoHighLevel
+Data integrity in residential webhook payload
+Form validation requirements
+Existing residential pathway functionality
+
+PROBLEM ANALYSIS:
+The residential form currently asks for "Number of Units" again, even though this information was already captured in the main Partner Qualification Assessment. This creates poor UX by making users enter the same information twice.
+BUSINESS LOGIC:
+
+Use the projectUnitCount value from the main assessment form
+Display it in the residential form for confirmation (read-only)
+Remove the editable input field from residential form
+Ensure the original value is passed to GoHighLevel residential webhook
+
+MODIFY client/src/components/assessment-form.tsx:
+UPDATE the residential form to remove duplicate field and use existing data:
+typescript// In the residential form section, REPLACE the Number of Units input with:
+<div>
+  <Label>Number of Units</Label>
+  <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-gray-700">
+    {form.watch('projectUnitCount')} units (from assessment)
+  </div>
+  <p className="text-xs text-gray-500 mt-1">
+    Using the unit count from your Partner Qualification Assessment
+  </p>
+</div>
+
+// REMOVE this field entirely:
+<Input 
+  type="number" 
+  id="res_units" 
+  placeholder="Number of Units (1-49)" 
+  min="1" 
+  max="49" 
+  value={residentialData.units}
+  onChange={(e) => setResidentialData({...residentialData, units: e.target.value})}
+  required 
+/>
+UPDATE the residential form submission to use the assessment data:
+typescriptconst handleResidentialSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  
+  const residentialPayload = {
+    first_name: form.getValues('firstName'),
+    last_name: form.getValues('lastName'),
+    email: form.getValues('email'),
+    phone: form.getValues('phone'),
+    company: form.getValues('company'),
+    source: "ILLÜMMAA Website - Residential",
+    project_unit_count: form.getValues('projectUnitCount'), // USE assessment value
+    construction_province: residentialData.province,
+    project_description: residentialData.description,
+    residential_pathway: "In-House Service",
+    lead_type: "B2C Residential",
+    submission_timestamp: new Date().toISOString()
+  }
+  
+  // Rest of submission logic remains the same
+}
+CRITICAL REQUIREMENTS:
+
+Remove duplicate Number of Units input from residential form
+Display the assessment value as read-only confirmation
+Use the original projectUnitCount in residential webhook payload
+Maintain all existing residential form validation for other fields
+Preserve residential pathway functionality and GoHighLevel integration
+Ensure data integrity in residential submissions
+
+USER EXPERIENCE IMPROVEMENTS:
+
+Eliminates redundancy - No duplicate data entry required
+Shows data continuity - User sees their assessment value carried forward
+Reduces form friction - Faster residential form completion
+Maintains data accuracy - Uses single source of truth for unit count
+
+MANDATORY VERIFICATION AFTER IMPLEMENTATION:
+
+Test that residential form displays the correct unit count from assessment
+Test that residential form submission includes the correct project_unit_count
+Verify GoHighLevel residential webhook receives proper unit count data
+Confirm other residential form fields still validate correctly
+Ensure residential success state still functions properly
+
+⚠️ FINAL SAFETY CHECK ⚠️
+Before proceeding, confirm that removing the duplicate Number of Units field will NOT break residential form submission, data integrity, or GoHighLevel integration while improving the user experience.Retry
