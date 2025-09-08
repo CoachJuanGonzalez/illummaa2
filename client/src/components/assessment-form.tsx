@@ -184,21 +184,31 @@ export default function AssessmentForm() {
 
   const getPriorityMessage = () => {
     if (priorityScore >= 100) {
-      return "PRIORITY PROJECT: Senior Sales Manager will contact within 1 hour";
+      return "PRIORITY PROJECT: Senior Sales Manager will contact within 1 hour after assessment submission";
     } else if (priorityScore >= 50) {
-      return "QUALIFIED PROJECT: Sales Representative will contact within 4 hours";
+      return "QUALIFIED PROJECT: Sales Representative will contact within 4 hours after assessment submission";
     } else {
-      return "FUTURE OPPORTUNITY: Lead Development team will contact within 24 hours";
+      return "FUTURE OPPORTUNITY: Lead Development team will contact within 24 hours after assessment submission";
     }
   };
 
   const getResponseCommitment = () => {
     if (priorityScore >= 100) {
-      return "Senior Sales Manager will respond within 1 hour";
+      return "Senior Sales Manager will respond within 1 hour after assessment submission";
     } else if (priorityScore >= 50) {
-      return "Sales Representative will respond within 4 hours";
+      return "Sales Representative will respond within 4 hours after assessment submission";
     } else {
-      return "Lead Development Team will respond within 24 hours";
+      return "Lead Development Team will respond within 24 hours after assessment submission";
+    }
+  };
+
+  const getPriorityLevel = () => {
+    if (priorityScore >= 100) {
+      return "PRIORITY";
+    } else if (priorityScore >= 50) {
+      return "QUALIFIED";
+    } else {
+      return "STANDARD";
     }
   };
 
