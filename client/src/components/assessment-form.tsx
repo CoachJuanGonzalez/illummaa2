@@ -417,8 +417,13 @@ export default function AssessmentForm() {
       // Add step transition animation
       setIsStepChanging(true);
       setTimeout(() => {
-        setCurrentStep(currentStep + 1);
+        const newStep = currentStep + 1;
+        setCurrentStep(newStep);
         setIsStepChanging(false);
+        // Auto-scroll to next step
+        universalScrollToContent(`[data-scroll-target="step-${newStep}"]`, {
+          delay: 100
+        });
       }, 200);
     }
   };
@@ -452,7 +457,7 @@ export default function AssessmentForm() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-6 fade-in-up" data-testid="step-contact-info">
+          <div className="space-y-6 fade-in-up" data-testid="step-contact-info" data-scroll-target="step-1">
             <h3 className="font-display font-bold text-2xl mb-6 slide-in-right" data-testid="heading-step-1">Contact Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
@@ -534,7 +539,7 @@ export default function AssessmentForm() {
 
       case 2:
         return (
-          <div className="space-y-6" data-testid="step-project-details">
+          <div className="space-y-6" data-testid="step-project-details" data-scroll-target="step-2">
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-2">Project Details</h3>
             <FormField
               control={form.control}
@@ -611,7 +616,7 @@ export default function AssessmentForm() {
 
       case 3:
         return (
-          <div className="space-y-6" data-testid="step-timeline-location">
+          <div className="space-y-6" data-testid="step-timeline-location" data-scroll-target="step-3">
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-3">Timeline & Location</h3>
             <FormField
               control={form.control}
@@ -673,7 +678,7 @@ export default function AssessmentForm() {
 
       case 4:
         return (
-          <div className="space-y-6" data-testid="step-developer-classification">
+          <div className="space-y-6" data-testid="step-developer-classification" data-scroll-target="step-4">
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-4">Developer Classification</h3>
             <FormField
               control={form.control}
@@ -725,7 +730,7 @@ export default function AssessmentForm() {
 
       case 5:
         return (
-          <div className="space-y-6" data-testid="step-submission">
+          <div className="space-y-6" data-testid="step-submission" data-scroll-target="step-5">
             <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-step-5">Project Description & Submission</h3>
             {/* EMERGENCY: Isolated Project Description Component */}
             <div className="space-y-2">
@@ -864,7 +869,7 @@ export default function AssessmentForm() {
 
   if (isSubmitted) {
     return (
-      <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment-success">
+      <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment-success" data-scroll-target="b2b-success">
         <div className="container mx-auto px-6">
           <div className="max-w-2xl mx-auto text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -1013,7 +1018,7 @@ export default function AssessmentForm() {
 
           {/* RESIDENTIAL PATHWAY - COMPLETE CONDITIONAL REPLACEMENT */}
           {showResidentialOptions && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
-            <div className="space-y-6 mt-8">
+            <div className="space-y-6 mt-8" data-scroll-target="residential-options">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
                 <p className="text-gray-600">ILLÜMMAA offers two pathways for residential projects:</p>
@@ -1048,7 +1053,7 @@ export default function AssessmentForm() {
           )}
 
           {residentialPathway === 'in-house' && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
-            <div className="space-y-6 mt-8">
+            <div className="space-y-6 mt-8" data-scroll-target="residential-form">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
                 <p className="text-gray-600">We'll connect you with our residential specialists.</p>
@@ -1109,7 +1114,7 @@ export default function AssessmentForm() {
 
           {/* SUCCESS STATES - REPLACE ALL CONTENT */}
           {residentialSubmissionSuccess && (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4" data-scroll-target="residential-success">
               <div className="max-w-md w-full space-y-8 text-center">
                 <div className="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
                   <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1135,7 +1140,7 @@ export default function AssessmentForm() {
           )}
 
           {remaxRedirectSuccess && (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4" data-scroll-target="remax-success">
               <div className="max-w-md w-full space-y-8 text-center">
                 <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">
                   <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
