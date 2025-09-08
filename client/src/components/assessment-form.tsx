@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -624,6 +624,9 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-decision-timeline">Delivery Timeline *</FormLabel>
+                  <FormDescription>
+                    When do you need the modular units completed and delivered?
+                  </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-decision-timeline">
@@ -647,6 +650,9 @@ export default function AssessmentForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel data-testid="label-construction-province">Installation Province *</FormLabel>
+                  <FormDescription>
+                    Province/territory where modular units will be installed
+                  </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-construction-province">

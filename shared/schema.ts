@@ -87,14 +87,14 @@ export const assessmentSchema = z.object({
     "$15M - $30 Million",
     "$30M - $50 Million",
     "Over $50 Million"
-  ], { required_error: "Please select a budget range" }),
+  ], { required_error: "Please select a project budget range" }),
   
   decisionTimeline: z.enum([
     "Immediate (0-3 months)",
     "Short-term (3-6 months)",
     "Medium-term (6-12 months)", 
     "Long-term (12+ months)"
-  ], { required_error: "Please select a decision timeline" }),
+  ], { required_error: "Please select a delivery timeline" }),
   
   constructionProvince: z.enum([
     "Ontario",
@@ -110,7 +110,7 @@ export const assessmentSchema = z.object({
     "Northwest Territories",
     "Nunavut",
     "Yukon"
-  ], { required_error: "Please select a province" }),
+  ], { required_error: "Please select an installation province" }),
   
   developerType: z.enum([
     "Commercial Developer (Large Projects)",
