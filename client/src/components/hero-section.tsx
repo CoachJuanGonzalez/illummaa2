@@ -1,4 +1,4 @@
-import { Handshake, Play, Award, CheckCircle, Trophy } from "lucide-react";
+import { Handshake, Play } from "lucide-react";
 
 export default function HeroSection() {
   const scrollToAssessment = () => {
@@ -27,44 +27,22 @@ export default function HeroSection() {
           <h1 className="font-display font-bold text-5xl md:text-7xl text-gray-900 mb-6 leading-tight" data-testid="heading-hero-title" style={{color: '#1a365d'}}>
             The Future of Housing Is Here.
           </h1>
-          <p className="text-2xl md:text-3xl mb-8 font-medium" data-testid="text-hero-subtitle" style={{color: '#2d3748'}}>
+          <p className="text-2xl md:text-3xl mb-12 font-medium" data-testid="text-hero-subtitle" style={{color: '#2d3748'}}>
             Your Home, Your Lifestyle
           </p>
           
-          {/* Authority Badges */}
-          <div className="flex flex-wrap gap-4 mb-10" data-testid="container-authority-badges">
-            <div className="hero-badge rounded-2xl px-6 py-3" data-testid="badge-csa-certified">
-              <span className="font-medium">
-                <Award className="inline mr-2" size={16} style={{color: '#1a365d'}} />
-                CSA Certified
-              </span>
-            </div>
-            <div className="hero-badge rounded-2xl px-6 py-3" data-testid="badge-government-approved">
-              <span className="font-medium">
-                <CheckCircle className="inline mr-2" size={16} style={{color: '#1a365d'}} />
-                Government Approved
-              </span>
-            </div>
-            <div className="hero-badge rounded-2xl px-6 py-3" data-testid="badge-units-delivered">
-              <span className="font-medium">
-                <Trophy className="inline mr-2" size={16} style={{color: '#1a365d'}} />
-                500+ Units Delivered
-              </span>
-            </div>
-          </div>
-          
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4" data-testid="container-hero-ctas">
+          {/* Enhanced CTAs */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center sm:justify-start" data-testid="container-hero-ctas">
             <button 
               onClick={scrollToAssessment} 
-              className="btn-primary px-8 py-4 rounded-2xl text-white font-semibold text-lg flex items-center justify-center"
+              className="btn-primary px-10 py-5 rounded-2xl text-white font-bold text-xl flex items-center justify-center transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               data-testid="button-qualify-partnership"
             >
-              <Handshake className="mr-3" size={20} />
+              <Handshake className="mr-3" size={24} />
               Qualify for Developer Partnership
             </button>
-            <button className="hero-secondary-btn px-8 py-4 rounded-2xl font-semibold text-lg transition-all flex items-center justify-center" data-testid="button-watch-film">
-              <Play className="mr-3" size={20} style={{color: '#1a365d'}} />
+            <button className="hero-secondary-btn px-10 py-5 rounded-2xl font-semibold text-xl transition-all duration-200 flex items-center justify-center hover:bg-white hover:shadow-lg" data-testid="button-watch-film">
+              <Play className="mr-3" size={24} style={{color: '#1a365d'}} />
               Watch the Film
             </button>
           </div>
