@@ -1,0 +1,77 @@
+URGENT FIX: Mobile navigation scroll positioning broken after Leadership section addition.
+
+CRITICAL ISSUE:
+After adding the Leadership section, mobile hamburger menu navigation doesn't scroll to correct section starting points. All navigation links scroll past the intended section start on mobile devices.
+
+CURRENT BEHAVIOR:
+✅ Desktop/Laptop: Navigation works correctly, scrolls to proper section starts
+❌ Mobile: All navigation links scroll too far down, missing section beginnings
+❌ Tablet/iPad: Needs verification and potential fixing
+
+REQUIRED FIX:
+1. Investigate mobile scroll offset calculations after Leadership section addition
+2. Fix mobile navigation to scroll to exact section starting points
+3. Ensure proper scroll positioning across ALL device types
+4. Maintain existing desktop/laptop functionality (don't break what works)
+
+DEVICE TESTING REQUIREMENTS:
+- ✅ Desktop: Verify still works correctly
+- ✅ Laptop: Verify still works correctly  
+- 🔧 Mobile phones: Fix scroll positioning to section starts
+- 🔧 iPad/Tablets: Fix scroll positioning to section starts
+- 🔧 All screen sizes: Comprehensive responsive testing
+
+LIKELY CAUSE ANALYSIS:
+- Leadership section addition may have affected scroll calculations
+- Mobile header height offset calculations might be incorrect
+- Sticky header behavior differences between desktop and mobile
+- Viewport height calculations for mobile scroll positioning
+
+TECHNICAL INVESTIGATION:
+1. Check scroll offset calculations in navigation component
+2. Verify mobile header height compensation
+3. Review smooth scroll behavior implementation
+4. Test section anchor positioning across devices
+5. Validate viewport-specific scroll calculations
+
+NAVIGATION LINKS TO FIX:
+Assessment • Why • Leadership • Models • Developers • Partnership • Contact
+(All must scroll to proper section starting points on mobile)
+
+IMPLEMENTATION REQUIREMENTS:
+- Fix mobile scroll positioning without breaking desktop functionality
+- Ensure consistent behavior across all mobile devices
+- Test on various screen sizes (iPhone, Android, iPad)
+- Maintain smooth scroll animation
+- Preserve existing styling and user experience
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ NAVIGATION: Critical fix for user experience
+⚠️ DEVICE-TESTING: Must work on all devices properly
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Navigation or scrolling functionality could be impacted further
+- Mobile responsiveness could be compromised
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+PRIORITY: HIGH - This affects user experience on mobile devices
+GOAL: Perfect navigation scroll positioning across ALL devices while maintaining existing desktop functionality.
+
+After fixing this navigation issue, we can proceed with the tagline change from "Light Living. Elevated." to "Your Home, Your Lifestyle".
