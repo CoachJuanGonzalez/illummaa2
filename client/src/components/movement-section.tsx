@@ -1,27 +1,13 @@
-import { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ResidentialSection from "./residential-section";
 
 export default function MovementSection() {
-  const [showResidentialSection, setShowResidentialSection] = useState(false);
-  const residentialSectionRef = useRef<HTMLDivElement>(null);
-  
-  const handleLearnMore = () => {
-    setShowResidentialSection(true); // One-way reveal to prevent data loss
-  };
-
-  useEffect(() => {
-    if (showResidentialSection && residentialSectionRef.current) {
-      // Auto-scroll to residential section when it becomes visible
-      setTimeout(() => {
-        residentialSectionRef.current?.scrollIntoView({ 
-          behavior: "smooth", 
-          block: "start" 
-        });
-      }, 100);
+  const scrollToAssessment = () => {
+    const element = document.getElementById("assessment");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
     }
-  }, [showResidentialSection]);
+  };
 
   return (
     <section className="py-20" data-testid="section-movement">
@@ -65,28 +51,15 @@ export default function MovementSection() {
                 </div>
               </div>
               <Button 
-                onClick={handleLearnMore} 
+                onClick={scrollToAssessment} 
                 className="btn-primary px-8 py-4 rounded-2xl text-white font-semibold text-lg"
-                data-testid="button-learn-more"
+                data-testid="button-join-movement"
               >
-                Learn More
+                Join the Movement
               </Button>
             </div>
           </div>
         </div>
-
-        {/* Residential Section - Reveals when "Learn More" is clicked */}
-        {showResidentialSection && (
-          <div ref={residentialSectionRef} className="container mx-auto px-6 mt-12">
-            <div className="max-w-4xl mx-auto">
-              <ResidentialSection
-                projectUnitCount={0}
-                budgetRange="Under $5 Million"
-                leadType="Consumer Information Request Form"
-              />
-            </div>
-          </div>
-        )}
       </div>
     </section>
   );
