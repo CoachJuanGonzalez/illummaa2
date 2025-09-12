@@ -60,6 +60,13 @@ export default function StickyHeader() {
               Why
             </button>
             <button 
+              onClick={() => scrollToSection("leadership")} 
+              className="text-foreground hover:text-primary transition-colors"
+              data-testid="nav-leadership"
+            >
+              Leadership
+            </button>
+            <button 
               onClick={() => scrollToSection("models")} 
               className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-models"
@@ -116,6 +123,13 @@ export default function StickyHeader() {
                 data-testid="nav-mobile-why"
               >
                 Why
+              </button>
+              <button 
+                onClick={() => scrollToSection("leadership")} 
+                className="text-left text-foreground hover:text-primary transition-colors"
+                data-testid="nav-mobile-leadership"
+              >
+                Leadership
               </button>
               <button 
                 onClick={() => scrollToSection("models")} 
