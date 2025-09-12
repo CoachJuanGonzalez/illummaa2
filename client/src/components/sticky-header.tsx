@@ -9,9 +9,30 @@ export default function StickyHeader() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // Close mobile menu first to get accurate header height
+      setMobileMenuOpen(false);
+      
+      // Wait a frame for menu to close, then calculate scroll position
+      requestAnimationFrame(() => {
+        // Get the actual sticky bar height (not including expanded menu)
+        const header = document.querySelector('header');
+        const headerHeight = header ? header.offsetHeight : 80; // Fallback to 80px
+        
+        // Add extra offset for mobile devices to ensure proper positioning
+        const isMobile = window.innerWidth < 768; // md breakpoint
+        const extraOffset = isMobile ? 24 : 10; // Slightly larger offset for mobile
+        
+        // Calculate the target scroll position using getBoundingClientRect for accuracy
+        const elementRect = element.getBoundingClientRect();
+        const targetPosition = elementRect.top + window.scrollY - headerHeight - extraOffset;
+        
+        // Scroll to the calculated position
+        window.scrollTo({
+          top: Math.max(0, targetPosition), // Ensure we don't scroll past the top
+          behavior: "smooth"
+        });
+      });
     }
-    setMobileMenuOpen(false);
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
