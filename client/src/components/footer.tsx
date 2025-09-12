@@ -17,8 +17,8 @@ export default function Footer() {
             <div className="flex items-center space-x-3 mb-6" data-testid="footer-logo">
               <div className="w-8 h-8">
                 <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem">
-                  <circle cx="16" cy="10" r="3" fill="#FFFFFF"/>
-                  <circle cx="48" cy="10" r="3" fill="#FFFFFF"/>
+                  <circle cx="22" cy="10" r="3" fill="#FFFFFF"/>
+                  <circle cx="42" cy="10" r="3" fill="#FFFFFF"/>
                   <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round"/>
                 </svg>
               </div>

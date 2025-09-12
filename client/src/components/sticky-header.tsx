@@ -34,8 +34,8 @@ export default function StickyHeader() {
             <div className="flex items-center space-x-3 hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
               <div className="w-8 h-8">
                 <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem" data-testid="logo-svg">
-                  <circle cx="16" cy="10" r="3" fill="#2C5530"/>
-                  <circle cx="48" cy="10" r="3" fill="#2C5530"/>
+                  <circle cx="22" cy="10" r="3" fill="#2C5530"/>
+                  <circle cx="42" cy="10" r="3" fill="#2C5530"/>
                   <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#2C5530" strokeWidth="6" strokeLinecap="round"/>
                 </svg>
               </div>
