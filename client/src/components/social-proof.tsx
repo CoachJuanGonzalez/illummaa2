@@ -21,7 +21,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-cost-efficiency">Cost Efficiency</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-cost-description">
-              Modular housing is generally more affordable than traditional construction methods, thanks to the ability to mass-produce modules in factories and reduce waste.
+              Modular housing is generally more affordable than traditional construction methods, thanks to the ability to mass-produce modules in factories and reduce waste. 30-40% more affordable for the end user.
             </p>
             <div className="text-primary font-semibold" data-testid="text-cost-metric">30-40% More Affordable</div>
           </div>
