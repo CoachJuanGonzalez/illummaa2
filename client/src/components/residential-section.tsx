@@ -45,11 +45,11 @@ export default function ResidentialSection({
     e.preventDefault();
     
     const residentialPayload = {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      company: "",
+      first_name: "Consumer",
+      last_name: "Inquiry",
+      email: "consumer.inquiry@illummaa.com",
+      phone: "0000000000",
+      company: "Consumer Inquiry",
       source: "ILLÜMMAA Website - Residential (Learn More)",
       project_unit_count: projectUnitCount,
       budget_range: budgetRange,
