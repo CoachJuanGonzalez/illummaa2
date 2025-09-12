@@ -1,12 +1,12 @@
+import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function MovementSection() {
-  const scrollToAssessment = () => {
-    const element = document.getElementById("assessment");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+  const [showResidentialSection, setShowResidentialSection] = useState(false);
+  
+  const handleLearnMore = () => {
+    setShowResidentialSection(!showResidentialSection);
   };
 
   return (
@@ -51,11 +51,11 @@ export default function MovementSection() {
                 </div>
               </div>
               <Button 
-                onClick={scrollToAssessment} 
+                onClick={handleLearnMore} 
                 className="btn-primary px-8 py-4 rounded-2xl text-white font-semibold text-lg"
-                data-testid="button-join-movement"
+                data-testid="button-learn-more"
               >
-                Join the Movement
+                Learn More
               </Button>
             </div>
           </div>
