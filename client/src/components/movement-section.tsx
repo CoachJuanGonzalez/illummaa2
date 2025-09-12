@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ResidentialSection from "./residential-section";
 
 export default function MovementSection() {
   const [showResidentialSection, setShowResidentialSection] = useState(false);
@@ -60,6 +61,19 @@ export default function MovementSection() {
             </div>
           </div>
         </div>
+
+        {/* Residential Section - Reveals when "Learn More" is clicked */}
+        {showResidentialSection && (
+          <div className="container mx-auto px-6 mt-12">
+            <div className="max-w-4xl mx-auto">
+              <ResidentialSection
+                projectUnitCount={0}
+                budgetRange="Under $5 Million"
+                leadType="Consumer Information Request Form"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
