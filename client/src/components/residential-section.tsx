@@ -156,7 +156,7 @@ export default function ResidentialSection({
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-primary/50" onClick={() => handleInHouseSelection()}>
+            <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-primary/50" onClick={() => handleInHouseSelection()} data-testid="card-inhouse">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-200">In-House First-Time Home Buyer Service</h3>
                 <ul className="space-y-2 text-gray-600 mb-4">
@@ -164,11 +164,16 @@ export default function ResidentialSection({
                   <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• No real estate agents involved</li>
                   <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• For clients preferring direct builder relationship</li>
                 </ul>
-                <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">Choose In-House Service</Button>
+                <Button 
+                  className="w-full interactive-hover group-hover:scale-105 transition-all duration-200"
+                  data-testid="button-choose-inhouse"
+                >
+                  Choose In-House Service
+                </Button>
               </CardContent>
             </Card>
             
-            <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-accent/50" onClick={() => handleRemaxSelection()}>
+            <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-accent/50" onClick={() => handleRemaxSelection()} data-testid="card-remax">
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-3 group-hover:text-accent transition-colors duration-200">Remax Partnership Program</h3>
                 <ul className="space-y-2 text-gray-600 mb-4">
@@ -176,7 +181,12 @@ export default function ResidentialSection({
                   <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Land acquisition assistance</li>
                   <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Complete guided home buying process</li>
                 </ul>
-                <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">Choose Remax Partnership</Button>
+                <Button 
+                  className="w-full interactive-hover group-hover:scale-105 transition-all duration-200"
+                  data-testid="button-choose-remax"
+                >
+                  Choose Remax Partnership
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -205,7 +215,7 @@ export default function ResidentialSection({
             <div>
               <Label htmlFor="res_province">Construction Province</Label>
               <Select value={residentialData.province} onValueChange={(value) => setResidentialData({...residentialData, province: value})}>
-                <SelectTrigger>
+                <SelectTrigger data-testid="select-province">
                   <SelectValue placeholder="Select Province..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -234,10 +244,11 @@ export default function ResidentialSection({
                 rows={4}
                 value={residentialData.description}
                 onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
+                data-testid="input-project-description"
               />
             </div>
             
-            <Button type="submit" className="w-full">Submit Residential Inquiry</Button>
+            <Button type="submit" className="w-full" data-testid="button-submit-residential">Submit Residential Inquiry</Button>
           </form>
         </div>
       )}

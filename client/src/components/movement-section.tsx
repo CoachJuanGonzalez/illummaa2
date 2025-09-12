@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ResidentialSection from "./residential-section";
 
 export default function MovementSection() {
   const [showResidentialSection, setShowResidentialSection] = useState(false);
+  const residentialSectionRef = useRef<HTMLDivElement>(null);
   
   const handleLearnMore = () => {
-    setShowResidentialSection(!showResidentialSection);
+    setShowResidentialSection(true); // One-way reveal to prevent data loss
   };
+
+  useEffect(() => {
+    if (showResidentialSection && residentialSectionRef.current) {
+      // Auto-scroll to residential section when it becomes visible
+      setTimeout(() => {
+        residentialSectionRef.current?.scrollIntoView({ 
+          behavior: "smooth", 
+          block: "start" 
+        });
+      }, 100);
+    }
+  }, [showResidentialSection]);
 
   return (
     <section className="py-20" data-testid="section-movement">
@@ -64,7 +77,7 @@ export default function MovementSection() {
 
         {/* Residential Section - Reveals when "Learn More" is clicked */}
         {showResidentialSection && (
-          <div className="container mx-auto px-6 mt-12">
+          <div ref={residentialSectionRef} className="container mx-auto px-6 mt-12">
             <div className="max-w-4xl mx-auto">
               <ResidentialSection
                 projectUnitCount={0}
