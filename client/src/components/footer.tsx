@@ -93,11 +93,20 @@ export default function Footer() {
               </li>
               <li className="text-white/80 flex items-center" data-testid="contact-email">
                 <Mail className="mr-2" size={16} />
-                info@illummaa.com
+                <a href="mailto:info@illummaa.com" className="hover:text-white transition-colors">
+                  info@illummaa.com
+                </a>
               </li>
               <li className="text-white/80 flex items-center" data-testid="contact-location">
                 <MapPin className="mr-2" size={16} />
-                17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
+                <a 
+                  href="https://maps.google.com/?q=17550+2nd+Floor+Trans-Canada+Hwy,+Kirkland,+Quebec,+H9J+3A3" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
+                </a>
               </li>
             </ul>
           </div>
