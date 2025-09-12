@@ -6,33 +6,25 @@ export default function GovernmentPrograms() {
       name: "Housing Accelerator Fund",
       description: "$4.4B program compatibility",
       icon: <Rocket className="text-blue-600" size={24} />,
-      iconBg: "bg-blue-100",
-      action: "Learn More",
-      actionColor: "text-blue-600"
+      iconBg: "bg-blue-100"
     },
     {
       name: "Build Canada Homes", 
       description: "$6B+ program eligibility",
       icon: <Home className="text-green-600" size={24} />,
-      iconBg: "bg-green-100",
-      action: "Apply Now",
-      actionColor: "text-green-600"
+      iconBg: "bg-green-100"
     },
     {
       name: "Provincial Programs",
       description: "Regional incentive programs", 
       icon: <MapPin className="text-purple-600" size={24} />,
-      iconBg: "bg-purple-100",
-      action: "Explore",
-      actionColor: "text-purple-600"
+      iconBg: "bg-purple-100"
     },
     {
       name: "Municipal Fast-Track",
       description: "Expedited approvals",
       icon: <Clock className="text-orange-600" size={24} />,
-      iconBg: "bg-orange-100", 
-      action: "Get Started",
-      actionColor: "text-orange-600"
+      iconBg: "bg-orange-100"
     }
   ];
 
@@ -61,12 +53,9 @@ export default function GovernmentPrograms() {
               <h3 className="font-semibold text-lg mb-3" data-testid={`heading-program-${index}-name`}>
                 {program.name}
               </h3>
-              <p className="text-muted-foreground text-sm mb-3" data-testid={`text-program-${index}-description`}>
+              <p className="text-muted-foreground text-sm" data-testid={`text-program-${index}-description`}>
                 {program.description}
               </p>
-              <div className={`${program.actionColor} font-semibold cursor-pointer`} data-testid={`link-program-${index}-action`}>
-                {program.action}
-              </div>
             </div>
           ))}
         </div>
