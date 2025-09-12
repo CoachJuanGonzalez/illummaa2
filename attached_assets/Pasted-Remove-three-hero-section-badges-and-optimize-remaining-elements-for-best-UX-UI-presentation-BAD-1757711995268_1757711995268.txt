@@ -1,0 +1,88 @@
+Remove three hero section badges and optimize remaining elements for best UX/UI presentation.
+
+BADGES TO REMOVE:
+- "CSA Certified" 
+- "Government Approved"
+- "500+ Units Delivered"
+
+CURRENT LAYOUT ISSUE:
+After removing these three trust badges, the hero section will have empty space that needs to be optimized for better visual balance and user experience.
+
+UX/UI OPTIMIZATION RECOMMENDATIONS:
+
+OPTION 1 - ENHANCED CTA FOCUS (RECOMMENDED):
+- Remove all three badges completely
+- Increase prominence of existing CTAs:
+  * "Qualify for Developer Partnership" (green button)
+  * "Watch the Film" (white button)
+- Center CTAs with improved spacing
+- Add subtle animation or enhanced styling to draw attention
+- Create better visual hierarchy focusing on conversion actions
+
+OPTION 2 - STREAMLINED HERO CONTENT:
+- Remove badges and optimize vertical spacing
+- Improve text readability with better contrast/positioning
+- Focus attention on main headline and tagline
+- Create cleaner, more minimalist aesthetic
+- Enhance mobile responsiveness
+
+OPTION 3 - ADD NEW COMPELLING ELEMENT:
+- Replace badges with single powerful statistic
+- Example: "Transforming Canada's Housing Future" 
+- Or: "72-Hour Assembly • 30-40% Cost Savings"
+- Keep it concise and impactful
+
+RECOMMENDED IMPLEMENTATION (OPTION 1):
+1. Remove all three badge elements completely
+2. Reorganize CTA buttons for better visual balance:
+   - Maintain horizontal layout on desktop
+   - Ensure proper stacking on mobile
+   - Increase button prominence with improved styling
+   - Add subtle hover effects for interactivity
+3. Optimize spacing and alignment:
+   - Better center alignment of remaining elements
+   - Improved vertical rhythm and spacing
+   - Enhanced mobile responsiveness
+4. Focus on conversion optimization:
+   - Make "Qualify for Developer Partnership" more prominent
+   - Ensure clear visual hierarchy directing to primary action
+
+LAYOUT ADJUSTMENTS NEEDED:
+- Rebalance hero section spacing after badge removal
+- Ensure proper alignment of remaining elements
+- Maintain responsive behavior across all devices
+- Optimize for conversion rather than just information display
+- Create cleaner, more focused user experience
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+⚠️ VISUAL-BALANCE: Ensure hero section remains visually appealing
+⚠️ CONVERSION: Maintain focus on primary conversion goals
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Visual layout or conversion elements could be impacted
+- Mobile responsiveness could be compromised
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+UX/UI EXPERT RECOMMENDATION:
+Implement Option 1 - Enhanced CTA Focus for optimal conversion optimization and cleaner user experience. This creates a more focused, action-oriented hero section that drives visitors toward the primary business goal.
+
+IMPLEMENTATION GOAL:
+Remove trust badges and create a cleaner, more conversion-focused hero section that maintains visual balance and improves user experience across all devices.
