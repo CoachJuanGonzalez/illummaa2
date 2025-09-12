@@ -1,0 +1,102 @@
+Add "Leadership" section to single-page ILLÜMMAA website in optimal UX position.
+
+IMPLEMENTATION REQUIREMENT:
+Add new "Leadership" section to the existing single-page website structure in strategically optimal position for B2B trust-building flow.
+
+SECTION PLACEMENT:
+Insert Leadership section after "Why ILLÜMMAA" section and before "Partner Qualification Assessment" section for optimal B2B conversion psychology (Know → Like → Trust → Buy progression).
+
+NAVIGATION UPDATE:
+Add "Leadership" link to header navigation between "Why" and "Models":
+Assessment • Why • Leadership • Models • Developers • Partnership • Contact
+
+EXECUTIVE TEAM CONTENT:
+**Section Title:** "Leadership Team"
+**Subtitle:** "Experienced executives driving Canada's modular construction transformation"
+
+**Executive Management:**
+- **Chairman:** Baillargeon-Kemener Family Office
+- **Operating Manager:** Howard Smolar  
+- **Major Accounts and Business Development:** Marvin Garellek
+- **Sales Account Manager:** Juan Grey
+- **Global Business Development:** Ian Lajoie
+- **Corporate Sales Manager:** Choukhrate Rasoulev
+- **Quality and Production and International Relations:** Lili Zunhua
+
+UX/UI DESIGN SPECIFICATIONS:
+**Visual Design Approach:**
+- Clean white background (contrast with previous blue "Why ILLÜMMAA" section)
+- Professional, enterprise-grade presentation suitable for developer partnerships
+- Consistent with ILLÜMMAA's premium aesthetic and #2C5530 color scheme
+
+**Layout Structure:**
+1. **Section Header:** Centered, consistent with other section styling
+2. **Executive Grid:** Responsive layout optimized for professional presentation
+   - Desktop: 3-4 columns for optimal viewing
+   - Tablet: 2 columns maintaining readability  
+   - Mobile: 1 column with proper spacing
+
+**Executive Card Design:**
+- Professional placeholder avatar circles (consistent size)
+- Name in bold, title/role underneath in lighter text
+- Subtle card shadows matching ILLÜMMAA design language
+- Hover effects for interactivity (subtle scale or shadow change)
+- Consistent spacing and typography with existing sections
+
+**Typography Hierarchy:**
+- Executive names: Semi-bold, prominent sizing
+- Titles/roles: Regular weight, slightly smaller, professional gray
+- Consistent with existing ILLÜMMAA font family (Montserrat/Inter)
+
+**Professional Presentation:**
+- Executive titles presented as full descriptive roles (not abbreviated)
+- Logical grouping by function (Leadership, Business Development, Operations)
+- Professional spacing between cards for easy scanning
+- Authority-building layout emphasizing experience and expertise
+
+TECHNICAL IMPLEMENTATION:
+1. Add new Leadership section component to single-page structure
+2. Integrate with existing navigation scroll functionality  
+3. Update smooth scroll behavior to new section anchor
+4. Ensure responsive design across all devices
+5. Apply consistent spacing and styling with other sections
+6. Maintain single-page architecture integrity
+
+CONTENT PRESENTATION OPTIMIZATION:
+- Group executives by function for easy understanding
+- Present titles in full for authority building
+- Use professional placeholder imagery until photos available
+- Emphasize diversity of expertise (sales, operations, international)
+- Create trust through comprehensive leadership representation
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+⚠️ NAVIGATION: Ensure smooth scroll functionality works properly
+⚠️ SINGLE-PAGE: Maintain single-page architecture integrity
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Navigation or scrolling functionality could be impacted
+- Mobile responsiveness could be compromised
+- SEO or performance metrics might degrade
+- Single-page architecture might be disrupted
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+IMPLEMENTATION GOAL:
+Create professional Leadership section that builds trust with B2B developers while maintaining ILLÜMMAA's premium brand presentation and optimal user experience flow.
