@@ -1,0 +1,77 @@
+Update footer contact information AND fix broken navigation links in footer section.
+
+CONTACT INFO UPDATES:
+
+ADDRESS UPDATE:
+CHANGE FROM: "Toronto, Ontario"
+CHANGE TO: "17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3"
+
+EMAIL UPDATE:
+CHANGE FROM: "partners@illummaa.com"
+CHANGE TO: "info@illummaa.com"
+
+FUTURE ADDITIONS (noted for 2 weeks):
+- Phone number (to be provided)
+- Social media links (once pages are open)
+
+CRITICAL NAVIGATION FIX:
+Fix broken footer navigation links that are currently not working:
+
+BROKEN LINKS TO FIX:
+- "Assessment" link (not working on any device)
+- "Partnership" link (not working on any device)
+
+WORKING LINKS (verify still functional):
+- "Why ILLUMMAA" link (currently working)
+- "Models" link (currently working)
+
+NAVIGATION IMPLEMENTATION:
+1. Investigate why Assessment and Partnership footer links are broken
+2. Fix smooth scroll functionality for these links
+3. Ensure all footer navigation links work consistently across devices
+4. Match working behavior of "Why ILLUMMAA" and "Models" links
+5. Test scroll positioning and anchor targeting
+
+FOOTER LINKS STRUCTURE:
+Quick Links section should include functional links to:
+- Assessment (fix broken navigation)
+- Why ILLUMMAA (verify still works)
+- Models (verify still works)
+- Partnership (fix broken navigation)
+
+CONTACT SECTION STRUCTURE:
+- Address: 17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
+- Email: info@illummaa.com (replace existing partners email)
+- Phone: +1 (800) ILLUMMAA (keep current placeholder)
+
+TECHNICAL REQUIREMENTS:
+1. Fix scroll navigation for Assessment and Partnership links
+2. Ensure consistent behavior across all devices (desktop, tablet, mobile)
+3. Verify anchor targets exist and are properly configured
+4. Match scroll offset calculations used by working links
+5. Test smooth scroll animation functionality
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ NAVIGATION: Critical fix for user experience
+⚠️ LAYOUT: Ensure proper spacing with longer address
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Navigation fixes affect other working links
+- Footer layout issues with longer address text
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+GOAL: Update footer contact information (including email change from partners@ to info@) AND fix broken Assessment/Partnership navigation links to ensure all footer navigation works consistently across all devices.
