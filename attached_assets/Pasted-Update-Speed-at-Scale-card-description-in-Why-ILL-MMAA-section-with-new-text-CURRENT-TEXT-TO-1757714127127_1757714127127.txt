@@ -1,0 +1,48 @@
+Update "Speed at Scale" card description in "Why ILLÜMMAA" section with new text.
+
+CURRENT TEXT TO REPLACE:
+"72-hour assembly with fewer labor hours. Transform months into weeks."
+
+NEW TEXT TO IMPLEMENT:
+"helps project to reach completion in much faster pace than regular construction"
+
+IMPLEMENTATION REQUIREMENTS:
+1. Locate "Speed at Scale" card in "Why ILLÜMMAA" section
+2. Replace the description text with exact wording provided
+3. Keep existing card title "Speed at Scale"
+4. Maintain current visual design, icons, and layout
+5. Preserve "4x Faster Construction" highlight text if present
+6. Keep responsive behavior and styling consistent
+
+MAINTAIN CURRENT DESIGN:
+- Keep existing card structure and visual formatting
+- Preserve current rocket icon and styling
+- Maintain typography hierarchy and spacing
+- Keep card layout consistent with other cards
+- Preserve mobile responsiveness
+
+EXACT TEXT UPDATE:
+Replace description paragraph with: "helps project to reach completion in much faster pace than regular construction"
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ TEXT-ACCURACY: Use exact wording as specified
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Text content cannot be updated to exact specifications
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+GOAL: Simple text content update in Speed at Scale card while preserving all existing visual design and functionality.
