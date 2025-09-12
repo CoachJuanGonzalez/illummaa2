@@ -1,0 +1,60 @@
+Fix ILLÜMMAA logo alignment - align dots with U letter vertical strokes everywhere.
+
+ALIGNMENT REQUIREMENT:
+The two dots must align with the U letter's vertical strokes in:
+1. The Ü symbol in header logo
+2. The U within "ILLÜMMAA" wordmark  
+3. Every standalone "ILLÜMMAA" text throughout entire website
+
+CURRENT ISSUE:
+Dots are not properly aligned with U letter's left and right vertical strokes, creating inconsistent brand presentation.
+
+IMPLEMENTATION SCOPE:
+1. Header logo: Fix "Ü ILLÜMMAA" so dots align with U strokes in both locations
+2. All ILLÜMMAA wordmarks: Ensure U letter maintains same dot alignment
+3. Body text: Every instance of "ILLÜMMAA" word uses consistent U letter design
+4. Navigation menus: All ILLÜMMAA references 
+5. Footer branding: Logo and text instances
+6. Page titles and headings: All ILLÜMMAA mentions
+7. Favicon and meta elements
+8. Mobile responsive versions
+
+TECHNICAL FIX:
+1. Locate all instances of ILLÜMMAA text and logos
+2. Standardize U letter design with dots positioned at vertical stroke points
+3. Apply consistent typography and dot positioning
+4. Update CSS, SVG, and text rendering
+5. Ensure alignment works across all screen sizes
+6. Test visual consistency on desktop, tablet, mobile
+
+VISUAL GOAL:
+Perfect vertical alignment between dots and U letter strokes throughout entire website for professional brand consistency.
+
+Apply this U letter alignment standard to every single instance of ILLÜMMAA across the complete website.
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Database connections or API integrations could be impacted
+- Authentication or security features might be modified
+- Mobile responsiveness could be compromised
+- SEO or performance metrics might degrade
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
