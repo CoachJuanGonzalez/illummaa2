@@ -1,0 +1,62 @@
+Update hero section tagline from "Light Living. Elevated." to "Your Home, Your Lifestyle"
+
+CURRENT TAGLINE TO REPLACE:
+"Light Living. Elevated."
+
+NEW TAGLINE:
+"Your Home, Your Lifestyle"
+
+IMPLEMENTATION SCOPE:
+1. Locate hero section component (main landing page area)
+2. Find current "Light Living. Elevated." text
+3. Replace with "Your Home, Your Lifestyle"
+4. Maintain existing typography styling and positioning
+5. Preserve responsive behavior across all devices
+
+DESIGN CONSISTENCY:
+- Keep same font family, size, and styling as current tagline
+- Maintain existing color scheme and positioning
+- Preserve spacing and layout alignment
+- Ensure text fits properly on mobile devices
+- Keep same visual hierarchy under main headline
+
+LOCATIONS TO UPDATE:
+- Hero section subtitle/tagline (primary location)
+- Any other instances of "Light Living. Elevated." throughout website
+- Meta descriptions if they reference the old tagline
+- Any branded content that might use this tagline
+
+TECHNICAL REQUIREMENTS:
+- Update text content only, preserve all styling
+- Maintain responsive design behavior
+- Ensure proper line breaks on mobile if needed
+- Test across different screen sizes
+- Verify accessibility standards maintained
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Mobile responsiveness could be compromised
+- SEO or performance metrics might degrade
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+IMPLEMENTATION GOAL:
+Simple text replacement maintaining all existing design and functionality while updating brand messaging from "Light Living. Elevated." to "Your Home, Your Lifestyle"
