@@ -21,7 +21,7 @@ export default function WhyIllummaa() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-speed-scale">Speed at Scale</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-speed-description">
-              72-hour assembly with fewer labor hours. Transform months into weeks.
+              helps project to reach completion in much faster pace than regular construction
             </p>
             <div className="text-primary font-semibold" data-testid="text-speed-metric">4x Faster Construction</div>
           </div>
