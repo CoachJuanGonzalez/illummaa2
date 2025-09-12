@@ -28,7 +28,7 @@ export default function HeroSection() {
             The Future of Housing Is Here.
           </h1>
           <p className="text-2xl md:text-3xl mb-8 font-medium" data-testid="text-hero-subtitle" style={{color: '#2d3748'}}>
-            Light Living. Elevated.
+            Your Home, Your Lifestyle
           </p>
           
           {/* Authority Badges */}
