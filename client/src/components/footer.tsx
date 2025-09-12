@@ -46,7 +46,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <button 
-                  onClick={() => scrollToSection("assessment")} 
+                  onClick={() => scrollToSection("developer-qualification")} 
                   className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-assessment"
                 >
@@ -73,7 +73,7 @@ export default function Footer() {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection("partnership")} 
+                  onClick={() => scrollToSection("partnership-tiers")} 
                   className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-partnership"
                 >
@@ -93,11 +93,11 @@ export default function Footer() {
               </li>
               <li className="text-white/80 flex items-center" data-testid="contact-email">
                 <Mail className="mr-2" size={16} />
-                partners@illummaa.com
+                info@illummaa.com
               </li>
               <li className="text-white/80 flex items-center" data-testid="contact-location">
                 <MapPin className="mr-2" size={16} />
-                Toronto, Ontario
+                17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
               </li>
             </ul>
           </div>
