@@ -11,20 +11,14 @@ export default function PartnershipTiers() {
   // Security constants
   const CONSUMER_FORM_SESSION_KEY = 'illummaa_partnership_consumer_form_used';
 
-  // Check if form was already used in this session
+  // Clear session data on page load to reset button state
   useEffect(() => {
-    const sessionData = sessionStorage.getItem(CONSUMER_FORM_SESSION_KEY);
-    if (sessionData) {
-      try {
-        const data = JSON.parse(sessionData);
-        if (data.used) {
-          setIsFormUsed(true);
-          setShowSuccessMessage(true);
-        }
-      } catch (error) {
-        console.error('Error parsing session data:', error);
-      }
-    }
+    // Clear any existing session data so button resets on page reload
+    sessionStorage.removeItem(CONSUMER_FORM_SESSION_KEY);
+    
+    // Ensure clean state on page load
+    setIsFormUsed(false);
+    setShowSuccessMessage(false);
   }, []);
 
   const openConsumerForm = () => {
