@@ -26,9 +26,9 @@ const consumerFormSchema = z.object({
   email: z.string()
     .email("Please enter a valid email address"),
   
-  phone: z.string()
-    .min(1, "Phone number is required")
-    .transform((val) => {
+  phone: z.preprocess(
+    (val) => {
+      if (typeof val !== 'string') return val;
       const cleaned = val.replace(/\D/g, '');
       if (cleaned.length === 10 && !cleaned.startsWith('1')) {
         return `+1${cleaned}`;
@@ -37,19 +37,11 @@ const consumerFormSchema = z.object({
         return `+${cleaned}`;
       }
       return val;
-    })
-    .refine((val) => {
-      const cleaned = val.replace(/\D/g, '');
-      if (!/^\+1\d{10}$/.test(val)) {
-        return false;
-      }
-      if (cleaned.length === 10 && cleaned.startsWith('1')) {
-        return false;
-      }
-      return true;
-    }, {
-      message: "Please enter a valid Canadian phone number (10 digits: area code + 7 digits, or 11 digits starting with 1)"
-    }),
+    },
+    z.string()
+      .min(1, "Phone number is required")
+      .regex(/^\+1\d{10}$/, "Please enter a valid Canadian phone number (10 digits: area code + 7 digits, or 11 digits starting with 1)")
+  ),
   
   company: z.string()
     .min(1, "Company name is required")
@@ -148,6 +140,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       company: contactData.company || "Personal",
       source: "Consumer Information Request Form",
       project_unit_count: 1, // Pre-filled as per instructions
+      budget: "Under $5M", // Pre-filled as per instructions
       construction_province: residentialData.province,
       project_description: residentialData.description,
       residential_pathway: residentialPathway,
