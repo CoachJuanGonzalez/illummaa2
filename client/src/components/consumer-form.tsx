@@ -76,35 +76,6 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   const MAX_SUBMISSIONS_PER_SESSION = 1;
   const SESSION_KEY = 'illummaa_consumer_form_session';
 
-  // Check session-based submission limit on component mount
-  useEffect(() => {
-    const sessionData = sessionStorage.getItem(SESSION_KEY);
-    if (sessionData) {
-      try {
-        const parsed = JSON.parse(sessionData);
-        if (parsed.submitted) {
-          setIsFormSubmitted(true);
-        }
-        setSubmissionAttempts(parsed.attempts || 0);
-      } catch (error) {
-        console.error('Error parsing session data:', error);
-        sessionStorage.removeItem(SESSION_KEY);
-      }
-    }
-  }, []);
-
-  // Prevent form usage if already submitted in this session - only when form is actually opened
-  useEffect(() => {
-    if (isFormSubmitted && open) {
-      toast({
-        title: "Form Already Submitted",
-        description: "This form has already been submitted in this session. Please refresh the page to submit again.",
-        variant: "destructive",
-      });
-      onOpenChange(false);
-    }
-  }, [isFormSubmitted, open, toast, onOpenChange]);
-
   const form = useForm<ConsumerFormData>({
     resolver: zodResolver(consumerFormSchema),
     defaultValues: {
@@ -119,10 +90,6 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   // Residential submission mutation with enhanced security
   const residentialMutation = useMutation({
     mutationFn: async (data: any) => {
-      // Check submission limit before making request
-      if (submissionAttempts >= MAX_SUBMISSIONS_PER_SESSION) {
-        throw new Error('Maximum submissions reached for this session');
-      }
       
       // Add security headers and session tracking
       const enhancedData = {
@@ -136,13 +103,6 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       return apiRequest('POST', '/api/submit-residential', enhancedData);
     },
     onSuccess: () => {
-      // Mark form as submitted in session storage for security
-      const sessionData = {
-        submitted: true,
-        submittedAt: new Date().toISOString(),
-        attempts: submissionAttempts + 1
-      };
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
       
       setResidentialSubmissionSuccess(true);
       setIsFormSubmitted(true);
@@ -162,32 +122,11 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
     onError: (error: any) => {
       console.error('Residential submission error:', error);
       
-      // Update session attempts counter
-      const newAttempts = submissionAttempts + 1;
-      setSubmissionAttempts(newAttempts);
-      
-      const sessionData = {
-        submitted: false,
-        attempts: newAttempts,
-        lastAttemptAt: new Date().toISOString()
-      };
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
-      
-      // Check if max attempts reached
-      if (newAttempts >= MAX_SUBMISSIONS_PER_SESSION) {
-        toast({
-          title: "Submission Limit Reached",
-          description: "Please refresh the page to try again.",
-          variant: "destructive",
-        });
-        onOpenChange(false);
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to submit your inquiry. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to submit your inquiry. Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
