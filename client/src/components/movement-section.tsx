@@ -9,15 +9,33 @@ export default function MovementSection() {
 
   // Security constants for Learn More button tracking
   const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_used';
+  const PAGE_LOAD_KEY = 'illummaa_page_load_time';
 
-  // Clear session data on page load and track within the current page session only
+  // Track page loads and reset button state on actual page reload
   useEffect(() => {
     try {
-      // Clear any existing session data on page load to reset button state
-      sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
-      setIsLearnMoreUsed(false);
+      const currentPageLoad = Date.now();
+      const previousPageLoad = sessionStorage.getItem(PAGE_LOAD_KEY);
+      
+      // If this is a new page load (different timestamp), clear the Learn More usage
+      if (!previousPageLoad || (currentPageLoad - parseInt(previousPageLoad)) > 1000) {
+        sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
+        sessionStorage.setItem(PAGE_LOAD_KEY, currentPageLoad.toString());
+        setIsLearnMoreUsed(false);
+      } else {
+        // Same page session - check if button was already used
+        const sessionData = sessionStorage.getItem(LEARN_MORE_SESSION_KEY);
+        if (sessionData) {
+          const parsed = JSON.parse(sessionData);
+          if (parsed.used && parsed.component === 'learn_more_button') {
+            setIsLearnMoreUsed(true);
+          }
+        }
+      }
     } catch (error) {
-      console.error('Error clearing learn more session data:', error);
+      console.error('Error managing learn more session data:', error);
+      sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
+      sessionStorage.removeItem(PAGE_LOAD_KEY);
     }
   }, []);
 
