@@ -1,12 +1,45 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ConsumerForm from "./consumer-form";
 
 export default function MovementSection() {
   const [showConsumerForm, setShowConsumerForm] = useState(false);
+  const [isLearnMoreUsed, setIsLearnMoreUsed] = useState(false);
+
+  // Security constants for Learn More button tracking
+  const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_used';
+
+  // Check if Learn More button has been used in this session
+  useEffect(() => {
+    try {
+      const sessionData = sessionStorage.getItem(LEARN_MORE_SESSION_KEY);
+      if (sessionData) {
+        const parsed = JSON.parse(sessionData);
+        if (parsed.used && parsed.component === 'learn_more_button') {
+          setIsLearnMoreUsed(true);
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing learn more session data:', error);
+      sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
+    }
+  }, []);
 
   const openConsumerForm = () => {
+    if (isLearnMoreUsed) {
+      return; // Prevent opening if already used
+    }
+    
+    // Mark as used in session storage
+    const sessionData = {
+      used: true,
+      component: 'learn_more_button',
+      usedAt: new Date().toISOString()
+    };
+    sessionStorage.setItem(LEARN_MORE_SESSION_KEY, JSON.stringify(sessionData));
+    setIsLearnMoreUsed(true);
+    
     setShowConsumerForm(true);
   };
 
@@ -53,10 +86,16 @@ export default function MovementSection() {
               </div>
               <Button 
                 onClick={openConsumerForm} 
-                className="btn-primary text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:transform hover:translateY(-1px) transition-all duration-200"
+                disabled={isLearnMoreUsed}
+                className={`px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-200 ${
+                  isLearnMoreUsed 
+                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-60' 
+                    : 'btn-primary text-white hover:transform hover:translateY(-1px)'
+                }`}
                 data-testid="button-learn-more"
+                title={isLearnMoreUsed ? "Form already accessed - please reload page for new submission" : "Learn More"}
               >
-                Learn More
+                {isLearnMoreUsed ? "Form Already Accessed" : "Learn More"}
               </Button>
             </div>
           </div>
