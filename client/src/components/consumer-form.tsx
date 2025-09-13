@@ -93,9 +93,9 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
     }
   }, []);
 
-  // Prevent form usage if already submitted in this session
+  // Prevent form usage if already submitted in this session - only when form is actually opened
   useEffect(() => {
-    if (isFormSubmitted) {
+    if (isFormSubmitted && open) {
       toast({
         title: "Form Already Submitted",
         description: "This form has already been submitted in this session. Please refresh the page to submit again.",
@@ -103,7 +103,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       });
       onOpenChange(false);
     }
-  }, [isFormSubmitted, toast, onOpenChange]);
+  }, [isFormSubmitted, open, toast, onOpenChange]);
 
   const form = useForm<ConsumerFormData>({
     resolver: zodResolver(consumerFormSchema),
