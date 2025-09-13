@@ -39,7 +39,7 @@ export default function LeadershipTeam() {
     },
     {
       name: "Coach Juan Gonzalez",
-      title: "CTO & AI Strategist Consultant",
+      title: "CTO & AI Strategist Consultant, PVRPOSE AI",
       category: "Innovation"
     }
   ];
