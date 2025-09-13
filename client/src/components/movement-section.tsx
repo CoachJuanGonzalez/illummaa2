@@ -7,22 +7,26 @@ export default function MovementSection() {
   const [showConsumerForm, setShowConsumerForm] = useState(false);
   const [isLearnMoreUsed, setIsLearnMoreUsed] = useState(false);
 
-  // Security constants matching B2B assessment behavior
-  const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_used';
+  // Security constants with unique identifiers to prevent conflicts
+  const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_button_used';
 
   // Check if Learn More button has been used in this session
   useEffect(() => {
-    const sessionData = sessionStorage.getItem(LEARN_MORE_SESSION_KEY);
-    if (sessionData) {
-      try {
+    try {
+      const sessionData = sessionStorage.getItem(LEARN_MORE_SESSION_KEY);
+      if (sessionData) {
         const parsed = JSON.parse(sessionData);
-        if (parsed.used) {
+        // Validate this is actually from Learn More button (not other forms)
+        if (parsed.used && parsed.component === 'learn_more_button' && parsed.version === '1.0') {
           setIsLearnMoreUsed(true);
+        } else {
+          // Clear invalid or old session data
+          sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
         }
-      } catch (error) {
-        console.error('Error parsing learn more session data:', error);
-        sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
       }
+    } catch (error) {
+      console.error('Error parsing learn more session data:', error);
+      sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
     }
   }, []);
 
@@ -31,9 +35,11 @@ export default function MovementSection() {
       return; // Prevent opening if already used
     }
     
-    // Mark as used in session storage
+    // Mark as used in session storage with validation data
     const sessionData = {
       used: true,
+      component: 'learn_more_button',
+      version: '1.0',
       usedAt: new Date().toISOString()
     };
     sessionStorage.setItem(LEARN_MORE_SESSION_KEY, JSON.stringify(sessionData));
