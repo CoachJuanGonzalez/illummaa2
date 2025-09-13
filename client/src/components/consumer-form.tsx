@@ -109,15 +109,10 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       
       toast({
         title: "Success!",
-        description: "Your residential inquiry has been submitted successfully. Page will reload for security.",
+        description: "Your residential inquiry has been submitted successfully.",
       });
       
       queryClient.invalidateQueries({ queryKey: ['/api/residential'] });
-      
-      // Force page reload after 3 seconds for security consistency
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
     },
     onError: (error: any) => {
       console.error('Residential submission error:', error);
