@@ -63,7 +63,8 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   const [residentialPathway, setResidentialPathway] = useState('');
   const [residentialData, setResidentialData] = useState({
     province: '',
-    description: ''
+    housingInterest: '',
+    questionsInterests: ''
   });
   const [residentialSubmissionSuccess, setResidentialSubmissionSuccess] = useState(false);
   const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
@@ -139,10 +140,11 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       phone: contactData.phone,
       company: contactData.company || "Personal",
       source: "Consumer Information Request Form",
-      project_unit_count: 1, // Pre-filled as per instructions
-      budget: "Under $5M", // Pre-filled as per instructions
+      project_unit_count: 0, // Pre-filled backend value (NOT visible to user)
+      project_budget_range: "Under $5 Million", // Pre-filled backend value
       construction_province: residentialData.province,
-      project_description: residentialData.description,
+      housing_interest: residentialData.housingInterest, // NEW FIELD
+      questions_interests: residentialData.questionsInterests || '', // NEW FIELD
       residential_pathway: residentialPathway,
       lead_type: "Consumer Information Request Form", // Pre-filled as per instructions
       submission_timestamp: new Date().toISOString()
@@ -156,7 +158,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
     setShowResidentialOptions(false);
     setContactData(null);
     setResidentialPathway('');
-    setResidentialData({ province: '', description: '' });
+    setResidentialData({ province: '', housingInterest: '', questionsInterests: '' });
     setResidentialSubmissionSuccess(false);
     setRemaxRedirectSuccess(false);
     onOpenChange(false);
@@ -170,7 +172,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
             Consumer Information Request
           </DialogTitle>
           <p className="text-center text-gray-600 mt-2" data-testid="text-consumer-subtitle">
-            Tell us about your modular housing needs. We'll connect you with the right pathway.
+            Share your contact information to begin exploring modular housing solutions.
           </p>
         </DialogHeader>
 
@@ -284,8 +286,8 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
         {showResidentialOptions && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
           <div className="space-y-6 mt-6" data-testid="section-residential-options">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
-              <p className="text-gray-600">ILLÜMMAA offers two pathways for residential projects:</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">How Can We Help You?</h2>
+              <p className="text-gray-600">Choose the service that best fits your needs:</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -296,15 +298,15 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
               >
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors duration-200">
-                    In-House First-Time Home Buyer Service
+                    Explore Modular Housing Options
                   </h3>
                   <ul className="space-y-2 text-gray-600 mb-4">
-                    <li className="transition-transform duration-200 group-hover:translate-x-1">• Direct consultation with ILLÜMMAA specialists</li>
-                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• No real estate agents involved</li>
-                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• For clients preferring direct builder relationship</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1">• Learn about modular housing solutions</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Direct consultation with ILLÜMMAA specialists</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Explore design and pricing options</li>
                   </ul>
                   <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">
-                    Choose In-House Service
+                    Get Information
                   </Button>
                 </CardContent>
               </Card>
@@ -316,15 +318,15 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
               >
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-3 group-hover:text-accent transition-colors duration-200">
-                    Remax Partnership Program
+                    Full-Service Home Buying Support
                   </h3>
                   <ul className="space-y-2 text-gray-600 mb-4">
-                    <li className="transition-transform duration-200 group-hover:translate-x-1">• Full real estate agent support</li>
-                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Land acquisition assistance</li>
-                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Complete guided home buying process</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1">• Complete home buying assistance</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Real estate agent support included</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Land acquisition and financing help</li>
                   </ul>
                   <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">
-                    Choose Remax Partnership
+                    Get Full Service
                   </Button>
                 </CardContent>
               </Card>
@@ -336,19 +338,26 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
         {residentialPathway === 'in-house' && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
           <div className="space-y-6 mt-6" data-testid="section-in-house-form">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
-              <p className="text-gray-600">We'll connect you with our residential specialists.</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Modular Housing Information Request</h2>
+              <p className="text-gray-600">Tell us about your interests so our specialists can provide relevant information.</p>
             </div>
             
             <form onSubmit={handleResidentialSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-medium leading-none">Number of Units</label>
-                <div className="bg-gray-50 border border-gray-200 rounded-md px-3 py-2 text-gray-700">
-                  1 unit (consumer inquiry)
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Pre-filled for consumer information requests
-                </p>
+                <label htmlFor="housing_interest" className="text-sm font-medium leading-none">Housing Interest *</label>
+                <select 
+                  value={residentialData.housingInterest || ''} 
+                  onChange={(e) => setResidentialData({...residentialData, housingInterest: e.target.value})}
+                  className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md"
+                  required
+                  data-testid="select-housing-interest"
+                >
+                  <option value="">Select your interest...</option>
+                  <option value="Learning about options">Learning about options</option>
+                  <option value="1 home">1 home</option>
+                  <option value="2-5 homes">2-5 homes</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
               
               <div>
@@ -378,17 +387,17 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
               </div>
               
               <div>
-                <label htmlFor="res_description" className="text-sm font-medium leading-none">Project Description (Optional)</label>
+                <label htmlFor="questions_interests" className="text-sm font-medium leading-none">Questions or Interests (Optional)</label>
                 <textarea
-                  value={residentialData.description}
-                  onChange={(e) => setResidentialData({...residentialData, description: e.target.value})}
-                  placeholder="Describe your housing needs, timeline, or any specific requirements..."
+                  value={residentialData.questionsInterests || ''}
+                  onChange={(e) => setResidentialData({...residentialData, questionsInterests: e.target.value})}
+                  placeholder="What would you like to know about modular housing?"
                   className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md min-h-[100px] resize-none"
                   maxLength={1000}
-                  data-testid="textarea-description"
+                  data-testid="textarea-questions-interests"
                 />
                 <div className="text-sm text-gray-500 mt-1">
-                  {residentialData.description.length}/1000 characters
+                  {(residentialData.questionsInterests || '').length}/1000 characters
                 </div>
               </div>
               
@@ -407,7 +416,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
                   disabled={residentialMutation.isPending}
                   data-testid="button-submit-residential"
                 >
-                  {residentialMutation.isPending ? "Submitting..." : "Submit Inquiry"}
+                  {residentialMutation.isPending ? "Submitting..." : "Request Information"}
                 </Button>
               </div>
             </form>

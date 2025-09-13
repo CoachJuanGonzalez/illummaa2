@@ -287,8 +287,10 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
     company: data.company,
     source: data.source,
     project_unit_count: data.project_unit_count,
+    project_budget_range: data.project_budget_range || '', // NEW FIELD
     construction_province: data.construction_province,
-    project_description: data.project_description || '',
+    housing_interest: data.housing_interest || '', // NEW FIELD  
+    questions_interests: data.questions_interests || '', // NEW FIELD
     residential_pathway: data.residential_pathway,
     lead_type: data.lead_type,
     submission_timestamp: data.submission_timestamp

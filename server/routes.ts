@@ -276,9 +276,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone: z.string().min(10, "Valid phone number required"),
         company: z.string().min(1, "Company name required"),
         source: z.string(),
-        project_unit_count: z.number().min(1).max(49),
+        project_unit_count: z.number().min(0).max(49), // Allow 0 for consumer inquiries
         construction_province: z.string().min(1, "Province required"),
-        project_description: z.string().optional(),
+        project_budget_range: z.string().optional(), // NEW FIELD
+        housing_interest: z.string().optional(), // NEW FIELD
+        questions_interests: z.string().optional(), // NEW FIELD
         residential_pathway: z.string(),
         lead_type: z.string(),
         submission_timestamp: z.string()
