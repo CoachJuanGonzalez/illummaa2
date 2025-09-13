@@ -1,0 +1,64 @@
+Replace existing partnership tiers section with source-aligned "Partnership Tiers for Every Development Scale" structure.
+
+COMPLETE SECTION REPLACEMENT:
+
+Section Title: "Partnership Tiers for Every Development Scale"
+Description: "From individual homes to thriving communities, choose the partnership level that matches your development scale and unlock proven modular construction advantages."
+
+TIER 1: STARTER (1-49 UNITS)
+- Individual homes to small development projects
+- Direct consultation with ILLÜMMAA modular specialists
+- Standard modular designs with digital customization options
+- Competitive pricing: modular units from $99K CAD, fully-serviced homes from $269K CAD
+- Factory precision manufacturing with superior quality control
+- Rapid 72-hour on-site assembly for individual units
+- Access to financing assistance and government housing programs
+BUTTON: "Get Started" → Consumer Information Request Form
+
+TIER 2: PIONEER (50-149 UNITS)
+- All Starter benefits
+- Volume pricing discounts (30-40% cost savings vs traditional construction)
+- Dedicated partnership support through complete project lifecycle
+- Priority production scheduling in factory queue
+- Access to modular configurator for multi-unit coordination
+- Housing Accelerator Fund program alignment assistance
+BUTTON: "Begin Assessment" → B2B Assessment Form
+
+TIER 3: PREFERRED (150-299 UNITS)
+- All Pioneer benefits
+- Custom design modifications for municipal code compliance
+- Enhanced financing coordination and GST rebate processing
+- Expedited project timeline management (3-month completion capability)
+- Advanced partnership proposals with ROI analysis
+- Dedicated account coordination for complex projects
+BUTTON: "Begin Assessment" → B2B Assessment Form
+
+TIER 4: ELITE (300+ UNITS)
+- All Preferred benefits
+- Exclusive custom community design development
+- Complete turnkey community solutions (factory to occupancy)
+- Executive partnership team for strategic projects
+- Co-development opportunities with ILLÜMMAA design team
+- Coordinated community delivery within 3-month timeline
+BUTTON: "Begin Assessment" → B2B Assessment Form
+
+DESIGN REQUIREMENTS:
+- Maintain identical UX/UI design consistency with existing site
+- Preserve current responsive behavior and professional styling
+- Keep enterprise aesthetic and ILLÜMMAA brand elements
+
+ROUTING REQUIREMENTS:
+- Starter tier → Consumer Information Request Form
+- Pioneer/Preferred/Elite tiers → B2B Assessment Form with AI Priority Score routing
+- Maintain existing webhook endpoints and dual-pathway architecture
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create complete backup before section replacement
+⚠️ TEST: Verify all CTA buttons route correctly
+⚠️ MOBILE: Test responsive behavior across all devices
+⚠️ ALIGNMENT: Ensure benefits match source documentation capabilities
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+Confirm tier benefits align with documented ILLÜMMAA capabilities and modular construction industry standards.
+
+GOAL: Professional partnership tiers with source-verified benefits that communicate clear value without technical jargon.

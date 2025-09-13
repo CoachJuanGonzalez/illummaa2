@@ -1,15 +1,7 @@
-import { Home, Rocket, Star, Crown, Check } from "lucide-react";
+import { Rocket, Star, Crown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import ConsumerForm from "@/components/consumer-form";
 
 export default function PartnershipTiers() {
-  const [showConsumerForm, setShowConsumerForm] = useState(false);
-
-  const openConsumerForm = () => {
-    setShowConsumerForm(true);
-  };
-
   const scrollToAssessment = () => {
     const element = document.getElementById("developer-qualification");
     if (element) {
@@ -19,57 +11,34 @@ export default function PartnershipTiers() {
 
   const tiers = [
     {
-      name: "Starter",
-      units: "1-49 units",
-      icon: <Home className="text-green-600" size={32} />,
-      iconBg: "bg-green-100",
-      features: [
-        "Individual homes to small development projects",
-        "Direct consultation with ILLÜMMAA modular specialists",
-        "Standard modular designs with digital customization options",
-        "Competitive pricing: modular units from $99K CAD, fully-serviced homes from $269K CAD",
-        "Factory precision manufacturing with superior quality control",
-        "Rapid 72-hour on-site assembly for individual units",
-        "Access to financing assistance and government housing programs"
-      ],
-      buttonVariant: "outline" as const,
-      buttonText: "Get Started",
-      action: openConsumerForm
-    },
-    {
       name: "Pioneer",
-      units: "50-149 units",
+      units: "50-99 units",
       icon: <Rocket className="text-blue-600" size={32} />,
       iconBg: "bg-blue-100",
       features: [
-        "All Starter benefits",
-        "Volume pricing discounts (30-40% cost savings vs traditional construction)",
-        "Dedicated partnership support through complete project lifecycle",
-        "Priority production scheduling in factory queue",
-        "Access to modular configurator for multi-unit coordination",
-        "Housing Accelerator Fund program alignment assistance"
+        "Volume pricing discounts",
+        "Dedicated project support", 
+        "Standard delivery timelines",
+        "Quality assurance program"
       ],
-      buttonVariant: "default" as const,
-      buttonText: "Begin Assessment",
-      popular: true,
-      action: scrollToAssessment
+      buttonVariant: "outline" as const,
+      buttonText: "Learn More"
     },
     {
       name: "Preferred",
-      units: "150-299 units",
+      units: "100-299 units",
       icon: <Star className="text-primary" size={32} />,
       iconBg: "bg-primary/10",
       features: [
         "All Pioneer benefits",
-        "Custom design modifications for municipal code compliance",
-        "Enhanced financing coordination and GST rebate processing",
-        "Expedited project timeline management (3-month completion capability)",
-        "Advanced partnership proposals with ROI analysis",
-        "Dedicated account coordination for complex projects"
+        "Custom design modifications",
+        "Financing assistance",
+        "Priority production scheduling",
+        "Dedicated account manager"
       ],
-      buttonVariant: "outline" as const,
-      buttonText: "Begin Assessment",
-      action: scrollToAssessment
+      buttonVariant: "default" as const,
+      buttonText: "Get Started",
+      popular: true
     },
     {
       name: "Elite", 
@@ -78,15 +47,13 @@ export default function PartnershipTiers() {
       iconBg: "bg-yellow-100",
       features: [
         "All Preferred benefits",
-        "Exclusive custom community design development",
-        "Complete turnkey community solutions (factory to occupancy)",
-        "Executive partnership team for strategic projects",
-        "Co-development opportunities with ILLÜMMAA design team",
-        "Coordinated community delivery within 3-month timeline"
+        "Exclusive custom designs",
+        "Turnkey community solutions",
+        "Co-marketing opportunities",
+        "Executive relationship team"
       ],
       buttonVariant: "outline" as const,
-      buttonText: "Begin Assessment",
-      action: scrollToAssessment
+      buttonText: "Contact Us"
     }
   ];
 
@@ -95,14 +62,14 @@ export default function PartnershipTiers() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-partnership-title">
-            Partnership Tiers for Every Development Scale
+            Scale Your Development with Industrial Precision
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-partnership-subtitle">
-            From individual homes to thriving communities, choose the partnership level that matches your development scale and unlock proven modular construction advantages.
+            Choose the partnership tier that matches your development scale and unlock exclusive benefits.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" data-testid="container-partnership-tiers">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="container-partnership-tiers">
           {tiers.map((tier, index) => (
             <div 
               key={index}
@@ -143,7 +110,6 @@ export default function PartnershipTiers() {
               <Button 
                 variant={tier.buttonVariant}
                 className={`w-full ${tier.buttonVariant === 'default' ? 'btn-primary' : ''}`}
-                onClick={tier.action}
                 data-testid={`button-tier-${tier.name.toLowerCase()}`}
               >
                 {tier.buttonText}
@@ -163,11 +129,6 @@ export default function PartnershipTiers() {
           </Button>
         </div>
       </div>
-      
-      <ConsumerForm 
-        open={showConsumerForm} 
-        onOpenChange={setShowConsumerForm}
-      />
     </section>
   );
 }
