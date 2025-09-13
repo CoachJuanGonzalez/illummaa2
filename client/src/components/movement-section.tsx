@@ -8,34 +8,17 @@ export default function MovementSection() {
   const [isLearnMoreUsed, setIsLearnMoreUsed] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
-  // Security constants for Learn More button tracking - use localStorage for persistence across reloads
+  // Security constants for Learn More button tracking - use sessionStorage to reset on page reload
   const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_used';
   const SUCCESS_MESSAGE_KEY = 'illummaa_success_shown';
 
-  // Check if Learn More button has been used or success message should be shown
+  // Reset state on page load and check session storage
   useEffect(() => {
-    try {
-      const sessionData = localStorage.getItem(LEARN_MORE_SESSION_KEY);
-      const successData = localStorage.getItem(SUCCESS_MESSAGE_KEY);
-      
-      if (sessionData) {
-        const parsed = JSON.parse(sessionData);
-        if (parsed.used && parsed.component === 'learn_more_button') {
-          setIsLearnMoreUsed(true);
-        }
-      }
-      
-      if (successData) {
-        const parsed = JSON.parse(successData);
-        if (parsed.shown) {
-          setShowSuccessMessage(true);
-        }
-      }
-    } catch (error) {
-      console.error('Error parsing session data:', error);
-      localStorage.removeItem(LEARN_MORE_SESSION_KEY);
-      localStorage.removeItem(SUCCESS_MESSAGE_KEY);
-    }
+    // Always start fresh on page load - clear any previous state
+    sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
+    sessionStorage.removeItem(SUCCESS_MESSAGE_KEY);
+    setIsLearnMoreUsed(false);
+    setShowSuccessMessage(false);
   }, []);
 
   const openConsumerForm = () => {
@@ -43,13 +26,13 @@ export default function MovementSection() {
       return; // Prevent opening if already used or success shown
     }
     
-    // Mark as used in localStorage for persistence across reloads
+    // Mark as used in sessionStorage (resets on page reload)
     const sessionData = {
       used: true,
       component: 'learn_more_button',
       usedAt: new Date().toISOString()
     };
-    localStorage.setItem(LEARN_MORE_SESSION_KEY, JSON.stringify(sessionData));
+    sessionStorage.setItem(LEARN_MORE_SESSION_KEY, JSON.stringify(sessionData));
     setIsLearnMoreUsed(true);
     
     setShowConsumerForm(true);
@@ -60,12 +43,12 @@ export default function MovementSection() {
     setShowConsumerForm(false);
     setShowSuccessMessage(true);
     
-    // Store success state in localStorage
+    // Store success state in sessionStorage (resets on page reload)
     const successData = {
       shown: true,
       timestamp: new Date().toISOString()
     };
-    localStorage.setItem(SUCCESS_MESSAGE_KEY, JSON.stringify(successData));
+    sessionStorage.setItem(SUCCESS_MESSAGE_KEY, JSON.stringify(successData));
   };
 
   return (
