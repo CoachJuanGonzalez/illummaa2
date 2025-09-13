@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import ConsumerForm from "./consumer-form";
+import buildingCanadaImage from "@assets/Generated Image September 13, 2025 - 5_31PM_1757799121636.png";
 
 export default function MovementSection() {
   const [showConsumerForm, setShowConsumerForm] = useState(false);
@@ -58,8 +59,8 @@ export default function MovementSection() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-                alt="Aerial view of modern modular home community development" 
+                src={buildingCanadaImage} 
+                alt="Futuristic Canadian cityscape with modern modular buildings and sustainable community development" 
                 className="rounded-2xl shadow-2xl w-full h-auto"
                 data-testid="img-community-aerial"
               />
