@@ -139,7 +139,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       email: contactData.email,
       phone: contactData.phone,
       company: contactData.company || "Personal",
-      source: "Consumer Information Request Form",
+      source: "ILLÜMMAA Website - Residential",
       project_unit_count: 0, // Pre-filled backend value (NOT visible to user)
       project_budget_range: "Under $5 Million", // Pre-filled backend value
       construction_province: residentialData.province,
