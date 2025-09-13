@@ -68,49 +68,49 @@ export default function StickyHeader() {
           <div className="hidden md:flex items-center space-x-8" data-testid="nav-desktop">
             <button 
               onClick={() => scrollToSection("developer-qualification")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-assessment"
             >
               Assessment
             </button>
             <button 
               onClick={() => scrollToSection("why")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-why"
             >
               Why
             </button>
             <button 
               onClick={() => scrollToSection("leadership")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-leadership"
             >
               Leadership
             </button>
             <button 
               onClick={() => scrollToSection("models")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-models"
             >
               Models
             </button>
             <button 
               onClick={() => scrollToSection("developer-qualification")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-developers"
             >
               Developers
             </button>
             <button 
               onClick={() => scrollToSection("partnership-tiers")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-partnership"
             >
               Partnership
             </button>
             <button 
               onClick={() => scrollToSection("contact")} 
-              className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+              className="text-foreground hover:text-primary transition-colors"
               data-testid="nav-contact"
             >
               Contact
@@ -119,10 +119,9 @@ export default function StickyHeader() {
           
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="md:hidden text-foreground"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="button-mobile-menu"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -131,52 +130,52 @@ export default function StickyHeader() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
-            <div className="flex flex-col space-y-2 pt-4">
+            <div className="flex flex-col space-y-4 pt-4">
               <button 
                 onClick={() => scrollToSection("developer-qualification")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-assessment"
               >
                 Assessment
               </button>
               <button 
                 onClick={() => scrollToSection("why")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-why"
               >
                 Why
               </button>
               <button 
                 onClick={() => scrollToSection("leadership")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-leadership"
               >
                 Leadership
               </button>
               <button 
                 onClick={() => scrollToSection("models")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-models"
               >
                 Models
               </button>
               <button 
                 onClick={() => scrollToSection("developer-qualification")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-developers"
               >
                 Developers
               </button>
               <button 
                 onClick={() => scrollToSection("partnership-tiers")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-partnership"
               >
                 Partnership
               </button>
               <button 
                 onClick={() => scrollToSection("contact")} 
-                className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                className="text-left text-foreground hover:text-primary transition-colors"
                 data-testid="nav-mobile-contact"
               >
                 Contact

@@ -28,13 +28,13 @@ export default function Footer() {
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
             <div className="flex space-x-4" data-testid="social-links">
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
+              <a href="#" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors" data-testid="link-linkedin">
                 <Linkedin className="text-white" size={20} />
               </a>
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
+              <a href="#" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors" data-testid="link-twitter">
                 <Twitter className="text-white" size={20} />
               </a>
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
+              <a href="#" className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors" data-testid="link-instagram">
                 <Instagram className="text-white" size={20} />
               </a>
             </div>
@@ -43,11 +43,11 @@ export default function Footer() {
           {/* Quick Links */}
           <div data-testid="section-quick-links">
             <h3 className="font-semibold text-white text-lg mb-6" data-testid="heading-quick-links">Quick Links</h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               <li>
                 <button 
                   onClick={() => scrollToSection("developer-qualification")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-assessment"
                 >
                   Assessment
@@ -56,7 +56,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("why")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-why"
                 >
                   Why ILLÜMMAA
@@ -65,7 +65,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("models")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-models"
                 >
                   Models
@@ -74,7 +74,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("partnership-tiers")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="text-white/80 hover:text-white transition-colors text-left"
                   data-testid="link-footer-partnership"
                 >
                   Partnership

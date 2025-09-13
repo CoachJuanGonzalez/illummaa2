@@ -1,5 +1,4 @@
 import { Handshake, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   const scrollToAssessment = () => {
@@ -33,25 +32,19 @@ export default function HeroSection() {
           </p>
           
           {/* Enhanced CTAs */}
-          <div className="button-group-mobile" data-testid="container-hero-ctas">
-            <Button 
+          <div className="flex flex-col sm:flex-row gap-6 justify-center sm:justify-start" data-testid="container-hero-ctas">
+            <button 
               onClick={scrollToAssessment} 
-              size="lg"
-              className="btn-primary text-white font-bold text-xl hero-cta-mobile"
+              className="btn-primary px-10 py-5 rounded-2xl text-white font-bold text-xl flex items-center justify-center transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
               data-testid="button-qualify-partnership"
             >
               <Handshake className="mr-3" size={24} />
               Qualify for Developer Partnership
-            </Button>
-            <Button 
-              variant="outline"
-              size="lg"
-              className="hero-secondary-btn font-semibold text-xl hero-cta-mobile" 
-              data-testid="button-watch-film"
-            >
+            </button>
+            <button className="hero-secondary-btn px-10 py-5 rounded-2xl font-semibold text-xl transition-all duration-200 flex items-center justify-center hover:bg-white hover:shadow-lg" data-testid="button-watch-film">
               <Play className="mr-3" size={24} style={{color: '#1a365d'}} />
               Watch the Film
-            </Button>
+            </button>
           </div>
         </div>
       </div>
