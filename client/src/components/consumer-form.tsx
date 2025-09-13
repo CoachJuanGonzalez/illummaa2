@@ -91,10 +91,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   // Residential submission mutation
   const residentialMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/submit-residential', {
-        method: 'POST',
-        body: JSON.stringify(data),
-      });
+      return apiRequest('POST', '/api/submit-residential', data);
     },
     onSuccess: () => {
       setResidentialSubmissionSuccess(true);
