@@ -118,10 +118,11 @@ export default function PartnershipTiers() {
           ))}
         </div>
         
-        <div className="text-center mt-12">
+        <div className="text-center mt-12 px-4">
           <Button 
             onClick={scrollToAssessment} 
-            className="btn-primary px-8 py-4 rounded-2xl text-white font-semibold text-lg"
+            size="lg"
+            className="btn-primary text-white font-semibold text-base sm:text-lg w-full max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal sm:whitespace-nowrap"
             data-testid="button-schedule-assessment"
           >
             Schedule Partnership Assessment
