@@ -10,20 +10,11 @@ export default function MovementSection() {
   // Security constants for Learn More button tracking
   const LEARN_MORE_SESSION_KEY = 'illummaa_learn_more_used';
 
-  // Check if Learn More button has been used in this session
+  // Clear button state on page load and check usage status
   useEffect(() => {
-    try {
-      const sessionData = sessionStorage.getItem(LEARN_MORE_SESSION_KEY);
-      if (sessionData) {
-        const parsed = JSON.parse(sessionData);
-        if (parsed.used && parsed.component === 'learn_more_button') {
-          setIsLearnMoreUsed(true);
-        }
-      }
-    } catch (error) {
-      console.error('Error parsing learn more session data:', error);
-      sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
-    }
+    // First, clear any existing session data on page load to reset button
+    sessionStorage.removeItem(LEARN_MORE_SESSION_KEY);
+    setIsLearnMoreUsed(false);
   }, []);
 
   const openConsumerForm = () => {
