@@ -119,16 +119,12 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
 
   const handleRemaxSelection = () => {
     setResidentialPathway('remax');
-    // Redirect to external Remax website
+    // Simulate Remax redirect
+    setRemaxRedirectSuccess(true);
     toast({
       title: "Remax Partnership",
       description: "Redirecting you to our Remax partnership program...",
     });
-    // Perform actual external redirect
-    setTimeout(() => {
-      window.open('https://www.remax.ca/', '_blank');
-      onOpenChange(false); // Close the modal after redirect
-    }, 1000);
   };
 
   const handleResidentialSubmit = (e: React.FormEvent) => {
@@ -287,7 +283,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
         )}
 
         {/* Residential Options Section */}
-        {showResidentialOptions && !residentialSubmissionSuccess && !remaxRedirectSuccess && residentialPathway !== 'in-house' && (
+        {showResidentialOptions && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
           <div className="space-y-6 mt-6" data-testid="section-residential-options">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">How Can We Help You?</h2>

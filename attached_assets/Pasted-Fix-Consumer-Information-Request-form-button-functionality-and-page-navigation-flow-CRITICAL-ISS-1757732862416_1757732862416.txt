@@ -1,0 +1,58 @@
+Fix Consumer Information Request form button functionality and page navigation flow.
+
+CRITICAL ISSUES TO FIX:
+
+ISSUE 1: "Get Full Service" Button Not Working
+PROBLEM: "Get Full Service" button click does not redirect to external Remax website
+REQUIRED FIX: Ensure button redirects to external Remax partner website (no GoHighLevel webhook)
+IMPLEMENTATION: Add proper external redirect functionality to "Get Full Service" button
+
+ISSUE 2: "Get Information" Button Navigation Flow
+PROBLEM: After clicking "Get Information" button, the service selection screen should disappear and show the "Modular Housing Information Request" form
+CURRENT ISSUE: Service selection content remains visible instead of transitioning to the form
+
+REQUIRED NAVIGATION FLOW:
+Step 1: Consumer clicks "Learn More" → Contact information form appears
+Step 2: Consumer fills contact info and clicks "Next" → Service selection screen appears
+Step 3: Consumer clicks "Get Information" → Service selection DISAPPEARS, "Modular Housing Information Request" form appears
+Step 4: Consumer completes form and clicks "Request Information" → Submission to GoHighLevel
+
+CONTENT THAT MUST DISAPPEAR AFTER "GET INFORMATION" CLICK:
+- "How Can We Help You?" heading
+- "Choose the service that best fits your needs:" subtitle
+- Entire "Explore Modular Housing Options" card with bullet points and "Get Information" button
+- Entire "Full-Service Home Buying Support" card with bullet points and "Get Full Service" button
+
+CONTENT THAT MUST APPEAR AFTER "GET INFORMATION" CLICK:
+- "Modular Housing Information Request" form title
+- "Tell us about your interests so our specialists can provide relevant information." subtitle
+- Housing Interest dropdown field
+- Questions or Interests textarea field
+- Construction Province dropdown field
+- "Request Information" submit button
+
+IMPLEMENTATION REQUIREMENTS:
+1. Fix "Get Full Service" external redirect functionality
+2. Implement proper screen transition from service selection to form
+3. Ensure service selection content disappears when "Get Information" is clicked
+4. Show "Modular Housing Information Request" form after "Get Information" click
+5. Maintain all existing styling and responsive behavior
+6. Test both button functionalities thoroughly
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before making changes
+⚠️ TEST: Verify both button functionalities work correctly
+⚠️ NAVIGATION: Ensure proper screen transitions
+⚠️ MOBILE: Test navigation flow on mobile devices
+⚠️ REMAX-REDIRECT: Confirm external redirect works for "Get Full Service"
+⚠️ FORM-DISPLAY: Verify "Modular Housing Information Request" form appears correctly
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Button functionality
+- Page navigation flow
+- External redirect capabilities
+- Form display transitions
+- Any unexpected errors
+
+GOAL: Fix consumer form navigation so "Get Information" properly transitions to the Modular Housing Information Request form and "Get Full Service" redirects to external Remax website.
