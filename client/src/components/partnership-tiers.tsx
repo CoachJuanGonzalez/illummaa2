@@ -25,7 +25,7 @@ export default function PartnershipTiers() {
       iconBg: "bg-green-100",
       features: [
         "Individual homes to small development projects",
-        "Direct consultation with ILLÜMMAA modular specialists",
+        "Direct consultation with an ILLÜMMAA modular expert or an approved real estate partner (e.g., REMAX)",
         "Standard modular designs with digital customization options",
         "Competitive pricing: modular units from $99K CAD, fully-serviced homes from $269K CAD",
         "Factory precision manufacturing with superior quality control",
