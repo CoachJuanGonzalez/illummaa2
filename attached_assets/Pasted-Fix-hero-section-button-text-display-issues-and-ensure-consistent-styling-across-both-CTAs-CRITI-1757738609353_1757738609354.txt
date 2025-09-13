@@ -1,0 +1,56 @@
+Fix hero section button text display issues and ensure consistent styling across both CTAs.
+
+CRITICAL BUTTON ISSUES TO FIX:
+
+TEXT DISPLAY PROBLEMS:
+1. "Qualify for Developer Partnership" button text is truncated/cut off
+2. Button container width insufficient for full text display
+3. Text overflow issues preventing complete message visibility
+4. Inconsistent font sizes between the two buttons
+
+BUTTON CONSISTENCY REQUIREMENTS:
+1. Ensure both buttons have identical text styling:
+   - Same font size and weight
+   - Same line height and letter spacing
+   - Same text alignment (center)
+   - Same padding and margins
+2. Adjust button width to accommodate full text without truncation
+3. Maintain consistent visual hierarchy between primary and secondary CTAs
+
+RESPONSIVE TEXT HANDLING:
+- Ensure button text displays completely on all screen sizes
+- Implement proper text wrapping if needed on smaller screens
+- Maintain button readability across all device types
+- Test text display on:
+  * Mobile: 375px, 390px, 428px widths
+  * Tablet: 768px, 1024px widths
+  * Desktop: 1440px, 1920px+ widths
+
+BUTTON LAYOUT FIXES:
+1. Increase button width or reduce font size to prevent text cutoff
+2. Ensure proper button padding accommodates full text
+3. Maintain equal visual weight between both CTAs
+4. Preserve touch-friendly button dimensions (44px minimum height)
+
+VISUAL CONSISTENCY:
+- Apply identical typography treatment to both buttons
+- Ensure consistent spacing between button elements
+- Maintain proper contrast ratios for accessibility
+- Preserve ILLÜMMAA brand button styling
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before making button changes
+⚠️ TEST: Verify button text displays completely on all devices
+⚠️ MOBILE: Ensure buttons remain touch-friendly and readable
+⚠️ ACCESSIBILITY: Maintain proper contrast and font size requirements
+⚠️ CONSISTENCY: Ensure identical styling between both CTAs
+⚠️ FUNCTIONALITY: Verify button clicks work after text fixes
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Button text visibility or truncation
+- Mobile responsiveness of button elements
+- Accessibility standards compliance
+- Button functionality after changes
+
+GOAL: Fix button text display issues and ensure both hero CTAs have consistent, professional styling with complete text visibility across all devices.

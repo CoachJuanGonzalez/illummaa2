@@ -39,7 +39,7 @@ export default function HeroSection() {
             <Button 
               onClick={scrollToAssessment} 
               size="lg"
-              className="btn-primary-hero text-white hero-cta-primary shadow-lg"
+              className="btn-primary-hero text-white font-bold text-base md:text-lg hero-cta-primary shadow-lg"
               data-testid="button-qualify-partnership"
             >
               <Handshake className="mr-3 flex-shrink-0" size={20} />
@@ -48,7 +48,7 @@ export default function HeroSection() {
             <Button 
               variant="outline"
               size="lg"
-              className="hero-secondary-btn-optimized hero-cta-secondary" 
+              className="hero-secondary-btn-optimized font-medium text-sm md:text-base hero-cta-secondary" 
               data-testid="button-watch-film"
             >
               <Play className="mr-2 flex-shrink-0" size={18} style={{color: '#1a365d'}} />
