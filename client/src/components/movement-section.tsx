@@ -1,12 +1,13 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import ConsumerForm from "./consumer-form";
 
 export default function MovementSection() {
-  const scrollToAssessment = () => {
-    const element = document.getElementById("assessment");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+  const [showConsumerForm, setShowConsumerForm] = useState(false);
+
+  const openConsumerForm = () => {
+    setShowConsumerForm(true);
   };
 
   return (
@@ -51,16 +52,22 @@ export default function MovementSection() {
                 </div>
               </div>
               <Button 
-                onClick={scrollToAssessment} 
+                onClick={openConsumerForm} 
                 className="btn-primary px-8 py-4 rounded-2xl text-white font-semibold text-lg"
-                data-testid="button-join-movement"
+                data-testid="button-learn-more"
               >
-                Join the Movement
+                Learn More
               </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Consumer Form Modal */}
+      <ConsumerForm 
+        open={showConsumerForm} 
+        onOpenChange={setShowConsumerForm} 
+      />
     </section>
   );
 }
