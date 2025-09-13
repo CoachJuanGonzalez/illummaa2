@@ -1,0 +1,83 @@
+Create "Consumer Information Request" form following Partner Qualification Assessment design pattern.
+
+BUTTON FUNCTIONALITY:
+CHANGE FROM: "Join the Movement" 
+CHANGE TO: "Learn More" (opens consumer form modal/section)
+
+FORM STRUCTURE:
+Create single-step form matching Partner Qualification Assessment styling:
+
+FORM HEADER:
+- Title: "Consumer Information Request"  
+- Subtitle: "Tell us about your modular housing needs. We'll connect you with the right pathway."
+- NO progress bar (single step form)
+
+CONTACT INFORMATION FIELDS:
+- First Name * (required)
+- Last Name * (required)
+- Email Address * (required)
+- Phone Number * (required, Canadian format placeholder)
+- Company Name (optional - "Personal" as placeholder)
+
+FORM STYLING:
+- Match existing Partner Qualification Assessment design exactly
+- Same input field styling, spacing, and typography
+- Professional enterprise appearance
+- Mobile-responsive behavior
+- Consistent with ILLÜMMAA brand colors
+
+BUTTON BEHAVIOR:
+- Button text: "Next" (not "Next - Continue Assessment")
+- On submit: Validate contact info → Show Residential Projects section
+- Pre-fill backend data: Unit Count: 1, Budget: Under $5M, Lead Type: Consumer Information Request Form
+
+RESIDENTIAL SECTION REVEAL:
+After successful contact form submission, show existing "Residential Projects (Under 50 Units)" section with:
+- Same two-card layout (In-House Service vs Remax Partnership)
+- Contact info carried forward to final submission
+- Existing routing logic and webhook processing
+
+UX ENHANCEMENTS:
+- Smooth transition from form to service selection
+- Clear visual connection between steps
+- Professional enterprise experience throughout
+- Consistent with existing assessment flow patterns
+
+TECHNICAL IMPLEMENTATION:
+- Modal or inline form reveal on "Learn More" click
+- Form validation matching existing standards
+- Data persistence between form and service selection
+- Integration with existing /api/submit-residential endpoint
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+⚠️ FORM-VALIDATION: Ensure proper client and server-side validation
+⚠️ DATA-PERSISTENCE: Verify contact info carries through to final submission
+⚠️ WEBHOOK-INTEGRATION: Test existing /api/submit-residential endpoint compatibility
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Replit development setup might be disrupted
+- Core files (package.json, server.js, main components) need modification
+- Dependencies or build process might be affected
+- Database connections or API integrations could be impacted
+- Authentication or security features might be modified
+- Mobile responsiveness could be compromised
+- SEO or performance metrics might degrade
+- Existing form validation or submission processes could be affected
+- Any unexpected errors or conflicts arise during implementation
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+GOAL: Create professional two-step consumer journey maintaining enterprise UX standards while capturing contact information and routing to appropriate service selection.
