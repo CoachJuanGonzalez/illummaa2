@@ -290,6 +290,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validationResult = residentialSchema.safeParse(req.body);
       
       if (!validationResult.success) {
+        console.error('Residential validation failed:', {
+          received: req.body,
+          errors: validationResult.error.errors
+        });
         return res.status(400).json({
           success: false,
           errors: validationResult.error.errors
