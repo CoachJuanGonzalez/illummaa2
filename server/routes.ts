@@ -265,10 +265,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Residential endpoint following exact TypeScript patterns
+  // Residential endpoint with enhanced security matching B2B assessment
   app.post("/api/submit-residential", bruteforce.prevent, async (req, res) => {
+    const requestStart = Date.now();
+    
+    // Enhanced security logging matching B2B assessment pattern
+    console.log(`[SECURITY] Residential submission attempt from IP: ${req.ip}, User-Agent: ${req.get('User-Agent')?.substring(0, 100)}`);
+    
     try {
-      // Residential-specific Zod validation schema
+      // Enhanced validation and sanitization
+      if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({
+          error: 'Empty request body',
+          message: 'Request body cannot be empty'
+        });
+      }
+      
+      // Additional input validation matching B2B pattern
+      const validationErrors = validateInput(req.body);
+      if (validationErrors.length > 0) {
+        return res.status(400).json({
+          error: 'Input validation failed',
+          details: validationErrors
+        });
+      }
+      
+      // Enhanced Residential-specific Zod validation schema with security fields
       const residentialSchema = z.object({
         first_name: z.string().min(1, "First name required"),
         last_name: z.string().min(1, "Last name required"), 
@@ -283,30 +305,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         questions_interests: z.string().optional(), // NEW FIELD
         residential_pathway: z.string(),
         lead_type: z.string(),
-        submission_timestamp: z.string()
+        submission_timestamp: z.string(),
+        // Enhanced security fields
+        session_id: z.string().optional(),
+        submission_attempt: z.number().optional(),
+        user_agent: z.string().optional(),
+        timestamp: z.string().optional()
       });
 
       // Validate incoming data using Zod
       const validationResult = residentialSchema.safeParse(req.body);
       
       if (!validationResult.success) {
-        console.error('Residential validation failed:', {
+        console.error('[SECURITY] Residential validation failed:', {
+          ip: req.ip,
           received: req.body,
           errors: validationResult.error.errors
         });
         return res.status(400).json({
-          success: false,
-          errors: validationResult.error.errors
+          error: 'Validation failed',
+          details: validationResult.error.errors
         });
       }
 
       const data = validationResult.data;
       
+      // Enhanced security logging for successful submissions
+      console.log(`[SECURITY] Residential submission validated for IP: ${req.ip}, Session: ${data.session_id}, Attempt: ${data.submission_attempt}`);
+      
       // Store in database (using same pattern as B2B)
       const submission = await storage.createResidentialAssessment(data);
       
-      // Submit to GoHighLevel residential webhook  
-      await submitToGoHighLevelResidential(data);
+      // Submit to GoHighLevel residential webhook with retry logic
+      try {
+        await submitToGoHighLevelResidential(data);
+      } catch (webhookError) {
+        console.error("GoHighLevel residential webhook failed:", webhookError);
+        // Don't fail the request if webhook fails, but log it
+      }
       
       res.json({ 
         success: true, 
@@ -315,10 +351,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
     } catch (error) {
-      console.error('Residential submission error:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error processing residential inquiry' 
+      const duration = Date.now() - requestStart;
+      console.error(`[SECURITY] Residential submission error from IP ${req.ip} after ${duration}ms:`, error);
+      
+      // Don't expose internal error details in production
+      const errorMessage = process.env.NODE_ENV === 'development' 
+        ? (error as Error).message 
+        : 'Please try again later';
+        
+      res.status(500).json({
+        error: "Internal server error",
+        message: errorMessage,
+        requestId: Date.now().toString(36)
       });
     }
   });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -68,7 +68,42 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   });
   const [residentialSubmissionSuccess, setResidentialSubmissionSuccess] = useState(false);
   const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const [submissionAttempts, setSubmissionAttempts] = useState(0);
   const { toast } = useToast();
+
+  // Security constants
+  const MAX_SUBMISSIONS_PER_SESSION = 1;
+  const SESSION_KEY = 'illummaa_consumer_form_session';
+
+  // Check session-based submission limit on component mount
+  useEffect(() => {
+    const sessionData = sessionStorage.getItem(SESSION_KEY);
+    if (sessionData) {
+      try {
+        const parsed = JSON.parse(sessionData);
+        if (parsed.submitted) {
+          setIsFormSubmitted(true);
+        }
+        setSubmissionAttempts(parsed.attempts || 0);
+      } catch (error) {
+        console.error('Error parsing session data:', error);
+        sessionStorage.removeItem(SESSION_KEY);
+      }
+    }
+  }, []);
+
+  // Prevent form usage if already submitted in this session
+  useEffect(() => {
+    if (isFormSubmitted) {
+      toast({
+        title: "Form Already Submitted",
+        description: "This form has already been submitted in this session. Please refresh the page to submit again.",
+        variant: "destructive",
+      });
+      onOpenChange(false);
+    }
+  }, [isFormSubmitted, toast, onOpenChange]);
 
   const form = useForm<ConsumerFormData>({
     resolver: zodResolver(consumerFormSchema),
@@ -81,26 +116,78 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
     },
   });
 
-  // Residential submission mutation
+  // Residential submission mutation with enhanced security
   const residentialMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('POST', '/api/submit-residential', data);
+      // Check submission limit before making request
+      if (submissionAttempts >= MAX_SUBMISSIONS_PER_SESSION) {
+        throw new Error('Maximum submissions reached for this session');
+      }
+      
+      // Add security headers and session tracking
+      const enhancedData = {
+        ...data,
+        session_id: sessionStorage.getItem(SESSION_KEY) || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        submission_attempt: submissionAttempts + 1,
+        user_agent: navigator.userAgent.substring(0, 200),
+        timestamp: new Date().toISOString()
+      };
+      
+      return apiRequest('POST', '/api/submit-residential', enhancedData);
     },
     onSuccess: () => {
+      // Mark form as submitted in session storage for security
+      const sessionData = {
+        submitted: true,
+        submittedAt: new Date().toISOString(),
+        attempts: submissionAttempts + 1
+      };
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+      
       setResidentialSubmissionSuccess(true);
+      setIsFormSubmitted(true);
+      
       toast({
         title: "Success!",
-        description: "Your residential inquiry has been submitted successfully.",
+        description: "Your residential inquiry has been submitted successfully. Page will reload for security.",
       });
+      
       queryClient.invalidateQueries({ queryKey: ['/api/residential'] });
+      
+      // Force page reload after 3 seconds for security consistency
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     },
     onError: (error: any) => {
       console.error('Residential submission error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to submit your inquiry. Please try again.",
-        variant: "destructive",
-      });
+      
+      // Update session attempts counter
+      const newAttempts = submissionAttempts + 1;
+      setSubmissionAttempts(newAttempts);
+      
+      const sessionData = {
+        submitted: false,
+        attempts: newAttempts,
+        lastAttemptAt: new Date().toISOString()
+      };
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+      
+      // Check if max attempts reached
+      if (newAttempts >= MAX_SUBMISSIONS_PER_SESSION) {
+        toast({
+          title: "Submission Limit Reached",
+          description: "Please refresh the page to try again.",
+          variant: "destructive",
+        });
+        onOpenChange(false);
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to submit your inquiry. Please try again.",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -158,6 +245,7 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
   };
 
   const resetForm = () => {
+    // Clear all form state
     form.reset();
     setShowResidentialOptions(false);
     setContactData(null);
@@ -165,7 +253,18 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
     setResidentialData({ province: '', housingInterest: '', questionsInterests: '' });
     setResidentialSubmissionSuccess(false);
     setRemaxRedirectSuccess(false);
+    
+    // Clear session data for security
+    sessionStorage.removeItem(SESSION_KEY);
+    setIsFormSubmitted(false);
+    setSubmissionAttempts(0);
+    
     onOpenChange(false);
+    
+    // Force page reload for complete security reset
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   return (
@@ -417,10 +516,12 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
                 <Button
                   type="submit"
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8"
-                  disabled={residentialMutation.isPending}
+                  disabled={residentialMutation.isPending || isFormSubmitted || submissionAttempts >= MAX_SUBMISSIONS_PER_SESSION}
                   data-testid="button-submit-residential"
                 >
-                  {residentialMutation.isPending ? "Submitting..." : "Request Information"}
+                  {residentialMutation.isPending ? "Submitting..." : 
+                   submissionAttempts >= MAX_SUBMISSIONS_PER_SESSION ? "Limit Reached" :
+                   "Request Information"}
                 </Button>
               </div>
             </form>
@@ -436,11 +537,14 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Inquiry Submitted Successfully!</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               Thank you for your interest in ILLÜMMAA's residential services. Our team will contact you within 24-48 hours.
             </p>
-            <Button onClick={resetForm} data-testid="button-close-success">
-              Close
+            <p className="text-sm text-gray-500 mb-6">
+              Page will refresh automatically for security purposes...
+            </p>
+            <Button onClick={resetForm} data-testid="button-close-success" disabled>
+              Refreshing...
             </Button>
           </div>
         )}
