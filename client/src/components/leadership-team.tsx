@@ -36,6 +36,11 @@ export default function LeadershipTeam() {
       name: "Lili Zunhua",
       title: "Quality and Production and International Relations",
       category: "Operations"
+    },
+    {
+      name: "Coach Juan Gonzalez",
+      title: "CTO & AI Strategist Consultant",
+      category: "Innovation"
     }
   ];
 
