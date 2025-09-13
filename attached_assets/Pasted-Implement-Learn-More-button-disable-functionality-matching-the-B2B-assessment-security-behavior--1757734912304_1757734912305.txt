@@ -1,0 +1,43 @@
+Implement "Learn More" button disable functionality matching the B2B assessment security behavior.
+
+SECURITY REQUIREMENT:
+After consumer form is accessed once, disable "Learn More" button to prevent multiple form submissions per session, matching existing B2B assessment form security.
+
+IMPLEMENTATION NEEDED:
+1. Track when "Learn More" button has been clicked in session
+2. Disable "Learn More" button after first click
+3. Prevent reopening consumer form until page reload
+4. Add visual indication that button is disabled
+5. Match existing assessment form disable behavior exactly
+
+BUTTON STATE MANAGEMENT:
+- Initial state: "Learn More" button active and clickable
+- After first click: Button becomes disabled/inactive
+- Visual feedback: Gray out button or show "completed" state
+- Tooltip/message: "Form already submitted - please reload page for new submission"
+- Prevent modal reopening until page refresh
+
+CONSISTENCY REQUIREMENTS:
+- Match identical behavior to B2B assessment form disable functionality
+- Use same visual styling for disabled state
+- Implement same session tracking mechanism
+- Ensure consistent security across all forms
+
+TECHNICAL IMPLEMENTATION:
+- Add session state tracking for consumer form usage
+- Implement button disable logic after first click
+- Apply appropriate CSS styling for disabled state
+- Prevent modal reopening functionality
+- Clear state only on page reload
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before making changes
+⚠️ TEST: Verify button disables correctly after first use
+⚠️ SECURITY: Ensure no bypass methods exist
+⚠️ MOBILE: Test disable functionality on mobile devices
+⚠️ CONSISTENCY: Match B2B assessment disable behavior exactly
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with button disable functionality or security implementation.
+
+GOAL: Disable "Learn More" button after first use to match B2B assessment security, preventing multiple form submissions per session.

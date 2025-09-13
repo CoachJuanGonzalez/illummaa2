@@ -122,7 +122,7 @@ export default function PartnershipTiers() {
           <Button 
             onClick={scrollToAssessment} 
             size="lg"
-            className="btn-primary text-white font-semibold text-base sm:text-lg w-full max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal sm:whitespace-nowrap"
+            className="btn-primary text-white font-semibold text-sm xs:text-base sm:text-lg w-full max-w-xs xs:max-w-sm sm:max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal leading-tight"
             data-testid="button-schedule-assessment"
           >
             Schedule Partnership Assessment

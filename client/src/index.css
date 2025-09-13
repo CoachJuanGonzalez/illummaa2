@@ -389,9 +389,41 @@
     /* Hero section mobile button optimizations */
     .hero-cta-mobile {
       min-height: 44px;
-      padding: 12px 24px;
+      padding: 10px 16px;
       width: 100%;
       max-width: 100%;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+  }
+
+  /* 5a. Extra small screens (iPhone SE, etc.) - 320px and below */
+  @media (max-width: 375px) {
+    .hero-cta-mobile {
+      padding: 8px 12px;
+      font-size: 13px;
+      min-height: 40px;
+      line-height: 1.2;
+    }
+    
+    /* Reduce container padding for very small screens */
+    .container {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
+
+  /* 5b. iPhone SE specific (320px) */
+  @media (max-width: 320px) {
+    .hero-cta-mobile {
+      padding: 8px 10px;
+      font-size: 12px;
+      min-height: 38px;
+    }
+    
+    .container {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
     }
     
     /* Form buttons mobile optimizations */

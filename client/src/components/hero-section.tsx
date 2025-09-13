@@ -37,20 +37,20 @@ export default function HeroSection() {
             <Button 
               onClick={scrollToAssessment} 
               size="lg"
-              className="btn-primary text-white font-bold text-xl hero-cta-mobile"
+              className="btn-primary text-white font-bold text-sm xs:text-base sm:text-xl hero-cta-mobile whitespace-normal leading-tight"
               data-testid="button-qualify-partnership"
             >
-              <Handshake className="mr-3" size={24} />
-              Qualify for Developer Partnership
+              <Handshake className="mr-2 xs:mr-3 flex-shrink-0" size={20} />
+              <span>Qualify for Developer Partnership</span>
             </Button>
             <Button 
               variant="outline"
               size="lg"
-              className="hero-secondary-btn font-semibold text-xl hero-cta-mobile" 
+              className="hero-secondary-btn font-semibold text-sm xs:text-base sm:text-xl hero-cta-mobile whitespace-normal leading-tight" 
               data-testid="button-watch-film"
             >
-              <Play className="mr-3" size={24} style={{color: '#1a365d'}} />
-              Watch the Film
+              <Play className="mr-2 xs:mr-3 flex-shrink-0" size={20} style={{color: '#1a365d'}} />
+              <span>Watch the Film</span>
             </Button>
           </div>
         </div>
