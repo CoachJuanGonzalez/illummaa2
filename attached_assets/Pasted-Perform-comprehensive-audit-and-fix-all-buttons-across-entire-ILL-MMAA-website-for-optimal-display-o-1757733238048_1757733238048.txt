@@ -1,0 +1,97 @@
+Perform comprehensive audit and fix all buttons across entire ILLÜMMAA website for optimal display on all devices, with special focus on mobile responsiveness.
+
+COMPREHENSIVE BUTTON AUDIT REQUIRED:
+
+BUTTONS TO AUDIT AND FIX:
+1. "Learn More" button (hero section)
+2. "Qualify for Developer Partnership" button (hero section)
+3. "Watch the Film" button (hero section)
+4. "Schedule Partnership Assessment" button (assessment section)
+5. "Get Information" button (consumer form - In-House Service)
+6. "Get Full Service" button (consumer form - Remax Partnership)
+7. "Next" button (consumer contact form)
+8. "Request Information" button (final consumer form)
+9. "Cancel" button (consumer form modal)
+10. Navigation menu buttons (mobile hamburger menu)
+11. Footer navigation links
+12. Any other interactive buttons throughout the site
+
+MOBILE DEVICE TESTING REQUIREMENTS:
+- iPhone SE (375x667px)
+- iPhone 12/13/14 (390x844px)
+- iPhone 14 Plus (428x926px)
+- iPhone 14 Pro Max (430x932px)
+- Samsung Galaxy S21 (360x800px)
+- Google Pixel (393x851px)
+- iPad Mini (768x1024px)
+- iPad Pro (1024x1366px)
+
+BUTTON STANDARDS TO IMPLEMENT:
+1. **Touch Target Size**: Minimum 44px height for accessibility
+2. **Horizontal Spacing**: Minimum 16px margins from screen edges
+3. **Vertical Spacing**: Proper spacing above and below buttons
+4. **Width Constraints**: Maximum 90% of screen width on mobile
+5. **Text Readability**: Ensure text fits without truncation
+6. **Hover States**: Functional on desktop, appropriate for touch devices
+7. **Loading States**: Visual feedback during form submissions
+8. **Disabled States**: Clear visual indication when buttons are inactive
+
+RESPONSIVE DESIGN FIXES:
+- Ensure no horizontal scrolling caused by buttons
+- Proper button stacking on narrow screens
+- Appropriate font sizes that scale with screen size
+- Consistent button styling across all breakpoints
+- Proper alignment and centering
+- Touch-friendly spacing between multiple buttons
+
+CSS AUDIT REQUIREMENTS:
+- Check all media queries for button styles
+- Verify flexbox/grid layouts work on all screen sizes
+- Ensure z-index values don't cause overlay issues
+- Validate button animations work smoothly on mobile
+- Test form submission states and error handling
+
+ACCESSIBILITY COMPLIANCE:
+- Proper contrast ratios for button text
+- Clear focus indicators for keyboard navigation
+- Screen reader compatible button labels
+- Touch target accessibility guidelines
+- WCAG 2.1 AA compliance for all interactive elements
+
+CROSS-BROWSER TESTING:
+- Safari (iOS)
+- Chrome (Android/iOS)
+- Firefox (Android)
+- Samsung Internet
+- Edge (mobile)
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Test every button on every device size
+⚠️ MOBILE: Verify no layout breaking on small screens
+⚠️ TOUCH: Ensure all buttons are touch-friendly
+⚠️ NAVIGATION: Verify mobile menu functionality
+⚠️ FORMS: Test form submission buttons thoroughly
+⚠️ ACCESSIBILITY: Maintain WCAG compliance
+⚠️ PERFORMANCE: Ensure changes don't impact load times
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Button functionality might be compromised
+- Mobile navigation could be affected
+- Form submission processes might break
+- Accessibility standards might be impacted
+- Cross-browser compatibility issues detected
+- Any unexpected errors or layout issues arise
+
+COMPREHENSIVE TESTING PROTOCOL:
+1. Test all buttons on all specified mobile devices
+2. Verify button functionality in both portrait and landscape modes
+3. Check button behavior during form submissions
+4. Validate mobile menu and navigation elements
+5. Test touch interactions and hover states
+6. Confirm no buttons extend beyond viewport boundaries
+7. Verify proper spacing and alignment across all screens
+
+GOAL: Ensure every button on the ILLÜMMAA website displays perfectly and functions correctly across all devices, with special emphasis on mobile user experience and accessibility standards.
