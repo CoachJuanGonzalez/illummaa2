@@ -1,13 +1,52 @@
 import { Home, Rocket, Star, Crown, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ConsumerForm from "@/components/consumer-form";
 
 export default function PartnershipTiers() {
   const [showConsumerForm, setShowConsumerForm] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isFormUsed, setIsFormUsed] = useState(false);
+
+  // Security constants
+  const CONSUMER_FORM_SESSION_KEY = 'illummaa_partnership_consumer_form_used';
+
+  // Check if form was already used in this session
+  useEffect(() => {
+    const sessionData = sessionStorage.getItem(CONSUMER_FORM_SESSION_KEY);
+    if (sessionData) {
+      try {
+        const data = JSON.parse(sessionData);
+        if (data.used) {
+          setIsFormUsed(true);
+          setShowSuccessMessage(true);
+        }
+      } catch (error) {
+        console.error('Error parsing session data:', error);
+      }
+    }
+  }, []);
 
   const openConsumerForm = () => {
+    if (isFormUsed || showSuccessMessage) {
+      return; // Prevent opening if already used or success shown
+    }
     setShowConsumerForm(true);
+  };
+
+  const handleFormSuccess = () => {
+    // Mark as used in sessionStorage (resets on page reload)
+    const sessionData = {
+      used: true,
+      component: 'partnership_consumer_form',
+      usedAt: new Date().toISOString()
+    };
+    sessionStorage.setItem(CONSUMER_FORM_SESSION_KEY, JSON.stringify(sessionData));
+    setIsFormUsed(true);
+    
+    // Close the modal and show inline success message
+    setShowConsumerForm(false);
+    setShowSuccessMessage(true);
   };
 
   const scrollToAssessment = () => {
@@ -33,8 +72,9 @@ export default function PartnershipTiers() {
         "Access to financing assistance and government housing programs"
       ],
       buttonVariant: "outline" as const,
-      buttonText: "Get Started",
-      action: openConsumerForm
+      buttonText: isFormUsed || showSuccessMessage ? "Form Submitted" : "Get Started",
+      action: openConsumerForm,
+      disabled: isFormUsed || showSuccessMessage
     },
     {
       name: "Pioneer",
@@ -142,9 +182,11 @@ export default function PartnershipTiers() {
               
               <Button 
                 variant={tier.buttonVariant}
-                className={`w-full ${tier.buttonVariant === 'default' ? 'btn-primary' : ''}`}
+                className={`w-full ${tier.buttonVariant === 'default' ? 'btn-primary' : ''} ${tier.disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 onClick={tier.action}
+                disabled={tier.disabled}
                 data-testid={`button-tier-${tier.name.toLowerCase()}`}
+                title={tier.disabled ? "Form already submitted - please reload page for new submission" : tier.buttonText}
               >
                 {tier.buttonText}
               </Button>
@@ -162,11 +204,34 @@ export default function PartnershipTiers() {
             Schedule Partnership Assessment
           </Button>
         </div>
+        
+        {/* Inline Success Message */}
+        {showSuccessMessage && (
+          <div className="mt-12 max-w-2xl mx-auto bg-green-50 border border-green-200 rounded-2xl p-8 shadow-lg" data-testid="success-message-inline">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-green-800 mb-2" data-testid="heading-success-title">
+                Inquiry Submitted Successfully!
+              </h3>
+              <p className="text-green-700 mb-4" data-testid="text-success-message">
+                Thank you for your interest in ILLÜMMAA's residential services. Our team will contact you within 24-48 hours.
+              </p>
+              <p className="text-sm text-green-600" data-testid="text-success-note">
+                Ready for a new inquiry? Simply reload the page.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
       
       <ConsumerForm 
         open={showConsumerForm} 
         onOpenChange={setShowConsumerForm}
+        onSuccess={handleFormSuccess}
       />
     </section>
   );

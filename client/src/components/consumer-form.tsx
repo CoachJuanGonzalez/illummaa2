@@ -104,13 +104,10 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
       return apiRequest('POST', '/api/submit-residential', enhancedData);
     },
     onSuccess: () => {
-      
-      setResidentialSubmissionSuccess(true);
       setIsFormSubmitted(true);
-      
       queryClient.invalidateQueries({ queryKey: ['/api/residential'] });
       
-      // Call the parent success handler to show inline message
+      // Close modal immediately and call parent success handler
       if (onSuccess) {
         onSuccess();
       } else {
@@ -120,6 +117,26 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
           description: "Your residential inquiry has been submitted successfully.",
         });
       }
+      
+      // Close the modal
+      onOpenChange(false);
+      
+      // Reset form state but don't reload page
+      form.reset();
+      setShowResidentialOptions(false);
+      setContactData(null);
+      setResidentialPathway('');
+      setResidentialData({ province: '', housingInterest: '', questionsInterests: '' });
+      setResidentialSubmissionSuccess(false);
+      setRemaxRedirectSuccess(false);
+      
+      // Store session data for security
+      const sessionData = {
+        used: true,
+        component: 'consumer_form',
+        usedAt: new Date().toISOString()
+      };
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
     },
     onError: (error: any) => {
       console.error('Residential submission error:', error);
@@ -470,25 +487,6 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
         )}
 
         {/* Success States */}
-        {residentialSubmissionSuccess && (
-          <div className="text-center py-8" data-testid="section-success">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">Inquiry Submitted Successfully!</h3>
-            <p className="text-gray-600 mb-4">
-              Thank you for your interest in ILLÜMMAA's residential services. Our team will contact you within 24-48 hours.
-            </p>
-            <p className="text-sm text-gray-500 mb-6">
-              Page will refresh automatically for security purposes...
-            </p>
-            <Button onClick={resetForm} data-testid="button-close-success" disabled>
-              Refreshing...
-            </Button>
-          </div>
-        )}
 
         {remaxRedirectSuccess && (
           <div className="text-center py-8" data-testid="section-remax-success">
