@@ -55,9 +55,10 @@ type ConsumerFormData = z.infer<typeof consumerFormSchema>;
 interface ConsumerFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) {
+export default function ConsumerForm({ open, onOpenChange, onSuccess }: ConsumerFormProps) {
   const [showResidentialOptions, setShowResidentialOptions] = useState(false);
   const [contactData, setContactData] = useState<ConsumerFormData | null>(null);
   const [residentialPathway, setResidentialPathway] = useState('');
@@ -107,12 +108,18 @@ export default function ConsumerForm({ open, onOpenChange }: ConsumerFormProps) 
       setResidentialSubmissionSuccess(true);
       setIsFormSubmitted(true);
       
-      toast({
-        title: "Success!",
-        description: "Your residential inquiry has been submitted successfully.",
-      });
-      
       queryClient.invalidateQueries({ queryKey: ['/api/residential'] });
+      
+      // Call the parent success handler to show inline message
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Fallback toast if no parent handler
+        toast({
+          title: "Success!",
+          description: "Your residential inquiry has been submitted successfully.",
+        });
+      }
     },
     onError: (error: any) => {
       console.error('Residential submission error:', error);
