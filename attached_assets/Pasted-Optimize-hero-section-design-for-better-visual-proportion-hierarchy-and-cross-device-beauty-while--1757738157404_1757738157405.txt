@@ -1,0 +1,82 @@
+Optimize hero section design for better visual proportion, hierarchy, and cross-device beauty while maintaining enterprise B2B focus.
+
+DESIGN ISSUES TO FIX:
+
+TEXT HIERARCHY IMPROVEMENTS:
+1. Reduce main headline "The Future of Housing Is Here" font size by 15-20% for better proportion
+2. Improve spacing relationship between headline and "Your Home, Your Lifestyle" subtitle
+3. Create tighter visual connection between text elements with proper line-height and letter-spacing
+4. Ensure text hierarchy guides eye flow naturally from headline to CTAs
+
+BUTTON BALANCE OPTIMIZATION:
+1. Create clearer visual hierarchy between CTAs:
+   - "Qualify for Developer Partnership" (primary action) - maintain prominence
+   - "Watch the Film" (secondary action) - reduce visual weight slightly
+2. Improve button spacing and alignment for better flow
+3. Ensure consistent button proportions and touch targets
+4. Add proper visual breathing room around button group
+
+RESPONSIVE DESIGN REQUIREMENTS:
+- Optimize text scaling for all screen sizes (320px - 1920px+)
+- Ensure headline remains readable without overwhelming mobile screens
+- Maintain button accessibility on touch devices (44px minimum height)
+- Create fluid typography that scales proportionally
+- Test visual balance on:
+  * Mobile: 375px, 390px, 428px widths
+  * Tablet: 768px, 1024px widths  
+  * Desktop: 1440px, 1920px+ widths
+
+VISUAL BALANCE ENHANCEMENTS:
+1. Improve text overlay integration with architectural background
+2. Adjust text positioning to work harmoniously with image composition
+3. Ensure proper contrast ratios for accessibility (4.5:1 minimum)
+4. Create better negative space distribution
+5. Maintain professional B2B aesthetic over luxury residential feel
+
+TYPOGRAPHY REFINEMENTS:
+- Optimize font weights for better hierarchy
+- Improve line spacing for enhanced readability
+- Ensure consistent font scaling across breakpoints
+- Maintain ILLÜMMAA brand typography standards
+
+LAYOUT PROPORTIONS:
+- Balance text-to-image ratio for optimal visual impact
+- Ensure content doesn't compete with architectural photography
+- Create harmonious composition that supports enterprise messaging
+- Maintain focus on B2B developer audience rather than luxury residential
+
+CROSS-DEVICE BEAUTY STANDARDS:
+- Ensure proportional beauty on all device types
+- Maintain visual harmony in both portrait and landscape orientations
+- Create smooth transitions between breakpoints
+- Test visual appeal on various screen densities and resolutions
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making design changes
+⚠️ TEST: Verify changes across all device sizes and orientations
+⚠️ MOBILE: Ensure mobile experience remains optimal
+⚠️ ACCESSIBILITY: Maintain proper contrast ratios and font sizes
+⚠️ BRAND: Preserve ILLÜMMAA brand identity and B2B messaging
+⚠️ PERFORMANCE: Ensure design changes don't impact load times
+⚠️ RESPONSIVE: Test fluid typography scaling thoroughly
+⚠️ USABILITY: Maintain clear call-to-action visibility and accessibility
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Design changes might compromise brand identity
+- Text readability could be impacted on any device size
+- Button accessibility or functionality might be affected
+- Visual hierarchy changes could reduce conversion effectiveness
+- Mobile responsiveness could be compromised
+- Performance metrics might be negatively impacted
+- Any unexpected layout issues arise during implementation
+
+TESTING PROTOCOL:
+1. Verify text hierarchy works across all screen sizes
+2. Test button proportions and accessibility on touch devices
+3. Validate visual balance in multiple orientations
+4. Check contrast ratios meet accessibility standards
+5. Ensure smooth scaling between breakpoints
+6. Confirm B2B messaging remains prominent and professional
+
+GOAL: Create visually balanced, proportionally beautiful hero section that maintains enterprise B2B focus while delivering optimal user experience across all devices and screen sizes.
