@@ -1,0 +1,135 @@
+Implement complete consumer clarity approach for Consumer Information Request form with new GoHighLevel custom fields.
+
+COMPREHENSIVE UPDATES REQUIRED:
+
+STEP 1 - CONSUMER FORM SUBTITLE UPDATE:
+CHANGE FROM: "Tell us about your modular housing needs. We'll connect you with the right pathway."
+CHANGE TO: "Share your contact information to begin exploring modular housing solutions."
+
+STEP 2 - SERVICE SELECTION CONTENT UPDATE:
+CHANGE FROM: "Residential Projects (Under 50 Units)" + "ILLÜMMAA offers two pathways for residential projects:"
+CHANGE TO: "How Can We Help You?" + "Choose the service that best fits your needs:"
+
+STEP 2 - CARD TITLES AND CONTENT UPDATE:
+LEFT CARD:
+- TITLE: "Explore Modular Housing Options" (from "In-House First-Time Home Buyer Service")
+- CONTENT: 
+  • Learn about modular housing solutions
+  • Direct consultation with ILLÜMMAA specialists  
+  • Explore design and pricing options
+- BUTTON: "Get Information" (from "Choose In-House Service")
+
+RIGHT CARD:
+- TITLE: "Full-Service Home Buying Support" (from "Remax Partnership Program")
+- CONTENT:
+  • Complete home buying assistance
+  • Real estate agent support included
+  • Land acquisition and financing help
+- BUTTON: "Get Full Service" (from "Choose Remax Partnership")
+
+STEP 3 - IN-HOUSE SERVICE FORM UPDATE:
+FORM TITLE: Change to "Modular Housing Information Request" (from "In-House Residential Service")
+SUBTITLE: "Tell us about your interests so our specialists can provide relevant information."
+
+NEW FORM FIELDS:
+- Housing Interest (dropdown): "Learning about options", "1 home", "2-5 homes", "Other"
+- Questions or Interests (textarea): "What would you like to know about modular housing?"
+- Construction Province (existing field)
+
+REMOVE FIELDS:
+- Number of Units field (replaced by Housing Interest)
+- Project Description field (replaced by Questions or Interests)
+
+BUTTON TEXT: "Request Information" (from "Submit Inquiry")
+
+PRE-FILLED BACKEND DATA (IN-HOUSE SERVICE ONLY):
+- Project Unit Count: 0 (NOT visible to user, backend only)
+- Project Budget Range: "Under $5 Million" (backend only)
+- Lead Type: "Consumer Information Request Form" (backend only)
+
+NEW GOHIGHLEVEL CUSTOM FIELDS REQUIRED:
+1. **Housing Interest** (Single Line Text field)
+   - Name: Housing Interest
+   - Description: Consumer interest level for modular housing exploration
+   
+2. **Questions or Interests** (Multi Line Text field)
+   - Name: Questions or Interests
+   - Description: Consumer questions about modular housing options
+
+ROUTING LOGIC - CRITICAL DISTINCTION:
+- "Get Information" → Submit to existing GHL_RESIDENTIAL_WEBHOOK_URL with consumer data
+- "Get Full Service" → Redirect to external Remax partner website (NO webhook sent)
+
+WEBHOOK INTEGRATION (IN-HOUSE SERVICE PATH ONLY):
+Submit to existing /api/submit-residential endpoint with:
+- first_name: contact_first_name
+- last_name: contact_last_name
+- email: contact_email
+- phone: contact_phone
+- construction_province: selected_province
+- project_unit_count: 0 (pre-filled backend value)
+- project_budget_range: "Under $5 Million" (pre-filled backend value)
+- housing_interest: selected_dropdown_value (NEW FIELD)
+- questions_interests: textarea_content (NEW FIELD)
+- residential_pathway: "In-House Service"
+- lead_type: "Consumer Information Request Form"
+
+REMAX PARTNERSHIP PATH:
+- Direct redirect to external Remax website
+- NO GoHighLevel webhook sent
+- NO data processing required
+- Maintains existing Remax redirect functionality
+
+TECHNICAL REQUIREMENTS - MUST CONFIRM:
+ERROR HANDLING VERIFICATION:
+- Webhook submission includes try/catch error handling for field rejection
+- Graceful failure messages if GHL doesn't recognize new custom fields
+- User-friendly error messages without exposing technical details
+- Retry logic for temporary webhook failures
+
+ROLLBACK PROCEDURES:
+- Ability to instantly revert to previous Consumer Information Request form
+- Backup of all modified components before changes
+- Quick restoration of original field structure if integration fails
+- Documentation of all changes made for rapid rollback
+
+DESIGN CONSISTENCY:
+- Maintain all existing styling and responsive behavior
+- Keep professional enterprise appearance
+- Preserve ILLÜMMAA brand colors and typography
+- Ensure smooth transitions between all steps
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create full backup before making changes
+⚠️ TEST: Verify changes don't break existing functionality
+⚠️ MOBILE: Test responsive behavior on all device sizes
+⚠️ REVERT: Be prepared to rollback if issues occur
+⚠️ PREVIEW: Show changes before applying to production
+⚠️ VALIDATE: Ensure no broken links or missing assets
+⚠️ CROSS-BROWSER: Test in Chrome, Firefox, Safari, Edge
+⚠️ PERFORMANCE: Monitor load times after changes
+⚠️ ACCESSIBILITY: Maintain proper alt text and ARIA labels
+⚠️ SEO: Preserve meta tags and structured data
+⚠️ WEBHOOK-INTEGRATION: Test new fields integrate with GHL_RESIDENTIAL_WEBHOOK_URL (In-House only)
+⚠️ REMAX-REDIRECT: Ensure Remax partnership maintains existing redirect behavior
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY of these situations occur:
+- Any warning condition above is detected
+- Website functionality might be broken or impacted
+- Webhook endpoints require structural changes
+- Remax partnership redirect functionality could be affected
+- Error handling is not properly implemented for new custom fields
+- Rollback procedures are not ready if GHL integration fails
+- Any unexpected errors or conflicts arise during implementation
+
+CONFIRM SPECIFICALLY:
+- Error handling is properly implemented for new custom fields
+- Rollback procedures are ready if GHL integration fails
+- Remax redirect maintains existing functionality (no webhook)
+- In-House Service webhook integration is properly configured
+
+DO NOT proceed with changes without my explicit approval if any risks are identified.
+
+IMPLEMENTATION GOAL:
+Transform Consumer Information Request flow with clear, exploration-focused language while maintaining existing technical functionality: In-House Service integrates with GHL, Remax Partnership redirects externally.
