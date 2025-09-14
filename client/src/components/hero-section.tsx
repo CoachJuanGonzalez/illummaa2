@@ -18,7 +18,10 @@ export default function HeroSection() {
           src={heroBackgroundImage} 
           alt="Aerial view of modern modular home community with solar panels and sustainable green spaces" 
           className="w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
-          style={{opacity: 1.0}}
+          style={{
+            opacity: 1.0,
+            filter: 'brightness(1.15) contrast(1.25) saturate(1.2) sharpen(1)'
+          }}
           data-testid="img-hero-background"
         />
         <div className="hero-bg absolute inset-0"></div>

@@ -1,0 +1,46 @@
+Fix hero section background image clarity issues and optimize for professional presentation.
+
+CURRENT ISSUE:
+The recently implemented aerial community image has a foggy/hazy appearance that reduces visual clarity and professional impact of the hero section.
+
+IMAGE OPTIMIZATION REQUIRED:
+
+CLARITY ENHANCEMENTS:
+- Increase image contrast to reduce foggy appearance
+- Enhance sharpness and definition of modular homes and landscape
+- Improve overall brightness and vibrancy for crisp presentation
+- Apply professional image enhancement filters to achieve clean, clear look
+
+TECHNICAL ADJUSTMENTS:
+- Adjust CSS filters if needed: brightness(), contrast(), saturate()
+- Optimize image compression while maintaining quality
+- Ensure enhanced image maintains fast loading performance
+- Test clarity improvements across all devices and screen sizes
+
+TEXT READABILITY:
+- Verify text overlays remain clearly readable after image enhancements
+- Maintain proper contrast between background and text elements
+- Ensure buttons remain visible and professional against enhanced background
+- Test readability on both desktop and mobile devices
+
+PROFESSIONAL PRESENTATION:
+- Achieve crisp, enterprise-quality visual presentation
+- Ensure image quality matches professional B2B website standards
+- Maintain architectural photography aesthetic without hazy appearance
+- Create clean, sharp visual impact for enterprise prospects
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before image optimization
+⚠️ TEST: Verify text readability after clarity enhancements
+⚠️ MOBILE: Test enhanced image on mobile devices
+⚠️ PERFORMANCE: Ensure optimizations don't impact load times
+⚠️ QUALITY: Maintain professional enterprise visual standards
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Image clarity or sharpness improvements
+- Text contrast or readability
+- Performance impact from enhancements
+- Mobile display quality
+
+GOAL: Transform foggy aerial image into crisp, professional hero background that maintains enterprise visual standards and optimal text readability.
