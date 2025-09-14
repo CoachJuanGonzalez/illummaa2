@@ -1,0 +1,66 @@
+Modify model detail pages to ensure proper scroll-to-top navigation and center the "Back to Models" button for optimal UX/UI across all devices.
+
+TWO MODIFICATIONS REQUIRED:
+
+MODIFICATION 1: UNIVERSAL SCROLL-TO-TOP ON PAGE LOAD
+When "View Details" buttons are clicked and model pages load, ensure the page displays from the top across ALL devices:
+
+CROSS-DEVICE IMPLEMENTATION:
+- Add scrollTo(0, 0) with fallback methods for maximum compatibility
+- Use useEffect hook: useEffect(() => { 
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, []);
+- Include setTimeout fallback for slow-loading devices: setTimeout(() => window.scrollTo(0, 0), 100)
+- Test on iOS Safari, Android Chrome, desktop browsers, and tablet orientations
+
+MODIFICATION 2: CENTER "BACK TO MODELS" BUTTON AND REMOVE DEVELOPER RELATIONS
+Update button layout for optimal UX/UI positioning:
+
+BUTTON CHANGES:
+- Remove "Contact Developer Relations" button completely
+- Center the remaining "Back to Models" button horizontally on the page
+- Use CSS centering: display: flex; justify-content: center; or text-align: center
+- Maintain proper vertical spacing above and below the button
+
+RESPONSIVE CENTERING REQUIREMENTS:
+- Center button on all screen sizes: mobile (375px+), tablet (768px+), desktop (1024px+)
+- Ensure 44px minimum height for touch accessibility
+- Add proper margins: minimum 24px vertical spacing, 16px horizontal margins
+- Test centered positioning in both portrait and landscape orientations
+- Verify button remains accessible and visually balanced
+
+AFFECTED PAGES WITH UNIVERSAL COMPATIBILITY:
+- /models/1br-compact (centered button on all devices)
+- /models/2br-family (centered button on all devices)
+- /models/3br-executive (centered button on all devices)
+
+COMPREHENSIVE DEVICE TESTING:
+- Verify centered button positioning on mobile, tablet, and desktop
+- Test touch accessibility with centered layout
+- Ensure visual balance and proper spacing around centered button
+- Confirm consistent centering behavior across all screen sizes
+
+DESIGN CONSISTENCY:
+- Maintain ILLÜMMAA UX/UI standards with centered button
+- Preserve responsive behavior with improved centering
+- Create visually balanced layout with single centered navigation button
+- Ensure professional appearance across all device types
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before modifying model pages
+⚠️ MOBILE: Test centered button on iOS Safari and Android Chrome
+⚠️ TABLET: Test centering in both portrait and landscape orientations
+⚠️ DESKTOP: Test centered button across all major desktop browsers
+⚠️ CENTERING: Verify button remains perfectly centered on all screen sizes
+⚠️ TOUCH: Maintain accessibility standards with centered positioning
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Scroll-to-top implementation on any device type
+- Button centering or layout changes affecting any screen size
+- Navigation functionality with new centered positioning
+- Visual balance or spacing with centered button design
+
+GOAL: Ensure all model detail pages load at the top when accessed via "View Details" buttons and display a perfectly centered "Back to Models" button that provides optimal UX/UI experience across every device type and screen size.
