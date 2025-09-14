@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Check, ArrowLeft, Home } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 
 export default function Model2BRFamily() {
+  const [location, navigate] = useLocation();
+
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
     // Primary scroll method
@@ -18,6 +20,35 @@ export default function Model2BRFamily() {
       window.scrollTo(0, 0);
     }, 100);
   }, []);
+
+  // Custom function to navigate to home and scroll to models section
+  const goBackToModels = () => {
+    navigate('/');
+    
+    // Wait for navigation to complete, then scroll to models section
+    setTimeout(() => {
+      const element = document.getElementById('models');
+      if (element) {
+        // Get the actual sticky header height
+        const header = document.querySelector('header');
+        const headerHeight = header ? header.offsetHeight : 80;
+        
+        // Add extra offset for proper positioning
+        const isMobile = window.innerWidth < 768;
+        const extraOffset = isMobile ? 24 : 10;
+        
+        // Calculate the target scroll position
+        const elementRect = element.getBoundingClientRect();
+        const targetPosition = elementRect.top + window.scrollY - headerHeight - extraOffset;
+        
+        // Scroll to the calculated position
+        window.scrollTo({
+          top: Math.max(0, targetPosition),
+          behavior: "smooth"
+        });
+      }
+    }, 100); // Small delay to ensure DOM is updated
+  };
 
   return (
     <div className="bg-background text-foreground">
@@ -142,12 +173,16 @@ export default function Model2BRFamily() {
 
             {/* Back Navigation */}
             <div className="flex justify-center py-6">
-              <Link href="/#models">
-                <Button variant="outline" size="lg" className="min-h-[44px] px-6 mx-4" data-testid="button-back">
-                  <ArrowLeft className="mr-2" size={20} />
-                  Back to Models
-                </Button>
-              </Link>
+              <Button 
+                onClick={goBackToModels}
+                variant="outline" 
+                size="lg" 
+                className="min-h-[44px] px-6 mx-4" 
+                data-testid="button-back"
+              >
+                <ArrowLeft className="mr-2" size={20} />
+                Back to Models
+              </Button>
             </div>
           </div>
         </div>
