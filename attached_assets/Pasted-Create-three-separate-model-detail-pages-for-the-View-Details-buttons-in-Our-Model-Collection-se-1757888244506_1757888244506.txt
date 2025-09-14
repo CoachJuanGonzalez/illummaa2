@@ -1,0 +1,86 @@
+Create three separate model detail pages for the "View Details" buttons in "Our Model Collection" section, maintaining consistent ILLÜMMAA enterprise UX/UI design.
+
+PAGE CREATION REQUIREMENTS:
+
+CREATE THREE NEW PAGES:
+1. /models/1br-compact - for 1BR Compact model
+2. /models/2br-family - for 2BR Family model  
+3. /models/3br-executive - for 3BR Executive model
+
+ROUTING SETUP:
+- Update "View Details" buttons to navigate to respective model pages
+- Implement proper React Router routing for all three pages
+- Ensure back navigation and breadcrumb functionality
+
+SHARED PAGE STRUCTURE FOR ALL THREE MODELS:
+Each page must include the following content with model-specific details:
+
+HEADER SECTION:
+- Model name as main headline (1BR Compact / 2BR Family / 3BR Executive)
+- "Your Home. Your Lifestyle." as subtitle
+- Model specifications (sq ft, description from original cards)
+- Starting price from original cards
+
+MAIN CONTENT (identical text for all three pages):
+"Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:
+
+- Family moments around the kitchen table.
+- Quiet mornings with light streaming through oversized windows.
+- A backyard that feels like an extension of your living room.
+
+Our homes are built to adapt to you, not the other way around.
+
+Affordable Luxury Without Compromise
+
+Why choose between quality and affordability? Illummaa combines smart design, efficient construction, and sustainable practices to give you more home for your money. Every detail from energy-efficient materials to timeless finishes is crafted to make you proud of where you live.
+
+Designed to Inspire Confidence - Whether it's your first home, a family upgrade, or a modern retreat, Illummaa homes are:
+
+- Beautifully designed with clean lines and natural light.
+- Flexible to suit different budgets, families, and lifestyles.
+- Built with integrity, so you can feel secure about your investment."
+
+MODEL-SPECIFIC DETAILS:
+1BR Compact Page:
+- 600 sq ft • Perfect for urban density
+- Starting from $129K CAD
+- Features: Open concept living, Energy efficient appliances, Premium finishes
+
+2BR Family Page:
+- 900 sq ft • Ideal for young families
+- Starting from $169K CAD
+- Features: Two spacious bedrooms, Full kitchen & dining, Private outdoor space ready
+
+3BR Executive Page:
+- 1200 sq ft • Premium family living
+- Starting from $199K CAD
+- Features: Master suite with ensuite, Open concept design, Smart home ready
+
+DESIGN REQUIREMENTS:
+- Maintain identical UX/UI styling as main ILLÜMMAA website
+- Use same typography, colors, spacing, and layout patterns
+- Ensure responsive design across all devices
+- Include proper navigation back to main site
+- Add breadcrumbs: Home > Models > [Model Name]
+
+TECHNICAL IMPLEMENTATION:
+- Create React components for each model page
+- Implement proper SEO meta tags for each page
+- Ensure fast loading and mobile optimization
+- Add proper error handling and 404 fallbacks
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before adding new pages
+⚠️ TEST: Verify all navigation and routing works correctly
+⚠️ MOBILE: Test responsive behavior on all devices
+⚠️ CONSISTENCY: Maintain exact UX/UI design standards
+⚠️ ROUTING: Ensure proper React Router implementation
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Page routing or navigation setup
+- Design consistency with main website
+- Mobile responsiveness
+- Content layout or formatting
+
+GOAL: Create three professional model detail pages with consistent ILLÜMMAA branding, identical content structure, and seamless integration with existing website navigation.
