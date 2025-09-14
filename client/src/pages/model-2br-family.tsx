@@ -1,10 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Check, ArrowLeft, Home } from "lucide-react";
 import { Link } from "wouter";
+import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 
 export default function Model2BRFamily() {
+  // Universal scroll-to-top on page load for all devices
+  useEffect(() => {
+    // Primary scroll method
+    window.scrollTo(0, 0);
+    // Fallback methods for maximum compatibility
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    // setTimeout fallback for slow-loading devices
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+  }, []);
+
   return (
     <div className="bg-background text-foreground">
       <StickyHeader />
@@ -12,11 +26,9 @@ export default function Model2BRFamily() {
       {/* Breadcrumbs */}
       <div className="container mx-auto px-6 pt-8">
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" data-testid="breadcrumbs">
-          <Link href="/">
-            <a className="flex items-center hover:text-primary transition-colors">
-              <Home size={16} className="mr-1" />
-              Home
-            </a>
+          <Link href="/" className="flex items-center hover:text-primary transition-colors">
+            <Home size={16} className="mr-1" />
+            Home
           </Link>
           <span>&gt;</span>
           <span>Models</span>
@@ -129,16 +141,13 @@ export default function Model2BRFamily() {
             </div>
 
             {/* Back Navigation */}
-            <div className="text-center">
+            <div className="flex justify-center py-6">
               <Link href="/">
-                <Button variant="outline" size="lg" className="mr-4" data-testid="button-back">
+                <Button variant="outline" size="lg" className="min-h-[44px] px-6 mx-4" data-testid="button-back">
                   <ArrowLeft className="mr-2" size={20} />
                   Back to Models
                 </Button>
               </Link>
-              <Button size="lg" className="btn-primary" data-testid="button-contact">
-                Contact Developer Relations
-              </Button>
             </div>
           </div>
         </div>
