@@ -142,7 +142,7 @@ export default function Model2BRFamily() {
 
             {/* Back Navigation */}
             <div className="flex justify-center py-6">
-              <Link href="/">
+              <Link href="/#models">
                 <Button variant="outline" size="lg" className="min-h-[44px] px-6 mx-4" data-testid="button-back">
                   <ArrowLeft className="mr-2" size={20} />
                   Back to Models
