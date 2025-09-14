@@ -1,0 +1,52 @@
+Replace current hero section background image with new modular community aerial view while maintaining all existing UX/UI design and styling.
+
+IMAGE REPLACEMENT REQUIREMENTS:
+
+CURRENT TASK:
+- Locate hero section background image (luxury pool/modern home)
+- Replace with new aerial community image showing multiple modular homes
+- Maintain all existing styling, positioning, and responsive behavior
+
+NEW IMAGE SPECIFICATIONS:
+- Aerial view of modular home community with solar panels
+- Multiple single-story modular homes in natural setting
+- Green spaces and sustainable community design
+- Lake/natural landscape in background
+- Professional architectural photography quality
+
+PRESERVE EXISTING ELEMENTS:
+- All text overlays ("The Future of Housing Is Here", "Your Home, Your Lifestyle")
+- Button positioning and styling ("Qualify for Developer Partnership", "Watch the Film")
+- Text contrast and readability against new background
+- Responsive image behavior across all devices
+- Current text positioning and hierarchy
+
+TECHNICAL REQUIREMENTS:
+- Ensure new image maintains proper contrast with existing text overlays
+- Preserve mobile responsiveness and image scaling
+- Maintain current image optimization and loading performance
+- Keep existing CSS styling and positioning unchanged
+- Test text readability against new background
+
+IMAGE OPTIMIZATION:
+- Optimize new image for web performance (proper compression)
+- Ensure image works across all screen sizes and orientations
+- Maintain professional quality while optimizing load times
+- Test on various devices for proper display
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before replacing hero image
+⚠️ TEST: Verify text readability against new background
+⚠️ MOBILE: Test image display and text contrast on mobile devices
+⚠️ PERFORMANCE: Ensure new image doesn't impact load times
+⚠️ RESPONSIVE: Verify image scales properly across all breakpoints
+⚠️ CONTRAST: Confirm text overlays remain readable
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Text contrast or readability against new background
+- Image positioning or responsive behavior
+- Performance impact from new image
+- Mobile display or scaling issues
+
+GOAL: Replace hero background image with modular community aerial view while preserving all existing UX/UI design, text overlays, button functionality, and responsive behavior.

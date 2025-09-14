@@ -14,8 +14,8 @@ export default function HeroSection() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2075&q=80" 
-          alt="Modern modular home with pool and contemporary design" 
+          src="/attached_assets/Generated Image September 14, 2025 - 12_11PM_1757866782266.png" 
+          alt="Aerial view of modern modular home community with solar panels and sustainable green spaces" 
           className="w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           style={{opacity: 1.0}}
           data-testid="img-hero-background"
