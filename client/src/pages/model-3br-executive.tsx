@@ -4,6 +4,9 @@ import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
+import exteriorImage from "@assets/3bedroom-1_1757890999523.jpg";
+import interiorImage from "@assets/3bedroom-2_1757891004660.jpg";
+import floorPlanImage from "@assets/3bedroom-3_1757891009839.jpg";
 
 export default function Model3BRExecutive() {
   const [location, navigate] = useLocation();
@@ -76,16 +79,61 @@ export default function Model3BRExecutive() {
               3BR Executive
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6" data-testid="text-model-subtitle">
-              Your Home. Your Lifestyle.
+              1200 sq ft • Premium family living • Volume pricing available for qualified developers
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
-              <div className="text-lg text-muted-foreground" data-testid="text-model-specs">
-                1200 sq ft • Premium family living
-              </div>
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
                 Starting from $199K CAD
               </div>
+              <div className="text-xl font-medium text-accent" data-testid="text-volume-pricing">
+                Volume discounts for 50+ units
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Floor Plan Section */}
+      <section className="py-16 bg-background" data-testid="section-floor-plan">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-floor-plan">
+              Technical Floor Plan
+            </h2>
+            <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
+              <img 
+                src={floorPlanImage} 
+                alt="3BR Executive floor plan - 1200 sq ft technical drawing" 
+                className="w-full max-w-3xl mx-auto rounded-xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                data-testid="img-floor-plan"
+                onClick={() => window.open(floorPlanImage, '_blank')}
+              />
+            </div>
+            <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
+              1200 sq ft • 3 bedrooms • 2 bathrooms • Optimized for developments and family living
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Exterior Rendering Section */}
+      <section className="py-16 bg-muted" data-testid="section-exterior">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-exterior">
+              Modern Exterior Design
+            </h2>
+            <div className="rounded-2xl overflow-hidden shadow-xl mb-6">
+              <img 
+                src={exteriorImage} 
+                alt="3BR Executive exterior rendering - modern single-story modular home" 
+                className="w-full h-[400px] md:h-[500px] object-cover hover:scale-105 transition-transform duration-300"
+                data-testid="img-exterior"
+              />
+            </div>
+            <p className="text-lg text-muted-foreground" data-testid="text-exterior-caption">
+              Modern design perfect for communities and individual families
+            </p>
           </div>
         </div>
       </section>
@@ -95,6 +143,29 @@ export default function Model3BRExecutive() {
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <div className="prose prose-lg max-w-none mb-12">
+              <h2 className="font-display font-bold text-3xl text-foreground mb-6">
+                Partnership Advantages
+              </h2>
+              
+              <ul className="space-y-3 mb-8 text-lg">
+                <li className="flex items-start">
+                  <span className="text-accent mr-3">•</span>
+                  72-hour assembly timeline per unit for rapid development
+                </li>
+                <li className="flex items-start">
+                  <span className="text-accent mr-3">•</span>
+                  Volume pricing discounts (30-40% cost savings vs traditional construction)
+                </li>
+                <li className="flex items-start">
+                  <span className="text-accent mr-3">•</span>
+                  Factory precision manufacturing with superior quality control
+                </li>
+              </ul>
+
+              <h2 className="font-display font-bold text-3xl text-foreground mb-6">
+                Your Home. Your Lifestyle.
+              </h2>
+              
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
                 Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:
               </p>
@@ -150,6 +221,24 @@ export default function Model3BRExecutive() {
               </ul>
             </div>
 
+            {/* Interior Lifestyle Section */}
+            <div className="mb-12">
+              <h2 className="font-display font-bold text-3xl text-foreground mb-6 text-center" data-testid="heading-interior">
+                Premium Interior Living
+              </h2>
+              <div className="rounded-2xl overflow-hidden shadow-xl mb-6">
+                <img 
+                  src={interiorImage} 
+                  alt="3BR Executive interior - premium kitchen and living area" 
+                  className="w-full h-[400px] md:h-[500px] object-cover hover:scale-105 transition-transform duration-300"
+                  data-testid="img-interior"
+                />
+              </div>
+              <p className="text-lg text-muted-foreground text-center" data-testid="text-interior-caption">
+                Premium interior finishes and open concept design for modern living
+              </p>
+            </div>
+
             {/* Model Features */}
             <div className="bg-muted rounded-2xl p-8 mb-12">
               <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-model-features">
@@ -158,15 +247,15 @@ export default function Model3BRExecutive() {
               <ul className="space-y-3 text-lg" data-testid="list-model-features">
                 <li className="flex items-center">
                   <Check className="text-green-500 mr-3" size={20} />
-                  <span>Master suite with ensuite</span>
+                  <span>Master suite with ensuite (family comfort + development efficiency)</span>
                 </li>
                 <li className="flex items-center">
                   <Check className="text-green-500 mr-3" size={20} />
-                  <span>Open concept design</span>
+                  <span>Open concept design (lifestyle appeal + construction optimization)</span>
                 </li>
                 <li className="flex items-center">
                   <Check className="text-green-500 mr-3" size={20} />
-                  <span>Smart home ready</span>
+                  <span>Smart home ready (modern living + community scalability)</span>
                 </li>
               </ul>
             </div>
