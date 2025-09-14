@@ -20,7 +20,10 @@ export default function HeroSection() {
           className="w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           style={{
             opacity: 1.0,
-            filter: 'brightness(1.15) contrast(1.25) saturate(1.2) sharpen(1)'
+            filter: 'brightness(1.3) contrast(1.6) saturate(1.4) blur(0px) hue-rotate(0deg)',
+            backdropFilter: 'none',
+            imageRendering: 'crisp-edges',
+            transform: 'scale(1.01)'
           }}
           data-testid="img-hero-background"
         />
@@ -30,10 +33,10 @@ export default function HeroSection() {
       <div className="container mx-auto px-6 relative z-10">
         <div className="hero-content-width hero-content-spacing">
           <div className="hero-text-overlay md:bg-transparent md:backdrop-filter-none">
-            <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#1a365d'}}>
+            <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#1a365d', textShadow: '2px 2px 4px rgba(0,0,0,0.3)'}}>
               The Future of Housing Is Here.
             </h1>
-            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#2d3748'}}>
+            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#2d3748', textShadow: '1px 1px 3px rgba(0,0,0,0.25)'}}>
               Your Home, Your Lifestyle
             </p>
           </div>
