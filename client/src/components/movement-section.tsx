@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import ConsumerForm from "./consumer-form";
-import buildingCanadaImage from "@assets/Generated Image September 13, 2025 - 5_31PM_1757799121636.png";
+import buildingCanadaImage from "@assets/Generated Image September 14, 2025 - 11_48AM_1757864918811.png";
 
 export default function MovementSection() {
   const [showConsumerForm, setShowConsumerForm] = useState(false);
@@ -60,7 +60,7 @@ export default function MovementSection() {
             <div>
               <img 
                 src={buildingCanadaImage} 
-                alt="Futuristic Canadian cityscape with modern modular buildings and sustainable community development" 
+                alt="Modern modular home showcasing contemporary design and sustainable living in Canadian landscape" 
                 className="rounded-2xl shadow-2xl w-full h-auto"
                 data-testid="img-community-aerial"
               />
