@@ -1,0 +1,84 @@
+Update the existing 3BR Executive model detail page to implement hybrid B2B/B2C layout structure and integrate the three uploaded image files.
+
+SINGLE PAGE MODIFICATION:
+Target: /models/3br-executive (existing page)
+
+SPECIFIC IMAGE FILE INTEGRATION:
+Add these three image files to the 3BR Executive page:
+- 3bedroom-1.jpg (exterior rendering - modern single-story modular home)
+- 3bedroom-2.jpg (interior kitchen/living area)
+- 3bedroom-3.jpg (floor plan technical drawing)
+
+HYBRID B2B/B2C LAYOUT STRUCTURE FOR 3BR EXECUTIVE PAGE:
+
+1. TECHNICAL SPECIFICATIONS HEADER (B2B FOCUS):
+- Keep existing: "3BR Executive" headline
+- Update subtitle to: "1200 sq ft • Premium family living • Volume pricing available for qualified developers"
+- Dual pricing: "Starting from $199K CAD • Volume discounts for 50+ units"
+
+2. FLOOR PLAN SECTION (B2B PRIMARY):
+- Add 3bedroom-3.jpg (floor plan) prominently below header
+- Large display, clickable for detailed view
+- Caption: "1200 sq ft • 3 bedrooms • 2 bathrooms • Optimized for developments and family living"
+
+3. EXTERIOR RENDERING (DUAL APPEAL):
+- Add 3bedroom-1.jpg (exterior) below floor plan
+- Medium-large size
+- Caption: "Modern design perfect for communities and individual families"
+
+4. MAIN CONTENT (HYBRID APPROACH):
+Add B2B section before existing lifestyle content:
+
+"**Partnership Advantages:**
+- 72-hour assembly timeline per unit for rapid development
+- Volume pricing discounts (30-40% cost savings vs traditional construction)
+- Factory precision manufacturing with superior quality control
+
+**Your Home. Your Lifestyle.**
+
+Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:
+
+- Family moments around the kitchen table.
+- Quiet mornings with light streaming through oversized windows.
+- A backyard that feels like an extension of your living room.
+
+Our homes are built to adapt to you, not the other way around.
+
+**Affordable Luxury Without Compromise**
+
+Why choose between quality and affordability? Illummaa combines smart design, efficient construction, and sustainable practices to give you more home for your money. Every detail from energy-efficient materials to timeless finishes is crafted to make you proud of where you live.
+
+**Designed to Inspire Confidence** - Whether it's your first home, a family upgrade, or a modern retreat, Illummaa homes are:
+
+- Beautifully designed with clean lines and natural light.
+- Flexible to suit different budgets, families, and lifestyles.
+- Built with integrity, so you can feel secure about your investment."
+
+5. LIFESTYLE SECTION (B2C APPEAL):
+- Add 3bedroom-2.jpg (interior) below main content
+- Caption: "Premium interior finishes and open concept design for modern living"
+
+6. FEATURES UPDATE (DUAL FOCUS):
+Update existing features to serve both audiences:
+- Master suite with ensuite (family comfort + development efficiency)
+- Open concept design (lifestyle appeal + construction optimization)
+- Smart home ready (modern living + community scalability)
+
+TECHNICAL REQUIREMENTS:
+- Upload and optimize 3bedroom-1.jpg, 3bedroom-2.jpg, 3bedroom-3.jpg for web performance
+- Maintain existing navigation (centered "Back to Models" button)
+- Preserve responsive design across all devices
+- Keep existing scroll-to-top functionality
+- Ensure all three images display properly on mobile, tablet, desktop
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before modifying 3BR Executive page
+⚠️ CONTENT: Preserve existing lifestyle messaging while adding B2B elements
+⚠️ IMAGES: Optimize all three image files for web performance
+⚠️ MOBILE: Test responsive behavior with new hybrid content
+⚠️ DUAL-AUDIENCE: Ensure both B2B and B2C messaging flows naturally
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with hybrid content integration or image file placement.
+
+GOAL: Transform the existing 3BR Executive page into a hybrid B2B/B2C layout using 3bedroom-1.jpg, 3bedroom-2.jpg, and 3bedroom-3.jpg that serves partnership prospects while preserving the existing lifestyle messaging for individual buyers.
