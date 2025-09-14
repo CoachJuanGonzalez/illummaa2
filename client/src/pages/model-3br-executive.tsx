@@ -18,9 +18,9 @@ export default function Model3BRExecutive() {
               Home
             </a>
           </Link>
-          <span>></span>
+          <span>&gt;</span>
           <span>Models</span>
-          <span>></span>
+          <span>&gt;</span>
           <span className="text-foreground">3BR Executive</span>
         </nav>
       </div>

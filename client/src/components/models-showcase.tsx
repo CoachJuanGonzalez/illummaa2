@@ -1,8 +1,14 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
 
 export default function ModelsShowcase() {
+  const getModelRoute = (index: number) => {
+    const routes = ["/models/1br-compact", "/models/2br-family", "/models/3br-executive"];
+    return routes[index];
+  };
+
   const models = [
     {
       title: "1BR Compact",
@@ -85,9 +91,11 @@ export default function ModelsShowcase() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full btn-primary" data-testid={`button-model-${index + 1}-details`}>
-                  View Details
-                </Button>
+                <Link href={getModelRoute(index)}>
+                  <Button className="w-full btn-primary" data-testid={`button-model-${index + 1}-details`}>
+                    View Details
+                  </Button>
+                </Link>
               </div>
             </div>
           ))}

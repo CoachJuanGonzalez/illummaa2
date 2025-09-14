@@ -18,9 +18,9 @@ export default function Model2BRFamily() {
               Home
             </a>
           </Link>
-          <span>></span>
+          <span>&gt;</span>
           <span>Models</span>
-          <span>></span>
+          <span>&gt;</span>
           <span className="text-foreground">2BR Family</span>
         </nav>
       </div>

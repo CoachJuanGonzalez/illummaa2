@@ -18,9 +18,9 @@ export default function Model1BRCompact() {
               Home
             </a>
           </Link>
-          <span>></span>
+          <span>&gt;</span>
           <span>Models</span>
-          <span>></span>
+          <span>&gt;</span>
           <span className="text-foreground">1BR Compact</span>
         </nav>
       </div>
