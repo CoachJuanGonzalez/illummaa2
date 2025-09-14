@@ -1,0 +1,50 @@
+Replace the third model image (3BR Executive) in "Our Model Collection" section with the uploaded image while maintaining all existing styling and layout.
+
+IMAGE REPLACEMENT REQUIREMENTS:
+
+TARGET SECTION:
+- Locate "Our Model Collection" section
+- Find the third model card (3BR Executive, 1200 sq ft, Premium family living)
+- Replace current townhouse/multi-story image with uploaded single-story modular home image
+
+NEW IMAGE SPECIFICATIONS:
+- Use the uploaded image showing single-story modular home
+- Maintain current image dimensions and aspect ratio
+- Preserve responsive behavior across all devices
+- Ensure image fits properly within existing card layout
+
+PRESERVE EXISTING ELEMENTS:
+- Keep all text content unchanged: "3BR Executive", "1200 sq ft • Premium family living"
+- Maintain pricing: "Starting from $199K CAD"
+- Preserve all bullet points: Master suite with ensuite, Open concept design, Smart home ready
+- Keep "View Details" button functionality and styling
+- Maintain card spacing and visual hierarchy
+
+TECHNICAL REQUIREMENTS:
+- Upload new image to appropriate assets folder
+- Update image source reference in model collection component
+- Optimize image for web performance (proper compression)
+- Ensure image displays correctly on all screen sizes
+- Maintain consistent visual quality with other model images
+
+DESIGN CONSISTENCY:
+- Ensure new image maintains professional quality matching other model cards
+- Preserve visual balance across all three model cards
+- Keep consistent image positioning and cropping
+- Maintain ILLÜMMAA brand presentation standards
+
+CRITICAL WARNINGS:
+⚠️ BACKUP: Create backup before replacing image
+⚠️ TEST: Verify image displays correctly on all devices
+⚠️ MOBILE: Test responsive behavior thoroughly
+⚠️ QUALITY: Ensure image quality matches professional standards
+⚠️ LAYOUT: Confirm card layout remains intact
+
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if ANY issues are detected with:
+- Image upload or integration
+- Card layout or styling
+- Mobile responsiveness
+- Visual quality consistency
+
+GOAL: Replace third model image with uploaded single-story modular home while preserving all existing content, functionality, and design consistency across the model collection section.

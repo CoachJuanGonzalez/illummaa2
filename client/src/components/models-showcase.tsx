@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
 
 export default function ModelsShowcase() {
   const models = [
@@ -32,7 +33,7 @@ export default function ModelsShowcase() {
       size: "1200 sq ft",
       description: "Premium family living",
       price: "Starting from $199K CAD",
-      image: "https://images.unsplash.com/photo-1567496898669-ee935f5f647a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500",
+      image: executiveModelImage,
       features: [
         "Master suite with ensuite",
         "Open concept design",
@@ -62,7 +63,7 @@ export default function ModelsShowcase() {
             >
               <img 
                 src={model.image} 
-                alt={`${model.title} interior`} 
+                alt={index === 2 ? `${model.title} exterior view` : `${model.title} interior`} 
                 className="w-full h-64 object-cover"
                 data-testid={`img-model-${index + 1}`}
               />
