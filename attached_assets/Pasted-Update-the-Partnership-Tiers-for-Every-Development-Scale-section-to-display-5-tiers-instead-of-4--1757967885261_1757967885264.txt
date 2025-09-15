@@ -1,0 +1,141 @@
+Update the "Partnership Tiers for Every Development Scale" section to display 5 tiers instead of 4, adding an Explorer tier while maintaining the EXACT current ILLÜMMAA website design system.
+CURRENT ISSUE:
+The partnership section currently shows 4 tiers in cards. Add a 5th "Explorer" tier for education-only leads using IDENTICAL card styling, spacing, shadows, and animations as existing tiers.
+TIER STRUCTURE UPDATE REQUIRED:
+NEW 5-TIER CONFIGURATION:
+
+Explorer (NEW): 0 units - Just learning
+Starter: 1-49 units (update from current)
+Pioneer: 50-149 units (keep as is)
+Preferred: 150-299 units (keep as is)
+Elite: 300+ units (keep as is)
+
+DESIGN IMPLEMENTATION:
+CRITICAL: Use EXACT same card component structure as current 4 tiers. DO NOT create a separate section or different styling.
+Desktop Layout: Display 5 cards in a row (adjust card widths from 25% to 20%)
+Tablet Layout: Display 3-2 grid or 2-2-1 grid
+Mobile Layout: Keep current stacked cards
+Explorer Card Styling:
+
+Use SAME card structure as other tiers
+Keep SAME shadow, border-radius, padding, fonts
+Badge background: #EDF2F7 (light gray)
+Badge text: #4A5568 (dark gray for contrast)
+Card accent color: #E2E8F0 (subtle gray)
+Icon: 🔍 or 📚 (learning icon)
+Add "FREE LEARNING" badge similar to "Most Popular" badge style
+
+Color Harmony (Light to Dark progression):
+
+Explorer: Light Gray (#EDF2F7)
+Starter: Green (keep current)
+Pioneer: Blue (keep current)
+Preferred: Purple (keep current)
+Elite: Gold (keep current)
+
+BENEFITS REALLOCATION:
+CRITICAL: Use EXACT same checkmark list format as current tiers. Each benefit must be a single line item with checkmark.
+TIER 0 - EXPLORER:
+✓ Free educational resources
+✓ Modular home cost calculator
+✓ Design gallery access
+✓ Monthly market updates
+✓ Community forum access
+✓ Self-paced learning journey
+TIER 1 - STARTER:
+✓ All Explorer benefits
+✓ Personal consultation support
+✓ Direct ILLÜMMAA expert access
+✓ Standard modular designs
+✓ Financing assistance programs
+✓ 72-hour on-site assembly
+✓ Factory precision manufacturing
+✓ Competitive pricing from $99K CAD
+TIER 2 - PIONEER:
+✓ All Starter benefits
+✓ Priority partnership handling
+✓ Dedicated project support
+✓ 30-40% cost savings vs traditional
+✓ Housing Accelerator Fund assistance
+✓ Custom modification options
+✓ Multi-unit coordination
+✓ Factory queue priority
+TIER 3 - PREFERRED:
+✓ All Pioneer benefits
+✓ Expedited senior team attention
+✓ Enhanced customization options
+✓ Fast-track project timeline
+✓ Municipal code compliance support
+✓ Volume optimization pricing
+✓ Advanced partnership proposals
+✓ ROI analysis tools
+TIER 4 - ELITE:
+✓ All Preferred benefits
+✓ Executive partnership team
+✓ VIP priority handling
+✓ Build Canada Homes eligibility
+✓ Co-development opportunities
+✓ Strategic enterprise pricing
+✓ Government liaison assistance
+✓ Coordinated 3-month timeline
+CTA BUTTON UPDATES:
+MAINTAIN current button styling. Update text only:
+
+Explorer: "Start Free Assessment"
+Starter: "Get Started"
+Pioneer: "Begin Assessment" (no change)
+Preferred: "Begin Assessment" (no change)
+Elite: "Begin Assessment" (no change)
+
+ALL buttons must link to existing Partner Qualification Assessment form.
+RESPONSE COMMITMENT UPDATES:
+REMOVE any specific time mentions (hours/days). Replace unit text under tier name with:
+
+Explorer: "Just learning • 0 units"
+Starter: "1-49 units"
+Pioneer: "50-149 units"
+Preferred: "150-299 units"
+Elite: "300+ units"
+
+MAINTAIN EXISTING:
+
+Card hover effects and animations
+Font families and sizes
+Checkmark style and spacing
+Current color scheme for Starter/Pioneer/Preferred/Elite
+Border radius and shadows
+Spacing between cards
+Section padding and margins
+"Most Popular" badge on Pioneer (if exists)
+
+ADD DISCLAIMER:
+Below all tier cards, add centered text:
+"*Partnership support levels based on project complexity and current volume. Urgent projects receive priority attention across all tiers."
+BACKEND UPDATE ONLY:
+In form processing logic, update tier determination:
+javascriptfunction determineCustomerTier(units, readiness) {
+    if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
+    if (units <= 49) return 'tier_1_starter';
+    if (units <= 149) return 'tier_2_pioneer';
+    if (units <= 299) return 'tier_3_preferred';
+    return 'tier_4_elite';
+}
+CRITICAL WARNINGS:
+⚠️ DESIGN SYSTEM: Use EXACT current card components - do not create new styles
+⚠️ BENEFITS FORMAT: Keep checkmark list format identical to current design
+⚠️ LAYOUT: Adjust grid to accommodate 5 cards instead of 4
+⚠️ NO TIME COMMITMENTS: Remove ALL hour/day response promises
+⚠️ LINKS: ALL buttons go to Partner Qualification Assessment
+⚠️ COLOR HARMONY: Explorer gray must not conflict with other tier colors
+⚠️ CONSISTENCY: Explorer must look like it belongs with other tiers
+🚨 MANDATORY CONFIRMATION REQUIRED 🚨
+ASK FOR MY EXPLICIT CONFIRMATION before proceeding if:
+
+Current design system would be altered
+5 cards don't fit properly on desktop
+Any response times remain in code
+Buttons don't link correctly
+Explorer looks disconnected from other tiers
+Benefit lists don't use checkmark format
+
+GOAL: Add Explorer as the 5th tier using identical design language as current 4 tiers, creating seamless visual progression from education (gray) to enterprise partnership (gold) while maintaining professional ILLÜMMAA brand consistency.
