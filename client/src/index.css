@@ -856,4 +856,119 @@
       background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=4150&q=90');
     }
   }
+
+  /* UNIVERSAL MODEL IMAGE OPTIMIZATION CLASSES */
+  
+  /* Model Card Images - Our Model Collection Section */
+  .model-card-image {
+    width: 100%;
+    height: 200px; /* Fixed height for consistency */
+    object-fit: cover;
+    object-position: center;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  /* Model Detail Images - Individual Model Pages */
+  .model-detail-image {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    margin: 16px 0;
+    transition: transform 0.3s ease;
+  }
+
+  /* Model Floor Plan Images - Technical Drawings */
+  .model-floorplan-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    cursor: pointer; /* For zoom functionality */
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  /* Mobile Responsive Adjustments */
+  @media (max-width: 768px) {
+    .model-card-image {
+      height: 180px; /* Reduced height for mobile */
+    }
+    
+    .model-detail-image {
+      margin: 12px 0; /* Reduced margins for mobile */
+    }
+    
+    .model-floorplan-image {
+      border-width: 1px; /* Ensure border visibility on small screens */
+    }
+  }
+
+  /* Extra Small Mobile Optimizations */
+  @media (max-width: 480px) {
+    .model-card-image {
+      height: 160px; /* Further reduction for very small screens */
+      border-radius: 6px; /* Slightly smaller radius */
+    }
+    
+    .model-detail-image {
+      margin: 8px 0; /* Minimal margins for tight mobile layouts */
+      border-radius: 6px;
+    }
+  }
+
+  /* Performance and Accessibility Enhancements */
+  .model-card-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .model-detail-image:hover {
+    transform: scale(1.01);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .model-floorplan-image:hover {
+    transform: scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 4px 20px rgba(44, 85, 48, 0.15);
+  }
+
+  /* Loading States for Better UX */
+  .model-image-loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 2s infinite;
+  }
+
+  @keyframes loading-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Future-Proofing: Consistent Image Container Standards */
+  .model-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .model-image-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.02);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .model-image-container:hover::before {
+    opacity: 1;
+  }
 }

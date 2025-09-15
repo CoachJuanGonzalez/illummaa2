@@ -104,7 +104,9 @@ export default function Model3BRExecutive() {
               <img 
                 src={floorPlanImage} 
                 alt="3BR Executive floor plan - 1200 sq ft technical drawing" 
-                className="w-full max-w-3xl mx-auto rounded-xl cursor-pointer hover:scale-105 transition-transform duration-300"
+                className="model-floorplan-image max-w-3xl mx-auto"
+                loading="lazy"
+                decoding="async"
                 data-testid="img-floor-plan"
                 onClick={() => window.open(floorPlanImage, '_blank')}
               />
@@ -123,11 +125,13 @@ export default function Model3BRExecutive() {
             <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-exterior">
               Modern Exterior Design
             </h2>
-            <div className="rounded-2xl overflow-hidden shadow-xl mb-6">
+            <div className="model-image-container rounded-2xl overflow-hidden shadow-xl mb-6">
               <img 
                 src={exteriorImage} 
                 alt="3BR Executive exterior rendering - modern single-story modular home" 
-                className="w-full h-[400px] md:h-[500px] object-cover hover:scale-105 transition-transform duration-300"
+                className="model-detail-image h-[400px] md:h-[500px]"
+                loading="lazy"
+                decoding="async"
                 data-testid="img-exterior"
               />
             </div>
@@ -226,11 +230,13 @@ export default function Model3BRExecutive() {
               <h2 className="font-display font-bold text-3xl text-foreground mb-6 text-center" data-testid="heading-interior">
                 Premium Interior Living
               </h2>
-              <div className="rounded-2xl overflow-hidden shadow-xl mb-6">
+              <div className="model-image-container rounded-2xl overflow-hidden shadow-xl mb-6">
                 <img 
                   src={interiorImage} 
                   alt="3BR Executive interior - premium kitchen and living area" 
-                  className="w-full h-[400px] md:h-[500px] object-cover hover:scale-105 transition-transform duration-300"
+                  className="model-detail-image h-[400px] md:h-[500px]"
+                  loading="lazy"
+                  decoding="async"
                   data-testid="img-interior"
                 />
               </div>

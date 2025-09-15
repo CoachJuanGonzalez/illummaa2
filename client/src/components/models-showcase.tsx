@@ -67,12 +67,16 @@ export default function ModelsShowcase() {
               className="card-hover bg-card rounded-2xl overflow-hidden shadow-xl"
               data-testid={`card-model-${index + 1}`}
             >
-              <img 
-                src={model.image} 
-                alt={index === 2 ? `${model.title} exterior view` : `${model.title} interior`} 
-                className="w-full h-64 object-cover"
-                data-testid={`img-model-${index + 1}`}
-              />
+              <div className="model-image-container">
+                <img 
+                  src={model.image} 
+                  alt={index === 2 ? `${model.title} exterior view` : `${model.title} interior`} 
+                  className="model-card-image"
+                  loading="lazy"
+                  decoding="async"
+                  data-testid={`img-model-${index + 1}`}
+                />
+              </div>
               <div className="p-8">
                 <h3 className="font-display font-bold text-2xl mb-2" data-testid={`heading-model-${index + 1}-title`}>
                   {model.title}
