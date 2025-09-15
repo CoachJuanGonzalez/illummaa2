@@ -271,6 +271,15 @@ function getPriorityLevel(score: number): string {
   return "LOW";
 }
 
+// Tier determination function for 5-tier system
+function determineCustomerTier(units: number, readiness?: string): string {
+  if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
+  if (units <= 49) return 'tier_1_starter';
+  if (units <= 149) return 'tier_2_pioneer';
+  if (units <= 299) return 'tier_3_preferred';
+  return 'tier_4_elite';
+}
+
 // Residential GoHighLevel webhook function
 export async function submitToGoHighLevelResidential(data: any): Promise<any> {
   const webhookUrl = process.env.GHL_RESIDENTIAL_WEBHOOK_URL;

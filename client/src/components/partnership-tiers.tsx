@@ -1,4 +1,4 @@
-import { Home, Rocket, Star, Crown, Check } from "lucide-react";
+import { Home, Rocket, Star, Crown, Check, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import ConsumerForm from "@/components/consumer-form";
@@ -52,18 +52,39 @@ export default function PartnershipTiers() {
 
   const tiers = [
     {
+      name: "Explorer",
+      units: "Just learning • 0 units",
+      icon: <BookOpen className="text-gray-600" size={32} />,
+      iconBg: "bg-gray-100",
+      accentColor: "border-gray-200",
+      badgeColor: "bg-gray-100 text-gray-700",
+      features: [
+        "Free educational resources",
+        "Modular home cost calculator",
+        "Design gallery access",
+        "Monthly market updates",
+        "Community forum access",
+        "Self-paced learning journey"
+      ],
+      buttonVariant: "outline" as const,
+      buttonText: "Start Free Assessment",
+      action: scrollToAssessment,
+      freeLearning: true
+    },
+    {
       name: "Starter",
       units: "1-49 units",
       icon: <Home className="text-green-600" size={32} />,
       iconBg: "bg-green-100",
       features: [
-        "Individual homes to small development projects",
-        "Direct consultation with an ILLÜMMAA modular expert or an approved real estate partner (e.g., REMAX)",
-        "Standard modular designs with digital customization options",
-        "Competitive pricing: modular units from $99K CAD, fully-serviced homes from $269K CAD",
-        "Factory precision manufacturing with superior quality control",
-        "Rapid 72-hour on-site assembly for individual units",
-        "Access to financing assistance and government housing programs"
+        "All Explorer benefits",
+        "Personal consultation support",
+        "Direct ILLÜMMAA expert access",
+        "Standard modular designs",
+        "Financing assistance programs",
+        "72-hour on-site assembly",
+        "Factory precision manufacturing",
+        "Competitive pricing from $99K CAD"
       ],
       buttonVariant: "outline" as const,
       buttonText: isFormUsed || showSuccessMessage ? "Form Submitted" : "Get Started",
@@ -77,11 +98,13 @@ export default function PartnershipTiers() {
       iconBg: "bg-blue-100",
       features: [
         "All Starter benefits",
-        "Volume pricing discounts (30-40% cost savings vs traditional construction)",
-        "Dedicated partnership support through complete project lifecycle",
-        "Priority production scheduling in factory queue",
-        "Access to modular configurator for multi-unit coordination",
-        "Housing Accelerator Fund program alignment assistance"
+        "Priority partnership handling",
+        "Dedicated project support",
+        "30-40% cost savings vs traditional",
+        "Housing Accelerator Fund assistance",
+        "Custom modification options",
+        "Multi-unit coordination",
+        "Factory queue priority"
       ],
       buttonVariant: "default" as const,
       buttonText: "Begin Assessment",
@@ -95,11 +118,13 @@ export default function PartnershipTiers() {
       iconBg: "bg-primary/10",
       features: [
         "All Pioneer benefits",
-        "Custom design modifications for municipal code compliance",
-        "Enhanced financing coordination and GST rebate processing",
-        "Expedited project timeline management (3-month completion capability)",
-        "Advanced partnership proposals with ROI analysis",
-        "Dedicated account coordination for complex projects"
+        "Expedited senior team attention",
+        "Enhanced customization options",
+        "Fast-track project timeline",
+        "Municipal code compliance support",
+        "Volume optimization pricing",
+        "Advanced partnership proposals",
+        "ROI analysis tools"
       ],
       buttonVariant: "outline" as const,
       buttonText: "Begin Assessment",
@@ -112,11 +137,13 @@ export default function PartnershipTiers() {
       iconBg: "bg-yellow-100",
       features: [
         "All Preferred benefits",
-        "Exclusive custom community design development",
-        "Complete turnkey community solutions (factory to occupancy)",
-        "Executive partnership team for strategic projects",
-        "Co-development opportunities with ILLÜMMAA design team",
-        "Coordinated community delivery within 3-month timeline"
+        "Executive partnership team",
+        "VIP priority handling",
+        "Build Canada Homes eligibility",
+        "Co-development opportunities",
+        "Strategic enterprise pricing",
+        "Government liaison assistance",
+        "Coordinated 3-month timeline"
       ],
       buttonVariant: "outline" as const,
       buttonText: "Begin Assessment",
@@ -136,12 +163,12 @@ export default function PartnershipTiers() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" data-testid="container-partnership-tiers">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8" data-testid="container-partnership-tiers">
           {tiers.map((tier, index) => (
             <div 
               key={index}
               className={`card-hover bg-card rounded-2xl p-8 shadow-xl border-2 relative ${
-                tier.popular ? 'border-primary' : 'border-transparent'
+                tier.popular ? 'border-primary' : tier.accentColor || 'border-transparent'
               }`}
               data-testid={`card-tier-${tier.name.toLowerCase()}`}
             >
@@ -149,6 +176,13 @@ export default function PartnershipTiers() {
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-most-popular">
                   <span className="bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
                     Most Popular
+                  </span>
+                </div>
+              )}
+              {tier.freeLearning && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-free-learning">
+                  <span className="bg-gray-100 text-gray-700 px-4 py-1 rounded-full text-sm font-medium">
+                    FREE LEARNING
                   </span>
                 </div>
               )}
@@ -186,6 +220,12 @@ export default function PartnershipTiers() {
               </Button>
             </div>
           ))}
+        </div>
+        
+        <div className="text-center mt-8 mb-12">
+          <p className="text-sm text-muted-foreground italic" data-testid="text-partnership-disclaimer">
+            *Partnership support levels based on project complexity and current volume. Urgent projects receive priority attention across all tiers.
+          </p>
         </div>
         
         <div className="text-center mt-12 px-4">
