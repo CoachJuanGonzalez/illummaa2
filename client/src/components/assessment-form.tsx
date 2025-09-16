@@ -199,7 +199,8 @@ export default function AssessmentForm() {
     description: ''
   });
   const [residentialSubmissionSuccess, setResidentialSubmissionSuccess] = useState(false);
-  const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
+  // STEP 6: REMOVED - All residential leads now stay with ILLÜMMAA education/residential teams
+  // const [remaxRedirectSuccess, setRemaxRedirectSuccess] = useState(false);
 
   // Micro-interaction states
   const [isStepChanging, setIsStepChanging] = useState(false);
@@ -210,6 +211,7 @@ export default function AssessmentForm() {
   // STEP 1 - State for form logic consistency (per step-by-step instructions)
   const [isUnitFieldDisabled, setIsUnitFieldDisabled] = useState(false);
   const [showResearchNote, setShowResearchNote] = useState(false);
+  const [isExplorer, setIsExplorer] = useState(false);
   
   // CASL/PIPEDA Consent state
   const [showConsentDetails, setShowConsentDetails] = useState(false);
@@ -268,14 +270,21 @@ export default function AssessmentForm() {
   });
 
   const submitMutation = useMutation({
-    mutationFn: async (data: AssessmentFormData) => {
+    mutationFn: async (data: any) => {
+      // CRITICAL FIX: Accept enhanced payload with ILLÜMMAA flags
       return apiRequest("POST", "/api/submit-assessment", data);
     },
-    onSuccess: () => {
+    onSuccess: (response, variables) => {
+      // CRITICAL FIX: Restored success handler with custom messaging
       setIsSubmitted(true);
+      
+      // Extract tierInfo from submitted payload
+      const tierInfo = variables.tierInfo || { tier: 'tier_1_starter' };
+      const customMessage = getSuccessMessage(tierInfo, variables.data);
+      
       toast({
         title: "Assessment Submitted Successfully",
-        description: "Our team will contact you according to your priority level.",
+        description: customMessage,
       });
     },
     onError: (error) => {
@@ -289,34 +298,73 @@ export default function AssessmentForm() {
 
   const watchedValues = form.watch();
 
-  // CORRECTED: Tier determination - handle high units with planning-long properly
-  const determineCustomerTier = (units: string | number, readiness: string) => {
-    const unitCount = parseInt(String(units)) || 0;
-    
-    // Debug log
-    console.log('Determining tier - unitCount:', unitCount, 'readiness:', readiness);
-    
-    // CRITICAL FIX: Only force Explorer for researching or zero units
-    if (readiness === 'researching' || unitCount === 0) {
-      return 'tier_0_explorer';
-    }
+  // STEP 1: Add conditional field handling for Explorer users (per step-by-step instructions)
+  useEffect(() => {
+    const readiness = form.getValues('readiness') || '';
+    const isExplorerUser = readiness.includes('researching') || readiness.includes('learn more');
+    setIsExplorer(isExplorerUser);
+  }, [watchedValues.readiness]);
 
-    // For planning-long: Calculate based on units but cap at Preferred level 
-    if (readiness === 'planning-long') {
-      if (unitCount >= 300) return 'tier_3_preferred'; // Elite downgraded to Preferred
-      if (unitCount >= 150) return 'tier_3_preferred';
-      if (unitCount >= 50) return 'tier_2_pioneer';
-      if (unitCount >= 1) return 'tier_1_starter';
-      return 'tier_0_explorer';
-    }
-
-    // Normal tiers for immediate/short/medium planning (FIXED LOGIC - was backwards!)
-    if (unitCount >= 300) return 'tier_4_elite';
-    if (unitCount >= 150) return 'tier_3_preferred';
-    if (unitCount >= 50) return 'tier_2_pioneer';
-    if (unitCount >= 1) return 'tier_1_starter';
+  // STEP 5: Success messaging function to match user intent (per step-by-step instructions)
+  const getSuccessMessage = (tierInfo: any, formData: any) => {
+    const isExplorer = tierInfo.tier === 'tier_0_explorer';
     
-    return 'tier_0_explorer';
+    if (isExplorer) {
+        return `Thank you for your interest in modular housing! An ILLÜMMAA education specialist will contact you within 48 hours to answer your questions and provide helpful resources about modular construction options.`;
+    } else {
+        return `Thank you! An ILLÜMMAA residential specialist will contact you within 24 hours to discuss your modular home project and next steps.`;
+    }
+  };
+
+  // STEP 3: Updated tier determination with ILLÜMMAA-only routing (per step-by-step instructions)
+  const determineCustomerTier = (formData: any) => {
+    const units = parseInt(formData.unitCount || formData.projectUnitCount) || 0;
+    const readiness = formData.readiness || '';
+    
+    // Force Explorer for researchers regardless of units
+    if (readiness.includes('researching') || readiness.includes('learn more') || units === 0) {
+        return {
+            tier: 'tier_0_explorer',
+            pathway: 'illummaa_education',
+            assignedTo: 'ILLÜMMAA Education Team',
+            responseTime: '48 hours',
+            focus: 'Educational resources and learning support'
+        };
+    }
+    
+    // ALL other residential projects stay with ILLÜMMAA (NO REMAX ROUTING)
+    if (units < 50) {
+        return {
+            tier: 'tier_1_starter',
+            pathway: 'illummaa_residential', 
+            assignedTo: 'ILLÜMMAA Residential Specialist',
+            responseTime: '24 hours',
+            focus: 'Residential project development'
+        };
+    }
+    
+    // Continue with existing logic for larger projects...
+    if (units < 150) return { 
+        tier: 'tier_2_pioneer', 
+        pathway: 'illummaa_partnership',
+        assignedTo: 'ILLÜMMAA Partnership Team',
+        responseTime: '12 hours',
+        focus: 'Partnership project development'
+    };
+    if (units < 300) return { 
+        tier: 'tier_3_preferred', 
+        pathway: 'illummaa_partnership',
+        assignedTo: 'ILLÜMMAA Partnership Team',
+        responseTime: '6 hours',
+        focus: 'Priority partnership development'
+    };
+    return { 
+        tier: 'tier_4_elite', 
+        pathway: 'illummaa_partnership',
+        assignedTo: 'ILLÜMMAA Elite Team',
+        responseTime: '2 hours',
+        focus: 'Elite partnership development'
+    };
   };
 
   // Handle readiness change - CRITICAL FIX for data consistency (per step-by-step instructions)
@@ -379,8 +427,8 @@ export default function AssessmentForm() {
     }
     
     // Normal flow when both fields have values
-    const tier = determineCustomerTier(units, readiness || '');
-    updateTierDisplay(tier);
+    const tierInfo = determineCustomerTier({ projectUnitCount: units, readiness: readiness || '' });
+    updateTierDisplay(tierInfo.tier);
     
     // Check agent support
     checkAgentSupport();
@@ -442,8 +490,7 @@ export default function AssessmentForm() {
         indicator.classList.add('show');
     }
     
-    // Adjust form fields
-    adjustFormFields(tier);
+    // CRITICAL FIX: Removed DOM manipulation - now using React conditional rendering
   };
 
   // Show agent support for 1-10 units (as per instructions)
@@ -460,34 +507,7 @@ export default function AssessmentForm() {
     }
   };
 
-  // Field adjustments per tier (as per instructions)
-  const adjustFormFields = (tier: string) => {
-    const companyField = document.getElementById('companyName');
-    const budgetGroup = document.getElementById('budget')?.parentElement;
-    const governmentGroup = document.getElementById('government')?.parentElement;
-    
-    // Company optional for Explorer/Starter
-    if (tier === 'tier_0_explorer' || tier === 'tier_1_starter') {
-      if (companyField) {
-        (companyField as HTMLInputElement).required = false;
-        (companyField as HTMLInputElement).placeholder = 'Company Name (optional)';
-      }
-    } else {
-      if (companyField) {
-        (companyField as HTMLInputElement).required = true;
-        (companyField as HTMLInputElement).placeholder = 'Company Name *';
-      }
-    }
-    
-    // Hide budget/government for Explorer
-    if (tier === 'tier_0_explorer') {
-      if (budgetGroup) budgetGroup.style.display = 'none';
-      if (governmentGroup) governmentGroup.style.display = 'none';
-    } else {
-      if (budgetGroup) budgetGroup.style.display = 'block';
-      if (governmentGroup) governmentGroup.style.display = 'block';
-    }
-  };
+  // CRITICAL FIX: Removed DOM manipulation function - now using React conditional rendering via isExplorer state
 
   // STEP 1: Debug form state corruption
   useEffect(() => {
@@ -611,7 +631,7 @@ export default function AssessmentForm() {
   // Viewport change handler for mobile devices
   const handleViewportChange = () => {
     // Recalculate scroll positions when viewport changes (keyboard, orientation)
-    if (showResidentialOptions || residentialPathway || residentialSubmissionSuccess || remaxRedirectSuccess) {
+    if (showResidentialOptions || residentialPathway || residentialSubmissionSuccess) {
       setTimeout(() => {
         if (showResidentialOptions) {
           universalScrollToContent('[data-scroll-target="residential-options"]');
@@ -619,8 +639,7 @@ export default function AssessmentForm() {
           universalScrollToContent('[data-scroll-target="residential-form"]');
         } else if (residentialSubmissionSuccess) {
           universalScrollToContent('[data-scroll-target="residential-success"]');
-        } else if (remaxRedirectSuccess) {
-          universalScrollToContent('[data-scroll-target="remax-success"]');
+        // STEP 6: REMOVED - No external referrals until after ILLÜMMAA consultation
         }
       }, 300);
     }
@@ -635,7 +654,7 @@ export default function AssessmentForm() {
       window.removeEventListener('resize', handleViewportChange);
       window.removeEventListener('orientationchange', handleViewportChange);
     };
-  }, [showResidentialOptions, residentialPathway, residentialSubmissionSuccess, remaxRedirectSuccess]);
+  }, [showResidentialOptions, residentialPathway, residentialSubmissionSuccess]);
 
   // AUTO-SCROLL FOR ALL DYNAMIC CONTENT SCENARIOS
 
@@ -669,15 +688,8 @@ export default function AssessmentForm() {
     }
   }, [residentialSubmissionSuccess]);
 
-  // 4. Remax redirect success
-  useEffect(() => {
-    if (remaxRedirectSuccess) {
-      universalScrollToContent('[data-scroll-target="remax-success"]', {
-        delay: 300,
-        block: 'start'
-      });
-    }
-  }, [remaxRedirectSuccess]);
+  // STEP 6: REMOVED - All residential leads now stay with ILLÜMMAA education/residential teams
+  // No external referrals until after ILLÜMMAA consultation
 
   // 5. B2B success state
   useEffect(() => {
@@ -750,17 +762,17 @@ export default function AssessmentForm() {
 
   const generateTags = () => {
     const values = form.getValues();
-    const tier = determineCustomerTier(values.projectUnitCount || 0, values.readiness || '');
+    const tierInfo = determineCustomerTier(values);
     
     // STEP 5 - Ensure Explorer tier gets correct tags (per step-by-step instructions)
-    if (tier === 'tier_0_explorer') {
+    if (tierInfo.tier === 'tier_0_explorer') {
         return ['Tier-0-Explorer', 'Not-Ready', 'Education-Journey', 'Priority-EDUCATION'];
     }
     
     const tags: string[] = [];
 
     // Partnership tier tags
-    tags.push(`tier-${tier.toLowerCase()}`);
+    tags.push(`tier-${tierInfo.tier.toLowerCase()}`);
 
     // Readiness level tags
     if (values.readiness) {
@@ -1019,24 +1031,50 @@ export default function AssessmentForm() {
       }
 
       // Calculate tier and score with sanitized data
-      const customerTier = determineCustomerTier(sanitizedData.projectUnitCount, sanitizedData.readiness);
+      const tierInfo = determineCustomerTier(sanitizedData);
+      const customerTier = tierInfo.tier;
       const priorityLevel = getPriorityLevel();
       const tags = generateTags();
       const sessionToken = SecurityModule.generateToken();
 
-      // Build secure payload
+      // STEP 4: Handle budget value from dropdown or hidden field (per step-by-step instructions)
+      const budgetValue = sanitizedData.budgetRange || 'Learning about costs and options';
+      
+      // Build secure payload with unified ILLÜMMAA routing
       const securePayload = {
         // Session validation
         sessionToken: sessionToken,
         timestamp: new Date().toISOString(),
         
-        // Sanitized form data
-        data: sanitizedData,
+        // CRITICAL FLAGS: Top-level for backend access (STEP 4)
+        illummaaOnly: 'TRUE',
+        noExternalReferrals: 'TRUE',
+        
+        // Sanitized form data with budget handling
+        data: {
+          ...sanitizedData,
+          budget: budgetValue
+        },
         
         // Customer Journey classification
+        tier: tierInfo.tier,
+        pathway: tierInfo.pathway, // Always ILLÜMMAA pathways
         customerTier: customerTier,
         priorityScore: Math.min(Math.max(priorityScore, 0), 150),
         priorityLevel: priorityLevel,
+        
+        // STEP 4: Enhanced ILLÜMMAA-only routing details
+        tierInfo: tierInfo,
+        customField: {
+          tier: tierInfo.tier,
+          pathway: tierInfo.pathway,
+          assignedTo: tierInfo.assignedTo,
+          responseTime: tierInfo.responseTime,
+          budgetSource: budgetValue === 'Learning about costs and options' ? 'auto_explorer' : 'user_selected',
+          // Redundant flags for GHL integration
+          illummaaOnly: 'TRUE',
+          noExternalReferrals: 'TRUE'
+        },
         
         // Enhanced routing logic
         buildCanadaEligible: (sanitizedData.projectUnitCount >= 300 || 
@@ -1045,7 +1083,7 @@ export default function AssessmentForm() {
         // Comprehensive tags
         tags: tags.join(','),
         
-        // Pipeline routing
+        // Pipeline routing - ILLÜMMAA only
         pipeline: 'ILLÜMMAA Customer Journey',
         stage: customerTier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
         
@@ -1092,7 +1130,7 @@ export default function AssessmentForm() {
         sessionToken: sessionToken.substring(0, 8) + '...' // Only log first 8 chars for security
       });
 
-      // Submit with enhanced security
+      // Submit with enhanced security - success handled in submitMutation
       submitMutation.mutate(securePayload as any);
 
     } catch (error) {
@@ -1298,15 +1336,23 @@ export default function AssessmentForm() {
                   </FormItem>
                 )}
               />
+              {/* STEP 2: Conditional company field handling (per step-by-step instructions) */}
               <div className="md:col-span-2">
                 <FormField
                   control={form.control}
                   name="company"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel data-testid="label-company">Company Name *</FormLabel>
+                      <FormLabel data-testid="label-company">
+                        {isExplorer ? "Company Name (Optional)" : "Company Name *"}
+                      </FormLabel>
                       <FormControl>
-                        <Input id="companyName" placeholder="Your Development Company" {...field} data-testid="input-company" />
+                        <Input 
+                          id="companyName" 
+                          placeholder={isExplorer ? "Company Name (Optional)" : "Your Development Company"} 
+                          {...field} 
+                          data-testid="input-company" 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1384,33 +1430,54 @@ export default function AssessmentForm() {
               </div>
             </div>
             
-            <FormField
-              control={form.control}
-              name="budgetRange"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel data-testid="label-budget-range">Project Budget Range (CAD) *</FormLabel>
-                  <FormDescription>
-                    Total project budget for modular construction and site preparation
-                  </FormDescription>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger id="budget" data-testid="select-budget-range">
-                        <SelectValue placeholder="Select budget range..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Under $5 Million">Under $5 Million</SelectItem>
-                      <SelectItem value="$5M - $15 Million">$5M - $15 Million</SelectItem>
-                      <SelectItem value="$15M - $30 Million">$15M - $30 Million</SelectItem>
-                      <SelectItem value="$30M - $50 Million">$30M - $50 Million</SelectItem>
-                      <SelectItem value="Over $50 Million">Over $50 Million</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* STEP 1: Conditional budget field with Explorer logic (per step-by-step instructions) */}
+            <div className="form-group budget-group">
+              <FormField
+                control={form.control}
+                name="budgetRange"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel id="budgetLabel" data-testid="label-budget-range">
+                      {isExplorer ? "Project Budget Range (CAD) - Will be discussed" : "Project Budget Range (CAD) *"}
+                    </FormLabel>
+                    <FormDescription>
+                      Total project budget for modular construction and site preparation
+                    </FormDescription>
+                    {!isExplorer ? (
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger id="budget" data-testid="select-budget-range">
+                            <SelectValue placeholder="Select budget range..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Under $500K">Under $500K</SelectItem>
+                          <SelectItem value="$500K - $2M">$500K - $2M</SelectItem>
+                          <SelectItem value="$2M - $5M">$2M - $5M</SelectItem>
+                          <SelectItem value="$5M - $15M">$5M - $15M</SelectItem>
+                          <SelectItem value="$15M - $30M">$15M - $30M</SelectItem>
+                          <SelectItem value="$30M - $50M">$30M - $50M</SelectItem>
+                          <SelectItem value="Over $50M">Over $50M</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <input 
+                        type="hidden" 
+                        id="budgetHidden" 
+                        {...field}
+                        value="Learning about costs and options"
+                      />
+                    )}
+                    {isExplorer && (
+                      <div id="explorerBudgetNote" className="text-sm text-gray-600 mt-2 italic">
+                        Budget planning will be discussed during your educational consultation
+                      </div>
+                    )}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         );
 
@@ -1677,7 +1744,7 @@ export default function AssessmentForm() {
       // Open with security attributes
       window.open(REMAX_URL, '_blank', 'noopener,noreferrer');
       
-      setRemaxRedirectSuccess(true);
+      // STEP 6: REMOVED - All residential leads now stay with ILLÜMMAA teams
       toast({
         title: "Redirecting to Remax Partnership",
         description: "You will be redirected to our Remax partnership program.",
@@ -1771,7 +1838,7 @@ export default function AssessmentForm() {
     <section id="developer-qualification" className="py-20 qualification-section" data-testid="section-assessment">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
-          {!residentialSubmissionSuccess && !remaxRedirectSuccess && (
+          {!residentialSubmissionSuccess && (
             <>
               <div className="text-center mb-12">
                 <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-assessment-title">
@@ -2083,7 +2150,7 @@ export default function AssessmentForm() {
           </Form>
 
           {/* RESIDENTIAL PATHWAY - COMPLETE CONDITIONAL REPLACEMENT */}
-          {showResidentialOptions && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
+          {showResidentialOptions && !residentialSubmissionSuccess && (
             <div className="space-y-6 mt-8" data-scroll-target="residential-options">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Residential Projects (Under 50 Units)</h2>
@@ -2118,7 +2185,7 @@ export default function AssessmentForm() {
             </div>
           )}
 
-          {residentialPathway === 'in-house' && !residentialSubmissionSuccess && !remaxRedirectSuccess && (
+          {residentialPathway === 'in-house' && !residentialSubmissionSuccess && (
             <div className="space-y-6 mt-8" data-scroll-target="residential-form">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">In-House Residential Service</h2>
@@ -2205,7 +2272,8 @@ export default function AssessmentForm() {
             </div>
           )}
 
-          {remaxRedirectSuccess && (
+          {/* STEP 6: REMOVED - All residential leads now stay with ILLÜMMAA education/residential teams */}
+          {false && (
             <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4" data-scroll-target="remax-success">
               <div className="max-w-md w-full space-y-8 text-center">
                 <div className="mx-auto w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center">

@@ -75,6 +75,34 @@ Preferred communication style: Simple, everyday language.
 - **Assessment result delivery** and follow-up communications
 - **Developer-specific messaging** based on qualification tier
 
+### STEP 7: Updated GHL Workflow Triggers (ILLÜMMAA-Only Routing)
+- **Complete Remax elimination** - All residential leads now stay with ILLÜMMAA teams
+- **Unified ILLÜMMAA pathways** - No external referrals until after ILLÜMMAA consultation
+
+#### Tier 0 - Explorer Leads (Researching/Education Phase)
+- **Assign to:** ILLÜMMAA Education Team
+- **Workflow:** Educational nurturing sequence
+- **Response SLA:** 48 hours
+- **Focus:** Learning resources, not sales
+- **Pathway:** illummaa_education
+- **Trigger conditions:** readiness="researching" OR projectUnitCount=0
+
+#### Tier 1 - Starter Leads (Under 50 Units)
+- **Assign to:** ILLÜMMAA Residential Specialist
+- **Workflow:** Residential project development
+- **Response SLA:** 24 hours
+- **Focus:** Project planning and development
+- **Pathway:** illummaa_residential
+- **Trigger conditions:** projectUnitCount < 50 AND readiness != "researching"
+
+#### Tier 2+ - Partnership Leads (50+ Units)
+- **Assign to:** ILLÜMMAA Partnership Team
+- **Workflow:** Commercial partnership development
+- **Response SLA:** 12 hours (Pioneer), 6 hours (Preferred), 2 hours (Elite)
+- **Focus:** B2B partnership and large-scale project development
+- **Pathway:** illummaa_partnership
+- **Critical flags:** illummaaOnly="TRUE", noExternalReferrals="TRUE"
+
 ### Font and Asset Delivery
 - **Google Fonts** integration (Inter, Montserrat, Architects Daughter, DM Sans, Fira Code, Geist Mono)
 - **Unsplash images** for hero sections and showcase content

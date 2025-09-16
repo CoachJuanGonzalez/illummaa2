@@ -1,0 +1,157 @@
+IMPROVE ILLUMMAA form UX while maintaining exact visual design and adding proper legal validation.
+
+FIND your current form HTML and APPLY these MINIMAL changes that preserve your existing design:
+
+1. UPDATE the consent section to be more visually prominent while keeping the same style:
+
+REPLACE the current consent checkboxes with this enhanced version:
+
+<div class="consent-section" style="background: #f8f9fa; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #28a745;">
+    <div class="consent-item" style="margin-bottom: 16px;">
+        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 14px; line-height: 1.5;">
+            <input type="checkbox" id="consentCommunications" name="consentCommunications" required>
+            <span style="color: #495057; font-weight: 500;">
+                I consent to ILLÜMMAA contacting me via email, phone, and text about modular home solutions and understand I can unsubscribe anytime
+                <small style="display: block; color: #6c757d; font-weight: normal; margin-top: 4px;">
+                    Required for processing your inquiry under Canadian privacy law
+                </small>
+            </span>
+        </label>
+    </div>
+    
+    <div class="consent-item">
+        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" id="ageVerification" name="ageVerification" required>
+            <span style="color: #6c757d;">I am 18+ years old and can provide legal consent</span>
+        </label>
+    </div>
+</div>
+
+2. ADD conditional field logic to reduce cognitive load:
+
+ADD this JavaScript to show/hide company field based on journey:
+
+document.addEventListener('DOMContentLoaded', function() {
+    const readinessSelect = document.querySelector('#readiness, [name="readiness"]');
+    const companyField = document.querySelector('#companyName, [name="companyName"]');
+    const companyGroup = companyField?.closest('.form-group');
+    
+    if (readinessSelect && companyGroup) {
+        function toggleCompanyField() {
+            const value = readinessSelect.value;
+            if (value === 'Just researching - want to learn more' || value === 'researching') {
+                companyGroup.style.opacity = '0.6';
+                companyField.removeAttribute('required');
+                companyField.placeholder = 'Company Name (optional for research)';
+            } else {
+                companyGroup.style.opacity = '1';
+                companyField.setAttribute('required', '');
+                companyField.placeholder = 'Company Name *';
+            }
+        }
+        
+        readinessSelect.addEventListener('change', toggleCompanyField);
+        toggleCompanyField(); // Run on load
+    }
+});
+
+3. ENHANCE form validation to block progression without consent:
+
+REPLACE your existing validateStep1 function with this:
+
+function validateStep1() {
+    // Basic field validation (keeping existing logic)
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+    const readinessSelect = document.querySelector('#readiness, [name="readiness"]');
+    
+    for (let fieldName of requiredFields) {
+        const field = document.getElementById(fieldName) || document.querySelector(`[name="${fieldName}"]`);
+        if (!field || !field.value.trim()) {
+            alert(`Please enter your ${fieldName.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+            field?.focus();
+            return false;
+        }
+    }
+    
+    if (!readinessSelect || !readinessSelect.value) {
+        alert('Please select where you are in your modular home journey');
+        readinessSelect?.focus();
+        return false;
+    }
+    
+    // CRITICAL: Legal consent validation
+    const consentComm = document.getElementById('consentCommunications');
+    const ageVerif = document.getElementById('ageVerification');
+    
+    if (!consentComm?.checked) {
+        alert('Legal Requirement: Please consent to communications.\n\nThis is required under Canadian privacy law to process your inquiry.');
+        document.querySelector('.consent-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    if (!ageVerif?.checked) {
+        alert('Legal Requirement: Please verify you are 18+ years old.\n\nAge verification is required to provide valid consent.');
+        document.querySelector('.consent-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    return true;
+}
+
+4. ADD helpful microcopy without changing layout:
+
+UPDATE your existing field labels to be more helpful:
+
+FIND your email field and ADD this helper text:
+<small style="color: #6c757d; font-size: 12px;">We'll send your partnership information here</small>
+
+FIND your phone field and ADD this helper text:
+<small style="color: #6c757d; font-size: 12px;">For priority project discussions</small>
+
+5. IMPROVE the journey dropdown with better context:
+
+REPLACE the readiness dropdown options with more descriptive ones:
+
+<option value="">Please select your current stage...</option>
+<option value="researching">Just researching - want to learn more</option>
+<option value="planning-long">Planning ahead (12+ months out)</option>
+<option value="planning-medium">Actively planning (6-12 months)</option>
+<option value="planning-short">Ready to move forward (3-6 months)</option>
+<option value="immediate">Need solution now (0-3 months)</option>
+
+6. ADD progress context without changing visual design:
+
+ADD this helper text above the form:
+<div style="text-align: center; margin-bottom: 20px; color: #6c757d; font-size: 14px;">
+    Step 1 of 5 - Contact Information
+    <br>
+    <small>Takes 2-3 minutes • Your information is secure and private</small>
+</div>
+
+7. ENSURE Next button respects validation:
+
+ADD this to prevent form progression without consent:
+
+document.addEventListener('DOMContentLoaded', function() {
+    const nextBtn = document.querySelector('#nextBtn, .btn-primary, [onclick*="next"]');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            const currentStep = document.querySelector('#currentStep')?.textContent || '1';
+            if (currentStep === '1' && !validateStep1()) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+    }
+});
+
+TESTING CHECKLIST:
+✓ Form looks exactly the same visually
+✓ Consent section is more prominent but matches design
+✓ Company field becomes optional for researchers
+✓ Cannot proceed without both consent checkboxes
+✓ Helper text provides context without clutter
+✓ All existing functionality preserved
+
+This maintains your exact visual design while improving UX clarity, legal compliance, and user guidance.

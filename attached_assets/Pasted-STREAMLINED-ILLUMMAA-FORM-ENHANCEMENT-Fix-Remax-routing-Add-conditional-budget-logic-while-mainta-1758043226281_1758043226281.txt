@@ -1,0 +1,200 @@
+STREAMLINED ILLUMMAA FORM ENHANCEMENT: Fix Remax routing + Add conditional budget logic while maintaining existing UX
+
+PROBLEM 1: Leads being diverted to Remax instead of staying with ILLUMMAA
+PROBLEM 2: Budget field inappropriate for Explorer users
+SOLUTION: Fix business logic routing + conditional field handling without changing interface design
+
+STEP 1: ADD conditional budget field logic to your existing form:
+
+FIND your budget field and UPDATE it with conditional display:
+
+<div class="form-group budget-group">
+    <label for="budget" id="budgetLabel">Project Budget Range (CAD)</label>
+    <select id="budget" name="budget" class="form-select">
+        <option value="">Select budget range...</option>
+        <option value="Under $500K">Under $500K</option>
+        <option value="$500K - $2M">$500K - $2M</option>
+        <option value="$2M - $5M">$2M - $5M</option>
+        <option value="$5M - $15M">$5M - $15M</option>
+        <option value="$15M - $30M">$15M - $30M</option>
+        <option value="$30M - $50M">$30M - $50M</option>
+        <option value="Over $50M">Over $50M</option>
+    </select>
+    <input type="hidden" id="budgetHidden" name="budgetHidden" value="">
+    <div id="explorerBudgetNote" style="display: none; font-size: 0.9rem; color: #6c757d; margin-top: 8px; font-style: italic;">
+        Budget planning will be discussed during your educational consultation
+    </div>
+</div>
+
+STEP 2: ADD JavaScript for conditional field handling:
+
+document.addEventListener('DOMContentLoaded', function() {
+    const readinessSelect = document.querySelector('#readiness, [name="readiness"], select');
+    const budgetGroup = document.querySelector('.budget-group');
+    const budgetSelect = document.getElementById('budget');
+    const budgetHidden = document.getElementById('budgetHidden');
+    const budgetLabel = document.getElementById('budgetLabel');
+    const explorerNote = document.getElementById('explorerBudgetNote');
+    const companyField = document.querySelector('#companyName, [name="companyName"], input[placeholder*="Company"]');
+    const companyLabel = companyField?.previousElementSibling || companyField?.closest('.form-group')?.querySelector('label');
+    
+    function handleConditionalFields() {
+        if (!readinessSelect) return;
+        
+        const readiness = readinessSelect.value || '';
+        const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+        
+        if (isExplorer) {
+            // EXPLORER: Hide budget dropdown, show note, auto-populate hidden field
+            if (budgetSelect && budgetHidden && explorerNote) {
+                budgetSelect.style.display = 'none';
+                explorerNote.style.display = 'block';
+                budgetHidden.value = 'Learning about costs and options';
+                budgetSelect.removeAttribute('required');
+                if (budgetLabel) budgetLabel.textContent = 'Project Budget Range (CAD) - Will be discussed';
+            }
+            
+            // Make company optional
+            if (companyField) {
+                companyField.removeAttribute('required');
+                companyField.placeholder = 'Company Name (Optional)';
+                if (companyLabel) companyLabel.textContent = 'Company Name (Optional)';
+            }
+            
+        } else {
+            // ACTIVE PLANNER: Show budget dropdown normally
+            if (budgetSelect && budgetHidden && explorerNote) {
+                budgetSelect.style.display = 'block';
+                explorerNote.style.display = 'none';
+                budgetHidden.value = '';
+                if (budgetLabel) budgetLabel.textContent = 'Project Budget Range (CAD)';
+            }
+            
+            // Make company required
+            if (companyField) {
+                companyField.setAttribute('required', '');
+                companyField.placeholder = 'Company Name *';
+                if (companyLabel) companyLabel.textContent = 'Company Name *';
+            }
+        }
+    }
+    
+    if (readinessSelect) {
+        readinessSelect.addEventListener('change', handleConditionalFields);
+        handleConditionalFields(); // Run on load
+    }
+});
+
+STEP 3: FIX the core routing issue - UPDATE your tier classification logic:
+
+FIND your tier determination function and REPLACE the residential routing logic:
+
+function determineCustomerTier(formData) {
+    const units = parseInt(formData.unitCount) || 0;
+    const readiness = formData.readiness || '';
+    
+    // Force Explorer for researchers regardless of units
+    if (readiness.includes('researching') || readiness.includes('learn more') || units === 0) {
+        return {
+            tier: 'tier_0_explorer',
+            pathway: 'illummaa_education',
+            assignedTo: 'ILLUMMAA Education Team',
+            responseTime: '48 hours',
+            focus: 'Educational resources and learning support'
+        };
+    }
+    
+    // ALL other residential projects stay with ILLUMMAA (NO REMAX ROUTING)
+    if (units < 50) {
+        return {
+            tier: 'tier_1_starter',
+            pathway: 'illummaa_residential', 
+            assignedTo: 'ILLUMMAA Residential Specialist',
+            responseTime: '24 hours',
+            focus: 'Residential project development'
+        };
+    }
+    
+    // Continue with existing logic for larger projects...
+    if (units < 150) return { tier: 'tier_2_pioneer', pathway: 'illummaa_partnership' };
+    if (units < 300) return { tier: 'tier_3_preferred', pathway: 'illummaa_partnership' };
+    return { tier: 'tier_4_elite', pathway: 'illummaa_partnership' };
+}
+
+STEP 4: UPDATE form submission to handle unified ILLUMMAA routing:
+
+// In your form submission handler, ADD this logic:
+const budgetValue = formData.budget || formData.budgetHidden || '';
+const tierInfo = determineCustomerTier(formData);
+
+// Create payload with ILLUMMAA-only routing
+const payload = {
+    ...formData,
+    budget: budgetValue,
+    tier: tierInfo.tier,
+    pathway: tierInfo.pathway, // Always ILLUMMAA pathways
+    customField: {
+        tier: tierInfo.tier,
+        pathway: tierInfo.pathway,
+        assignedTo: tierInfo.assignedTo,
+        responseTime: tierInfo.responseTime,
+        budgetSource: budgetValue === 'Learning about costs and options' ? 'auto_explorer' : 'user_selected',
+        // CRITICAL: Flag that prevents any Remax routing
+        illummaaOnly: 'TRUE',
+        noExternalReferrals: 'TRUE'
+    }
+};
+
+STEP 5: UPDATE success messaging to match user intent:
+
+function getSuccessMessage(tierInfo, formData) {
+    const isExplorer = tierInfo.tier === 'tier_0_explorer';
+    
+    if (isExplorer) {
+        return `Thank you for your interest in modular housing! An ILLUMMAA education specialist will contact you within 48 hours to answer your questions and provide helpful resources about modular construction options.`;
+    } else {
+        return `Thank you! An ILLUMMAA residential specialist will contact you within 24 hours to discuss your modular home project and next steps.`;
+    }
+}
+
+STEP 6: REMOVE any existing Remax routing logic:
+
+// FIND and DISABLE any code that looks like this:
+// if (agentSupport === 'no-agent') { /* redirect to remax */ }
+// if (showAgentChoice) { /* display remax options */ }
+
+// REPLACE with comments:
+// REMOVED: All residential leads now stay with ILLUMMAA education/residential teams
+// No external referrals until after ILLUMMAA consultation
+
+STEP 7: UPDATE your GHL workflow triggers:
+
+For tier_0_explorer leads:
+- Assign to: ILLUMMAA Education Team  
+- Workflow: Educational nurturing sequence
+- Response SLA: 48 hours
+- Focus: Learning resources, not sales
+
+For tier_1_starter leads:
+- Assign to: ILLUMMAA Residential Specialist
+- Workflow: Residential project development
+- Response SLA: 24 hours  
+- Focus: Project planning and development
+
+BENEFITS OF THIS APPROACH:
+✓ Maintains your existing form design and user experience
+✓ Eliminates Remax diversion - all leads stay with ILLUMMAA
+✓ Budget field adapts intelligently to user readiness
+✓ Company field becomes optional for researchers
+✓ Respects user intent (education vs. project planning)
+✓ Preserves marketing investment and customer relationships
+✓ Reduces technical complexity and maintenance risk
+✓ Maintains legal consent compliance
+
+TESTING CHECKLIST:
+1. Select "Just researching" → Budget field should hide with explanatory note
+2. Select other readiness options → Budget field should appear normally
+3. Company field should become optional for researchers  
+4. NO Remax choice screens should appear anywhere in the flow
+5. All residential leads should route to ILLUMMAA teams only
+6. Success messages should match user's stated intent level
