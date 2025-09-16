@@ -349,7 +349,7 @@ const IllummaaAssessmentForm = () => {
   };
 
   return (
-    <section id="assessment" className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section id="developer-qualification" className="py-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-6 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
