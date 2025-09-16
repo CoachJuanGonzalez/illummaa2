@@ -90,6 +90,10 @@ export default function AssessmentForm() {
   const [validationErrors, setValidationErrors] = useState<Record<string, boolean>>({});
   const [fieldTouched, setFieldTouched] = useState<Record<string, boolean>>({});
   const [priorityScoreAnimating, setPriorityScoreAnimating] = useState(false);
+  
+  // STEP 1 - State for form logic consistency (per step-by-step instructions)
+  const [isUnitFieldDisabled, setIsUnitFieldDisabled] = useState(false);
+  const [showResearchNote, setShowResearchNote] = useState(false);
 
   const { toast } = useToast();
 
@@ -106,6 +110,14 @@ export default function AssessmentForm() {
     return () => {
       window.removeEventListener('error', handleError);
     };
+  }, []);
+
+  // STEP 7 - Handle browser back button (per step-by-step instructions)
+  useEffect(() => {
+    const readiness = form.getValues('readiness');
+    if (readiness) {
+      handleReadinessChange();
+    }
   }, []);
 
   // Prevent right-click on form - Step 7 security requirement  
@@ -187,12 +199,27 @@ export default function AssessmentForm() {
     return 'tier_0_explorer';
   };
 
-  // Handle readiness change - auto-set units to 0 for researchers (as per instructions)
+  // Handle readiness change - CRITICAL FIX for data consistency (per step-by-step instructions)
   const handleReadinessChange = () => {
     const readiness = form.getValues('readiness');
+    
     if (readiness === 'researching' || readiness === 'planning-long') {
-      form.setValue('projectUnitCount', 0);
-      calculateTier();
+        // Force Explorer path for researchers
+        form.setValue('projectUnitCount', 0);
+        setIsUnitFieldDisabled(true);
+        setShowResearchNote(true);
+        
+        // Calculate tier (will be Explorer)
+        calculateTier();
+        
+    } else {
+        // Re-enable for actual buyers
+        setIsUnitFieldDisabled(false);
+        setShowResearchNote(false);
+        form.setValue('projectUnitCount', 50); // Reset to default
+        
+        // Clear tier display until units selected
+        // Note: Tier indicator will be updated when calculateTier runs
     }
   };
 
@@ -201,6 +228,14 @@ export default function AssessmentForm() {
     // Get both values
     const units = form.getValues('projectUnitCount');
     const readiness = form.getValues('readiness');
+    
+    // STEP 3 - Safety check - researchers must be Explorer (per step-by-step instructions)
+    if (readiness === 'researching' || readiness === 'planning-long') {
+        if (units !== 0) {
+            form.setValue('projectUnitCount', 0);
+            console.warn('Corrected: Researchers must have 0 units');
+        }
+    }
     
     // Debug to console
     console.log('calculateTier called - Units:', units, 'Readiness:', readiness);
@@ -535,8 +570,15 @@ export default function AssessmentForm() {
   }, [isSubmitted]);
 
   const calculatePriorityScore = () => {
-    let score = 0;
     const values = form.getValues();
+    
+    // STEP 4 - Force 0 score for researchers (per step-by-step instructions)
+    if (values.readiness === 'researching' || values.readiness === 'planning-long' || values.projectUnitCount === 0) {
+        setPriorityScore(0);
+        return;
+    }
+    
+    let score = 0;
 
     // Unit count scoring
     const units = values.projectUnitCount || 0;
@@ -588,10 +630,16 @@ export default function AssessmentForm() {
 
   const generateTags = () => {
     const values = form.getValues();
+    const tier = determineCustomerTier(values.projectUnitCount || 0, values.readiness || '');
+    
+    // STEP 5 - Ensure Explorer tier gets correct tags (per step-by-step instructions)
+    if (tier === 'tier_0_explorer') {
+        return ['Tier-0-Explorer', 'Not-Ready', 'Education-Journey', 'Priority-EDUCATION'];
+    }
+    
     const tags: string[] = [];
 
     // Partnership tier tags
-    const tier = determineCustomerTier(values.projectUnitCount || 0, values.readiness || '');
     tags.push(`tier-${tier.toLowerCase()}`);
 
     // Readiness level tags
@@ -787,6 +835,24 @@ export default function AssessmentForm() {
       return;
     }
 
+    // STEP 2 - Validation BEFORE payload creation (per step-by-step instructions)
+    const readiness = data.readiness;
+    const units = parseInt(String(data.projectUnitCount));
+
+    if ((readiness === 'researching' || readiness === 'planning-long') && units > 0) {
+        toast({
+          title: "Configuration Error",
+          description: "Researchers cannot have unit counts. Please refresh and try again.",
+          variant: "destructive",
+        });
+        return;
+    }
+
+    // Force Explorer tier data consistency
+    if (readiness === 'researching' || readiness === 'planning-long') {
+        data.projectUnitCount = 0;
+    }
+
     try {
       // Collect and sanitize data using SecurityModule
       const sanitizedData = {
@@ -874,6 +940,15 @@ export default function AssessmentForm() {
         source: 'Website Form',
         userAgent: navigator.userAgent.substring(0, 200)
       };
+
+      // STEP 6 - Update payload for Explorer tier (per step-by-step instructions)
+      if (customerTier === 'tier_0_explorer') {
+        securePayload.priorityScore = 0; // Researchers always score 0
+        securePayload.stage = 'Education & Awareness'; // Different pipeline stage
+        (securePayload as any).isEducationOnly = 'Yes';
+        securePayload.tags = 'Tier-0-Explorer,Not-Ready,Education-Journey,Priority-EDUCATION';
+        securePayload.data.projectUnitCount = 0; // Force 0 units
+      }
 
       console.log("Secure form submission with Customer Journey data:", {
         tier: customerTier,
@@ -1052,22 +1127,40 @@ export default function AssessmentForm() {
                   <FormDescription>
                     Select the scope that best matches your project needs
                   </FormDescription>
-                  <Select onValueChange={(value) => { field.onChange(parseInt(value)); calculateTier(); checkAgentSupport(); }} defaultValue={field.value?.toString()}>
+                  <Select 
+                    onValueChange={(value) => { field.onChange(parseInt(value)); calculateTier(); checkAgentSupport(); }} 
+                    defaultValue={field.value?.toString()}
+                    disabled={isUnitFieldDisabled}
+                  >
                     <FormControl>
-                      <SelectTrigger data-testid="select-unit-count">
+                      <SelectTrigger 
+                        data-testid="select-unit-count"
+                        className={isUnitFieldDisabled ? "bg-gray-100 text-gray-600" : ""}
+                      >
                         <SelectValue placeholder="Please select..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="0">Just exploring options</SelectItem>
-                      <SelectItem value="1">1 home</SelectItem>
-                      <SelectItem value="2">2 homes</SelectItem>
-                      <SelectItem value="25">3-49 units (Starter)</SelectItem>
-                      <SelectItem value="75">50-149 units (Pioneer)</SelectItem>
-                      <SelectItem value="200">150-299 units (Preferred)</SelectItem>
-                      <SelectItem value="500">300+ units (Elite)</SelectItem>
+                      {isUnitFieldDisabled ? (
+                        <SelectItem value="0">Just exploring options</SelectItem>
+                      ) : (
+                        <>
+                          <SelectItem value="0">Just exploring options</SelectItem>
+                          <SelectItem value="1">1 home</SelectItem>
+                          <SelectItem value="2">2 homes</SelectItem>
+                          <SelectItem value="25">3-49 units (Starter)</SelectItem>
+                          <SelectItem value="75">50-149 units (Pioneer)</SelectItem>
+                          <SelectItem value="200">150-299 units (Preferred)</SelectItem>
+                          <SelectItem value="500">300+ units (Elite)</SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
+                  {showResearchNote && (
+                    <p className="text-sm text-gray-600 italic mt-1">
+                      Education journey - no specific project yet
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

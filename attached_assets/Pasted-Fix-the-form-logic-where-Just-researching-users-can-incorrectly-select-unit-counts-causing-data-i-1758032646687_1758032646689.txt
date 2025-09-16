@@ -1,0 +1,213 @@
+Fix the form logic where "Just researching" users can incorrectly select unit counts, causing data inconsistency and lead routing errors.
+
+=== CRITICAL WARNING - READ BEFORE IMPLEMENTING ===
+
+⚠️ BACKUP YOUR CURRENT CODE FIRST
+⚠️ This change affects form flow logic and data integrity
+⚠️ Test thoroughly before deploying to production
+⚠️ Existing form submissions in progress may be affected
+
+=== THE PROBLEM ===
+Users selecting "Just researching - want to learn more" can currently select 1-500+ units, which:
+- Creates contradictory data (researchers don't have unit requirements)
+- Causes incorrect lead routing (researchers sent to sales instead of education)
+- Inflates pipeline values with false opportunities
+- Wastes sales resources on education leads
+- Breaks AI priority scoring (researchers shouldn't have high scores)
+
+=== IMPLEMENTATION - COPY THIS EXACTLY ===
+
+1. FIND the handleReadinessChange function and REPLACE it entirely with:
+
+function handleReadinessChange() {
+    const readiness = document.getElementById('readiness').value;
+    const unitCountField = document.getElementById('unitCount');
+    
+    if (readiness === 'researching' || readiness === 'planning-long') {
+        // Force Explorer path for researchers
+        unitCountField.innerHTML = '<option value="0" selected>Just exploring options</option>';
+        unitCountField.value = '0';
+        unitCountField.disabled = true;
+        unitCountField.style.backgroundColor = '#f0f0f0';
+        
+        // Add visual indicator
+        const unitGroup = unitCountField.closest('.form-group');
+        if (unitGroup) {
+            const existingNote = unitGroup.querySelector('.research-note');
+            if (!existingNote) {
+                unitGroup.insertAdjacentHTML('beforeend', 
+                    '<small class="research-note" style="color: #666; font-style: italic;">Education journey - no specific project yet</small>'
+                );
+            }
+        }
+        
+        // Calculate tier (will be Explorer)
+        calculateTier();
+        
+    } else {
+        // Re-enable for actual buyers
+        unitCountField.disabled = false;
+        unitCountField.style.backgroundColor = '';
+        unitCountField.innerHTML = `
+            <option value="">Please select...</option>
+            <option value="1">1 home</option>
+            <option value="2">2 homes</option>
+            <option value="25">3-49 units (Starter)</option>
+            <option value="75">50-149 units (Pioneer)</option>
+            <option value="200">150-299 units (Preferred)</option>
+            <option value="500">300+ units (Elite)</option>
+        `;
+        unitCountField.value = '';
+        
+        // Remove research note
+        const unitGroup = unitCountField.closest('.form-group');
+        if (unitGroup) {
+            const note = unitGroup.querySelector('.research-note');
+            if (note) note.remove();
+        }
+        
+        // Clear tier display until units selected
+        const tierIndicator = document.getElementById('tierIndicator');
+        if (tierIndicator) {
+            tierIndicator.classList.remove('show');
+        }
+    }
+}
+
+2. ADD this validation to the form submission (in the submit event listener, BEFORE payload creation):
+
+// Add this validation BEFORE const payload = {...}
+const readiness = formData.readiness;
+const units = parseInt(formData.unitCount);
+
+if ((readiness === 'researching' || readiness === 'planning-long') && units > 0) {
+    alert('Configuration error: Researchers cannot have unit counts. Please refresh and try again.');
+    submitBtn.disabled = false;
+    return;
+}
+
+// Force Explorer tier data consistency
+if (readiness === 'researching' || readiness === 'planning-long') {
+    formData.unitCount = 0;
+    tier = 'tier_0_explorer';
+}
+
+3. UPDATE calculateTier() function - ADD this safety check at the beginning:
+
+function calculateTier() {
+    const units = document.getElementById('unitCount').value;
+    const readiness = document.getElementById('readiness').value;
+    
+    // Safety check - researchers must be Explorer
+    if (readiness === 'researching' || readiness === 'planning-long') {
+        if (units !== '0') {
+            document.getElementById('unitCount').value = '0';
+            console.warn('Corrected: Researchers must have 0 units');
+        }
+    }
+    
+    // ... rest of existing calculateTier code ...
+}
+
+4. UPDATE the calculatePriorityScore function to ensure Explorer tier gets 0:
+
+function calculatePriorityScore(data) {
+    // Force 0 score for researchers
+    if (data.readiness === 'researching' || data.readiness === 'planning-long' || data.unitCount === 0) {
+        return 0;
+    }
+    
+    // ... rest of existing scoring logic ...
+}
+
+5. UPDATE the generateTags function to ensure proper Explorer tags:
+
+function generateTags(tier, score, data) {
+    const tags = [];
+    
+    // Ensure Explorer tier gets correct tags
+    if (tier === 'tier_0_explorer') {
+        return ['Tier-0-Explorer', 'Not-Ready', 'Education-Journey', 'Priority-EDUCATION'];
+    }
+    
+    // ... rest of existing tag generation logic ...
+}
+
+6. UPDATE the payload creation in form submission to ensure data consistency:
+
+// Find where payload is created and ensure these fields for Explorer:
+if (tier === 'tier_0_explorer') {
+    payload.aiPriorityScore = 0; // Researchers always score 0
+    payload.stage = 'Education & Awareness'; // Different pipeline stage
+    payload.isEducationOnly = 'Yes';
+    payload.tags = 'Tier-0-Explorer,Not-Ready,Education-Journey,Priority-EDUCATION';
+    payload.unitCount = 0; // Force 0 units
+}
+
+7. ADD this on page load to handle browser back button:
+
+// Add this after SecurityModule initialization
+document.addEventListener('DOMContentLoaded', function() {
+    const readinessField = document.getElementById('readiness');
+    if (readinessField && readinessField.value) {
+        handleReadinessChange();
+    }
+});
+
+=== TESTING CHECKLIST ===
+□ Select "Just researching" → Units should lock to "Just exploring options"
+□ Select "Planning to buy in 12+ months" → Units should lock to "Just exploring options"  
+□ Select "Ready to move forward" → All unit options should be available
+□ Change from "researching" to "immediate" → Units should unlock
+□ Change from "immediate" to "researching" → Units should lock to 0
+□ Browser back button → Form state should be consistent
+□ Submit with research + 0 units → Should work
+□ Submit with research + any other units → Should be prevented
+□ Check payload has aiPriorityScore = 0 for researchers
+□ Check tags include "Tier-0-Explorer,Not-Ready,Education-Journey"
+□ Verify stage = "Education & Awareness" for researchers
+
+=== POTENTIAL RISKS ===
+
+⚠️ RISK 1: Breaking Change
+If users have bookmarked partially-filled forms, they may see unexpected behavior.
+MITIGATION: Clear browser cache after deployment.
+
+⚠️ RISK 2: Data Validation
+Existing leads in GHL may have inconsistent data (researchers with units).
+MITIGATION: Run data cleanup in GHL after deployment.
+
+⚠️ RISK 3: Workflow Triggers
+GHL workflows expecting unit counts may fail for 0-unit Explorer leads.
+MITIGATION: Verify Explorer workflow handles 0 units properly.
+
+⚠️ RISK 4: User Confusion
+Users might not understand why units are locked.
+MITIGATION: The visual note explains it's for education journey.
+
+=== DO NOT PROCEED WITHOUT ===
+□ Backing up current form code
+□ Testing in development environment first
+□ Confirming GHL can handle 0-unit Explorer leads
+□ Verifying Explorer workflow triggers on "Tier-0-Explorer" tag
+□ Confirming "Education & Awareness" stage exists in pipeline
+□ Notifying sales team about the change
+□ Preparing to clean existing inconsistent data in GHL
+
+=== WHY THIS CHANGE IS CRITICAL ===
+- Prevents researchers from being routed to sales team
+- Ensures accurate pipeline valuation (researchers = $0 value)
+- Maintains AI priority score accuracy (researchers = 0/150)
+- Protects data integrity in CRM
+- Improves lead routing accuracy by 100% for Explorer tier
+- Saves sales team from wasting time on education leads
+- Ensures proper tag-based workflow triggering
+
+=== DATA FLOW VERIFICATION ===
+Explorer Path: Form → Readiness=researching → Units=0 → Tier=tier_0_explorer → 
+Score=0 → Tags=Education-Journey → Stage=Education & Awareness → Education Team
+
+Sales Path: Form → Readiness=immediate → Units>0 → Tier=1-4 → Score>0 → 
+Tags=Ready-To-Buy → Stage=Initial Interest → Sales Team
+
+CONFIRM: Type "PROCEED WITH LOGIC FIX" after reading all warnings and verifying GHL configuration.
