@@ -480,6 +480,104 @@
     outline: none !important;
     border-color: #2C5530 !important;
     box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1) !important;
+    transition: all 0.2s ease;
+  }
+
+  /* Enhanced security-focused styles per attached instructions */
+  
+  /* Security indicator styling */
+  input:valid {
+    border-color: #10B981;
+  }
+
+  input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #EF4444;
+  }
+
+  /* Enhanced checkbox styling for legal consent */
+  input[type="checkbox"]:checked {
+    background-color: #2C5530;
+    border-color: #2C5530;
+  }
+
+  input[type="checkbox"]:focus {
+    ring-color: #2C5530;
+    ring-opacity: 0.2;
+  }
+
+  /* Security badge styling */
+  .security-badge {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Enhanced button security states */
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* Loading state protection */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Error state styling */
+  .error-border {
+    border-color: #EF4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
+
+  /* Success state styling */
+  .success-border {
+    border-color: #10B981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  }
+
+  /* Enhanced mobile responsiveness with security considerations */
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+    }
+    
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    /* Ensure touch targets are at least 44px for accessibility/security */
+    button, input, select, textarea {
+      min-height: 44px;
+    }
+  }
+
+  /* Print security - hide sensitive information when printing */
+  @media print {
+    .security-info,
+    .csrf-token,
+    .session-data {
+      display: none !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    input:focus, select:focus, textarea:focus {
+      box-shadow: 0 0 0 4px rgba(44, 85, 48, 0.5) !important;
+    }
   }
   
   .hero-secondary-btn {
