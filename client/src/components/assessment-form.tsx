@@ -1,20 +1,69 @@
 import React, { useState, useEffect } from 'react';
 
+// TypeScript interfaces
+interface FormData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  unitCount?: number;
+  budget?: string;
+  timeline?: string;
+  province?: string;
+  readiness?: string;
+  projectDescription?: string;
+  consentCommunications?: boolean;
+  ageVerification?: boolean;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+interface BudgetScores {
+  [key: string]: number;
+}
+
+interface TimelineScores {
+  [key: string]: number;
+}
+
+interface ProvinceCodes {
+  [key: string]: string;
+}
+
+// Global gtag declaration
+declare global {
+  interface Window {
+    gtag?: (
+      command: 'config' | 'event',
+      targetId: string,
+      config?: {
+        event_category?: string;
+        event_label?: string;
+        value?: number;
+      }
+    ) => void;
+  }
+}
+
 const IllummaaAssessmentForm = () => {
   // State management
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [priorityScore, setPriorityScore] = useState(0);
-  const [isExplorer, setIsExplorer] = useState(false);
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formData, setFormData] = useState<FormData>({});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [priorityScore, setPriorityScore] = useState<number>(0);
+  const [isExplorer, setIsExplorer] = useState<boolean>(false);
   
   const TOTAL_STEPS = 4;
 
   // Enhanced input handler with Explorer detection
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const checked = 'checked' in e.target ? e.target.checked : false;
     const newValue = type === 'checkbox' ? checked : value;
     
     setFormData(prev => ({ ...prev, [name]: newValue }));
@@ -42,7 +91,7 @@ const IllummaaAssessmentForm = () => {
   };
 
   // Canadian phone formatting
-  const handlePhoneChange = (e) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/\D/g, '');
     
     if (value.length > 0 && !value.startsWith('1')) {
@@ -65,7 +114,7 @@ const IllummaaAssessmentForm = () => {
     let score = 0;
     
     // Unit count (50 points max)
-    const units = parseInt(formData.unitCount) || 0;
+    const units = parseInt(String(formData.unitCount || 0)) || 0;
     if (units >= 1000) score += 50;
     else if (units >= 500) score += 40;
     else if (units >= 200) score += 30;
@@ -74,23 +123,23 @@ const IllummaaAssessmentForm = () => {
     else score += 5;
     
     // Budget (40 points max)
-    const budgetScores = {
+    const budgetScores: BudgetScores = {
       'Over $50M': 40, '$30M - $50M': 35, '$15M - $30M': 30,
       '$5M - $15M': 25, '$2M - $5M': 20, '$500K - $2M': 15,
       'Under $500K': 10
     };
-    score += budgetScores[formData.budget] || 0;
+    score += budgetScores[formData.budget || ''] || 0;
     
     // Timeline (30 points max)
-    const timelineScores = {
+    const timelineScores: TimelineScores = {
       'Immediate (0-3 months)': 30, 'Short-term (3-6 months)': 20,
       'Medium-term (6-12 months)': 10, 'Long-term (12+ months)': 5
     };
-    score += timelineScores[formData.timeline] || 0;
+    score += timelineScores[formData.timeline || ''] || 0;
     
     // Location (15 points max)
     const primaryProvinces = ['Ontario', 'British Columbia', 'Alberta'];
-    if (primaryProvinces.includes(formData.province)) {
+    if (primaryProvinces.includes(formData.province || '')) {
       score += 15;
     } else if (formData.province) {
       score += 10;
@@ -105,8 +154,8 @@ const IllummaaAssessmentForm = () => {
   };
 
   // Form validation with Explorer logic
-  const validateStep = (step) => {
-    const newErrors = {};
+  const validateStep = (step: number): boolean => {
+    const newErrors: FormErrors = {};
     
     switch(step) {
       case 1:
@@ -165,15 +214,15 @@ const IllummaaAssessmentForm = () => {
   };
 
   // Advanced tagging system
-  const generateAdvancedTags = () => {
-    const tags = [];
+  const generateAdvancedTags = (): string[] => {
+    const tags: string[] = [];
     
     // Customer type
     if (isExplorer) {
       tags.push('Customer-Consumer-Individual', 'Scale-Individual', 'Ready-Exploring');
-    } else if (formData.unitCount >= 200) {
+    } else if ((formData.unitCount || 0) >= 200) {
       tags.push('Customer-Enterprise-Scale', 'Scale-Enterprise-Community');
-    } else if (formData.unitCount >= 50) {
+    } else if ((formData.unitCount || 0) >= 50) {
       tags.push('Customer-Partnership-Large', 'Scale-Large-Partnership');
     } else {
       tags.push('Customer-Residential-Small', 'Scale-Small-Residential');
@@ -204,8 +253,8 @@ const IllummaaAssessmentForm = () => {
     return tags;
   };
 
-  const getProvinceCode = (province) => {
-    const codes = {
+  const getProvinceCode = (province: string): string => {
+    const codes: ProvinceCodes = {
       'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB',
       'New Brunswick': 'NB', 'Newfoundland and Labrador': 'NL',
       'Northwest Territories': 'NT', 'Nova Scotia': 'NS', 'Nunavut': 'NU',
@@ -215,14 +264,14 @@ const IllummaaAssessmentForm = () => {
     return codes[province] || 'XX';
   };
 
-  const getAssignedTeam = () => {
+  const getAssignedTeam = (): string => {
     if (isExplorer) return 'ILLÜMMAA Education Team';
     if (priorityScore >= 100) return 'Senior Partnership Manager';
     if (priorityScore >= 50) return 'Partnership Representative';
     return 'Residential Specialist';
   };
 
-  const getResponseTime = () => {
+  const getResponseTime = (): string => {
     if (isExplorer) return '48 hours';
     if (priorityScore >= 100) return '1 hour';
     if (priorityScore >= 50) return '4 hours';
@@ -230,7 +279,7 @@ const IllummaaAssessmentForm = () => {
   };
 
   // Form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateStep(currentStep)) return;
@@ -281,8 +330,8 @@ const IllummaaAssessmentForm = () => {
         throw new Error('Submission failed');
       }
       
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'conversion', {
+      if (window.gtag) {
+        window.gtag('event', 'conversion', {
           event_category: 'Assessment',
           event_label: getAssignedTeam(),
           value: priorityScore

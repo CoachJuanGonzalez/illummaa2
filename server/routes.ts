@@ -185,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return errors;
   }
 
-  // Assessment submission endpoint with enhanced security
+  // Assessment submission endpoint with enhanced security for NEW ILLÜMMAA form
   app.post("/api/submit-assessment", bruteforce.prevent, async (req, res) => {
     const requestStart = Date.now();
     
@@ -209,8 +209,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // Validate and sanitize form data
-      const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(req.body);
+      // NEW FORM COMPATIBILITY: Map new form field names to existing backend expectations
+      const mappedBody = {
+        ...req.body,
+        // Map new form fields to existing backend field names
+        companyName: req.body.company || req.body.companyName,
+        projectUnitCount: req.body.unitCount || req.body.projectUnitCount || 0,
+        budgetRange: req.body.budget || req.body.budgetRange,
+        // Keep all other fields as-is
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phone: req.body.phone,
+        readiness: req.body.readiness,
+        timeline: req.body.timeline,
+        province: req.body.province,
+        projectDescription: req.body.projectDescription,
+        consentCommunications: req.body.consentCommunications,
+        ageVerification: req.body.ageVerification,
+        // New form specific fields
+        isExplorer: req.body.isExplorer,
+        illummaaOnly: req.body.illummaaOnly,
+        noExternalReferrals: req.body.noExternalReferrals,
+        priorityScore: req.body.priorityScore,
+        assignedTo: req.body.assignedTo,
+        responseTime: req.body.responseTime,
+        tags: req.body.tags,
+        contactTags: req.body.contactTags,
+        consentTimestamp: req.body.consentTimestamp,
+        source: req.body.source || 'ILLÜMMAA Website Assessment',
+        submissionId: req.body.submissionId,
+        userAgent: req.body.userAgent
+      };
+      
+      // Validate and sanitize form data using mapped fields
+      const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
       
       if (!isValid) {
         return res.status(400).json({ 
