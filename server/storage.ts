@@ -22,6 +22,15 @@ export class MemStorage implements IStorage {
       id,
       submittedAt: new Date(),
       projectDescription: insertAssessment.projectDescription || null,
+      agentSupport: insertAssessment.agentSupport || null,
+      consentMarketing: insertAssessment.consentMarketing ?? false,
+      tags: insertAssessment.tags ?? null,
+      // Handle optional fields for Explorer/Starter tiers
+      budgetRange: insertAssessment.budgetRange || null,
+      decisionTimeline: insertAssessment.decisionTimeline || null,
+      constructionProvince: insertAssessment.constructionProvince || null,
+      developerType: insertAssessment.developerType || null,
+      governmentPrograms: insertAssessment.governmentPrograms || null,
     };
     
     this.assessments.set(id, assessment);
@@ -60,10 +69,14 @@ export async function validateFormData(rawData: any): Promise<{
   data?: AssessmentFormData;
   errors?: any[];
   priorityScore?: number;
+  customerTier?: string;
+  priorityLevel?: string;
+  tags?: string[];
 }> {
   try {
     // Sanitize input data
     const sanitizedData = {
+      readiness: DOMPurify.sanitize(rawData.readiness || ''),
       firstName: DOMPurify.sanitize(rawData.firstName || '').trim(),
       lastName: DOMPurify.sanitize(rawData.lastName || '').trim(),
       email: DOMPurify.sanitize(rawData.email || '').trim().toLowerCase(),
@@ -75,6 +88,8 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: DOMPurify.sanitize(rawData.constructionProvince || ''),
       developerType: DOMPurify.sanitize(rawData.developerType || ''),
       governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms || ''),
+      agentSupport: rawData.agentSupport ? DOMPurify.sanitize(rawData.agentSupport) : undefined,
+      consentMarketing: Boolean(rawData.consentMarketing),
       projectDescriptionText: rawData.projectDescriptionText ? 
         DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
         "",
@@ -92,11 +107,19 @@ export async function validateFormData(rawData: any): Promise<{
 
     // Calculate priority score
     const priorityScore = calculatePriorityScore(validationResult.data);
+    
+    // Calculate Customer Journey fields
+    const customerTier = determineCustomerTier(validationResult.data.projectUnitCount, validationResult.data.readiness);
+    const priorityLevel = getPriorityLevel(priorityScore);
+    const tags = generateCustomerTags(validationResult.data, customerTier, priorityLevel);
 
     return {
       isValid: true,
       data: validationResult.data,
-      priorityScore
+      priorityScore,
+      customerTier,
+      priorityLevel,
+      tags
     };
 
   } catch (error) {
@@ -118,41 +141,49 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   else if (units >= 100) score += 20;
   else if (units >= 50) score += 10;
 
-  // Budget scoring (v13.1 exact)
-  switch (data.budgetRange) {
-    case "Over $50 Million": score += 40; break;
-    case "$30M - $50 Million": score += 35; break;
-    case "$15M - $30 Million": score += 25; break;
-    case "$5M - $15 Million": score += 15; break;
-    case "Under $5 Million": score += 5; break;
+  // Budget scoring (v13.1 exact) - handle optional field
+  if (data.budgetRange) {
+    switch (data.budgetRange) {
+      case "Over $50 Million": score += 40; break;
+      case "$30M - $50 Million": score += 35; break;
+      case "$15M - $30 Million": score += 25; break;
+      case "$5M - $15 Million": score += 15; break;
+      case "Under $5 Million": score += 5; break;
+    }
   }
 
-  // Timeline scoring (v13.1 exact)
-  switch (data.decisionTimeline) {
-    case "Immediate (0-3 months)": score += 30; break;
-    case "Short-term (3-6 months)": score += 20; break;
-    case "Medium-term (6-12 months)": score += 10; break;
-    case "Long-term (12+ months)": score += 5; break;
+  // Timeline scoring (v13.1 exact) - handle optional field
+  if (data.decisionTimeline) {
+    switch (data.decisionTimeline) {
+      case "Immediate (0-3 months)": score += 30; break;
+      case "Short-term (3-6 months)": score += 20; break;
+      case "Medium-term (6-12 months)": score += 10; break;
+      case "Long-term (12+ months)": score += 5; break;
+    }
   }
 
-  // Government programs scoring (v13.1 exact)
-  switch (data.governmentPrograms) {
-    case "Yes - Currently participating": score += 20; break;
-    case "Interested - Tell us more": score += 10; break;
-    case "No - Private development only": score += 0; break;
+  // Government programs scoring (v13.1 exact) - handle optional field
+  if (data.governmentPrograms) {
+    switch (data.governmentPrograms) {
+      case "Yes - Currently participating": score += 20; break;
+      case "Interested - Tell us more": score += 10; break;
+      case "No - Private development only": score += 0; break;
+    }
   }
 
-  // Developer type scoring (v13.1 exact)
-  if (data.developerType === "Commercial Developer (Large Projects)" || 
-      data.developerType === "Government/Municipal Developer") {
-    score += 10;
-  } else if (data.developerType === "Private Developer (Medium Projects)" || 
-             data.developerType === "Non-Profit Housing Developer") {
-    score += 5;
+  // Developer type scoring (v13.1 exact) - handle optional field
+  if (data.developerType) {
+    if (data.developerType === "Commercial Developer (Large Projects)" || 
+        data.developerType === "Government/Municipal Developer") {
+      score += 10;
+    } else if (data.developerType === "Private Developer (Medium Projects)" || 
+               data.developerType === "Non-Profit Housing Developer") {
+      score += 5;
+    }
   }
 
-  // Geography scoring (v13.1 exact)
-  if (["Ontario", "British Columbia", "Alberta"].includes(data.constructionProvince)) {
+  // Geography scoring (v13.1 exact) - handle optional field
+  if (data.constructionProvince && ["Ontario", "British Columbia", "Alberta"].includes(data.constructionProvince)) {
     score += 5;
   }
 
@@ -172,12 +203,12 @@ function formatCanadianPhone(phone: string): string {
 }
 
 // Add missing sanitizeInput function
-function sanitizeInput(input: string): string {
+function sanitizeInput(input: string | undefined): string {
   if (!input) return '';
   return DOMPurify.sanitize(input.toString()).trim();
 }
 
-export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number): Promise<void> {
+export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number, customerTier: string, priorityLevel: string, tags: string[]): Promise<void> {
   const webhookUrl = process.env.GHL_WEBHOOK_URL;
   
   if (!webhookUrl) {
@@ -203,13 +234,13 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     company: sanitizeInput(formData.company),
     source: "ILLUMMAA Website",
     
-    // Custom fields
+    // Custom fields (handle optional fields with defaults)
     project_unit_count: parseInt(formData.projectUnitCount.toString()),
-    project_budget_range: formData.budgetRange,
-    delivery_timeline: formData.decisionTimeline,
-    construction_province: formData.constructionProvince,
-    developer_type: formData.developerType,
-    government_programs: formData.governmentPrograms,
+    project_budget_range: formData.budgetRange || "",
+    delivery_timeline: formData.decisionTimeline || "",
+    construction_province: formData.constructionProvince || "",
+    developer_type: formData.developerType || "",
+    government_programs: formData.governmentPrograms || "",
     project_description: sanitizeInput(formData.projectDescriptionText || ""),
     ai_priority_score: priorityData.score,
     lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
@@ -217,7 +248,13 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     submission_timestamp: new Date().toISOString(),
     assigned_to: priorityData.assignedTo,
     response_time: priorityData.responseTime,
-    priority_level: priorityData.priorityLevel
+    priority_level: priorityData.priorityLevel,
+    
+    // Customer Journey fields for external pipeline
+    customer_tier: customerTier,
+    customer_priority_level: priorityLevel,
+    customer_tags: tags.join(', '),
+    tags_array: tags
   };
 
   // Webhook delivery with retry logic (v13.1 required)
@@ -278,6 +315,85 @@ function determineCustomerTier(units: number, readiness?: string): string {
   if (units <= 149) return 'tier_2_pioneer';
   if (units <= 299) return 'tier_3_preferred';
   return 'tier_4_elite';
+}
+
+// Generate customer tags for Customer Journey system
+function generateCustomerTags(data: AssessmentFormData, customerTier: string, priorityLevel: string): string[] {
+  const tags: string[] = [];
+
+  // Tier tags
+  tags.push(`tier-${customerTier.toLowerCase()}`);
+
+  // Readiness level tags
+  if (data.readiness) {
+    tags.push(`readiness-${data.readiness.replace(/\s+/g, '-').toLowerCase()}`);
+    if (data.readiness.includes('immediate')) tags.push('urgent');
+    if (data.readiness.includes('planning')) tags.push('planning-phase');
+    if (data.readiness.includes('researching')) tags.push('early-stage');
+  }
+
+  // Unit count category tags
+  const units = data.projectUnitCount || 0;
+  if (units === 0) tags.push('pre-development');
+  else if (units <= 2) tags.push('single-multi-unit');
+  else if (units < 50) tags.push('small-scale');
+  else if (units < 150) tags.push('medium-scale');
+  else if (units < 300) tags.push('large-scale');
+  else tags.push('enterprise-scale');
+
+  // Budget category tags
+  if (data.budgetRange) {
+    const budgetTag = data.budgetRange.toLowerCase().replace(/[\s$-]/g, '_');
+    tags.push(`budget-${budgetTag}`);
+    if (data.budgetRange.includes('Over $50 Million')) tags.push('high-budget');
+    if (data.budgetRange.includes('Under $5 Million')) tags.push('starter-budget');
+  }
+
+  // Timeline urgency tags
+  if (data.decisionTimeline) {
+    if (data.decisionTimeline.includes('Immediate')) tags.push('immediate-need');
+    if (data.decisionTimeline.includes('Short-term')) tags.push('short-term');
+    if (data.decisionTimeline.includes('Long-term')) tags.push('long-term');
+  }
+
+  // Developer type tags
+  if (data.developerType) {
+    const devTypeTag = data.developerType.toLowerCase().replace(/[\s()/-]/g, '_');
+    tags.push(`dev-type-${devTypeTag}`);
+    if (data.developerType.includes('Government')) tags.push('government');
+    if (data.developerType.includes('Commercial')) tags.push('commercial');
+    if (data.developerType.includes('Non-Profit')) tags.push('non-profit');
+  }
+
+  // Province tags
+  if (data.constructionProvince) {
+    tags.push(`province-${data.constructionProvince.toLowerCase().replace(/\s+/g, '-')}`);
+    if (['Ontario', 'British Columbia', 'Alberta'].includes(data.constructionProvince)) {
+      tags.push('priority-province');
+    }
+  }
+
+  // Government programs tags
+  if (data.governmentPrograms) {
+    if (data.governmentPrograms.includes('Yes')) tags.push('government-participating');
+    if (data.governmentPrograms.includes('Interested')) tags.push('government-interested');
+    if (data.governmentPrograms.includes('No')) tags.push('private-only');
+  }
+
+  // Agent support tags
+  if (data.agentSupport) {
+    tags.push(`agent-${data.agentSupport}`);
+  }
+
+  // Consent and compliance tags
+  if (data.consentMarketing) {
+    tags.push('marketing-consent');
+  }
+
+  // Priority level tags
+  tags.push(`priority-${priorityLevel.toLowerCase()}`);
+
+  return tags.filter(Boolean);
 }
 
 // Residential GoHighLevel webhook function

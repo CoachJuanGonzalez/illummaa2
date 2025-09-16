@@ -460,6 +460,90 @@ export default function AssessmentForm() {
     setPriorityScore(Math.min(score, 150));
   };
 
+  const generateTags = () => {
+    const values = form.getValues();
+    const tags: string[] = [];
+
+    // Partnership tier tags
+    const tier = determineCustomerTier(values.projectUnitCount || 0, values.readiness || '');
+    tags.push(`tier-${tier.toLowerCase()}`);
+
+    // Readiness level tags
+    if (values.readiness) {
+      tags.push(`readiness-${values.readiness.replace(/\s+/g, '-').toLowerCase()}`);
+      if (values.readiness.includes('immediate')) tags.push('urgent');
+      if (values.readiness.includes('planning')) tags.push('planning-phase');
+      if (values.readiness.includes('researching')) tags.push('early-stage');
+    }
+
+    // Unit count category tags
+    const units = values.projectUnitCount || 0;
+    if (units === 0) tags.push('pre-development');
+    else if (units <= 2) tags.push('single-multi-unit');
+    else if (units < 50) tags.push('small-scale');
+    else if (units < 150) tags.push('medium-scale');
+    else if (units < 300) tags.push('large-scale');
+    else tags.push('enterprise-scale');
+
+    // Budget category tags
+    if (values.budgetRange) {
+      if (values.budgetRange.includes('50 Million')) tags.push('premium-budget');
+      else if (values.budgetRange.includes('30M')) tags.push('high-budget');
+      else if (values.budgetRange.includes('15M')) tags.push('medium-budget');
+      else if (values.budgetRange.includes('5M')) tags.push('standard-budget');
+      else tags.push('entry-budget');
+    }
+
+    // Timeline urgency tags
+    if (values.decisionTimeline) {
+      if (values.decisionTimeline.includes('Immediate')) tags.push('immediate-timeline');
+      else if (values.decisionTimeline.includes('Short-term')) tags.push('short-timeline');
+      else if (values.decisionTimeline.includes('Medium-term')) tags.push('medium-timeline');
+      else tags.push('long-timeline');
+    }
+
+    // Geographic tags
+    if (values.constructionProvince) {
+      tags.push(`province-${values.constructionProvince.toLowerCase().replace(/\s+/g, '-')}`);
+      if (['Ontario', 'British Columbia', 'Alberta'].includes(values.constructionProvince)) {
+        tags.push('priority-province');
+      }
+    }
+
+    // Developer type tags
+    if (values.developerType) {
+      tags.push(`developer-${values.developerType.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`);
+      if (values.developerType.includes('Commercial') || values.developerType.includes('Government')) {
+        tags.push('institutional-developer');
+      }
+    }
+
+    // Government program tags
+    if (values.governmentPrograms) {
+      if (values.governmentPrograms.includes('Yes')) tags.push('government-active');
+      else if (values.governmentPrograms.includes('Interested')) tags.push('government-interested');
+      else tags.push('private-only');
+    }
+
+    // Priority level tags based on score
+    const score = Math.min(priorityScore, 150);
+    if (score >= 100) tags.push('priority-lead');
+    else if (score >= 50) tags.push('qualified-lead');
+    else tags.push('standard-lead');
+
+    // Agent support tags
+    if (values.agentSupport) {
+      tags.push(`agent-${values.agentSupport}`);
+    }
+
+    // Consent and compliance tags
+    if (values.consentMarketing) {
+      tags.push('marketing-consent');
+    }
+
+    return tags.filter(Boolean);
+  };
+
   const getPriorityMessage = () => {
     if (priorityScore >= 100) {
       return "PRIORITY PROJECT: Senior Sales Manager will contact within 1 hour after assessment submission";
@@ -580,12 +664,29 @@ export default function AssessmentForm() {
     const isValid = await validateCurrentStep();
     if (!isValid) return;
 
-    // Include the isolated project description value
+    // Calculate Customer Journey fields
+    const customerTier = determineCustomerTier(data.projectUnitCount || 0, data.readiness || '');
+    const priorityLevel = getPriorityLevel();
+    const tags = generateTags();
+
+    // Include all required fields for the new Customer Journey system
     const submissionData = {
       ...data,
-      projectDescriptionText: projectDescriptionValue
+      projectDescriptionText: projectDescriptionValue,
+      customerTier,
+      priorityScore,
+      priorityLevel,
+      tags
     };
-    console.log("Form submitted with isolated description:", submissionData);
+    
+    console.log("Form submitted with Customer Journey data:", {
+      tier: customerTier,
+      priorityLevel,
+      priorityScore,
+      tags,
+      consentMarketing: data.consentMarketing
+    });
+    
     submitMutation.mutate(submissionData);
   };
 
@@ -638,7 +739,6 @@ export default function AssessmentForm() {
                         name="consentMarketing"
                         checked={field.value}
                         onChange={field.onChange}
-                        required
                         className="mt-1 h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
                         data-testid="checkbox-consent-marketing"
                       />

@@ -210,7 +210,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Validate and sanitize form data
-      const { isValid, data, errors, priorityScore } = await validateFormData(req.body);
+      const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(req.body);
       
       if (!isValid) {
         return res.status(400).json({ 
@@ -219,23 +219,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Check for under 50 units rejection
-      if (data && data.projectUnitCount < 50) {
-        return res.status(400).json({
-          error: "Project does not meet minimum requirements",
-          message: "Projects under 50 units are handled through our residential program. Please contact our residential team."
-        });
-      }
+      // All unit counts are now processed through the Customer Journey pipeline with appropriate tiers
 
-      // Store in database (data is guaranteed to exist here due to validation)
+      // Store in database with Customer Journey fields
       const submission = await storage.createAssessment({
         ...data!,
-        priorityScore: priorityScore!
+        priorityScore: priorityScore!,
+        customerTier: customerTier!,
+        priorityLevel: priorityLevel!,
+        tags: tags!
       });
 
       // Submit to GoHighLevel webhook with retry logic
       try {
-        await submitToGoHighLevel(data!, priorityScore!);
+        await submitToGoHighLevel(data!, priorityScore!, customerTier!, priorityLevel!, tags!);
       } catch (webhookError) {
         console.error("GoHighLevel webhook failed:", webhookError);
         // Don't fail the request if webhook fails, but log it

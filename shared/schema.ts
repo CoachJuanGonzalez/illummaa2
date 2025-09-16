@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -12,15 +12,18 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   phone: text("phone").notNull(),
   company: text("company").notNull(),
   projectUnitCount: integer("project_unit_count").notNull(),
-  budgetRange: text("budget_range").notNull(),
-  decisionTimeline: text("decision_timeline").notNull(),
-  constructionProvince: text("construction_province").notNull(),
-  developerType: text("developer_type").notNull(),
-  governmentPrograms: text("government_programs").notNull(),
+  budgetRange: text("budget_range"),
+  decisionTimeline: text("decision_timeline"),
+  constructionProvince: text("construction_province"),
+  developerType: text("developer_type"),
+  governmentPrograms: text("government_programs"),
   agentSupport: text("agent_support"),
-  consentMarketing: text("consent_marketing").notNull(),
+  consentMarketing: boolean("consent_marketing").default(false),
   projectDescription: text("project_description"),
   priorityScore: integer("priority_score").notNull(),
+  customerTier: text("customer_tier").notNull(),
+  priorityLevel: text("priority_level").notNull(),
+  tags: text("tags").array(),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
 });
 
@@ -86,10 +89,11 @@ export const assessmentSchema = z.object({
   
   company: z.string()
     .min(2, "Company name must be at least 2 characters")
-    .max(100, "Company name must be less than 100 characters"),
+    .max(100, "Company name must be less than 100 characters")
+    .default("Individual Investor"),
   
   projectUnitCount: z.number()
-    .min(1, "Number of units must be at least 1")
+    .min(0, "Please select the number of units for your project")
     .max(1000, "Number of units must be less than 1000"),
   
   budgetRange: z.enum([
@@ -98,14 +102,14 @@ export const assessmentSchema = z.object({
     "$15M - $30 Million",
     "$30M - $50 Million",
     "Over $50 Million"
-  ], { required_error: "Please select a project budget range" }),
+  ]).optional(),
   
   decisionTimeline: z.enum([
     "Immediate (0-3 months)",
     "Short-term (3-6 months)",
     "Medium-term (6-12 months)", 
     "Long-term (12+ months)"
-  ], { required_error: "Please select a delivery timeline" }),
+  ]).optional(),
   
   constructionProvince: z.enum([
     "Ontario",
@@ -121,20 +125,20 @@ export const assessmentSchema = z.object({
     "Northwest Territories",
     "Nunavut",
     "Yukon"
-  ], { required_error: "Please select an installation province" }),
+  ]).optional(),
   
   developerType: z.enum([
     "Commercial Developer (Large Projects)",
     "Government/Municipal Developer",
     "Non-Profit Housing Developer",
     "Private Developer (Medium Projects)"
-  ], { required_error: "Please select a developer type" }),
+  ]).optional(),
   
   governmentPrograms: z.enum([
     "Yes - Currently participating",
     "Interested - Tell us more",
     "No - Private development only"
-  ], { required_error: "Please select government program participation" }),
+  ]).optional(),
   
   agentSupport: z.enum([
     "no-direct",
@@ -142,15 +146,59 @@ export const assessmentSchema = z.object({
     "yes"
   ]).optional(),
   
-  consentMarketing: z.boolean({
-    required_error: "You must consent to receive communications to proceed"
-  }).refine((val) => val === true, {
-    message: "You must consent to receive communications to proceed"
-  }),
+  consentMarketing: z.boolean()
+    .default(false),
   
   projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
+}).superRefine((data, ctx) => {
+  // Determine if this is Explorer or Starter tier based on Customer Journey logic
+  const isExplorerTier = data.readiness === 'researching' || data.projectUnitCount === 0;
+  const isStarterTier = !isExplorerTier && data.projectUnitCount <= 49;
+  
+  // For Pioneer, Preferred, and Elite tiers (non-Explorer/Starter), require these fields
+  if (!isExplorerTier && !isStarterTier) {
+    if (!data.budgetRange) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['budgetRange'],
+        message: 'Please select a project budget range'
+      });
+    }
+    
+    if (!data.decisionTimeline) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['decisionTimeline'],
+        message: 'Please select a delivery timeline'
+      });
+    }
+    
+    if (!data.constructionProvince) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['constructionProvince'],
+        message: 'Please select an installation province'
+      });
+    }
+    
+    if (!data.developerType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['developerType'],
+        message: 'Please select a developer type'
+      });
+    }
+    
+    if (!data.governmentPrograms) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['governmentPrograms'],
+        message: 'Please select government program participation'
+      });
+    }
+  }
 });
 
 export type AssessmentFormData = z.infer<typeof assessmentSchema>;
