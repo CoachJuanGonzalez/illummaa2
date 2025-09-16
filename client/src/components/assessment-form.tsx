@@ -45,6 +45,7 @@ export default function AssessmentForm() {
   const form = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentSchema),
     defaultValues: {
+      readiness: undefined,
       firstName: "",
       lastName: "",
       email: "",
@@ -56,6 +57,8 @@ export default function AssessmentForm() {
       constructionProvince: undefined,
       developerType: undefined,
       governmentPrograms: undefined,
+      agentSupport: undefined,
+      consentMarketing: false,
       projectDescriptionText: "",
     },
   });
@@ -81,6 +84,129 @@ export default function AssessmentForm() {
   });
 
   const watchedValues = form.watch();
+
+  // CRITICAL: Tier determination - research ALWAYS = Explorer (as per instructions)
+  const determineCustomerTier = (units: string | number, readiness: string) => {
+    const unitCount = parseInt(String(units)) || 0;
+    
+    if (readiness === 'researching' || 
+        readiness === 'planning-long' ||
+        unitCount === 0) {
+      return 'tier_0_explorer';
+    }
+    
+    if (unitCount <= 49) return 'tier_1_starter';
+    if (unitCount <= 149) return 'tier_2_pioneer';
+    if (unitCount <= 299) return 'tier_3_preferred';
+    return 'tier_4_elite';
+  };
+
+  // Handle readiness change - auto-set units to 0 for researchers (as per instructions)
+  const handleReadinessChange = () => {
+    const readiness = form.getValues('readiness');
+    if (readiness === 'researching' || readiness === 'planning-long') {
+      form.setValue('projectUnitCount', 0);
+      calculateTier();
+    }
+  };
+
+  // Real-time tier display (as per instructions)
+  const calculateTier = () => {
+    const units = form.getValues('projectUnitCount');
+    const readiness = form.getValues('readiness');
+    const tier = determineCustomerTier(units, readiness);
+    
+    const tierConfig = {
+      'tier_0_explorer': {
+        badge: 'Explorer Journey',
+        class: 'tier-explorer',
+        description: 'Perfect! Start your modular home education journey.',
+        response: 'Educational resources at your pace'
+      },
+      'tier_1_starter': {
+        badge: 'Starter Partnership', 
+        class: 'tier-starter',
+        description: 'Great! Personal consultation and support await.',
+        response: 'Personal consultation support'
+      },
+      'tier_2_pioneer': {
+        badge: 'Pioneer Partnership',
+        class: 'tier-pioneer', 
+        description: 'Excellent! Priority partnership attention.',
+        response: 'Priority partnership attention'
+      },
+      'tier_3_preferred': {
+        badge: 'Preferred Partnership',
+        class: 'tier-preferred',
+        description: 'Outstanding! Senior team ready.',
+        response: 'Expedited senior team handling'
+      },
+      'tier_4_elite': {
+        badge: 'Elite Partnership',
+        class: 'tier-elite',
+        description: 'VIP Status! Executive engagement confirmed.',
+        response: 'Executive VIP engagement'
+      }
+    };
+    
+    const config = tierConfig[tier];
+    const tierBadgeElement = document.getElementById('tierBadge');
+    const tierDescriptionElement = document.getElementById('tierDescription');
+    const tierIndicatorElement = document.getElementById('tierIndicator');
+    
+    if (tierBadgeElement && tierDescriptionElement && tierIndicatorElement) {
+      tierBadgeElement.textContent = config.badge;
+      tierBadgeElement.className = `tier-badge ${config.class}`;
+      tierDescriptionElement.innerHTML = `<strong>${config.description}</strong><br>${config.response}`;
+      tierIndicatorElement.classList.add('show');
+    }
+    
+    adjustFormFields(tier);
+    checkAgentSupport();
+  };
+
+  // Show agent support for 1-10 units (as per instructions)
+  const checkAgentSupport = () => {
+    const units = parseInt(String(form.getValues('projectUnitCount')));
+    const agentGroup = document.getElementById('agentSupportGroup');
+    
+    if (agentGroup) {
+      if (units >= 1 && units <= 10) {
+        agentGroup.style.display = 'block';
+      } else {
+        agentGroup.style.display = 'none';
+      }
+    }
+  };
+
+  // Field adjustments per tier (as per instructions)
+  const adjustFormFields = (tier: string) => {
+    const companyField = document.getElementById('companyName');
+    const budgetGroup = document.getElementById('budget')?.parentElement;
+    const governmentGroup = document.getElementById('government')?.parentElement;
+    
+    // Company optional for Explorer/Starter
+    if (tier === 'tier_0_explorer' || tier === 'tier_1_starter') {
+      if (companyField) {
+        (companyField as HTMLInputElement).required = false;
+        (companyField as HTMLInputElement).placeholder = 'Company Name (optional)';
+      }
+    } else {
+      if (companyField) {
+        (companyField as HTMLInputElement).required = true;
+        (companyField as HTMLInputElement).placeholder = 'Company Name *';
+      }
+    }
+    
+    // Hide budget/government for Explorer
+    if (tier === 'tier_0_explorer') {
+      if (budgetGroup) budgetGroup.style.display = 'none';
+      if (governmentGroup) governmentGroup.style.display = 'none';
+    } else {
+      if (budgetGroup) budgetGroup.style.display = 'block';
+      if (governmentGroup) governmentGroup.style.display = 'block';
+    }
+  };
 
   // STEP 1: Debug form state corruption
   useEffect(() => {
@@ -383,7 +509,7 @@ export default function AssessmentForm() {
   const getStepFields = (step: number): (keyof AssessmentFormData)[] => {
     switch (step) {
       case 1:
-        return ["firstName", "lastName", "email", "phone", "company"];
+        return ["readiness", "consentMarketing", "firstName", "lastName", "email", "phone", "company"];
       case 2:
         return ["projectUnitCount", "budgetRange"];
       case 3:
@@ -469,6 +595,65 @@ export default function AssessmentForm() {
         return (
           <div className="space-y-6 fade-in-up" data-testid="step-contact-info" data-scroll-target="step-1">
             <h3 className="font-display font-bold text-2xl mb-6 slide-in-right" data-testid="heading-step-1">Contact Information</h3>
+            
+            {/* Readiness Question - FIRST question as per instructions */}
+            <div className="mb-8 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg">
+              <FormField
+                control={form.control}
+                name="readiness"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel data-testid="label-readiness" className="text-lg font-semibold">Where are you in your modular home journey? *</FormLabel>
+                    <Select onValueChange={(value) => { field.onChange(value); handleReadinessChange(); }} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-readiness">
+                          <SelectValue placeholder="Please select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="researching">Just researching - want to learn more</SelectItem>
+                        <SelectItem value="planning-long">Planning to buy in 12+ months</SelectItem>
+                        <SelectItem value="planning-medium">Actively looking (6-12 months)</SelectItem>
+                        <SelectItem value="planning-short">Ready to move forward (3-6 months)</SelectItem>
+                        <SelectItem value="immediate">I need a solution now (0-3 months)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            {/* Privacy Consent Checkbox - Added before contact fields as per instructions */}
+            <div className="consent-checkbox mb-6 p-4 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg">
+              <FormField
+                control={form.control}
+                name="consentMarketing"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        id="consentMarketing"
+                        name="consentMarketing"
+                        checked={field.value}
+                        onChange={field.onChange}
+                        required
+                        className="mt-1 h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        data-testid="checkbox-consent-marketing"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="text-sm font-medium cursor-pointer" htmlFor="consentMarketing" data-testid="label-consent-marketing">
+                        I consent to receive communications from ILLÜMMAA about modular home solutions and understand I can unsubscribe anytime.
+                      </FormLabel>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -536,7 +721,7 @@ export default function AssessmentForm() {
                     <FormItem>
                       <FormLabel data-testid="label-company">Company Name *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Your Development Company" {...field} data-testid="input-company" />
+                        <Input id="companyName" placeholder="Your Development Company" {...field} data-testid="input-company" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -558,48 +743,44 @@ export default function AssessmentForm() {
                 <FormItem>
                   <FormLabel data-testid="label-unit-count">Number of Units *</FormLabel>
                   <FormDescription>
-                    Total number of modular units required (50 minimum for commercial projects)
+                    Select the scope that best matches your project needs
                   </FormDescription>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      min="1" 
-                      max="1000" 
-                      placeholder="Enter number of units (50-1000)" 
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === '') {
-                          field.onChange('');
-                        } else {
-                          const numValue = parseInt(value);
-                          if (!isNaN(numValue) && numValue >= 1 && numValue <= 1000) {
-                            field.onChange(numValue);
-                          }
-                          // Reject values outside 1-1000 range
-                        }
-                      }}
-                      onBlur={(e) => {
-                        if (e.target.value === '') {
-                          field.onChange(50); // Default to 50 (commercial pathway)
-                          e.target.value = '50';
-                        }
-                      }}
-                      onFocus={(e) => {
-                        e.target.select(); // Select all text for easy editing
-                      }}
-                      data-testid="input-unit-count"
-                    />
-                  </FormControl>
+                  <Select onValueChange={(value) => { field.onChange(parseInt(value)); calculateTier(); checkAgentSupport(); }} defaultValue={field.value?.toString()}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-unit-count">
+                        <SelectValue placeholder="Please select..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="0">Just exploring options</SelectItem>
+                      <SelectItem value="1">1 home</SelectItem>
+                      <SelectItem value="2">2 homes</SelectItem>
+                      <SelectItem value="25">3-49 units (Starter)</SelectItem>
+                      <SelectItem value="75">50-149 units (Pioneer)</SelectItem>
+                      <SelectItem value="200">150-299 units (Preferred)</SelectItem>
+                      <SelectItem value="500">300+ units (Elite)</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
-                  {field.value > 0 && field.value < 50 && (
-                    <div className="text-amber-600 text-sm mt-1" data-testid="warning-unit-count">
-                      ⚠️ Projects under 50 units are handled through our residential program.
-                    </div>
-                  )}
                 </FormItem>
               )}
             />
+            
+            {/* Tier Indicator - Added after unit selection as per instructions */}
+            <div className="tier-indicator hidden" id="tierIndicator" data-testid="tier-indicator">
+              <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl shadow-sm">
+                <p className="font-semibold text-lg mb-3" data-testid="tier-label">
+                  <strong>Your Partnership Level:</strong>
+                </p>
+                <span className="tier-badge inline-block px-4 py-2 rounded-full font-semibold text-white mb-3" id="tierBadge" data-testid="tier-badge"></span>
+                <p className="tier-description text-gray-700 mb-2" id="tierDescription" data-testid="tier-description"></p>
+                <p className="tier-progress text-sm text-gray-600 mb-3" id="tierProgress" data-testid="tier-progress"></p>
+                <div className="disclaimer text-xs text-gray-500 italic" data-testid="tier-disclaimer">
+                  *Response times vary based on project urgency and current volume.
+                </div>
+              </div>
+            </div>
+            
             <FormField
               control={form.control}
               name="budgetRange"
@@ -611,7 +792,7 @@ export default function AssessmentForm() {
                   </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger data-testid="select-budget-range">
+                      <SelectTrigger id="budget" data-testid="select-budget-range">
                         <SelectValue placeholder="Select budget range..." />
                       </SelectTrigger>
                     </FormControl>
@@ -660,6 +841,45 @@ export default function AssessmentForm() {
                 </FormItem>
               )}
             />
+            
+            {/* Agent Support Question - Added after timeline field as per instructions */}
+            <div className="form-group hidden" id="agentSupportGroup" data-testid="agent-support-group">
+              <FormField
+                control={form.control}
+                name="agentSupport"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel data-testid="label-agent-support">Do you have a real estate agent?</FormLabel>
+                    <Select onValueChange={(value) => { 
+                      field.onChange(value);
+                      const remaxNotice = document.getElementById('remaxNotice');
+                      if (remaxNotice) {
+                        remaxNotice.style.display = value === 'no-agent' ? 'block' : 'none';
+                      }
+                    }} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger data-testid="select-agent-support">
+                          <SelectValue placeholder="Please select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="no-direct">No - I want to work directly with ILLÜMMAA</SelectItem>
+                        <SelectItem value="no-agent">No - I'd like real estate agent support</SelectItem>
+                        <SelectItem value="yes">Yes - I have an agent</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="remax-redirect-notice hidden mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg" id="remaxNotice" data-testid="remax-notice">
+                <small className="text-blue-700">
+                  <strong>Note:</strong> Selecting agent support will redirect you to Remax.ca where you'll register separately. Your information stays with ILLÜMMAA only.
+                </small>
+              </div>
+            </div>
+            
             <FormField
               control={form.control}
               name="constructionProvince"
@@ -739,7 +959,7 @@ export default function AssessmentForm() {
                   </FormDescription>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger data-testid="select-government-programs">
+                      <SelectTrigger id="government" data-testid="select-government-programs">
                         <SelectValue placeholder="Select participation level..." />
                       </SelectTrigger>
                     </FormControl>
@@ -924,10 +1144,10 @@ export default function AssessmentForm() {
             <>
               <div className="text-center mb-12">
                 <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-assessment-title">
-                  Partner Qualification Assessment
+                  Discover Your Partnership Path
                 </h2>
                 <p className="text-xl text-muted-foreground" data-testid="text-assessment-subtitle">
-                  Join Canada's leading developers. Complete our assessment to unlock partnership opportunities.
+                  From first-time learners to enterprise developers - find your place in Canada's modular revolution
                 </p>
               </div>
           

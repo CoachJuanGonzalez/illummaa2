@@ -223,6 +223,50 @@
     animation: shake 0.5s ease-in-out;
   }
 
+  /* Tier indicator visibility */
+  .tier-indicator.hidden {
+    display: none;
+  }
+
+  .tier-indicator.show {
+    display: block;
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  /* Tier badge colors */
+  .tier-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .tier-explorer {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+  }
+
+  .tier-starter {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+    color: white;
+  }
+
+  .tier-pioneer {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+  }
+
+  .tier-preferred {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+  }
+
+  .tier-elite {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: white;
+  }
+
   .button-loading {
     position: relative;
     overflow: hidden;

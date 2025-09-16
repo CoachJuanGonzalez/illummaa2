@@ -5,6 +5,7 @@ import { z } from "zod";
 // Assessment submission table
 export const assessmentSubmissions = pgTable("assessment_submissions", {
   id: uuid("id").primaryKey().defaultRandom(),
+  readiness: text("readiness").notNull(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
@@ -16,6 +17,8 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   constructionProvince: text("construction_province").notNull(),
   developerType: text("developer_type").notNull(),
   governmentPrograms: text("government_programs").notNull(),
+  agentSupport: text("agent_support"),
+  consentMarketing: text("consent_marketing").notNull(),
   projectDescription: text("project_description"),
   priorityScore: integer("priority_score").notNull(),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
@@ -23,6 +26,14 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
 
 // Assessment form schema with v13.1 exact validation
 export const assessmentSchema = z.object({
+  readiness: z.enum([
+    "researching",
+    "planning-long", 
+    "planning-medium",
+    "planning-short",
+    "immediate"
+  ], { required_error: "Please select where you are in your modular home journey" }),
+  
   firstName: z.string()
     .min(2, "First name must be at least 2 characters")
     .max(50, "First name must be less than 50 characters")
@@ -124,6 +135,18 @@ export const assessmentSchema = z.object({
     "Interested - Tell us more",
     "No - Private development only"
   ], { required_error: "Please select government program participation" }),
+  
+  agentSupport: z.enum([
+    "no-direct",
+    "no-agent", 
+    "yes"
+  ]).optional(),
+  
+  consentMarketing: z.boolean({
+    required_error: "You must consent to receive communications to proceed"
+  }).refine((val) => val === true, {
+    message: "You must consent to receive communications to proceed"
+  }),
   
   projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")

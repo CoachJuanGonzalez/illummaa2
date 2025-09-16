@@ -1,0 +1,509 @@
+Update the ILLÜMMAA website "Partner Qualification Assessment" form to implement a privacy-compliant 5-tier system with intelligent routing. Maintain ALL existing styling and animations while replacing the logic.
+
+=== CRITICAL REQUIREMENTS ===
+✓ Single form for all users (B2C learners to B2B enterprise)
+✓ Privacy compliant - NO data sharing with third parties
+✓ Remax redirect for small buyers WITHOUT data transfer
+✓ All leads go to single "ILLÜMMAA Customer Journey" pipeline
+✓ Research readiness ALWAYS routes to Explorer tier
+✓ Preserve exact current CSS styling and animations
+
+=== FORM HEADER CHANGES ===
+Change title from: "Partner Qualification Assessment"
+Change to: "Discover Your Partnership Path"
+
+Change subtitle from: "Join Canada's leading developers..."
+Change to: "From first-time learners to enterprise developers - find your place in Canada's modular revolution"
+
+=== 5-TIER STRUCTURE ===
+Tier 0: Explorer (0 units OR researching/planning-long)
+Tier 1: Starter (1-49 units)
+Tier 2: Pioneer (50-149 units)
+Tier 3: Preferred (150-299 units)
+Tier 4: Elite (300+ units)
+
+=== STEP 1 CHANGES: Add Readiness Question ===
+ADD this as FIRST question:
+<div class="form-group">
+    <label for="readiness">Where are you in your modular home journey? *</label>
+    <select id="readiness" name="readiness" required onchange="handleReadinessChange()">
+        <option value="">Please select...</option>
+        <option value="researching">Just researching - want to learn more</option>
+        <option value="planning-long">Planning to buy in 12+ months</option>
+        <option value="planning-medium">Actively looking (6-12 months)</option>
+        <option value="planning-short">Ready to move forward (3-6 months)</option>
+        <option value="immediate">I need a solution now (0-3 months)</option>
+    </select>
+</div>
+
+REPLACE unit count options with:
+<option value="">Please select...</option>
+<option value="0">Just exploring options</option>
+<option value="1">1 home</option>
+<option value="2">2 homes</option>
+<option value="25">3-49 units (Starter)</option>
+<option value="75">50-149 units (Pioneer)</option>
+<option value="200">150-299 units (Preferred)</option>
+<option value="500">300+ units (Elite)</option>
+
+ADD tier indicator after unit selection:
+<div class="tier-indicator" id="tierIndicator">
+    <p><strong>Your Partnership Level:</strong></p>
+    <span class="tier-badge" id="tierBadge"></span>
+    <p class="tier-description" id="tierDescription"></p>
+    <p class="tier-progress" id="tierProgress"></p>
+    <div class="disclaimer">
+        *Response times vary based on project urgency and current volume.
+    </div>
+</div>
+
+=== STEP 2 CHANGES: Add Agent Support Question ===
+ADD after timeline field (only shows for 1-10 units):
+<div class="form-group" id="agentSupportGroup" style="display:none;">
+    <label for="agentSupport">Do you have a real estate agent?</label>
+    <select id="agentSupport" name="agentSupport">
+        <option value="">Please select...</option>
+        <option value="no-direct">No - I want to work directly with ILLÜMMAA</option>
+        <option value="no-agent">No - I'd like real estate agent support</option>
+        <option value="yes">Yes - I have an agent</option>
+    </select>
+    
+    <div class="remax-redirect-notice" id="remaxNotice" style="display:none;">
+        <small><strong>Note:</strong> Selecting agent support will redirect you to Remax.ca where you'll register separately. Your information stays with ILLÜMMAA only.</small>
+    </div>
+</div>
+
+=== STEP 3 CHANGES: Add Privacy Consent ===
+ADD before contact fields:
+<div class="consent-checkbox">
+    <label>
+        <input type="checkbox" id="consentMarketing" name="consentMarketing" required>
+        I consent to receive communications from ILLÜMMAA about modular home solutions and understand I can unsubscribe anytime.
+    </label>
+</div>
+
+=== JAVASCRIPT CORE FUNCTIONS ===
+// CRITICAL: Tier determination - research ALWAYS = Explorer
+function determineCustomerTier(units, readiness) {
+    const unitCount = parseInt(units) || 0;
+    
+    if (readiness === 'researching' || 
+        readiness === 'planning-long' ||
+        unitCount === 0) {
+        return 'tier_0_explorer';
+    }
+    
+    if (unitCount <= 49) return 'tier_1_starter';
+    if (unitCount <= 149) return 'tier_2_pioneer';
+    if (unitCount <= 299) return 'tier_3_preferred';
+    return 'tier_4_elite';
+}
+
+// Handle readiness change - auto-set units to 0 for researchers
+function handleReadinessChange() {
+    const readiness = document.getElementById('readiness').value;
+    if (readiness === 'researching' || readiness === 'planning-long') {
+        document.getElementById('unitCount').value = '0';
+        calculateTier();
+    }
+}
+
+// Show agent support for 1-10 units
+function checkAgentSupport() {
+    const units = parseInt(document.getElementById('unitCount').value);
+    const agentGroup = document.getElementById('agentSupportGroup');
+    
+    if (units >= 1 && units <= 10) {
+        agentGroup.style.display = 'block';
+    } else {
+        agentGroup.style.display = 'none';
+    }
+}
+
+// Real-time tier display
+function calculateTier() {
+    const units = document.getElementById('unitCount').value;
+    const readiness = document.getElementById('readiness').value;
+    const tier = determineCustomerTier(units, readiness);
+    
+    const tierConfig = {
+        'tier_0_explorer': {
+            badge: 'Explorer Journey',
+            class: 'tier-explorer',
+            description: 'Perfect! Start your modular home education journey.',
+            response: 'Educational resources at your pace'
+        },
+        'tier_1_starter': {
+            badge: 'Starter Partnership',
+            class: 'tier-starter',
+            description: 'Great! Personal consultation and support await.',
+            response: 'Personal consultation support'
+        },
+        'tier_2_pioneer': {
+            badge: 'Pioneer Partnership',
+            class: 'tier-pioneer',
+            description: 'Excellent! Priority partnership attention.',
+            response: 'Priority partnership attention'
+        },
+        'tier_3_preferred': {
+            badge: 'Preferred Partnership',
+            class: 'tier-preferred',
+            description: 'Outstanding! Senior team ready.',
+            response: 'Expedited senior team handling'
+        },
+        'tier_4_elite': {
+            badge: 'Elite Partnership',
+            class: 'tier-elite',
+            description: 'VIP Status! Executive engagement confirmed.',
+            response: 'Executive VIP engagement'
+        }
+    };
+    
+    const config = tierConfig[tier];
+    document.getElementById('tierBadge').textContent = config.badge;
+    document.getElementById('tierBadge').className = `tier-badge ${config.class}`;
+    document.getElementById('tierDescription').innerHTML = `<strong>${config.description}</strong><br>${config.response}`;
+    document.getElementById('tierIndicator').classList.add('show');
+    
+    adjustFormFields(tier);
+    checkAgentSupport();
+}
+
+// Field adjustments per tier
+function adjustFormFields(tier) {
+    const companyField = document.getElementById('companyName');
+    const budgetGroup = document.getElementById('budget')?.parentElement;
+    const governmentGroup = document.getElementById('government')?.parentElement;
+    
+    // Company optional for Explorer/Starter
+    if (tier === 'tier_0_explorer' || tier === 'tier_1_starter') {
+        if (companyField) {
+            companyField.required = false;
+            companyField.placeholder = 'Company Name (optional)';
+        }
+    } else {
+        if (companyField) {
+            companyField.required = true;
+            companyField.placeholder = 'Company Name *';
+        }
+    }
+    
+    // Hide budget/government for Explorer
+    if (tier === 'tier_0_explorer') {
+        if (budgetGroup) budgetGroup.style.display = 'none';
+        if (governmentGroup) governmentGroup.style.display = 'none';
+    } else {
+        if (budgetGroup) budgetGroup.style.display = 'block';
+        if (governmentGroup) governmentGroup.style.display = 'block';
+    }
+}
+
+// Priority scoring (0-150)
+function calculatePriorityScore(data) {
+    let score = 0;
+    const units = parseInt(data.unitCount) || 0;
+    
+    // Units (50 points)
+    if (units === 0) score += 0;
+    else if (units <= 49) {
+        if (units >= 30) score += 12;
+        else if (units >= 10) score += 8;
+        else if (units >= 3) score += 5;
+        else score += 2;
+    } else if (units <= 149) {
+        if (units >= 100) score += 25;
+        else score += 20;
+    } else if (units <= 299) {
+        if (units >= 200) score += 35;
+        else score += 30;
+    } else score += 50;
+    
+    // Budget (40 points)
+    const budgetScores = {
+        'Under $500K': 2, '$500K - $2M': 5, '$2M - $5M': 10,
+        '$5M - $15M': 15, '$15M - $30M': 25, '$30M - $50M': 35, 'Over $50M': 40
+    };
+    score += budgetScores[data.budget] || 0;
+    
+    // Timeline (30 points)
+    const timelineScores = {
+        'immediate': 30, 'Immediate (0-3 months)': 30,
+        'planning-short': 20, 'Short-term (3-6 months)': 20,
+        'planning-medium': 10, 'Medium-term (6-12 months)': 10,
+        'planning-long': 5, 'Long-term (12+ months)': 5, 'researching': 0
+    };
+    score += timelineScores[data.timeline || data.readiness] || 0;
+    
+    // Government (20 points)
+    if (data.government === 'Yes - Build Canada') score += 20;
+    else if (data.government === 'Yes - Other') score += 15;
+    else if (data.government === 'Interested') score += 10;
+    
+    // Developer type (10 points)
+    const devScores = {
+        'Government/Municipal': 10, 'Commercial Developer': 8,
+        'Non-Profit Housing': 7, 'Private Developer': 5, 'Individual Homebuyer': 2
+    };
+    score += devScores[data.developerType] || 0;
+    
+    // Geographic (5 points)
+    if (['Ontario', 'British Columbia', 'Alberta'].includes(data.province)) score += 5;
+    
+    // Build Canada bonus
+    if (units >= 300) score += 5;
+    
+    return Math.min(score, 150);
+}
+
+// Generate comprehensive tags
+function generateTags(tier, score, data) {
+    const tags = [];
+    const units = parseInt(data.unitCount) || 0;
+    
+    // Tier tags
+    const tierTags = {
+        'tier_0_explorer': ['Tier-0-Explorer', 'Not-Ready', 'Education-Journey'],
+        'tier_1_starter': ['Tier-1-Starter', 'Ready-To-Buy', 'Individual-Small'],
+        'tier_2_pioneer': ['Tier-2-Pioneer', 'Ready-To-Buy', 'Developer'],
+        'tier_3_preferred': ['Tier-3-Preferred', 'Ready-To-Buy', 'Portfolio'],
+        'tier_4_elite': ['Tier-4-Elite', 'Ready-To-Buy', 'Strategic']
+    };
+    tags.push(...tierTags[tier]);
+    
+    // Priority
+    if (score >= 120) tags.push('Priority-URGENT', 'Hot-Lead');
+    else if (score >= 80) tags.push('Priority-HIGH');
+    else if (score >= 40) tags.push('Priority-MEDIUM');
+    else tags.push('Priority-STANDARD');
+    
+    // Build Canada
+    const isGovt = data.developerType === 'Government/Municipal';
+    if (units >= 300 || (units >= 200 && isGovt)) {
+        tags.push('Build-Canada-Eligible');
+    }
+    
+    // Remax referral (NO DATA SHARED)
+    if (data.agentSupport === 'no-agent') {
+        tags.push('Remax-Redirect-NoDataShared');
+    }
+    
+    return tags;
+}
+
+=== FORM SUBMISSION REPLACEMENT ===
+REPLACE entire submission logic with:
+
+document.getElementById('leadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Collect all form data
+    const formData = {
+        readiness: document.getElementById('readiness').value,
+        unitCount: document.getElementById('unitCount').value,
+        budget: document.getElementById('budget')?.value || '',
+        timeline: document.getElementById('timeline')?.value || '',
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        companyName: document.getElementById('companyName')?.value || '',
+        province: document.getElementById('province').value,
+        developerType: document.getElementById('developerType')?.value || '',
+        government: document.getElementById('government')?.value || '',
+        agentSupport: document.getElementById('agentSupport')?.value || '',
+        description: document.getElementById('description')?.value || ''
+    };
+    
+    const tier = determineCustomerTier(formData.unitCount, formData.readiness);
+    const priorityScore = calculatePriorityScore(formData);
+    const units = parseInt(formData.unitCount);
+    const isGovt = formData.developerType === 'Government/Municipal';
+    
+    // Build webhook payload - PRIVACY COMPLIANT
+    const payload = {
+        // Contact (ILLÜMMAA ONLY)
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        companyName: formData.companyName,
+        
+        // Classification
+        tier: tier,
+        priorityScore: priorityScore,
+        
+        // Project
+        unitCount: formData.unitCount,
+        readiness: formData.readiness,
+        budget: formData.budget,
+        timeline: formData.timeline || formData.readiness,
+        province: formData.province,
+        developerType: formData.developerType,
+        government: formData.government,
+        description: formData.description,
+        
+        // Routing
+        agentSupport: formData.agentSupport,
+        buildCanadaEligible: (units >= 300 || (units >= 200 && isGovt)) ? 'Yes' : 'No',
+        
+        // Tags
+        tags: generateTags(tier, priorityScore, formData).join(','),
+        
+        // Pipeline
+        pipeline: 'ILLÜMMAA Customer Journey',
+        stage: tier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
+        
+        // Privacy compliance
+        consentMarketing: true,
+        dataSharedWith: 'None',
+        
+        // Meta
+        source: 'Website Form',
+        timestamp: new Date().toISOString()
+    };
+    
+    // Submit to ILLÜMMAA ONLY
+    const response = await fetch('/api/submit-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    
+    if (response.ok) {
+        document.getElementById('leadForm').style.display = 'none';
+        
+        // Check if Remax redirect needed
+        if (formData.agentSupport === 'no-agent') {
+            // Privacy-compliant Remax redirect
+            document.getElementById('successMessage').innerHTML = `
+                <h3>✓ Information Saved with ILLÜMMAA</h3>
+                <p><strong>Privacy Note:</strong> Your information remains with ILLÜMMAA only.</p>
+                <p>Opening Remax Canada for agent support...</p>
+                <p>You'll need to register separately at Remax.</p>
+                <button class="btn-primary" onclick="window.open('https://www.remax.ca/', '_blank')">
+                    Open Remax Canada
+                </button>
+            `;
+            
+            // Auto-open after 2 seconds
+            setTimeout(() => {
+                window.open('https://www.remax.ca/', '_blank');
+            }, 2000);
+        } else {
+            // Standard success
+            const tierMessages = {
+                'tier_0_explorer': 'Educational resources coming your way!',
+                'tier_1_starter': 'A specialist will contact you within 48 hours.',
+                'tier_2_pioneer': 'Priority team will respond within 24 hours.',
+                'tier_3_preferred': 'Senior team will contact you within 4 hours.',
+                'tier_4_elite': 'Executive team notified. VIP response incoming.'
+            };
+            
+            document.getElementById('successMessage').innerHTML = `
+                <h3>Thank You!</h3>
+                <p>${tierMessages[tier]}</p>
+                <p>Check your email for next steps.</p>
+            `;
+        }
+        
+        document.getElementById('successMessage').style.display = 'block';
+    }
+});
+
+=== CSS ADDITIONS ===
+.tier-explorer { background: #EDF2F7; color: #4A5568; }
+.tier-starter { background: #28a745; color: white; }
+.tier-pioneer { background: #17a2b8; color: white; }
+.tier-preferred { background: #9c27b0; color: white; }
+.tier-elite { background: #ffc107; color: #333; }
+
+.remax-redirect-notice {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.consent-checkbox {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fafafa;
+    border-radius: 8px;
+}
+
+.build-canada-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff3838);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+=== CRITICAL TESTING ===
+✓ Explorer: researching + any units = Tier 0
+✓ Starter: ready + 10 units + agent support = Tier 1 + Remax redirect
+✓ Pioneer: immediate + 100 units = Tier 2
+✓ Preferred: 200 units + Government = Tier 3 + Build Canada
+✓ Elite: 500 units = Tier 4 + Build Canada
+✓ Privacy: NO data sent to Remax
+✓ Webhook: Single endpoint /api/submit-lead
+
+=========================================
+⚠️ CRITICAL WARNINGS & RISKS - MUST CONFIRM BEFORE EXECUTION ⚠️
+=========================================
+
+🔴 DATA INTEGRITY RISKS:
+1. BACKUP current form code BEFORE any changes
+2. Existing leads may have different data structure - ensure backward compatibility
+3. Current webhook endpoint may expect different payload format
+4. GoHighLevel custom fields must match new field names
+
+🔴 PRIVACY & LEGAL RISKS:
+1. NEVER send user data to Remax without explicit written consent
+2. Privacy policy must be updated if data collection changes
+3. CASL compliance requires consent checkbox to be functional
+4. Data retention policies must be documented
+
+🔴 TECHNICAL RISKS:
+1. Webhook endpoint "/api/submit-lead" must exist and be configured
+2. Current styling classes may conflict with new tier badges
+3. Form validation may break if required fields change
+4. Mobile responsiveness must be tested after changes
+
+🔴 BUSINESS RISKS:
+1. Changing form title may confuse returning users
+2. Existing B2B partners expecting "Partner Qualification" title
+3. Remax redirect without warm handoff may lose conversions
+4. Response time messages in success may create legal obligations
+
+🔴 INTEGRATION RISKS:
+1. GoHighLevel pipeline "ILLÜMMAA Customer Journey" must exist
+2. Stages "Education & Awareness" and "Initial Interest" must be configured
+3. Tag limits in GoHighLevel may be exceeded with new comprehensive tagging
+4. Email automations may trigger incorrectly with new tier structure
+
+=========================================
+⚠️ REQUIRED CONFIRMATIONS BEFORE EXECUTION:
+=========================================
+
+Please confirm the following before proceeding:
+
+□ Current form code has been backed up
+□ Webhook endpoint /api/submit-lead is active and tested
+□ GoHighLevel has all required custom fields configured
+□ Privacy policy has been reviewed by legal team
+□ Remax has been notified about referral process (no data transfer)
+□ All team members aware of new 5-tier structure
+□ Email templates updated for each tier's response commitment
+□ Mobile testing environment is ready
+□ Rollback plan is in place if issues occur
+
+Type "CONFIRMED - PROCEED WITH IMPLEMENTATION" to execute these changes.
+
+If any item above is not confirmed, type "STOP - NEED TO ADDRESS: [item]" and resolve before proceeding.
+
+=========================================
