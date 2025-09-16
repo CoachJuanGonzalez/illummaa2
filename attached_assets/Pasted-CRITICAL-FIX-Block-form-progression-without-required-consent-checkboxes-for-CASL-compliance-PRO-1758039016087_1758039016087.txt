@@ -1,0 +1,136 @@
+CRITICAL FIX: Block form progression without required consent checkboxes for CASL compliance.
+
+PROBLEM: Users can proceed from Step 1 to Step 2 without checking consent boxes, creating legal violations.
+
+SOLUTION: Add mandatory validation that prevents form progression without both required consents.
+
+FIND your existing form validation function (likely validateStep1() or similar) and REPLACE it with this:
+
+function validateStep1() {
+    // Check all required fields first
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const readiness = document.getElementById('readiness') || document.querySelector('[name="readiness"]');
+    
+    // Basic field validation
+    if (!firstName || !firstName.value.trim()) {
+        alert('Please enter your first name');
+        firstName?.focus();
+        return false;
+    }
+    
+    if (!lastName || !lastName.value.trim()) {
+        alert('Please enter your last name');
+        lastName?.focus();
+        return false;
+    }
+    
+    if (!email || !email.value.trim()) {
+        alert('Please enter your email address');
+        email?.focus();
+        return false;
+    }
+    
+    if (!phone || !phone.value.trim()) {
+        alert('Please enter your phone number');
+        phone?.focus();
+        return false;
+    }
+    
+    if (!readiness || !readiness.value) {
+        alert('Please select where you are in your modular home journey');
+        readiness?.focus();
+        return false;
+    }
+    
+    // CRITICAL: Legal consent validation - BLOCKS progression without consent
+    const consentComm = document.getElementById('consentCommunications');
+    const ageVerif = document.getElementById('ageVerification');
+    
+    if (!consentComm || !consentComm.checked) {
+        alert('LEGAL REQUIREMENT: You must consent to communications before continuing.\n\nThis is required under Canadian privacy law (CASL) to process your inquiry.');
+        // Scroll to consent section
+        consentComm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    if (!ageVerif || !ageVerif.checked) {
+        alert('LEGAL REQUIREMENT: Age verification (18+) is required.\n\nOnly adults can provide valid consent under Canadian law.');
+        ageVerif?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    return true;
+}
+
+ALSO ADD this to ensure Next button respects validation:
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Find and enhance the Next button
+    const nextBtn = document.getElementById('nextBtn') || 
+                   document.querySelector('.btn-primary') || 
+                   document.querySelector('[onclick*="next"]') ||
+                   document.querySelector('button[type="button"]');
+    
+    if (nextBtn) {
+        // Remove existing onclick if present
+        nextBtn.removeAttribute('onclick');
+        
+        // Add proper validation
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Check if we're on step 1
+            const currentStep = document.querySelector('.form-step.active')?.dataset?.step || 
+                               (document.querySelector('#currentStep')?.textContent) || '1';
+            
+            if (currentStep === '1' || currentStep === 1) {
+                if (validateStep1()) {
+                    // Only proceed if validation passes
+                    nextStep();
+                }
+            } else {
+                // For other steps, proceed normally
+                nextStep();
+            }
+        });
+    }
+});
+
+IF you have a separate nextStep() function, make sure it exists. If not, add this:
+
+function nextStep() {
+    const currentStepEl = document.querySelector('.form-step.active');
+    const nextStepEl = currentStepEl?.nextElementSibling;
+    
+    if (nextStepEl && nextStepEl.classList.contains('form-step')) {
+        currentStepEl.classList.remove('active');
+        nextStepEl.classList.add('active');
+        
+        // Update progress indicator
+        const currentStepNum = document.getElementById('currentStep');
+        if (currentStepNum) {
+            currentStepNum.textContent = parseInt(currentStepNum.textContent) + 1;
+        }
+        
+        // Update progress bar
+        const progressFill = document.getElementById('progressFill');
+        if (progressFill) {
+            const newStep = parseInt(currentStepNum?.textContent || 2);
+            const totalSteps = parseInt(document.getElementById('totalSteps')?.textContent || 5);
+            const percentage = (newStep / totalSteps) * 100;
+            progressFill.style.width = percentage + '%';
+        }
+    }
+}
+
+CRITICAL TEST INSTRUCTIONS:
+1. Try to click "Next - Continue Assessment" without checking either consent box - should be BLOCKED
+2. Check only communication consent, leave age unchecked - should be BLOCKED  
+3. Check only age verification, leave communication unchecked - should be BLOCKED
+4. Check both boxes - should ALLOW progression to Step 2
+5. Test on mobile devices to ensure validation works
+
+This fix ensures legal compliance by preventing any form progression without required consents, protecting ILLUMMAA from CASL violations and potential fines up to $10 million.

@@ -29,8 +29,63 @@ function validateConsentCompliance(formData: any) {
     return { valid: true };
 }
 
-function validateStep1(formData: any) {
-    return validateConsentCompliance(formData);
+function validateStep1() {
+    // Check all required fields first
+    const firstName = document.getElementById('firstName') as HTMLInputElement;
+    const lastName = document.getElementById('lastName') as HTMLInputElement;
+    const email = document.getElementById('email') as HTMLInputElement;
+    const phone = document.getElementById('phone') as HTMLInputElement;
+    const readiness = (document.getElementById('readiness') || document.querySelector('[name="readiness"]')) as HTMLInputElement;
+    
+    // Basic field validation
+    if (!firstName || !firstName.value.trim()) {
+        alert('Please enter your first name');
+        firstName?.focus();
+        return false;
+    }
+    
+    if (!lastName || !lastName.value.trim()) {
+        alert('Please enter your last name');
+        lastName?.focus();
+        return false;
+    }
+    
+    if (!email || !email.value.trim()) {
+        alert('Please enter your email address');
+        email?.focus();
+        return false;
+    }
+    
+    if (!phone || !phone.value.trim()) {
+        alert('Please enter your phone number');
+        phone?.focus();
+        return false;
+    }
+    
+    if (!readiness || !readiness.value) {
+        alert('Please select where you are in your modular home journey');
+        readiness?.focus();
+        return false;
+    }
+    
+    // CRITICAL: Legal consent validation - BLOCKS progression without consent
+    const consentComm = document.getElementById('consentCommunications') as HTMLInputElement;
+    const ageVerif = document.getElementById('ageVerification') as HTMLInputElement;
+    
+    if (!consentComm || !consentComm.checked) {
+        alert('LEGAL REQUIREMENT: You must consent to communications before continuing.\n\nThis is required under Canadian privacy law (CASL) to process your inquiry.');
+        // Scroll to consent section
+        consentComm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    if (!ageVerif || !ageVerif.checked) {
+        alert('LEGAL REQUIREMENT: Age verification (18+) is required.\n\nOnly adults can provide valid consent under Canadian law.');
+        ageVerif?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return false;
+    }
+    
+    return true;
 }
 
 // Form validation function with security checks
@@ -86,6 +141,51 @@ function validateFormData(formData: any) {
 
 export default function AssessmentForm() {
   const [currentStep, setCurrentStep] = useState(1);
+
+  // STEP 2: Add Next button validation event listener (as per instructions)
+  useEffect(() => {
+    const addNextButtonValidation = () => {
+      // Find and enhance the Next button
+      const nextBtn = document.getElementById('nextBtn') || 
+                     document.querySelector('.btn-primary') || 
+                     document.querySelector('[onclick*="next"]') ||
+                     document.querySelector('button[type="button"]');
+      
+      if (nextBtn) {
+        // Remove existing onclick if present
+        nextBtn.removeAttribute('onclick');
+        
+        // Add proper validation
+        const handleNextClick = (e: Event) => {
+          e.preventDefault();
+          
+          // Check if we're on step 1
+          const currentStepEl = document.querySelector('.form-step.active')?.getAttribute('data-step') || 
+                               (document.querySelector('#currentStep')?.textContent) || '1';
+          
+          if (currentStepEl === '1' || parseInt(currentStepEl) === 1 || currentStep === 1) {
+            if (validateStep1()) {
+              // Only proceed if validation passes
+              nextStep();
+            }
+          } else {
+            // For other steps, proceed normally
+            nextStep();
+          }
+        };
+        
+        // Remove existing listeners and add new one
+        nextBtn.removeEventListener('click', handleNextClick);
+        nextBtn.addEventListener('click', handleNextClick);
+      }
+    };
+    
+    // Add validation when component mounts and when step changes
+    addNextButtonValidation();
+    const timer = setTimeout(addNextButtonValidation, 100); // Retry in case DOM isn't ready
+    
+    return () => clearTimeout(timer);
+  }, [currentStep]);
   const [priorityScore, setPriorityScore] = useState(0);
   const [showRejectionModal, setShowRejectionModal] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
