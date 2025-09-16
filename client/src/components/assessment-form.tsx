@@ -89,6 +89,9 @@ export default function AssessmentForm() {
   const determineCustomerTier = (units: string | number, readiness: string) => {
     const unitCount = parseInt(String(units)) || 0;
     
+    // Debug log
+    console.log('Determining tier - unitCount:', unitCount, 'readiness:', readiness);
+    
     if (readiness === 'researching' || 
         readiness === 'planning-long' ||
         unitCount === 0) {
@@ -114,7 +117,11 @@ export default function AssessmentForm() {
   const calculateTier = () => {
     const units = form.getValues('projectUnitCount');
     const readiness = form.getValues('readiness');
-    const tier = determineCustomerTier(units, readiness);
+    
+    // Debug log to verify function is called
+    console.log('Calculating tier - Units:', units, 'Readiness:', readiness);
+    
+    const tier = determineCustomerTier(units, readiness || '');
     
     const tierConfig = {
       'tier_0_explorer': {

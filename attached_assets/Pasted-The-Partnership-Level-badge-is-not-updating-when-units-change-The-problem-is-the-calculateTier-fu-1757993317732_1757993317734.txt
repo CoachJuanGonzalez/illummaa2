@@ -1,0 +1,89 @@
+The Partnership Level badge is not updating when units change. The problem is the calculateTier() function needs to be called BOTH when readiness changes AND when unitCount changes.
+
+FIND this line in the HTML:
+<select id="unitCount" name="unitCount" required onchange="calculateTier()">
+
+VERIFY it has: onchange="calculateTier()"
+
+IF MISSING, add it.
+
+ALSO CHECK the calculateTier() function includes this logic:
+
+function calculateTier() {
+    const units = document.getElementById('unitCount').value;
+    const readiness = document.getElementById('readiness').value;
+    
+    // Debug log to verify function is called
+    console.log('Calculating tier - Units:', units, 'Readiness:', readiness);
+    
+    const tier = determineCustomerTier(units, readiness);
+    
+    // Update the display
+    const tierConfig = {
+        'tier_0_explorer': {
+            badge: 'Explorer Journey',
+            class: 'tier-explorer'
+        },
+        'tier_1_starter': {
+            badge: 'Starter Partnership',
+            class: 'tier-starter'
+        },
+        'tier_2_pioneer': {
+            badge: 'Pioneer Partnership',
+            class: 'tier-pioneer'
+        },
+        'tier_3_preferred': {
+            badge: 'Preferred Partnership',
+            class: 'tier-preferred'
+        },
+        'tier_4_elite': {
+            badge: 'Elite Partnership',
+            class: 'tier-elite'
+        }
+    };
+    
+    const config = tierConfig[tier];
+    
+    // Make sure these elements exist and update them
+    const badge = document.getElementById('tierBadge');
+    if (badge) {
+        badge.textContent = config.badge;
+        badge.className = `tier-badge ${config.class}`;
+    }
+    
+    // Also check agent support visibility
+    checkAgentSupport();
+}
+
+ADDITIONALLY, ensure the determineCustomerTier function properly handles the unit values:
+
+function determineCustomerTier(units, readiness) {
+    const unitCount = parseInt(units) || 0;
+    
+    // Debug log
+    console.log('Determining tier - unitCount:', unitCount, 'readiness:', readiness);
+    
+    // IMPORTANT: Check readiness FIRST
+    if (readiness === 'researching' || readiness === 'planning-long' || unitCount === 0) {
+        return 'tier_0_explorer';
+    }
+    
+    // Then check unit counts
+    if (unitCount >= 1 && unitCount <= 49) return 'tier_1_starter';
+    if (unitCount >= 50 && unitCount <= 149) return 'tier_2_pioneer';
+    if (unitCount >= 150 && unitCount <= 299) return 'tier_3_preferred';
+    if (unitCount >= 300) return 'tier_4_elite';
+    
+    return 'tier_0_explorer'; // fallback
+}
+
+MOST LIKELY ISSUE: The readiness field might be stuck on "researching" or not selected, which forces Explorer tier regardless of units.
+
+ADD this check: Make sure readiness has a value that's NOT "researching" or "planning-long" for the tier to change based on units.
+
+TEST by:
+1. Select readiness: "Ready to move forward (3-6 months)" 
+2. Then change units to "300+ units (Elite)"
+3. Badge should change to "Elite Partnership"
+
+If still stuck on Explorer, check browser console for errors or missing readiness value.
