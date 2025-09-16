@@ -148,10 +148,14 @@ export const assessmentSchema = z.object({
   ]).optional(),
   
   consentMarketing: z.boolean()
-    .default(false),
+    .refine((val) => val === true, {
+      message: "LEGAL REQUIREMENT: You must consent to communications before continuing. This is required under Canadian privacy law (CASL) to process your inquiry."
+    }),
   
   ageVerification: z.boolean()
-    .default(false),
+    .refine((val) => val === true, {
+      message: "LEGAL REQUIREMENT: Age verification (18+) is required. Only adults can provide valid consent under Canadian law."
+    }),
   
   projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")

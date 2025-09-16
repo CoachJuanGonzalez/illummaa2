@@ -887,7 +887,7 @@ export default function AssessmentForm() {
   const getStepFields = (step: number): (keyof AssessmentFormData)[] => {
     switch (step) {
       case 1:
-        return ["readiness", "consentMarketing", "firstName", "lastName", "email", "phone", "company"];
+        return ["readiness", "consentMarketing", "ageVerification", "firstName", "lastName", "email", "phone", "company"];
       case 2:
         return ["projectUnitCount", "budgetRange"];
       case 3:
