@@ -1,0 +1,369 @@
+Add comprehensive security layers to the ILLÜMMAA form. Implement ALL security measures below to prevent vulnerabilities.
+
+=== CRITICAL: BACKUP CURRENT CODE FIRST ===
+
+=== 1. ADD HTML SECURITY META TAGS (in <head>) ===
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+=== 2. ADD HONEYPOT FIELD (after form opening tag) ===
+<!-- Honeypot for bot detection -->
+<div style="opacity:0;position:absolute;top:0;left:0;height:0;width:0;z-index:-1;">
+    <label for="email_confirm">Leave this field empty</label>
+    <input type="text" name="email_confirm" id="email_confirm" tabindex="-1" autocomplete="off">
+</div>
+
+=== 3. ADD SECURITY MODULE (at top of script) ===
+const SecurityModule = {
+    // Input sanitization
+    sanitizeInput(input) {
+        if (!input || typeof input !== 'string') return '';
+        
+        // Remove HTML tags and scripts
+        let cleaned = input.replace(/<script[^>]*>.*?<\/script>/gis, '');
+        cleaned = cleaned.replace(/<[^>]+>/g, '');
+        
+        // Escape special characters
+        const escapeMap = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+            '/': '&#x2F;',
+            '`': '&#x60;',
+            '=': '&#x3D;'
+        };
+        
+        cleaned = cleaned.replace(/[&<>"'`=\/]/g, s => escapeMap[s]);
+        
+        // Trim and limit length
+        return cleaned.trim().substring(0, 2000);
+    },
+    
+    // Email validation
+    validateEmail(email) {
+        if (!email) return false;
+        const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return pattern.test(email) && email.length <= 254;
+    },
+    
+    // Phone validation (North American)
+    validatePhone(phone) {
+        if (!phone) return false;
+        const cleaned = phone.replace(/\D/g, '');
+        return cleaned.length === 10 || cleaned.length === 11;
+    },
+    
+    // Name validation
+    validateName(name) {
+        if (!name) return false;
+        const pattern = /^[a-zA-ZÀ-ÿ\s\-']{2,50}$/;
+        return pattern.test(name);
+    },
+    
+    // Generate session token
+    generateToken() {
+        const timestamp = Date.now();
+        const random = Math.random().toString(36).substring(2, 15);
+        return timestamp.toString(36) + random;
+    },
+    
+    // Check for SQL injection patterns
+    checkSQLInjection(value) {
+        const sqlPatterns = /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|UNION|CREATE|ALTER|EXEC|EXECUTE|SCRIPT|JAVASCRIPT|EVAL)\b|--|\/\*|\*\/|xp_|sp_|<script|javascript:|onerror=|onload=)/i;
+        return !sqlPatterns.test(value);
+    },
+    
+    // Session management
+    sessionManager: {
+        timeout: null,
+        duration: 30 * 60 * 1000, // 30 minutes
+        
+        start() {
+            this.reset();
+            document.addEventListener('mousedown', () => this.reset());
+            document.addEventListener('keypress', () => this.reset());
+            document.addEventListener('touchstart', () => this.reset());
+        },
+        
+        reset() {
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(() => {
+                alert('Your session has expired for security. Please refresh the page.');
+                window.location.reload();
+            }, this.duration);
+        },
+        
+        clear() {
+            clearTimeout(this.timeout);
+        }
+    }
+};
+
+// Initialize session management
+SecurityModule.sessionManager.start();
+
+// Add session token to form
+const sessionToken = SecurityModule.generateToken();
+document.getElementById('leadForm').insertAdjacentHTML('afterbegin', 
+    `<input type="hidden" id="sessionToken" name="sessionToken" value="${sessionToken}">`
+);
+
+=== 4. ADD FORM VALIDATION FUNCTION ===
+function validateFormData(formData) {
+    const errors = [];
+    
+    // Check honeypot
+    if (document.getElementById('email_confirm').value) {
+        console.warn('Bot detected');
+        return { valid: false, bot: true };
+    }
+    
+    // Validate names
+    if (!SecurityModule.validateName(formData.firstName)) {
+        errors.push('Please enter a valid first name (2-50 characters, letters only)');
+    }
+    
+    if (!SecurityModule.validateName(formData.lastName)) {
+        errors.push('Please enter a valid last name (2-50 characters, letters only)');
+    }
+    
+    // Validate email
+    if (!SecurityModule.validateEmail(formData.email)) {
+        errors.push('Please enter a valid email address');
+    }
+    
+    // Validate phone
+    if (!SecurityModule.validatePhone(formData.phone)) {
+        errors.push('Please enter a valid 10-digit phone number');
+    }
+    
+    // Check for injection attempts
+    for (const [key, value] of Object.entries(formData)) {
+        if (typeof value === 'string' && !SecurityModule.checkSQLInjection(value)) {
+            errors.push('Invalid characters detected. Please remove special characters.');
+            break;
+        }
+    }
+    
+    // Check required consent
+    if (!document.getElementById('consentMarketing')?.checked) {
+        errors.push('Please accept the privacy policy to continue');
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors: errors,
+        bot: false
+    };
+}
+
+=== 5. REPLACE FORM SUBMISSION WITH SECURE VERSION ===
+document.getElementById('leadForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Disable submit button immediately
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    
+    try {
+        // Collect and sanitize data
+        const formData = {
+            // Use SecurityModule.sanitizeInput for ALL text fields
+            firstName: SecurityModule.sanitizeInput(document.getElementById('firstName').value),
+            lastName: SecurityModule.sanitizeInput(document.getElementById('lastName').value),
+            email: SecurityModule.sanitizeInput(document.getElementById('email').value),
+            phone: SecurityModule.sanitizeInput(document.getElementById('phone').value),
+            companyName: SecurityModule.sanitizeInput(document.getElementById('companyName')?.value || ''),
+            
+            // Sanitize all other fields
+            readiness: SecurityModule.sanitizeInput(document.getElementById('readiness').value),
+            unitCount: parseInt(document.getElementById('unitCount').value) || 0,
+            budget: SecurityModule.sanitizeInput(document.getElementById('budget')?.value || ''),
+            timeline: SecurityModule.sanitizeInput(document.getElementById('timeline')?.value || ''),
+            province: SecurityModule.sanitizeInput(document.getElementById('province').value),
+            developerType: SecurityModule.sanitizeInput(document.getElementById('developerType')?.value || ''),
+            government: SecurityModule.sanitizeInput(document.getElementById('government')?.value || ''),
+            agentSupport: SecurityModule.sanitizeInput(document.getElementById('agentSupport')?.value || ''),
+            description: SecurityModule.sanitizeInput(document.getElementById('description')?.value || '').substring(0, 500)
+        };
+        
+        // Validate
+        const validation = validateFormData(formData);
+        
+        if (validation.bot) {
+            // Silently fail for bots
+            setTimeout(() => {
+                window.location.href = '/thank-you';
+            }, 1000);
+            return;
+        }
+        
+        if (!validation.valid) {
+            alert(validation.errors.join('\n'));
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        // Calculate tier and score
+        const tier = determineCustomerTier(formData.unitCount, formData.readiness);
+        const priorityScore = calculatePriorityScore(formData);
+        const units = parseInt(formData.unitCount);
+        const isGovt = formData.developerType === 'Government/Municipal';
+        
+        // Build secure payload
+        const payload = {
+            // Session validation
+            sessionToken: document.getElementById('sessionToken').value,
+            timestamp: new Date().toISOString(),
+            
+            // Sanitized data
+            data: formData,
+            
+            // Classification
+            tier: tier,
+            priorityScore: Math.min(Math.max(priorityScore, 0), 150),
+            
+            // Routing
+            buildCanadaEligible: (units >= 300 || (units >= 200 && isGovt)) ? 'Yes' : 'No',
+            
+            // Tags (sanitized)
+            tags: generateTags(tier, priorityScore, formData).join(','),
+            
+            // Pipeline
+            pipeline: 'ILLÜMMAA Customer Journey',
+            stage: tier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
+            
+            // Privacy & Security
+            consent: {
+                marketing: true,
+                timestamp: new Date().toISOString(),
+                version: 'v2.0'
+            },
+            dataSharedWithThirdParty: false,
+            
+            // Metadata
+            source: 'Website Form',
+            userAgent: navigator.userAgent.substring(0, 200)
+        };
+        
+        // Submit with security headers
+        const response = await fetch('/api/submit-lead', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Session-Token': sessionToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload),
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Submission failed');
+        }
+        
+        // Handle success based on path
+        handleSuccessResponse(formData, tier);
+        
+    } catch (error) {
+        console.error('Secure submission error:', error);
+        alert('There was an error submitting your form. Please try again.');
+        submitBtn.disabled = false;
+    }
+});
+
+=== 6. ADD SECURE REMAX REDIRECT FUNCTION ===
+function secureRemaxRedirect() {
+    // NEVER pass user data in URL
+    const REMAX_URL = 'https://www.remax.ca/';
+    
+    // Validate URL
+    try {
+        const url = new URL(REMAX_URL);
+        if (url.protocol !== 'https:' || url.hostname !== 'www.remax.ca') {
+            console.error('Invalid redirect URL');
+            return;
+        }
+        
+        // Clear sensitive data from memory
+        document.getElementById('leadForm').reset();
+        
+        // Open with security attributes
+        window.open(REMAX_URL, '_blank', 'noopener,noreferrer');
+        
+    } catch (error) {
+        console.error('Redirect failed:', error);
+    }
+}
+
+=== 7. ADD ERROR HANDLING ===
+window.addEventListener('error', function(e) {
+    console.error('Application error:', e.error);
+    // Don't expose errors to users
+    return true;
+});
+
+// Prevent right-click on form
+document.getElementById('leadForm').addEventListener('contextmenu', e => {
+    e.preventDefault();
+    return false;
+});
+
+=== 8. ADD TO CSS ===
+/* Disable text selection on sensitive elements */
+.form-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Hide autocomplete on sensitive fields */
+input[type="email"],
+input[type="tel"] {
+    autocomplete: off;
+}
+
+=== CRITICAL SECURITY NOTES ===
+✅ All inputs are sanitized before processing
+✅ Email and phone validation is strict
+✅ Honeypot field catches bots
+✅ Session timeout after 30 minutes
+✅ No data passed to Remax in URL
+✅ SQL injection patterns blocked
+✅ XSS prevention through escaping
+✅ Form data limited in length
+✅ Consent required before submission
+
+=== SERVER-SIDE REQUIREMENTS (Tell your backend developer) ===
+1. Implement rate limiting by IP (max 5 submissions per hour)
+2. Validate session token
+3. Add reCAPTCHA v3
+4. Use prepared statements for database
+5. Encrypt PII at rest
+6. Enable HTTPS only
+7. Add security headers (HSTS, CSP, X-Frame-Options)
+8. Log all submissions with IP
+9. Regular security audits
+10. Implement WAF rules
+
+=== DO NOT PROCEED WITHOUT ===
+□ Testing honeypot field works
+□ Confirming HTTPS is enabled
+□ Backend validation is ready
+□ Rate limiting is configured
+□ Security headers are set
+
+This implementation prevents XSS, SQL injection, CSRF, bots, and data leaks.

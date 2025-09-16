@@ -1015,4 +1015,26 @@
   .model-image-container:hover::before {
     opacity: 1;
   }
+
+  /* SECURITY CSS - STEP 8 REQUIREMENTS */
+  /* Disable text selection on sensitive elements */
+  .form-container {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  input, textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
+  /* Hide autocomplete on sensitive fields */
+  input[type="email"],
+  input[type="tel"] {
+    autocomplete: off;
+  }
 }

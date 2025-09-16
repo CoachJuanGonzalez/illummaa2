@@ -14,8 +14,59 @@ import { assessmentSchema, type AssessmentFormData } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { SecurityModule } from "@/lib/security";
 
 const TOTAL_STEPS = 5;
+
+// Form validation function with security checks
+function validateFormData(formData: any) {
+    const errors: string[] = [];
+    
+    // Check honeypot
+    const honeypotField = document.getElementById('email_confirm') as HTMLInputElement;
+    if (honeypotField?.value) {
+        console.warn('Bot detected');
+        return { valid: false, bot: true };
+    }
+    
+    // Validate names
+    if (!SecurityModule.validateName(formData.firstName)) {
+        errors.push('Please enter a valid first name (2-50 characters, letters only)');
+    }
+    
+    if (!SecurityModule.validateName(formData.lastName)) {
+        errors.push('Please enter a valid last name (2-50 characters, letters only)');
+    }
+    
+    // Validate email
+    if (!SecurityModule.validateEmail(formData.email)) {
+        errors.push('Please enter a valid email address');
+    }
+    
+    // Validate phone
+    if (!SecurityModule.validatePhone(formData.phone)) {
+        errors.push('Please enter a valid 10-digit phone number');
+    }
+    
+    // Check for injection attempts
+    for (const [key, value] of Object.entries(formData)) {
+        if (typeof value === 'string' && !SecurityModule.checkSQLInjection(value)) {
+            errors.push('Invalid characters detected. Please remove special characters.');
+            break;
+        }
+    }
+    
+    // Check required consent
+    if (!formData.consentMarketing) {
+        errors.push('Please accept the privacy policy to continue');
+    }
+    
+    return {
+        valid: errors.length === 0,
+        errors: errors,
+        bot: false
+    };
+}
 
 export default function AssessmentForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -41,6 +92,27 @@ export default function AssessmentForm() {
   const [priorityScoreAnimating, setPriorityScoreAnimating] = useState(false);
 
   const { toast } = useToast();
+
+  // Global error handling - Step 7 security requirement
+  useEffect(() => {
+    const handleError = (e: ErrorEvent) => {
+      console.error('Application error:', e.error);
+      // Don't expose errors to users
+      return true;
+    };
+
+    window.addEventListener('error', handleError);
+    
+    return () => {
+      window.removeEventListener('error', handleError);
+    };
+  }, []);
+
+  // Prevent right-click on form - Step 7 security requirement  
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
 
   const form = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentSchema),
@@ -667,34 +739,115 @@ export default function AssessmentForm() {
       console.warn('Form submission attempted on step', currentStep, 'but should only submit on step', TOTAL_STEPS);
       return;
     }
-    
-    const isValid = await validateCurrentStep();
-    if (!isValid) return;
 
-    // Calculate Customer Journey fields
-    const customerTier = determineCustomerTier(data.projectUnitCount || 0, data.readiness || '');
-    const priorityLevel = getPriorityLevel();
-    const tags = generateTags();
+    try {
+      // Collect and sanitize data using SecurityModule
+      const sanitizedData = {
+        firstName: SecurityModule.sanitizeInput(data.firstName),
+        lastName: SecurityModule.sanitizeInput(data.lastName), 
+        email: SecurityModule.sanitizeInput(data.email),
+        phone: SecurityModule.sanitizeInput(data.phone),
+        company: SecurityModule.sanitizeInput(data.company || ''),
+        readiness: SecurityModule.sanitizeInput(data.readiness || ''),
+        projectUnitCount: data.projectUnitCount || 0,
+        budgetRange: SecurityModule.sanitizeInput(data.budgetRange || ''),
+        decisionTimeline: SecurityModule.sanitizeInput(data.decisionTimeline || ''),
+        constructionProvince: SecurityModule.sanitizeInput(data.constructionProvince),
+        developerType: SecurityModule.sanitizeInput(data.developerType || ''),
+        governmentPrograms: SecurityModule.sanitizeInput(data.governmentPrograms || ''),
+        agentSupport: SecurityModule.sanitizeInput(data.agentSupport || ''),
+        projectDescriptionText: SecurityModule.sanitizeInput(projectDescriptionValue || '').substring(0, 500),
+        consentMarketing: data.consentMarketing
+      };
 
-    // Include all required fields for the new Customer Journey system
-    const submissionData = {
-      ...data,
-      projectDescriptionText: projectDescriptionValue,
-      customerTier,
-      priorityScore,
-      priorityLevel,
-      tags
-    };
-    
-    console.log("Form submitted with Customer Journey data:", {
-      tier: customerTier,
-      priorityLevel,
-      priorityScore,
-      tags,
-      consentMarketing: data.consentMarketing
-    });
-    
-    submitMutation.mutate(submissionData);
+      // Security validation
+      const validation = validateFormData(sanitizedData);
+      
+      if (validation.bot) {
+        // Silently handle bot submissions
+        toast({
+          title: "Thank you!",
+          description: "Your submission is being processed.",
+        });
+        setTimeout(() => {
+          setIsSubmitted(true);
+        }, 1000);
+        return;
+      }
+
+      if (!validation.valid) {
+        toast({
+          title: "Validation Error", 
+          description: validation.errors.join('\n'),
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Calculate tier and score with sanitized data
+      const customerTier = determineCustomerTier(sanitizedData.projectUnitCount, sanitizedData.readiness);
+      const priorityLevel = getPriorityLevel();
+      const tags = generateTags();
+      const sessionToken = SecurityModule.generateToken();
+
+      // Build secure payload
+      const securePayload = {
+        // Session validation
+        sessionToken: sessionToken,
+        timestamp: new Date().toISOString(),
+        
+        // Sanitized form data
+        data: sanitizedData,
+        
+        // Customer Journey classification
+        customerTier: customerTier,
+        priorityScore: Math.min(Math.max(priorityScore, 0), 150),
+        priorityLevel: priorityLevel,
+        
+        // Enhanced routing logic
+        buildCanadaEligible: (sanitizedData.projectUnitCount >= 300 || 
+          (sanitizedData.projectUnitCount >= 200 && sanitizedData.developerType === 'Government/Municipal Developer')) ? 'Yes' : 'No',
+        
+        // Comprehensive tags
+        tags: tags.join(','),
+        
+        // Pipeline routing
+        pipeline: 'ILLÜMMAA Customer Journey',
+        stage: customerTier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
+        
+        // Privacy & Security compliance
+        consent: {
+          marketing: sanitizedData.consentMarketing,
+          timestamp: new Date().toISOString(),
+          version: 'v2.0'
+        },
+        dataSharedWithThirdParty: false,
+        
+        // Metadata
+        source: 'Website Form',
+        userAgent: navigator.userAgent.substring(0, 200)
+      };
+
+      console.log("Secure form submission with Customer Journey data:", {
+        tier: customerTier,
+        priorityLevel,
+        priorityScore,
+        tags,
+        consentMarketing: sanitizedData.consentMarketing,
+        sessionToken: sessionToken.substring(0, 8) + '...' // Only log first 8 chars for security
+      });
+
+      // Submit with enhanced security
+      submitMutation.mutate(securePayload);
+
+    } catch (error) {
+      console.error('Secure submission error:', error);
+      toast({
+        title: "Submission Error",
+        description: "There was an error submitting your form. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const renderStep = () => {
@@ -1160,13 +1313,41 @@ export default function AssessmentForm() {
     setResidentialPathway('in-house');
   };
 
-  const handleRemaxSelection = () => {
-    window.open('https://www.remax.ca/', '_blank');
-    setRemaxRedirectSuccess(true);
-    toast({
-      title: "Redirecting to Remax Partnership",
-      description: "You will be redirected to our Remax partnership program.",
-    });
+  // Secure Remax redirect function - NEVER pass user data in URL
+  const secureRemaxRedirect = () => {
+    const REMAX_URL = 'https://www.remax.ca/';
+    
+    // Validate URL
+    try {
+      const url = new URL(REMAX_URL);
+      if (url.protocol !== 'https:' || url.hostname !== 'www.remax.ca') {
+        console.error('Invalid redirect URL');
+        return;
+      }
+      
+      // Clear sensitive data from memory (reset form)
+      form.reset();
+      
+      // Clear session data
+      SecurityModule.sessionManager.clear();
+      
+      // Open with security attributes
+      window.open(REMAX_URL, '_blank', 'noopener,noreferrer');
+      
+      setRemaxRedirectSuccess(true);
+      toast({
+        title: "Redirecting to Remax Partnership",
+        description: "You will be redirected to our Remax partnership program.",
+      });
+      
+    } catch (error) {
+      console.error('Redirect failed:', error);
+      toast({
+        title: "Redirect Error",
+        description: "Unable to redirect to Remax. Please visit remax.ca directly.",
+        variant: "destructive",
+      });
+    }
   };
 
 
@@ -1299,7 +1480,21 @@ export default function AssessmentForm() {
               e.stopPropagation();
               console.log('Form submit prevented, current step:', currentStep);
               return false;
-            }} className={`bg-card rounded-2xl p-8 shadow-xl transition-all duration-500 ${isStepChanging ? 'form-slide-out' : 'form-slide-in'}`} data-testid="form-assessment">
+            }} onContextMenu={handleContextMenu} className={`bg-card rounded-2xl p-8 shadow-xl transition-all duration-500 ${isStepChanging ? 'form-slide-out' : 'form-slide-in'}`} data-testid="form-assessment">
+              
+              {/* Honeypot for bot detection */}
+              <div style={{opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1}}>
+                <label htmlFor="email_confirm">Leave this field empty</label>
+                <input 
+                  type="text" 
+                  name="email_confirm" 
+                  id="email_confirm" 
+                  tabIndex={-1} 
+                  autoComplete="off"
+                  onChange={() => {}} // Prevent React warnings
+                />
+              </div>
+              
               <div className={`transition-all duration-300 ${isStepChanging ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
                 {renderStep()}
               </div>
@@ -1565,7 +1760,7 @@ export default function AssessmentForm() {
                   </CardContent>
                 </Card>
                 
-                <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-accent/50" onClick={() => handleRemaxSelection()}>
+                <Card className="cursor-pointer card-hover group transition-all duration-300 hover:border-accent/50" onClick={() => secureRemaxRedirect()}>
                   <CardContent className="p-6">
                     <h3 className="text-xl font-semibold mb-3 group-hover:text-accent transition-colors duration-200">Remax Partnership Program</h3>
                     <ul className="space-y-2 text-gray-600 mb-4">
