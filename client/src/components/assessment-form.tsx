@@ -157,23 +157,34 @@ export default function AssessmentForm() {
 
   const watchedValues = form.watch();
 
-  // CRITICAL: Tier determination - research ALWAYS = Explorer (as per instructions)
+  // CORRECTED: Tier determination - handle high units with planning-long properly
   const determineCustomerTier = (units: string | number, readiness: string) => {
     const unitCount = parseInt(String(units)) || 0;
     
     // Debug log
     console.log('Determining tier - unitCount:', unitCount, 'readiness:', readiness);
     
-    if (readiness === 'researching' || 
-        readiness === 'planning-long' ||
-        unitCount === 0) {
+    // CRITICAL FIX: Only force Explorer for researching or zero units
+    if (readiness === 'researching' || unitCount === 0) {
       return 'tier_0_explorer';
     }
+
+    // For planning-long: Calculate based on units but cap at Preferred level 
+    if (readiness === 'planning-long') {
+      if (unitCount >= 300) return 'tier_3_preferred'; // Elite downgraded to Preferred
+      if (unitCount >= 150) return 'tier_3_preferred';
+      if (unitCount >= 50) return 'tier_2_pioneer';
+      if (unitCount >= 1) return 'tier_1_starter';
+      return 'tier_0_explorer';
+    }
+
+    // Normal tiers for immediate/short/medium planning (FIXED LOGIC - was backwards!)
+    if (unitCount >= 300) return 'tier_4_elite';
+    if (unitCount >= 150) return 'tier_3_preferred';
+    if (unitCount >= 50) return 'tier_2_pioneer';
+    if (unitCount >= 1) return 'tier_1_starter';
     
-    if (unitCount <= 49) return 'tier_1_starter';
-    if (unitCount <= 149) return 'tier_2_pioneer';
-    if (unitCount <= 299) return 'tier_3_preferred';
-    return 'tier_4_elite';
+    return 'tier_0_explorer';
   };
 
   // Handle readiness change - auto-set units to 0 for researchers (as per instructions)
@@ -185,16 +196,43 @@ export default function AssessmentForm() {
     }
   };
 
-  // Real-time tier display (as per instructions)
+  // Real-time tier display (CORRECTED VERSION per instructions)
   const calculateTier = () => {
+    // Get both values
     const units = form.getValues('projectUnitCount');
     const readiness = form.getValues('readiness');
     
-    // Debug log to verify function is called
-    console.log('Calculating tier - Units:', units, 'Readiness:', readiness);
+    // Debug to console
+    console.log('calculateTier called - Units:', units, 'Readiness:', readiness);
     
+    // CRITICAL FIX: If readiness is not selected yet, don't force Explorer
+    // Only force Explorer if explicitly "researching" or "planning-long"
+    if (!readiness && units && parseInt(String(units)) > 0) {
+        // User selected units but hasn't selected readiness yet
+        // Calculate tier based on units alone for preview
+        const unitCount = parseInt(String(units));
+        
+        let tier;
+        if (unitCount >= 300) tier = 'tier_4_elite';
+        else if (unitCount >= 150) tier = 'tier_3_preferred';
+        else if (unitCount >= 50) tier = 'tier_2_pioneer';
+        else if (unitCount >= 1) tier = 'tier_1_starter';
+        else tier = 'tier_0_explorer';
+        
+        updateTierDisplay(tier);
+        return;
+    }
+    
+    // Normal flow when both fields have values
     const tier = determineCustomerTier(units, readiness || '');
+    updateTierDisplay(tier);
     
+    // Check agent support
+    checkAgentSupport();
+  };
+
+  // ADD this helper function to update the display (per instructions):
+  const updateTierDisplay = (tier: string) => {
     const tierConfig = {
       'tier_0_explorer': {
         badge: 'Explorer Journey',
@@ -203,14 +241,14 @@ export default function AssessmentForm() {
         response: 'Educational resources at your pace'
       },
       'tier_1_starter': {
-        badge: 'Starter Partnership', 
+        badge: 'Starter Partnership',
         class: 'tier-starter',
         description: 'Great! Personal consultation and support await.',
         response: 'Personal consultation support'
       },
       'tier_2_pioneer': {
         badge: 'Pioneer Partnership',
-        class: 'tier-pioneer', 
+        class: 'tier-pioneer',
         description: 'Excellent! Priority partnership attention.',
         response: 'Priority partnership attention'
       },
@@ -228,20 +266,29 @@ export default function AssessmentForm() {
       }
     };
     
-    const config = tierConfig[tier];
-    const tierBadgeElement = document.getElementById('tierBadge');
-    const tierDescriptionElement = document.getElementById('tierDescription');
-    const tierIndicatorElement = document.getElementById('tierIndicator');
+    const config = tierConfig[tier as keyof typeof tierConfig];
     
-    if (tierBadgeElement && tierDescriptionElement && tierIndicatorElement) {
-      tierBadgeElement.textContent = config.badge;
-      tierBadgeElement.className = `tier-badge ${config.class}`;
-      tierDescriptionElement.innerHTML = `<strong>${config.description}</strong><br>${config.response}`;
-      tierIndicatorElement.classList.add('show');
+    // Update badge
+    const badge = document.getElementById('tierBadge');
+    if (badge) {
+        badge.textContent = config.badge;
+        badge.className = `tier-badge ${config.class}`;
     }
     
+    // Update description
+    const description = document.getElementById('tierDescription');
+    if (description) {
+        description.innerHTML = `<strong>${config.description}</strong><br>${config.response}`;
+    }
+    
+    // Show the indicator
+    const indicator = document.getElementById('tierIndicator');
+    if (indicator) {
+        indicator.classList.add('show');
+    }
+    
+    // Adjust form fields
     adjustFormFields(tier);
-    checkAgentSupport();
   };
 
   // Show agent support for 1-10 units (as per instructions)
@@ -532,7 +579,7 @@ export default function AssessmentForm() {
     }
 
     // Geography scoring
-    if (["Ontario", "British Columbia", "Alberta"].includes(values.constructionProvince)) {
+    if (values.constructionProvince && ["Ontario", "British Columbia", "Alberta"].includes(values.constructionProvince)) {
       score += 5;
     }
 
@@ -778,7 +825,7 @@ export default function AssessmentForm() {
       if (!validation.valid) {
         toast({
           title: "Validation Error", 
-          description: validation.errors.join('\n'),
+          description: validation.errors?.join('\n') || "Please check your form data",
           variant: "destructive",
         });
         return;
@@ -838,7 +885,7 @@ export default function AssessmentForm() {
       });
 
       // Submit with enhanced security
-      submitMutation.mutate(securePayload);
+      submitMutation.mutate(securePayload as any);
 
     } catch (error) {
       console.error('Secure submission error:', error);
