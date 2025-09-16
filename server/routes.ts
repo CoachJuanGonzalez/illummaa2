@@ -376,6 +376,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Unused endpoint removed - frontend only uses /api/submit-assessment and /api/submit-residential
+
   const httpServer = createServer(app);
   return httpServer;
 }

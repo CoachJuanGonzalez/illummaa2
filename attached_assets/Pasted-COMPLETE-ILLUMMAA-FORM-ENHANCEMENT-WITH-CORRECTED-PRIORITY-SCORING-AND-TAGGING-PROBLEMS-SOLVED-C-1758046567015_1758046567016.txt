@@ -1,0 +1,539 @@
+COMPLETE ILLUMMAA FORM ENHANCEMENT WITH CORRECTED PRIORITY SCORING AND TAGGING
+
+PROBLEMS SOLVED: Company validation, enum mismatches, security gaps, missing tags, response time conflicts
+SOLUTION: Unified tier-based system with priority scoring for routing within tiers
+
+STEP 1: UPDATE frontend form validation with proper explorer handling:
+
+function validateCurrentStep() {
+    const formData = new FormData(document.querySelector('form'));
+    const readiness = formData.get('readiness') || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // Required fields for all users
+    const requiredFields = [
+        { key: 'firstName', label: 'first name' },
+        { key: 'lastName', label: 'last name' },
+        { key: 'email', label: 'email address' },
+        { key: 'phone', label: 'phone number' }
+    ];
+    
+    for (const field of requiredFields) {
+        const value = formData.get(field.key);
+        if (!value?.trim()) {
+            alert(`Please enter your ${field.label}`);
+            document.querySelector(`[name="${field.key}"]`)?.focus();
+            return false;
+        }
+    }
+    
+    if (!readiness) {
+        alert('Please select where you are in your modular home journey');
+        document.querySelector('[name="readiness"]')?.focus();
+        return false;
+    }
+    
+    // CORRECTED: Company validation only for non-explorers
+    const companyName = formData.get('companyName');
+    if (!isExplorer && !companyName?.trim()) {
+        alert('Please enter your company name');
+        document.querySelector('[name="companyName"]')?.focus();
+        return false;
+    }
+    
+    // Budget validation only for non-explorers (explorers get auto-value)
+    if (!isExplorer) {
+        const budget = formData.get('budget');
+        if (!budget) {
+            alert('Please select your project budget range');
+            document.querySelector('[name="budget"]')?.focus();
+            return false;
+        }
+    }
+    
+    // Legal consent validation
+    if (formData.get('consentCommunications') !== 'true') {
+        alert('Legal Requirement: Please consent to communications.\n\nRequired under Canadian privacy law.');
+        document.querySelector('[name="consentCommunications"]')?.focus();
+        return false;
+    }
+    
+    if (formData.get('ageVerification') !== 'true') {
+        alert('Legal Requirement: Please verify you are 18+ years old.');
+        document.querySelector('[name="ageVerification"]')?.focus();
+        return false;
+    }
+    
+    return true;
+}
+
+STEP 2: CREATE proper form data preparation:
+
+function prepareFormSubmission(formElement) {
+    const formData = new FormData(formElement);
+    const readiness = formData.get('readiness') || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    return {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        companyName: formData.get('companyName') || (isExplorer ? '' : 'Required'),
+        budget: isExplorer ? 'Under $500K' : (formData.get('budget') || ''),
+        readiness: readiness,
+        constructionProvince: formData.get('constructionProvince') || '',
+        unitCount: parseInt(formData.get('unitCount')) || (isExplorer ? 1 : 0),
+        deliveryTimeline: formData.get('deliveryTimeline') || '',
+        developerType: formData.get('developerType') || '',
+        governmentPrograms: formData.get('governmentPrograms') || '',
+        projectDescription: formData.get('projectDescription') || '',
+        consentCommunications: formData.get('consentCommunications') === 'true' ? 'true' : 'false',
+        ageVerification: formData.get('ageVerification') === 'true' ? 'true' : 'false',
+        illummaaOnly: 'TRUE',
+        noExternalReferrals: 'TRUE',
+        isExplorer: isExplorer.toString()
+    };
+}
+
+STEP 3: SETUP secure backend with proper dependencies:
+
+const express = require('express');
+const { body, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const cors = require('cors');
+const createDOMPurify = require('dompurify');
+const { JSDOM } = require('jsdom');
+require('dotenv').config();
+
+const app = express();
+const window = new JSDOM('').window;
+const DOMPurify = createDOMPurify(window);
+
+// Security configuration
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            connectSrc: ["'self'", "https://services.leadconnectorhq.com"]
+        }
+    }
+}));
+
+app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.static('public'));
+
+// Rate limiting
+const formLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 3,
+    message: { success: false, message: 'Too many submissions. Please wait 15 minutes.' }
+});
+
+// Validation rules
+const leadValidationRules = [
+    body('firstName').isLength({ min: 2, max: 50 }).matches(/^[a-zA-Z\s'-]+$/).trim().customSanitizer(value => DOMPurify.sanitize(value)),
+    body('lastName').isLength({ min: 2, max: 50 }).matches(/^[a-zA-Z\s'-]+$/).trim().customSanitizer(value => DOMPurify.sanitize(value)),
+    body('email').isEmail().normalizeEmail().isLength({ max: 254 }),
+    body('phone').matches(/^\+?1?[0-9]{10}$/),
+    body('readiness').isIn(['Just researching - want to learn more', 'planning-short', 'planning-medium', 'planning-long', 'immediate', 'researching']),
+    body('budget').optional().isIn(['', 'Under $500K', '$500K - $2M', '$2M - $5M', '$5M - $15M', '$15M - $30M', '$30M - $50M', 'Over $50M']),
+    body('companyName').optional().isLength({ max: 100 }).trim().customSanitizer(value => DOMPurify.sanitize(value || '')),
+    body('consentCommunications').equals('true'),
+    body('ageVerification').equals('true')
+];
+
+STEP 4: CORRECTED tier determination with proper response times:
+
+function determineCustomerTierSecure(formData) {
+    const units = parseInt(formData.unitCount) || 0;
+    const readiness = formData.readiness || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // CORRECTED: Tier-based response times (not priority-based)
+    if (isExplorer || units === 0) {
+        return {
+            tier: 'tier_0_explorer',
+            pathway: 'illummaa_education',
+            assignedTo: 'ILLUMMAA Education Team',
+            responseTime: '48 hours',
+            focus: 'Educational resources and learning support'
+        };
+    }
+    
+    if (units < 50) {
+        return {
+            tier: 'tier_1_starter',
+            pathway: 'illummaa_residential', 
+            assignedTo: 'ILLUMMAA Residential Specialist',
+            responseTime: '24 hours',
+            focus: 'Residential project development'
+        };
+    }
+    
+    if (units < 150) {
+        return { 
+            tier: 'tier_2_pioneer', 
+            pathway: 'illummaa_partnership',
+            assignedTo: 'ILLUMMAA Partnership Representative',
+            responseTime: '4 hours',
+            focus: 'Partnership development'
+        };
+    }
+    
+    if (units < 300) {
+        return { 
+            tier: 'tier_3_preferred', 
+            pathway: 'illummaa_partnership',
+            assignedTo: 'ILLUMMAA Senior Partnership Manager',
+            responseTime: '2 hours',
+            focus: 'Strategic partnership management'
+        };
+    }
+    
+    return { 
+        tier: 'tier_4_elite', 
+        pathway: 'illummaa_partnership',
+        assignedTo: 'ILLUMMAA Executive Team',
+        responseTime: '1 hour',
+        focus: 'Executive partnership engagement'
+    };
+}
+
+STEP 5: CORRECTED priority scoring aligned with tier system:
+
+function calculatePriorityScore(formData) {
+    let score = 0;
+    const units = parseInt(formData.unitCount) || 0;
+    const budget = formData.budget || '';
+    const timeline = formData.deliveryTimeline || '';
+    const province = formData.constructionProvince || '';
+    const governmentPrograms = formData.governmentPrograms || '';
+    const developerType = formData.developerType || '';
+    
+    // Unit count scoring (50 points max)
+    if (units >= 1000) score += 50;
+    else if (units >= 500) score += 40;
+    else if (units >= 200) score += 30;
+    else if (units >= 100) score += 20;
+    else if (units >= 50) score += 10;
+    else score += 5;
+    
+    // Budget scoring (30 points max)
+    const budgetScoring = {
+        'Over $50M': 30, '$30M - $50M': 25, '$15M - $30M': 20, 
+        '$5M - $15M': 15, '$2M - $5M': 10, '$500K - $2M': 8, 'Under $500K': 5
+    };
+    score += budgetScoring[budget] || 0;
+    
+    // Timeline urgency (20 points max)
+    const timelineScoring = {
+        'Immediate (0-3 months)': 20, 'Short-term (3-6 months)': 15,
+        'Medium-term (6-12 months)': 10, 'Long-term (12+ months)': 5
+    };
+    score += timelineScoring[timeline] || 0;
+    
+    // Geographic priority (10 points max)
+    if (['Ontario', 'British Columbia', 'Alberta'].includes(province)) {
+        score += 10;
+    } else if (['Quebec', 'Nova Scotia', 'New Brunswick'].includes(province)) {
+        score += 5;
+    }
+    
+    // Government programs (15 points max)
+    if (governmentPrograms === 'Yes - Currently participating') score += 15;
+    else if (governmentPrograms === 'Interested - Tell us more') score += 10;
+    
+    // Developer type (10 points max)
+    if (['Commercial Developer', 'Government/Municipal Developer'].includes(developerType)) {
+        score += 10;
+    } else if (['Private Developer', 'Non-Profit Developer'].includes(developerType)) {
+        score += 5;
+    }
+    
+    return Math.min(score, 150);
+}
+
+STEP 6: CORRECTED tagging system using tier-based response times:
+
+function generateILLUMMAATags(formData, tierInfo, priorityScore) {
+    const tags = [];
+    const units = parseInt(formData.unitCount) || 0;
+    const province = formData.constructionProvince || '';
+    const timeline = formData.deliveryTimeline || '';
+    const readiness = formData.readiness || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // Customer Type and Scale Tags (based on actual tiers)
+    if (isExplorer) {
+        tags.push('Customer-Consumer-Individual', 'Scale-Individual');
+    } else if (units >= 300) {
+        tags.push('Customer-Enterprise-Scale', 'Scale-Enterprise-Community');
+    } else if (units >= 150) {
+        tags.push('Customer-Partnership-Large', 'Scale-Large-Partnership');
+    } else if (units >= 50) {
+        tags.push('Customer-Commercial-Medium', 'Scale-Medium-Commercial');
+    } else if (units >= 3) {
+        tags.push('Customer-Residential-Small', 'Scale-Small-Residential');
+    } else {
+        tags.push('Customer-Consumer-Individual', 'Scale-Individual');
+    }
+    
+    // CORRECTED: Priority tags for routing within tiers (not response time override)
+    if (priorityScore >= 100) {
+        tags.push('Priority-High-150');
+    } else if (priorityScore >= 75) {
+        tags.push('Priority-Medium-75');
+    } else if (priorityScore >= 50) {
+        tags.push('Priority-Medium-50');
+    } else {
+        tags.push('Priority-Standard-25');
+    }
+    
+    // CORRECTED: Response time tags based on TIER, not priority score
+    const responseTimeTag = `Response-${tierInfo.responseTime.replace(' ', '')}-Required`;
+    tags.push(responseTimeTag);
+    
+    // Team assignment tags based on tier
+    const teamAssignmentMap = {
+        'tier_0_explorer': 'Team-Consumer-Education',
+        'tier_1_starter': 'Team-Residential-Specialist',
+        'tier_2_pioneer': 'Team-Partnership-Rep',
+        'tier_3_preferred': 'Team-Senior-Partnership',
+        'tier_4_elite': 'Team-Executive'
+    };
+    tags.push(teamAssignmentMap[tierInfo.tier] || 'Team-Standard');
+    
+    // Geographic Tags
+    if (province) {
+        const provinceCode = getProvinceCode(province);
+        tags.push(`Location-${provinceCode}-${province.replace(/\s+/g, '')}`);
+        
+        if (['Ontario', 'British Columbia', 'Alberta'].includes(province)) {
+            tags.push('Market-Primary');
+        } else {
+            tags.push('Market-Secondary');
+        }
+    }
+    
+    // Timeline Tags
+    const timelineMap = {
+        'Immediate (0-3 months)': 'Timeline-Immediate',
+        'Short-term (3-6 months)': 'Timeline-Short',
+        'Medium-term (6-12 months)': 'Timeline-Medium',
+        'Long-term (12+ months)': 'Timeline-Long'
+    };
+    if (timelineMap[timeline]) {
+        tags.push(timelineMap[timeline]);
+    }
+    
+    // Source and engagement tags
+    tags.push('Source-Website-Direct', 'Channel-Digital-High', 'Engagement-Warm');
+    
+    // Process tags
+    if (isExplorer) {
+        tags.push('Ready-Exploring');
+    } else {
+        tags.push('Ready-Evaluating');
+    }
+    
+    return tags;
+}
+
+function getProvinceCode(provinceName) {
+    const codes = {
+        'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB', 'New Brunswick': 'NB',
+        'Newfoundland and Labrador': 'NL', 'Northwest Territories': 'NT', 'Nova Scotia': 'NS',
+        'Nunavut': 'NU', 'Ontario': 'ON', 'Prince Edward Island': 'PE', 'Quebec': 'QC',
+        'Saskatchewan': 'SK', 'Yukon': 'YT'
+    };
+    return codes[provinceName] || 'XX';
+}
+
+function getSuccessMessage(tierInfo, isExplorer) {
+    if (isExplorer) {
+        return `Thank you for your interest in modular housing! An ${tierInfo.assignedTo} member will contact you within ${tierInfo.responseTime} to answer your questions and provide helpful resources about modular construction options.`;
+    } else {
+        return `Thank you! An ${tierInfo.assignedTo} member will contact you within ${tierInfo.responseTime} to discuss your modular home project and next steps.`;
+    }
+}
+
+STEP 7: CREATE secure API endpoint with complete integration:
+
+app.post('/api/submit-lead', formLimiter, leadValidationRules, async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.array(),
+                message: 'Please correct the highlighted fields and try again.'
+            });
+        }
+        
+        const formData = req.body;
+        const readiness = formData.readiness || '';
+        const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+        
+        // Server-side validation for explorer rules
+        if (isExplorer) {
+            formData.companyName = formData.companyName || '';
+            formData.budget = 'Under $500K';
+        } else {
+            if (!formData.companyName?.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Company name required for business inquiries'
+                });
+            }
+            if (!formData.budget) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Budget range required for project planning'
+                });
+            }
+        }
+        
+        const tierInfo = determineCustomerTierSecure(formData);
+        const priorityScore = calculatePriorityScore(formData);
+        const tags = generateILLUMMAATags(formData, tierInfo, priorityScore);
+        
+        // Complete GoHighLevel payload
+        const ghlPayload = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            companyName: formData.companyName,
+            budget: formData.budget,
+            readiness: formData.readiness,
+            constructionProvince: formData.constructionProvince,
+            unitCount: formData.unitCount,
+            deliveryTimeline: formData.deliveryTimeline,
+            developerType: formData.developerType,
+            governmentPrograms: formData.governmentPrograms,
+            projectDescription: formData.projectDescription,
+            
+            // CORRECTED: Advanced tagging system
+            tags: tags,
+            contact_tags: tags.join(','),
+            
+            // ILLUMMAA routing data
+            tier: tierInfo.tier,
+            pathway: tierInfo.pathway,
+            assignedTo: tierInfo.assignedTo,
+            responseTime: tierInfo.responseTime,
+            priorityScore: priorityScore,
+            
+            // Routing flags
+            illummaaOnly: 'TRUE',
+            noExternalReferrals: 'TRUE',
+            isExplorer: isExplorer.toString(),
+            
+            // Compliance
+            consentTimestamp: new Date().toISOString(),
+            sourceIP: req.ip,
+            submissionId: `ILLUMMAA-${Date.now()}`,
+            source: 'ILLUMMAA Website - Advanced Assessment'
+        };
+        
+        await sendToGoHighLevel(ghlPayload);
+        
+        res.json({
+            success: true,
+            message: getSuccessMessage(tierInfo, isExplorer),
+            tierInfo: tierInfo,
+            priority_score: priorityScore,
+            assigned_to: tierInfo.assignedTo,
+            response_time: tierInfo.responseTime
+        });
+        
+    } catch (error) {
+        console.error('Form processing error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Processing error. Our team will contact you within 24 hours.',
+            support_contact: 'info@illummaa.ca'
+        });
+    }
+});
+
+STEP 8: ADD GoHighLevel delivery with retry logic:
+
+async function sendToGoHighLevel(payload) {
+    const webhookUrl = process.env.GHL_WEBHOOK_URL;
+    
+    if (!webhookUrl) {
+        console.error('GoHighLevel webhook URL not configured');
+        throw new Error('Webhook configuration missing');
+    }
+    
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'ILLUMMAA-Pipeline/2.0',
+                    'X-Source': 'ILLUMMAA-Website'
+                },
+                body: JSON.stringify(payload),
+                timeout: 15000
+            });
+            
+            if (response.ok) {
+                console.log('Successfully delivered to GoHighLevel:', payload.email);
+                return await response.json();
+            }
+            
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            
+        } catch (error) {
+            console.warn(`GHL delivery attempt ${attempt} failed:`, error.message);
+            
+            if (attempt === maxRetries) {
+                throw error;
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        }
+    }
+}
+
+STEP 9: START server:
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`ILLUMMAA Form Server running on port ${PORT}`);
+    console.log('CORRECTED Features:');
+    console.log('- Tier-based response times (not priority-override)');
+    console.log('- Priority scores for routing within tiers');  
+    console.log('- Advanced tagging system for GHL automation');
+    console.log('- ILLUMMAA-only routing enforced');
+    console.log('- Explorer conditional field handling');
+    console.log('- Comprehensive security validation');
+});
+
+// Environment variables needed:
+// GHL_WEBHOOK_URL=your_webhook_url
+// NODE_ENV=production
+
+FINAL VERIFICATION CHECKLIST:
+□ Tier-based response times maintained (48hrs/24hrs/4hrs/2hrs/1hr)
+□ Priority scores used for routing priority within tiers only
+□ Company field truly optional for explorers
+□ Budget enum alignment frontend-backend
+□ Advanced tagging system matches tier structure  
+□ Tags trigger appropriate GHL workflows
+□ ILLUMMAA-only routing enforced
+□ Security validation comprehensive
+□ Success messages match tier assignments
+
+This corrected implementation fixes the response time conflicts while maintaining the sophisticated priority scoring for routing optimization within the established tier structure.

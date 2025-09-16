@@ -29,63 +29,102 @@ function validateConsentCompliance(formData: any) {
     return { valid: true };
 }
 
-function validateStep1() {
-    // Check all required fields first
-    const firstName = document.getElementById('firstName') as HTMLInputElement;
-    const lastName = document.getElementById('lastName') as HTMLInputElement;
-    const email = document.getElementById('email') as HTMLInputElement;
-    const phone = document.getElementById('phone') as HTMLInputElement;
-    const readiness = (document.getElementById('readiness') || document.querySelector('[name="readiness"]')) as HTMLInputElement;
+function validateCurrentStep() {
+    const formElement = document.querySelector('form');
+    if (!formElement) return false;
     
-    // Basic field validation
-    if (!firstName || !firstName.value.trim()) {
-        alert('Please enter your first name');
-        firstName?.focus();
-        return false;
+    const formData = new FormData(formElement);
+    const readiness = String(formData.get('readiness') || '');
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // Required fields for all users
+    const requiredFields = [
+        { key: 'firstName', label: 'first name' },
+        { key: 'lastName', label: 'last name' },
+        { key: 'email', label: 'email address' },
+        { key: 'phone', label: 'phone number' }
+    ];
+    
+    for (const field of requiredFields) {
+        const value = String(formData.get(field.key) || '');
+        if (!value.trim()) {
+            alert(`Please enter your ${field.label}`);
+            const element = document.querySelector(`[name="${field.key}"]`) as HTMLInputElement;
+            element?.focus();
+            return false;
+        }
     }
     
-    if (!lastName || !lastName.value.trim()) {
-        alert('Please enter your last name');
-        lastName?.focus();
-        return false;
-    }
-    
-    if (!email || !email.value.trim()) {
-        alert('Please enter your email address');
-        email?.focus();
-        return false;
-    }
-    
-    if (!phone || !phone.value.trim()) {
-        alert('Please enter your phone number');
-        phone?.focus();
-        return false;
-    }
-    
-    if (!readiness || !readiness.value) {
+    if (!readiness) {
         alert('Please select where you are in your modular home journey');
-        readiness?.focus();
+        const element = document.querySelector('[name="readiness"]') as HTMLSelectElement;
+        element?.focus();
         return false;
     }
     
-    // CRITICAL: Legal consent validation - BLOCKS progression without consent
-    const consentComm = document.getElementById('consentCommunications') as HTMLInputElement;
-    const ageVerif = document.getElementById('ageVerification') as HTMLInputElement;
-    
-    if (!consentComm || !consentComm.checked) {
-        alert('LEGAL REQUIREMENT: You must consent to communications before continuing.\n\nThis is required under Canadian privacy law (CASL) to process your inquiry.');
-        // Scroll to consent section
-        consentComm?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // CORRECTED: Company validation only for non-explorers
+    const companyName = String(formData.get('companyName') || '');
+    if (!isExplorer && !companyName.trim()) {
+        alert('Please enter your company name');
+        const element = document.querySelector('[name="companyName"]') as HTMLInputElement;
+        element?.focus();
         return false;
     }
     
-    if (!ageVerif || !ageVerif.checked) {
-        alert('LEGAL REQUIREMENT: Age verification (18+) is required.\n\nOnly adults can provide valid consent under Canadian law.');
-        ageVerif?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Budget validation only for non-explorers (explorers get auto-value)
+    if (!isExplorer) {
+        const budget = String(formData.get('budget') || '');
+        if (!budget) {
+            alert('Please select your project budget range');
+            const element = document.querySelector('[name="budget"]') as HTMLSelectElement;
+            element?.focus();
+            return false;
+        }
+    }
+    
+    // Legal consent validation
+    if (formData.get('consentMarketing') !== 'true') {
+        alert('Legal Requirement: Please consent to communications.\n\nRequired under Canadian privacy law.');
+        const element = document.querySelector('[name="consentMarketing"]') as HTMLInputElement;
+        element?.focus();
+        return false;
+    }
+    
+    if (formData.get('ageVerification') !== 'true') {
+        alert('Legal Requirement: Please verify you are 18+ years old.');
+        const element = document.querySelector('[name="ageVerification"]') as HTMLInputElement;
+        element?.focus();
         return false;
     }
     
     return true;
+}
+
+function prepareFormSubmission(formElement: HTMLFormElement) {
+    const formData = new FormData(formElement);
+    const readiness = String(formData.get('readiness') || '');
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    return {
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        companyName: formData.get('companyName') || (isExplorer ? '' : 'Required'),
+        budget: isExplorer ? 'Under $500K' : (formData.get('budget') || ''),
+        readiness: readiness,
+        constructionProvince: formData.get('constructionProvince') || '',
+        unitCount: parseInt(String(formData.get('unitCount') || '0')) || (isExplorer ? 1 : 0),
+        deliveryTimeline: formData.get('deliveryTimeline') || '',
+        developerType: formData.get('developerType') || '',
+        governmentPrograms: formData.get('governmentPrograms') || '',
+        projectDescription: formData.get('projectDescription') || '',
+        consentMarketing: formData.get('consentMarketing') === 'true' ? 'true' : 'false',
+        ageVerification: formData.get('ageVerification') === 'true' ? 'true' : 'false',
+        illummaaOnly: 'TRUE',
+        noExternalReferrals: 'TRUE',
+        isExplorer: isExplorer.toString()
+    };
 }
 
 // Form validation function with security checks
@@ -164,13 +203,13 @@ export default function AssessmentForm() {
                                (document.querySelector('#currentStep')?.textContent) || '1';
           
           if (currentStepEl === '1' || parseInt(currentStepEl) === 1 || currentStep === 1) {
-            if (validateStep1()) {
+            if (validateCurrentStep()) {
               // Only proceed if validation passes
-              nextStep();
+              setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
             }
           } else {
             // For other steps, proceed normally
-            nextStep();
+            setCurrentStep(prev => Math.min(prev + 1, TOTAL_STEPS));
           }
         };
         
@@ -1190,8 +1229,8 @@ export default function AssessmentForm() {
                         <FormControl>
                           <input 
                             type="checkbox" 
-                            id="consentCommunications" 
-                            name="consentCommunications" 
+                            id="consentMarketing" 
+                            name="consentMarketing" 
                             checked={field.value}
                             onChange={field.onChange}
                             required 

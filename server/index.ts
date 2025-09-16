@@ -1,4 +1,4 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { type Request, type Response, type NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
@@ -7,6 +7,12 @@ const app = express();
 // Trust proxy headers for correct client IP identification in Replit environment
 // Configure for Replit's specific proxy setup
 app.set('trust proxy', 1);
+
+// JSON parsing middleware (needed before routes)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// All validation, tier calculation, and webhook functions moved to storage.ts to avoid duplication
 
 // Enhanced body parsing with security limits
 app.use(express.json({ 
@@ -109,12 +115,21 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
+  const PORT = process.env.PORT || 5000;
+  
   server.listen({
-    port,
+    port: Number(PORT),
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    console.log(`ILLUMMAA Form Server running on port ${PORT}`);
+    console.log('CORRECTED Features:');
+    console.log('- Tier-based response times (not priority-override)');
+    console.log('- Priority scores for routing within tiers');  
+    console.log('- Advanced tagging system for GHL automation');
+    console.log('- ILLUMMAA-only routing enforced');
+    console.log('- Explorer conditional field handling');
+    console.log('- Comprehensive security validation');
+    log(`serving on port ${PORT}`);
   });
 })();

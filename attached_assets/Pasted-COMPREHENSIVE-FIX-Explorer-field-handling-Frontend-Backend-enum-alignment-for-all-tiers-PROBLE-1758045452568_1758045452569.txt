@@ -1,0 +1,337 @@
+COMPREHENSIVE FIX: Explorer field handling + Frontend-Backend enum alignment for all tiers
+
+PROBLEM 1: Company field shows "Optional" but still requires validation for explorers
+PROBLEM 2: "Invalid enum value" errors occurring for all user types due to frontend-backend mismatch
+PROBLEM 3: Hidden budget values not accepted by backend validation
+SOLUTION: Fix field requirements, align enum values, and ensure consistent validation
+
+STEP 1: STANDARDIZE budget dropdown values to match backend expectations:
+
+FIND your budget dropdown and UPDATE with these exact values:
+
+<div class="form-group budget-group">
+    <label for="budget" id="budgetLabel">Project Budget Range (CAD)</label>
+    <select id="budget" name="budget" class="form-select">
+        <option value="">Select budget range...</option>
+        <option value="Under $500K">Under $500K</option>
+        <option value="$500K - $2M">$500K - $2M</option>
+        <option value="$2M - $5M">$2M - $5M</option>
+        <option value="$5M - $15M">$5M - $15M</option>
+        <option value="$15M - $30M">$15M - $30M</option>
+        <option value="$30M - $50M">$30M - $50M</option>
+        <option value="Over $50M">Over $50M</option>
+    </select>
+    <input type="hidden" id="budgetHidden" name="budgetHidden" value="">
+    <div id="explorerBudgetNote" style="display: none; color: #6c757d; font-size: 0.9rem; font-style: italic; margin-top: 8px;">
+        Budget planning will be discussed during your educational consultation
+    </div>
+</div>
+
+FIND your company field and ensure proper structure:
+
+<div class="form-group company-group">
+    <label for="companyName" id="companyLabel">Company Name *</label>
+    <input type="text" id="companyName" name="companyName" class="form-input" required>
+</div>
+
+STEP 2: UPDATE conditional field JavaScript to handle both company and budget properly:
+
+document.addEventListener('DOMContentLoaded', function() {
+    const readinessSelect = document.querySelector('#readiness, [name="readiness"], select');
+    const companyField = document.querySelector('#companyName, [name="companyName"], input[placeholder*="Company"]');
+    const companyLabel = document.getElementById('companyLabel') || companyField?.closest('.form-group')?.querySelector('label');
+    const budgetSelect = document.getElementById('budget');
+    const budgetHidden = document.getElementById('budgetHidden');
+    const explorerNote = document.getElementById('explorerBudgetNote');
+    const budgetGroup = document.querySelector('.budget-group');
+    
+    function handleExplorerFields() {
+        if (!readinessSelect) return;
+        
+        const readiness = readinessSelect.value || '';
+        const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+        
+        if (isExplorer) {
+            // COMPANY FIELD: Make truly optional for explorers
+            if (companyField) {
+                companyField.removeAttribute('required');
+                companyField.setAttribute('data-optional-explorer', 'true');
+                if (companyLabel) {
+                    companyLabel.textContent = 'Company Name (Optional)';
+                }
+            }
+            
+            // BUDGET FIELD: Hide dropdown, set valid enum value
+            if (budgetSelect && budgetHidden) {
+                budgetSelect.style.display = 'none';
+                budgetSelect.removeAttribute('required');
+                budgetSelect.value = ''; // Clear the select value to prevent conflicts
+                
+                // Use valid enum value that backend accepts
+                budgetHidden.value = 'Under $500K';
+                
+                // Show explanatory note
+                if (explorerNote) {
+                    explorerNote.style.display = 'block';
+                }
+            }
+            
+        } else {
+            // NON-EXPLORER: Restore normal field requirements
+            if (companyField) {
+                companyField.setAttribute('required', '');
+                companyField.removeAttribute('data-optional-explorer');
+                if (companyLabel) {
+                    companyLabel.textContent = 'Company Name *';
+                }
+            }
+            
+            // BUDGET FIELD: Show dropdown, clear hidden value
+            if (budgetSelect && budgetHidden) {
+                budgetSelect.style.display = 'block';
+                budgetHidden.value = ''; // Clear hidden value
+                
+                // Hide explanatory note
+                if (explorerNote) {
+                    explorerNote.style.display = 'none';
+                }
+            }
+        }
+    }
+    
+    if (readinessSelect) {
+        readinessSelect.addEventListener('change', handleExplorerFields);
+        handleExplorerFields(); // Run on page load
+    }
+});
+
+STEP 3: UPDATE form validation to handle conditional fields properly:
+
+function validateStep1() {
+    const firstName = document.querySelector('#firstName, [name="firstName"]');
+    const lastName = document.querySelector('#lastName, [name="lastName"]');
+    const email = document.querySelector('#email, [name="email"]');
+    const phone = document.querySelector('#phone, [name="phone"]');
+    const readinessSelect = document.querySelector('#readiness, [name="readiness"]');
+    const companyField = document.querySelector('#companyName, [name="companyName"]');
+    const budgetSelect = document.getElementById('budget');
+    const consentComm = document.getElementById('consentCommunications');
+    const ageVerif = document.getElementById('ageVerification');
+    
+    // Basic required field validation
+    const requiredFields = [
+        {field: firstName, name: 'first name'},
+        {field: lastName, name: 'last name'}, 
+        {field: email, name: 'email address'},
+        {field: phone, name: 'phone number'},
+        {field: readinessSelect, name: 'journey stage'}
+    ];
+    
+    for (let {field, name} of requiredFields) {
+        if (!field?.value?.trim()) {
+            alert(`Please enter your ${name}`);
+            field?.focus();
+            return false;
+        }
+    }
+    
+    // Conditional field validation
+    const readiness = readinessSelect.value || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // CONDITIONAL company validation: only required for non-explorers
+    if (!isExplorer && companyField && !companyField.value.trim()) {
+        alert('Please enter your company name');
+        companyField?.focus();
+        return false;
+    }
+    
+    // CONDITIONAL budget validation: only for visible dropdown
+    if (!isExplorer && budgetSelect && budgetSelect.style.display !== 'none' && !budgetSelect.value) {
+        alert('Please select your project budget range');
+        budgetSelect?.focus();
+        return false;
+    }
+    
+    // Legal consent validation
+    if (!consentComm?.checked) {
+        alert('Legal Requirement: Please consent to communications.\n\nThis is required under Canadian privacy law to process your inquiry.');
+        consentComm?.focus();
+        return false;
+    }
+    
+    if (!ageVerif?.checked) {
+        alert('Legal Requirement: Please verify you are 18+ years old.\n\nAge verification is required to provide valid consent.');
+        ageVerif?.focus();
+        return false;
+    }
+    
+    return true;
+}
+
+STEP 4: FIX backend enum validation to accept all valid values:
+
+// In your server-side validation, UPDATE the budget validation:
+body('budget')
+    .optional()
+    .isIn([
+        '', // Allow empty
+        'Under $500K', '$500K - $2M', '$2M - $5M', 
+        '$5M - $15M', '$15M - $30M', '$30M - $50M', 'Over $50M'
+    ])
+    .withMessage('Invalid budget range selected'),
+
+body('budgetHidden')
+    .optional()
+    .isIn([
+        '', // Allow empty for non-explorers
+        'Under $500K' // Valid explorer value using standard enum
+    ])
+    .withMessage('Invalid hidden budget value'),
+
+body('companyName')
+    .optional() // Make optional at validation level
+    .isLength({ max: 100 })
+    .trim()
+    .customSanitizer(value => DOMPurify.sanitize(value || '')),
+
+STEP 5: UPDATE form submission to handle both scenarios correctly:
+
+// Prepare form data properly
+function prepareFormData(formData) {
+    const readiness = formData.readiness || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // Handle budget field properly
+    let budgetValue = '';
+    if (isExplorer) {
+        // For explorers: use hidden value
+        budgetValue = formData.budgetHidden || 'Under $500K';
+    } else {
+        // For non-explorers: use selected budget
+        budgetValue = formData.budget || '';
+    }
+    
+    return {
+        ...formData,
+        budget: budgetValue,
+        isExplorer: isExplorer,
+        // Make company truly optional for explorers
+        companyName: isExplorer ? (formData.companyName || '') : formData.companyName
+    };
+}
+
+STEP 6: UPDATE form submission handler:
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const nextBtn = document.querySelector('#nextBtn, .btn-primary, button[onclick*="Continue"]');
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (validateStep1()) {
+                // Prepare clean form data before progression
+                const formElement = document.querySelector('form');
+                const formData = new FormData(formElement);
+                const preparedData = prepareFormData(Object.fromEntries(formData));
+                
+                // Store prepared data for next step
+                sessionStorage.setItem('step1Data', JSON.stringify(preparedData));
+                
+                // Proceed to next step
+                if (typeof nextStep === 'function') {
+                    nextStep();
+                } else {
+                    // Fallback: find and trigger next step manually
+                    const currentStep = document.querySelector('.form-step.active');
+                    const nextStepEl = currentStep?.nextElementSibling;
+                    if (nextStepEl && nextStepEl.classList.contains('form-step')) {
+                        currentStep.classList.remove('active');
+                        nextStepEl.classList.add('active');
+                        
+                        // Update progress
+                        const stepIndicator = document.querySelector('#currentStep');
+                        if (stepIndicator && stepIndicator.textContent === '1') {
+                            stepIndicator.textContent = '2';
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+STEP 7: ADD server-side handling for explorer values:
+
+// In your backend processing:
+app.post('/api/submit-lead', leadValidationRules, async (req, res) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                success: false,
+                errors: errors.array(),
+                message: 'Validation failed'
+            });
+        }
+        
+        const formData = req.body;
+        const readiness = formData.readiness || '';
+        const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+        
+        // Handle explorer-specific processing
+        if (isExplorer) {
+            // Ensure budget is set to valid enum value
+            formData.budget = formData.budget || 'Under $500K';
+            
+            // Make company optional for explorers
+            formData.companyName = formData.companyName || '';
+        } else {
+            // Validate required fields for non-explorers
+            if (!formData.companyName || !formData.companyName.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Company name required for business inquiries'
+                });
+            }
+            
+            if (!formData.budget) {
+                return res.status(400).json({
+                    success: false, 
+                    message: 'Budget range required for project planning'
+                });
+            }
+        }
+        
+        // Process the validated data
+        const result = await processFormSubmission(formData);
+        res.json({ success: true, ...result });
+        
+    } catch (error) {
+        console.error('Form processing error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Processing error'
+        });
+    }
+});
+
+CRITICAL TESTING CHECKLIST:
+□ Explorer path: Company truly optional, no validation errors
+□ Explorer path: Budget auto-set to "Under $500K", no enum errors
+□ Explorer path: Can progress to Step 2 with or without company name
+□ Non-explorer path: Company required, shows validation error if empty
+□ Non-explorer path: Budget dropdown visible and required
+□ All budget dropdown values accepted by backend (no enum errors)
+□ Form progression works smoothly for both user types
+□ Step 2 displays properly without "invalid enum value" errors
+□ Backend validation accepts all frontend enum values
+
+This comprehensive solution fixes:
+1. Company field truly optional for explorers (removes required attribute)
+2. Budget enum alignment between frontend dropdown and backend validation
+3. Proper conditional validation that doesn't interfere with normal submissions
+4. Server-side handling of both explorer and non-explorer scenarios
+5. Clean form data preparation that prevents enum conflicts
