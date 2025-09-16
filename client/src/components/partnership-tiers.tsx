@@ -69,7 +69,8 @@ export default function PartnershipTiers() {
       buttonVariant: "outline" as const,
       buttonText: "Start Free Assessment",
       action: scrollToAssessment,
-      freeLearning: true
+      freeLearning: true,
+      disabled: false
     },
     {
       name: "Starter",
@@ -87,9 +88,9 @@ export default function PartnershipTiers() {
         "Competitive pricing from $99K CAD"
       ],
       buttonVariant: "outline" as const,
-      buttonText: isFormUsed || showSuccessMessage ? "Form Submitted" : "Get Started",
-      action: openConsumerForm,
-      disabled: isFormUsed || showSuccessMessage
+      buttonText: "Get Started",
+      action: scrollToAssessment,
+      disabled: false
     },
     {
       name: "Pioneer",
@@ -109,7 +110,8 @@ export default function PartnershipTiers() {
       buttonVariant: "default" as const,
       buttonText: "Begin Assessment",
       popular: true,
-      action: scrollToAssessment
+      action: scrollToAssessment,
+      disabled: false
     },
     {
       name: "Preferred",
@@ -128,7 +130,8 @@ export default function PartnershipTiers() {
       ],
       buttonVariant: "outline" as const,
       buttonText: "Begin Assessment",
-      action: scrollToAssessment
+      action: scrollToAssessment,
+      disabled: false
     },
     {
       name: "Elite", 
@@ -147,7 +150,8 @@ export default function PartnershipTiers() {
       ],
       buttonVariant: "outline" as const,
       buttonText: "Begin Assessment",
-      action: scrollToAssessment
+      action: scrollToAssessment,
+      disabled: false
     }
   ];
 
@@ -212,7 +216,7 @@ export default function PartnershipTiers() {
                 variant={tier.buttonVariant}
                 className={`w-full ${tier.buttonVariant === 'default' ? 'btn-primary' : ''} ${tier.disabled ? 'opacity-60 cursor-not-allowed' : ''}`}
                 onClick={tier.action}
-                disabled={tier.disabled}
+                disabled={tier.disabled ?? false}
                 data-testid={`button-tier-${tier.name.toLowerCase()}`}
                 title={tier.disabled ? "Form already submitted - please reload page for new submission" : tier.buttonText}
               >
