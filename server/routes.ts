@@ -10,6 +10,89 @@ import { z } from "zod";
 import { validateFormData, submitToGoHighLevel, submitToGoHighLevelResidential } from "./storage";
 import { storage } from "./storage";
 
+// COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION FUNCTION
+function mapFrontendToBackend(frontendData: any): any {
+  // Enum value mapping functions
+  const normalizeReadiness = (value: string): string => {
+    const readinessMap: { [key: string]: string } = {
+      'Just researching - want to learn more': 'researching',
+      'Planning future project (6+ months)': 'planning-long',
+      'Planning active project (0-6 months)': 'planning-medium',
+      'Ready to move forward immediately': 'immediate'
+    };
+    return readinessMap[value] || value;
+  };
+
+  const normalizeBudget = (value: string): string => {
+    const budgetMap: { [key: string]: string } = {
+      'Under $500K': 'Under $5 Million',
+      '$500K - $2M': 'Under $5 Million',
+      '$2M - $5M': 'Under $5 Million',
+      '$5M - $15M': '$5M - $15 Million',
+      '$15M - $30M': '$15M - $30 Million',
+      '$30M - $50M': '$30M - $50 Million',
+      'Over $50M': 'Over $50 Million'
+    };
+    return budgetMap[value] || value;
+  };
+
+  const normalizeTimeline = (value: string): string => {
+    // Timeline values appear to match already, but normalize just in case
+    const timelineMap: { [key: string]: string } = {
+      'Immediate (0-3 months)': 'Immediate (0-3 months)',
+      'Short-term (3-6 months)': 'Short-term (3-6 months)',
+      'Medium-term (6-12 months)': 'Medium-term (6-12 months)',
+      'Long-term (12+ months)': 'Long-term (12+ months)'
+    };
+    return timelineMap[value] || value;
+  };
+
+  // Field name mapping with enum normalization
+  return {
+    // Basic contact fields (direct mapping)
+    firstName: frontendData.firstName,
+    lastName: frontendData.lastName,
+    email: frontendData.email,
+    phone: frontendData.phone,
+    
+    // Company field mapping
+    company: frontendData.company || frontendData.companyName || 'Individual Investor',
+    
+    // CRITICAL FIELD NAME MAPPING FIXES:
+    projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
+    budgetRange: frontendData.budget ? normalizeBudget(frontendData.budget) : frontendData.budgetRange,
+    decisionTimeline: frontendData.timeline ? normalizeTimeline(frontendData.timeline) : frontendData.decisionTimeline,
+    constructionProvince: frontendData.province || frontendData.constructionProvince,
+    projectDescriptionText: frontendData.projectDescription || frontendData.projectDescriptionText,
+    consentMarketing: frontendData.consentCommunications || frontendData.consentMarketing,
+    
+    // Readiness with enum normalization
+    readiness: frontendData.readiness ? normalizeReadiness(frontendData.readiness) : frontendData.readiness,
+    
+    // Age verification (direct mapping)
+    ageVerification: frontendData.ageVerification,
+    
+    // Optional fields that may not be present
+    developerType: frontendData.developerType,
+    governmentPrograms: frontendData.governmentPrograms,
+    agentSupport: frontendData.agentSupport,
+    
+    // Additional form metadata (keep as-is)
+    isExplorer: frontendData.isExplorer,
+    illummaaOnly: frontendData.illummaaOnly,
+    noExternalReferrals: frontendData.noExternalReferrals,
+    priorityScore: frontendData.priorityScore,
+    assignedTo: frontendData.assignedTo,
+    responseTime: frontendData.responseTime,
+    tags: frontendData.tags,
+    contactTags: frontendData.contactTags,
+    consentTimestamp: frontendData.consentTimestamp,
+    source: frontendData.source || 'ILLÜMMAA Website Assessment',
+    submissionId: frontendData.submissionId,
+    userAgent: frontendData.userAgent
+  };
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enterprise Security Configuration v13.2
   
@@ -209,38 +292,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      // NEW FORM COMPATIBILITY: Map new form field names to existing backend expectations
-      const mappedBody = {
-        ...req.body,
-        // Map new form fields to existing backend field names
-        companyName: req.body.company || req.body.companyName,
-        projectUnitCount: req.body.unitCount || req.body.projectUnitCount || 0,
-        budgetRange: req.body.budget || req.body.budgetRange,
-        // Keep all other fields as-is
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        phone: req.body.phone,
-        readiness: req.body.readiness,
-        timeline: req.body.timeline,
-        province: req.body.province,
-        projectDescription: req.body.projectDescription,
-        consentCommunications: req.body.consentCommunications,
-        ageVerification: req.body.ageVerification,
-        // New form specific fields
-        isExplorer: req.body.isExplorer,
-        illummaaOnly: req.body.illummaaOnly,
-        noExternalReferrals: req.body.noExternalReferrals,
-        priorityScore: req.body.priorityScore,
-        assignedTo: req.body.assignedTo,
-        responseTime: req.body.responseTime,
-        tags: req.body.tags,
-        contactTags: req.body.contactTags,
-        consentTimestamp: req.body.consentTimestamp,
-        source: req.body.source || 'ILLÜMMAA Website Assessment',
-        submissionId: req.body.submissionId,
-        userAgent: req.body.userAgent
-      };
+      // COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION
+      const mappedBody = mapFrontendToBackend(req.body);
+      
+      console.log('[MAPPING] Frontend data:', JSON.stringify(req.body, null, 2));
+      console.log('[MAPPING] Mapped backend data:', JSON.stringify(mappedBody, null, 2));
       
       // Validate and sanitize form data using mapped fields
       const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
