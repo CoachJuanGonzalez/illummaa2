@@ -19,6 +19,7 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   governmentPrograms: text("government_programs"),
   agentSupport: text("agent_support"),
   consentMarketing: boolean("consent_marketing").default(false),
+  ageVerification: boolean("age_verification").default(false),
   projectDescription: text("project_description"),
   priorityScore: integer("priority_score").notNull(),
   customerTier: text("customer_tier").notNull(),
@@ -147,6 +148,9 @@ export const assessmentSchema = z.object({
   ]).optional(),
   
   consentMarketing: z.boolean()
+    .default(false),
+  
+  ageVerification: z.boolean()
     .default(false),
   
   projectDescriptionText: z.string()

@@ -24,6 +24,7 @@ export class MemStorage implements IStorage {
       projectDescription: insertAssessment.projectDescription || null,
       agentSupport: insertAssessment.agentSupport || null,
       consentMarketing: insertAssessment.consentMarketing ?? false,
+      ageVerification: insertAssessment.ageVerification ?? false,
       tags: insertAssessment.tags ?? null,
       // Handle optional fields for Explorer/Starter tiers
       budgetRange: insertAssessment.budgetRange || null,
@@ -90,6 +91,7 @@ export async function validateFormData(rawData: any): Promise<{
       governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms || ''),
       agentSupport: rawData.agentSupport ? DOMPurify.sanitize(rawData.agentSupport) : undefined,
       consentMarketing: Boolean(rawData.consentMarketing),
+      ageVerification: Boolean(rawData.ageVerification),
       projectDescriptionText: rawData.projectDescriptionText ? 
         DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
         "",

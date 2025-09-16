@@ -1,0 +1,176 @@
+⚠️ CRITICAL WARNING - READ BEFORE IMPLEMENTING ⚠️
+
+MAJOR BUSINESS RISKS:
+- Form Breaking Risk: Modifying existing consent logic could break your current form submission flow
+- Legal Liability: Implementing incomplete legal compliance is worse than current state
+- User Experience: Adding complexity might reduce conversion rates before weekend launch
+- Database Integrity: New consent fields may not map correctly to your GoHighLevel setup
+- Production Downtime: Changes this close to launch could cause unexpected failures
+
+TECHNICAL RISKS:
+- JavaScript Conflicts: New validation functions may conflict with existing form logic
+- Mobile Responsiveness: New CSS might break on mobile devices
+- Browser Compatibility: Advanced CSS features may not work in older browsers
+- Form Validation: Existing step progression logic might be disrupted
+- API Integration: GoHighLevel webhook may reject new consent record format
+
+LEGAL COMPLIANCE RISKS:
+- Incomplete Implementation: Partial legal compliance can create more liability than non-compliance
+- Missing Privacy Policy: Legal consent requires actual privacy policy page (not included)
+- Email Infrastructure: Requires privacy@illummaa.ca email setup for legal compliance
+- Data Storage: Backend consent record storage must be implemented for CASL compliance
+- Audit Trail: Missing database schema for 7-year consent record retention
+
+WEEKEND LAUNCH RISKS:
+- Limited Testing Time: Complex legal changes need thorough testing before going live
+- Support Availability: Legal/technical issues over weekend with limited support
+- Rollback Complexity: Difficult to revert legal compliance changes quickly
+- User Confusion: New consent flow may confuse existing leads in pipeline
+
+BACKUP YOUR CODE BEFORE PROCEEDING - This change affects form validation, submission flow, and legal compliance.
+
+---
+
+Update the ILLÜMMAA form consent section to be CASL/PIPEDA compliant. Replace the existing checkbox with this enhanced version that maintains the same visual design:
+
+FIND the current consent checkbox HTML and REPLACE it entirely with:
+
+<div class="consent-section-enhanced">
+    <div class="consent-primary">
+        <label class="consent-checkbox-label">
+            <input type="checkbox" id="consentCommunications" name="consentCommunications" required class="consent-checkbox-input">
+            <span class="consent-checkbox-custom"></span>
+            <span class="consent-text-main">
+                I consent to ILLÜMMAA contacting me via email, phone, and text about modular home solutions and understand I can unsubscribe anytime
+                <button type="button" class="consent-details-toggle" onclick="toggleConsentDetails()" aria-label="Show details">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+            </span>
+        </label>
+    </div>
+
+    <div id="consentDetailsPanel" class="consent-details-panel">
+        <div class="consent-details-content">
+            <div class="consent-grid">
+                <div class="consent-column">
+                    <h5>Communication Methods:</h5>
+                    <ul>
+                        <li>Email at address provided</li>
+                        <li>Text/SMS messages</li>
+                        <li>Phone calls when appropriate</li>
+                    </ul>
+                </div>
+                <div class="consent-column">
+                    <h5>Types of Communications:</h5>
+                    <ul>
+                        <li>Response to your inquiry</li>
+                        <li>Product information</li>
+                        <li>Educational resources</li>
+                        <li>Event invitations</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="consent-footer">
+                <p>Consent is voluntary and can be withdrawn anytime by emailing <strong>privacy@illummaa.ca</strong> or texting STOP. View our <a href="/privacy-policy" target="_blank">Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="consent-age-verification">
+        <label class="consent-checkbox-label">
+            <input type="checkbox" id="ageVerification" name="ageVerification" required class="consent-checkbox-input">
+            <span class="consent-checkbox-custom"></span>
+            <span class="consent-text-secondary">I am 18+ years old</span>
+        </label>
+    </div>
+</div>
+
+ADD this CSS to your existing styles:
+
+.consent-section-enhanced { margin: 16px 0; }
+.consent-primary { background: #f8f9fa; border-radius: 8px; padding: 16px; border: 1px solid #e9ecef; margin-bottom: 12px; }
+.consent-checkbox-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: 14px; line-height: 1.4; }
+.consent-checkbox-input { display: none; }
+.consent-checkbox-custom { width: 18px; height: 18px; border: 2px solid #6c757d; border-radius: 3px; background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: all 0.2s ease; }
+.consent-checkbox-input:checked + .consent-checkbox-custom { background: #28a745; border-color: #28a745; }
+.consent-checkbox-input:checked + .consent-checkbox-custom::after { content: '✓'; color: white; font-size: 11px; font-weight: bold; }
+.consent-text-main { color: #495057; font-weight: 500; flex: 1; }
+.consent-details-toggle { background: none; border: none; color: #6c757d; cursor: pointer; padding: 2px 4px; margin-left: 8px; border-radius: 3px; transition: all 0.2s ease; }
+.consent-details-toggle:hover { color: #28a745; background: rgba(40, 167, 69, 0.1); }
+.consent-details-panel { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background: white; border-radius: 8px; margin-bottom: 12px; }
+.consent-details-panel.expanded { max-height: 300px; border: 1px solid #e9ecef; }
+.consent-details-content { padding: 20px; }
+.consent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+@media (max-width: 768px) { .consent-grid { grid-template-columns: 1fr; gap: 16px; } }
+.consent-column h5 { margin: 0 0 8px 0; font-size: 13px; font-weight: 600; color: #495057; }
+.consent-column ul { margin: 0; padding-left: 16px; font-size: 12px; color: #6c757d; }
+.consent-column li { margin-bottom: 4px; }
+.consent-footer { padding-top: 16px; border-top: 1px solid #e9ecef; font-size: 12px; color: #6c757d; }
+.consent-footer a { color: #28a745; text-decoration: none; }
+.consent-footer a:hover { text-decoration: underline; }
+.consent-age-verification { padding: 8px 0; }
+.consent-text-secondary { color: #6c757d; font-size: 13px; }
+
+ADD this JavaScript:
+
+function toggleConsentDetails() {
+    const panel = document.getElementById('consentDetailsPanel');
+    const toggle = document.querySelector('.consent-details-toggle svg');
+    if (panel.classList.contains('expanded')) {
+        panel.classList.remove('expanded');
+        toggle.style.transform = 'rotate(0deg)';
+    } else {
+        panel.classList.add('expanded');
+        toggle.style.transform = 'rotate(180deg)';
+    }
+}
+
+function validateConsentCompliance() {
+    const communications = document.getElementById('consentCommunications');
+    const age = document.getElementById('ageVerification');
+    if (!communications?.checked) {
+        alert('Please consent to communications to continue');
+        return false;
+    }
+    if (!age?.checked) {
+        alert('Age verification required');
+        return false;
+    }
+    return true;
+}
+
+REPLACE your existing form validation with:
+function validateStep1() {
+    return validateConsentCompliance();
+}
+
+UPDATE your form submission to include consent record:
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('leadForm') || document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!validateConsentCompliance()) {
+                e.preventDefault();
+                return false;
+            }
+            const consentRecord = {
+                timestamp: new Date().toISOString(),
+                version: 'v2.0-casl-compliant',
+                communicationsConsent: true,
+                ageVerified: true,
+                withdrawalMethod: 'privacy@illummaa.ca or text STOP'
+            };
+            const consentInput = document.createElement('input');
+            consentInput.type = 'hidden';
+            consentInput.name = 'consentRecord';
+            consentInput.value = JSON.stringify(consentRecord);
+            form.appendChild(consentInput);
+        });
+    }
+});
+
+CRITICAL: Test thoroughly before launch - this changes form validation, submission flow, and legal compliance structure. Backup your current code first.
+
+This maintains your existing design while providing CASL/PIPEDA compliance, but requires privacy@illummaa.ca email setup and privacy policy page creation.

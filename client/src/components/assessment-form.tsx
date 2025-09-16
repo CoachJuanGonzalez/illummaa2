@@ -18,6 +18,21 @@ import { SecurityModule } from "@/lib/security";
 
 const TOTAL_STEPS = 5;
 
+// CASL/PIPEDA Compliant Consent Validation Functions
+function validateConsentCompliance(formData: any) {
+    if (!formData.consentMarketing) {
+        return { valid: false, message: 'Please consent to communications to continue' };
+    }
+    if (!formData.ageVerification) {
+        return { valid: false, message: 'Age verification required' };
+    }
+    return { valid: true };
+}
+
+function validateStep1(formData: any) {
+    return validateConsentCompliance(formData);
+}
+
 // Form validation function with security checks
 function validateFormData(formData: any) {
     const errors: string[] = [];
@@ -56,9 +71,10 @@ function validateFormData(formData: any) {
         }
     }
     
-    // Check required consent
-    if (!formData.consentMarketing) {
-        errors.push('Please accept the privacy policy to continue');
+    // CASL/PIPEDA Consent validation
+    const consentValidation = validateConsentCompliance(formData);
+    if (!consentValidation.valid) {
+        errors.push(consentValidation.message || 'Consent validation failed');
     }
     
     return {
@@ -94,6 +110,9 @@ export default function AssessmentForm() {
   // STEP 1 - State for form logic consistency (per step-by-step instructions)
   const [isUnitFieldDisabled, setIsUnitFieldDisabled] = useState(false);
   const [showResearchNote, setShowResearchNote] = useState(false);
+  
+  // CASL/PIPEDA Consent state
+  const [showConsentDetails, setShowConsentDetails] = useState(false);
 
   const { toast } = useToast();
 
@@ -143,6 +162,7 @@ export default function AssessmentForm() {
       governmentPrograms: undefined,
       agentSupport: undefined,
       consentMarketing: false,
+      ageVerification: false,
       projectDescriptionText: "",
     },
   });
@@ -870,7 +890,8 @@ export default function AssessmentForm() {
         governmentPrograms: SecurityModule.sanitizeInput(data.governmentPrograms || ''),
         agentSupport: SecurityModule.sanitizeInput(data.agentSupport || ''),
         projectDescriptionText: SecurityModule.sanitizeInput(projectDescriptionValue || '').substring(0, 500),
-        consentMarketing: data.consentMarketing
+        consentMarketing: data.consentMarketing,
+        ageVerification: data.ageVerification
       };
 
       // Security validation
@@ -941,6 +962,18 @@ export default function AssessmentForm() {
         userAgent: navigator.userAgent.substring(0, 200)
       };
 
+      // CASL/PIPEDA Consent Record (as per instructions)
+      const consentRecord = {
+        timestamp: new Date().toISOString(),
+        version: 'v2.0-casl-compliant',
+        communicationsConsent: sanitizedData.consentMarketing,
+        ageVerified: sanitizedData.ageVerification,
+        withdrawalMethod: 'privacy@illummaa.ca or text STOP'
+      };
+      
+      // Add consent record to payload
+      (securePayload as any).consentRecord = consentRecord;
+
       // STEP 6 - Update payload for Explorer tier (per step-by-step instructions)
       if (customerTier === 'tier_0_explorer') {
         securePayload.priorityScore = 0; // Researchers always score 0
@@ -1007,33 +1040,103 @@ export default function AssessmentForm() {
               />
             </div>
             
-            {/* Privacy Consent Checkbox - Added before contact fields as per instructions */}
-            <div className="consent-checkbox mb-6 p-4 bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-200 rounded-lg">
-              <FormField
-                control={form.control}
-                name="consentMarketing"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <input
-                        type="checkbox"
-                        id="consentMarketing"
-                        name="consentMarketing"
-                        checked={field.value}
-                        onChange={field.onChange}
-                        className="mt-1 h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
-                        data-testid="checkbox-consent-marketing"
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel className="text-sm font-medium cursor-pointer" htmlFor="consentMarketing" data-testid="label-consent-marketing">
-                        I consent to receive communications from ILLÜMMAA about modular home solutions and understand I can unsubscribe anytime.
-                      </FormLabel>
+            {/* Enhanced CASL/PIPEDA Compliant Consent Section */}
+            <div className="consent-section-enhanced">
+              <div className="consent-primary">
+                <FormField
+                  control={form.control}
+                  name="consentMarketing"
+                  render={({ field }) => (
+                    <FormItem>
+                      <label className="consent-checkbox-label">
+                        <FormControl>
+                          <input 
+                            type="checkbox" 
+                            id="consentCommunications" 
+                            name="consentCommunications" 
+                            checked={field.value}
+                            onChange={field.onChange}
+                            required 
+                            className="consent-checkbox-input"
+                            data-testid="checkbox-consent-communications"
+                          />
+                        </FormControl>
+                        <span className="consent-checkbox-custom"></span>
+                        <span className="consent-text-main">
+                          I consent to ILLÜMMAA contacting me via email, phone, and text about modular home solutions and understand I can unsubscribe anytime
+                          <button 
+                            type="button" 
+                            className="consent-details-toggle" 
+                            onClick={() => setShowConsentDetails(!showConsentDetails)}
+                            aria-label="Show details"
+                            data-testid="button-consent-details-toggle"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                          </button>
+                        </span>
+                      </label>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className={`consent-details-panel ${showConsentDetails ? 'expanded' : ''}`}>
+                <div className="consent-details-content">
+                  <div className="consent-grid">
+                    <div className="consent-column">
+                      <h5>Communication Methods:</h5>
+                      <ul>
+                        <li>Email at address provided</li>
+                        <li>Text/SMS messages</li>
+                        <li>Phone calls when appropriate</li>
+                      </ul>
                     </div>
-                  </FormItem>
-                )}
-              />
+                    <div className="consent-column">
+                      <h5>Types of Communications:</h5>
+                      <ul>
+                        <li>Response to your inquiry</li>
+                        <li>Product information</li>
+                        <li>Educational resources</li>
+                        <li>Event invitations</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div className="consent-footer">
+                    <p>Consent is voluntary and can be withdrawn anytime by emailing <strong>privacy@illummaa.ca</strong> or texting STOP. View our <a href="/privacy-policy" target="_blank">Privacy Policy</a>.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="consent-age-verification">
+                <FormField
+                  control={form.control}
+                  name="ageVerification"
+                  render={({ field }) => (
+                    <FormItem>
+                      <label className="consent-checkbox-label">
+                        <FormControl>
+                          <input 
+                            type="checkbox" 
+                            id="ageVerification" 
+                            name="ageVerification" 
+                            checked={field.value}
+                            onChange={field.onChange}
+                            required 
+                            className="consent-checkbox-input"
+                            data-testid="checkbox-age-verification"
+                          />
+                        </FormControl>
+                        <span className="consent-checkbox-custom"></span>
+                        <span className="consent-text-secondary">I am 18+ years old</span>
+                      </label>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
