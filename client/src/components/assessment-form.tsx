@@ -63,20 +63,20 @@ function validateCurrentStep() {
     }
     
     // CORRECTED: Company validation only for non-explorers
-    const companyName = String(formData.get('companyName') || '');
+    const companyName = String(formData.get('company') || '');
     if (!isExplorer && !companyName.trim()) {
         alert('Please enter your company name');
-        const element = document.querySelector('[name="companyName"]') as HTMLInputElement;
+        const element = document.querySelector('[name="company"]') as HTMLInputElement;
         element?.focus();
         return false;
     }
     
     // Budget validation only for non-explorers (explorers get auto-value)
     if (!isExplorer) {
-        const budget = String(formData.get('budget') || '');
+        const budget = String(formData.get('budgetRange') || '');
         if (!budget) {
             alert('Please select your project budget range');
-            const element = document.querySelector('[name="budget"]') as HTMLSelectElement;
+            const element = document.querySelector('[name="budgetRange"]') as HTMLSelectElement;
             element?.focus();
             return false;
         }
@@ -110,8 +110,8 @@ function prepareFormSubmission(formElement: HTMLFormElement) {
         lastName: formData.get('lastName'),
         email: formData.get('email'),
         phone: formData.get('phone'),
-        companyName: formData.get('companyName') || (isExplorer ? '' : 'Required'),
-        budget: isExplorer ? 'Under $500K' : (formData.get('budget') || ''),
+        companyName: formData.get('company') || (isExplorer ? '' : 'Required'),
+        budget: isExplorer ? 'Under $5 Million' : (formData.get('budgetRange') || ''),
         readiness: readiness,
         constructionProvince: formData.get('constructionProvince') || '',
         unitCount: parseInt(String(formData.get('unitCount') || '0')) || (isExplorer ? 1 : 0),
@@ -128,6 +128,7 @@ function prepareFormSubmission(formElement: HTMLFormElement) {
 }
 
 // Form validation function with security checks
+
 function validateFormData(formData: any) {
     const errors: string[] = [];
     
@@ -247,6 +248,10 @@ export default function AssessmentForm() {
   const [fieldTouched, setFieldTouched] = useState<Record<string, boolean>>({});
   const [priorityScoreAnimating, setPriorityScoreAnimating] = useState(false);
   
+  // STEP 4: ADD React state variables at top of component (per attached instructions)
+  const [companyRequired, setCompanyRequired] = useState(true);
+  const [budgetVisible, setBudgetVisible] = useState(true);
+  
   // STEP 1 - State for form logic consistency (per step-by-step instructions)
   const [isUnitFieldDisabled, setIsUnitFieldDisabled] = useState(false);
   const [showResearchNote, setShowResearchNote] = useState(false);
@@ -256,6 +261,90 @@ export default function AssessmentForm() {
   const [showConsentDetails, setShowConsentDetails] = useState(false);
 
   const { toast } = useToast();
+
+  // STEP 2: UPDATE form validation function to handle explorer logic (per attached instructions)
+  const validateForm = () => {
+    const formValues = form.getValues();
+    const readiness = formValues.readiness || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    // Basic validation
+    if (!formValues.firstName?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your first name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!formValues.lastName?.trim()) {
+      toast({
+        title: "Validation Error", 
+        description: "Please enter your last name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!formValues.email?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your email",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!formValues.phone?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your phone number", 
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    // CRITICAL: Company validation only for non-explorers
+    if (!isExplorer && !formValues.company?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your company name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    // CRITICAL: Budget validation only for non-explorers
+    if (!isExplorer && !formValues.budgetRange) {
+      toast({
+        title: "Validation Error",
+        description: "Please select your budget range",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!formValues.consentMarketing) {
+      toast({
+        title: "Validation Error",
+        description: "Please consent to communications",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    if (!formValues.ageVerification) {
+      toast({
+        title: "Validation Error",
+        description: "Please verify you are 18+ years old",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    return true;
+  };
 
   // Global error handling - Step 7 security requirement
   useEffect(() => {
@@ -406,28 +495,40 @@ export default function AssessmentForm() {
     };
   };
 
-  // Handle readiness change - CRITICAL FIX for data consistency (per step-by-step instructions)
-  const handleReadinessChange = () => {
-    const readiness = form.getValues('readiness');
+  // STEP 1: Handle readiness change with Explorer conditional logic (per attached instructions)
+  const handleReadinessChange = (value?: string) => {
+    const readiness = value || form.getValues('readiness');
     
-    if (readiness === 'researching' || readiness === 'planning-long') {
-        // Force Explorer path for researchers
-        form.setValue('projectUnitCount', 0);
-        setIsUnitFieldDisabled(true);
-        setShowResearchNote(true);
-        
-        // Calculate tier (will be Explorer)
-        calculateTier();
-        
+    const isExplorer = readiness?.includes('researching') || readiness?.includes('learn more');
+    
+    if (isExplorer) {
+      // For explorers: make company optional, hide budget dropdown
+      setCompanyRequired(false);
+      setBudgetVisible(false);
+      form.setValue('budgetRange', 'Under $5 Million'); // Set to valid enum value
+      
+      // Force Explorer path for researchers
+      form.setValue('projectUnitCount', 0);
+      setIsUnitFieldDisabled(true);
+      setShowResearchNote(true);
+      
     } else {
-        // Re-enable for actual buyers
-        setIsUnitFieldDisabled(false);
-        setShowResearchNote(false);
-        form.setValue('projectUnitCount', 50); // Reset to default
-        
-        // Clear tier display until units selected
-        // Note: Tier indicator will be updated when calculateTier runs
+      // For non-explorers: make company required, show budget dropdown
+      setCompanyRequired(true);
+      setBudgetVisible(true);
+      form.setValue('budgetRange', undefined); // Clear budget so user must select
+      
+      // Re-enable for actual buyers
+      setIsUnitFieldDisabled(false);
+      setShowResearchNote(false);
+      form.setValue('projectUnitCount', 50); // Reset to default
     }
+    
+    // Update Explorer state
+    setIsExplorer(isExplorer);
+    
+    // Calculate tier
+    calculateTier();
   };
 
   // Real-time tier display (CORRECTED VERSION per instructions)
@@ -999,6 +1100,64 @@ export default function AssessmentForm() {
     }
   };
 
+  // STEP 5: UPDATE form submission to send correct data (per attached instructions)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    const formValues = form.getValues();
+    const readiness = formValues.readiness || '';
+    const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+    
+    const payload = {
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email,
+      phone: formValues.phone,
+      companyName: isExplorer ? (formValues.company || '') : formValues.company,
+      budget: isExplorer ? 'Under $5 Million' : formValues.budgetRange,
+      readiness: formValues.readiness,
+      consentCommunications: formValues.consentMarketing.toString(),
+      ageVerification: formValues.ageVerification.toString(),
+      illummaaOnly: 'TRUE',
+      noExternalReferrals: 'TRUE'
+    };
+    
+    // Submit payload to backend
+    try {
+      const response = await fetch('/api/submit-assessment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Handle success
+        setIsSubmitted(true);
+        toast({
+          title: "Assessment Submitted Successfully",
+          description: result.message || "Your submission has been received!",
+        });
+      } else {
+        // Handle error
+        toast({
+          title: "Submission Failed",
+          description: result.message || 'Submission failed',
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Network Error", 
+        description: 'Network error. Please try again.',
+        variant: "destructive",
+      });
+    }
+  };
+
   const onSubmit = async (data: AssessmentFormData) => {
     // Only allow submission on the final step
     if (currentStep !== TOTAL_STEPS) {
@@ -1197,7 +1356,7 @@ export default function AssessmentForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel data-testid="label-readiness" className="text-lg font-semibold">Where are you in your modular home journey? *</FormLabel>
-                    <Select onValueChange={(value) => { field.onChange(value); handleReadinessChange(); }} defaultValue={field.value}>
+                    <Select onValueChange={(value) => { field.onChange(value); handleReadinessChange(value); }} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger data-testid="select-readiness">
                           <SelectValue placeholder="Please select..." />
@@ -1469,54 +1628,51 @@ export default function AssessmentForm() {
               </div>
             </div>
             
-            {/* STEP 1: Conditional budget field with Explorer logic (per step-by-step instructions) */}
-            <div className="form-group budget-group">
-              <FormField
-                control={form.control}
-                name="budgetRange"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel id="budgetLabel" data-testid="label-budget-range">
-                      {isExplorer ? "Project Budget Range (CAD) - Will be discussed" : "Project Budget Range (CAD) *"}
-                    </FormLabel>
-                    <FormDescription>
-                      Total project budget for modular construction and site preparation
-                    </FormDescription>
-                    {!isExplorer ? (
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+            {/* STEP 3: Conditional budget field with conditional visibility (per attached instructions) */}
+            {budgetVisible ? (
+              <div className="form-group">
+                <FormField
+                  control={form.control}
+                  name="budgetRange"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel data-testid="label-budget-range">Project Budget Range (CAD) *</FormLabel>
+                      <FormDescription>
+                        Total project budget for modular construction and site preparation
+                      </FormDescription>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} required>
                         <FormControl>
                           <SelectTrigger id="budget" data-testid="select-budget-range">
                             <SelectValue placeholder="Select budget range..." />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Under $500K">Under $500K</SelectItem>
-                          <SelectItem value="$500K - $2M">$500K - $2M</SelectItem>
-                          <SelectItem value="$2M - $5M">$2M - $5M</SelectItem>
-                          <SelectItem value="$5M - $15M">$5M - $15M</SelectItem>
-                          <SelectItem value="$15M - $30M">$15M - $30M</SelectItem>
-                          <SelectItem value="$30M - $50M">$30M - $50M</SelectItem>
-                          <SelectItem value="Over $50M">Over $50M</SelectItem>
+                          <SelectItem value="Under $5 Million">Under $5 Million</SelectItem>
+                          <SelectItem value="$5M - $15 Million">$5M - $15 Million</SelectItem>
+                          <SelectItem value="$15M - $30 Million">$15M - $30 Million</SelectItem>
+                          <SelectItem value="$30M - $50 Million">$30M - $50 Million</SelectItem>
+                          <SelectItem value="Over $50 Million">Over $50 Million</SelectItem>
                         </SelectContent>
                       </Select>
-                    ) : (
-                      <input 
-                        type="hidden" 
-                        id="budgetHidden" 
-                        {...field}
-                        value="Learning about costs and options"
-                      />
-                    )}
-                    {isExplorer && (
-                      <div id="explorerBudgetNote" className="text-sm text-gray-600 mt-2 italic">
-                        Budget planning will be discussed during your educational consultation
-                      </div>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ) : (
+              <div className="form-group">
+                <FormLabel>Project Budget Range (CAD)</FormLabel>
+                <div style={{ 
+                  background: '#f8f9fa', 
+                  padding: '12px', 
+                  borderRadius: '6px', 
+                  color: '#6c757d',
+                  fontStyle: 'italic'
+                }}>
+                  Budget planning will be discussed during your educational consultation
+                </div>
+              </div>
+            )}
           </div>
         );
 

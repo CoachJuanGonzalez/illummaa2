@@ -1,0 +1,187 @@
+FIX ILLUMMAA frontend React conditional logic for Explorer users
+
+PROBLEM: Frontend React component not properly handling conditional fields for Explorer users
+SOLUTION: Update React component state and validation logic
+
+STEP 1: FIND your React component with the readiness dropdown and UPDATE conditional rendering:
+
+// Find where you handle the readiness field change and add this logic:
+const handleReadinessChange = (value) => {
+  setReadiness(value);
+  
+  const isExplorer = value.includes('researching') || value.includes('learn more');
+  
+  if (isExplorer) {
+    // For explorers: make company optional, hide budget dropdown
+    setCompanyRequired(false);
+    setBudgetVisible(false);
+    setBudget('Under $500K'); // Set to valid enum value
+  } else {
+    // For non-explorers: make company required, show budget dropdown
+    setCompanyRequired(true);
+    setBudgetVisible(true);
+    setBudget(''); // Clear budget so user must select
+  }
+};
+
+STEP 2: UPDATE your form validation function to handle explorer logic:
+
+const validateForm = () => {
+  const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+  
+  // Basic validation
+  if (!firstName.trim()) {
+    setError('Please enter your first name');
+    return false;
+  }
+  
+  if (!lastName.trim()) {
+    setError('Please enter your last name');
+    return false;
+  }
+  
+  if (!email.trim()) {
+    setError('Please enter your email');
+    return false;
+  }
+  
+  if (!phone.trim()) {
+    setError('Please enter your phone number');
+    return false;
+  }
+  
+  // CRITICAL: Company validation only for non-explorers
+  if (!isExplorer && !companyName.trim()) {
+    setError('Please enter your company name');
+    return false;
+  }
+  
+  // CRITICAL: Budget validation only for non-explorers
+  if (!isExplorer && !budget) {
+    setError('Please select your budget range');
+    return false;
+  }
+  
+  if (!consentCommunications) {
+    setError('Please consent to communications');
+    return false;
+  }
+  
+  if (!ageVerification) {
+    setError('Please verify you are 18+ years old');
+    return false;
+  }
+  
+  return true;
+};
+
+STEP 3: UPDATE your form JSX to conditionally render fields:
+
+// Company field with conditional requirement
+<div className="form-group">
+  <label htmlFor="companyName">
+    Company Name {companyRequired ? '*' : '(Optional)'}
+  </label>
+  <input
+    type="text"
+    id="companyName"
+    value={companyName}
+    onChange={(e) => setCompanyName(e.target.value)}
+    required={companyRequired}
+    placeholder={companyRequired ? "Company Name *" : "Company Name (Optional)"}
+  />
+</div>
+
+// Budget field with conditional visibility
+{budgetVisible ? (
+  <div className="form-group">
+    <label htmlFor="budget">Project Budget Range (CAD) *</label>
+    <select
+      id="budget"
+      value={budget}
+      onChange={(e) => setBudget(e.target.value)}
+      required
+    >
+      <option value="">Select budget range...</option>
+      <option value="Under $500K">Under $500K</option>
+      <option value="$500K - $2M">$500K - $2M</option>
+      <option value="$2M - $5M">$2M - $5M</option>
+      <option value="$5M - $15M">$5M - $15M</option>
+      <option value="$15M - $30M">$15M - $30M</option>
+      <option value="$30M - $50M">$30M - $50M</option>
+      <option value="Over $50M">Over $50M</option>
+    </select>
+  </div>
+) : (
+  <div className="form-group">
+    <label>Project Budget Range (CAD)</label>
+    <div style={{ 
+      background: '#f8f9fa', 
+      padding: '12px', 
+      borderRadius: '6px', 
+      color: '#6c757d',
+      fontStyle: 'italic'
+    }}>
+      Budget planning will be discussed during your educational consultation
+    </div>
+  </div>
+)}
+
+STEP 4: ADD React state variables at the top of your component:
+
+const [companyRequired, setCompanyRequired] = useState(true);
+const [budgetVisible, setBudgetVisible] = useState(true);
+
+STEP 5: UPDATE form submission to send correct data:
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) return;
+  
+  const isExplorer = readiness.includes('researching') || readiness.includes('learn more');
+  
+  const payload = {
+    firstName,
+    lastName,
+    email,
+    phone,
+    companyName: isExplorer ? (companyName || '') : companyName,
+    budget: isExplorer ? 'Under $500K' : budget,
+    readiness,
+    consentCommunications: consentCommunications.toString(),
+    ageVerification: ageVerification.toString(),
+    illummaaOnly: 'TRUE',
+    noExternalReferrals: 'TRUE'
+  };
+  
+  // Submit payload to your backend
+  try {
+    const response = await fetch('/api/submit-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      // Handle success
+      alert(result.message);
+    } else {
+      // Handle error
+      setError(result.message || 'Submission failed');
+    }
+  } catch (error) {
+    setError('Network error. Please try again.');
+  }
+};
+
+CRITICAL TESTING:
+1. Select "Just researching - want to learn more"
+2. Verify company field shows "(Optional)" and doesn't require input
+3. Verify budget dropdown disappears and shows explanatory text
+4. Try submitting form - should work without company name
+5. Change to another option - company should become required again
+
+This React-specific fix addresses the conditional rendering and validation issues shown in your screenshots.
