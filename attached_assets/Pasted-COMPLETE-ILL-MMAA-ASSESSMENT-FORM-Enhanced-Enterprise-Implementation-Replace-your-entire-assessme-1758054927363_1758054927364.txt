@@ -1,3 +1,9 @@
+COMPLETE ILLÜMMAA ASSESSMENT FORM - Enhanced Enterprise Implementation
+
+Replace your entire assessment form with this comprehensive, secure, and modern implementation that handles Explorer users, Canadian compliance, and advanced automation tagging.
+
+STEP 1: Replace your assessment form component with this complete implementation:
+```tsx
 import React, { useState, useEffect } from 'react';
 
 const IllummaaAssessmentForm = () => {
@@ -773,3 +779,112 @@ const IllummaaAssessmentForm = () => {
 };
 
 export default IllummaaAssessmentForm;
+STEP 2: Create the secure backend API endpoint:
+javascript// api/submit-assessment.js
+import rateLimit from 'express-rate-limit';
+import { body, validationResult } from 'express-validator';
+import DOMPurify from 'isomorphic-dompurify';
+
+const assessmentLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 3,
+  message: { error: 'Too many submissions. Please wait before trying again.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const validation = [
+  body('firstName').trim().isLength({ min: 2, max: 50 }).matches(/^[a-zA-Z\s'-]+$/),
+  body('lastName').trim().isLength({ min: 2, max: 50 }).matches(/^[a-zA-Z\s'-]+$/),
+  body('email').isEmail().normalizeEmail(),
+  body('phone').matches(/^\+1[0-9]{10}$/),
+  body('consentCommunications').equals('true'),
+  body('ageVerification').equals('true')
+];
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  await new Promise((resolve, reject) => {
+    assessmentLimiter(req, res, (result) => {
+      if (result instanceof Error) reject(result);
+      else resolve(result);
+    });
+  });
+
+  await Promise.all(validation.map(validation => validation.run(req)));
+  const errors = validationResult(req);
+  
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ 
+      success: false, 
+      errors: errors.array(),
+      message: 'Validation failed' 
+    });
+  }
+
+  try {
+    const sanitized = {};
+    for (const [key, value] of Object.entries(req.body)) {
+      sanitized[key] = typeof value === 'string' ? DOMPurify.sanitize(value) : value;
+    }
+
+    const isExplorer = sanitized.isExplorer === 'true';
+    if (!isExplorer && !sanitized.company?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Company name required for business inquiries'
+      });
+    }
+
+    const response = await fetch(process.env.GHL_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'ILLUMMAA-Assessment/2.0'
+      },
+      body: JSON.stringify(sanitized)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Webhook failed: ${response.status}`);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Assessment submitted successfully'
+    });
+
+  } catch (error) {
+    console.error('Assessment error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Processing error. We will contact you directly.'
+    });
+  }
+}
+STEP 3: Add CSS animations to your global styles:
+css@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+.animate-scaleIn { animation: scaleIn 0.3s ease-out; }
+
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #2C5530 !important;
+  box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.1) !important;
+}
+STEP 4: Add environment variables to your .env file:
+envGHL_WEBHOOK_URL=your_actual_webhook_url_here
+NODE_ENV=production
+This complete implementation provides enterprise-grade security, proper Explorer handling, Canadian compliance, advanced tagging, and modern UX/UI design optimized for conversions and Replit efficiency.
