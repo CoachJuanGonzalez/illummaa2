@@ -548,6 +548,35 @@
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
   }
 
+  /* SMS consent specific security styling */
+  input[name="consentSMS"]:not(:checked) + span {
+    opacity: 0.7;
+  }
+
+  input[name="consentSMS"]:checked + span {
+    opacity: 1;
+    border-left: 3px solid #10B981;
+    padding-left: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  /* Prevent consent manipulation via CSS */
+  input[name="consentSMS"] {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    position: relative !important;
+  }
+
+  /* Enhanced consent validation indicators */
+  .consent-validated {
+    background: linear-gradient(135deg, #10B981, #059669);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
   /* Enhanced mobile responsiveness with security considerations */
   @media (max-width: 768px) {
     .container {
@@ -568,7 +597,8 @@
   @media print {
     .security-info,
     .csrf-token,
-    .session-data {
+    .session-data,
+    .sms-audit-trail {
       display: none !important;
     }
   }
@@ -577,6 +607,15 @@
   @media (prefers-contrast: high) {
     input:focus, select:focus, textarea:focus {
       box-shadow: 0 0 0 4px rgba(44, 85, 48, 0.5) !important;
+    }
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
   
