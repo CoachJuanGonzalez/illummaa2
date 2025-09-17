@@ -17,6 +17,8 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   constructionProvince: text("construction_province"),
   developerType: text("developer_type"),
   governmentPrograms: text("government_programs"),
+  learningInterest: text("learning_interest"),
+  informationPreference: text("information_preference"),
   agentSupport: text("agent_support"),
   consentMarketing: boolean("consent_marketing").default(false),
   ageVerification: boolean("age_verification").default(false),
@@ -141,6 +143,27 @@ export const assessmentSchema = z.object({
     "No - Private development only"
   ]).optional(),
   
+  learningInterest: z.enum([
+    "Cost comparison vs traditional construction",
+    "Construction process and timeline understanding",
+    "Building codes and regulatory requirements",
+    "Design options and customization capabilities",
+    "Financing and government program options",
+    "Sustainability and energy efficiency benefits",
+    "Site preparation and installation requirements",
+    "Long-term maintenance and durability",
+    "Comprehensive overview of all aspects"
+  ]).optional(),
+  
+  informationPreference: z.enum([
+    "Email guides and case studies",
+    "One-on-one educational consultation",
+    "Video walkthroughs and virtual tours",
+    "Downloadable planning resources",
+    "Industry webinar invitations",
+    "Mixed approach - email and consultation"
+  ]).optional(),
+  
   agentSupport: z.enum([
     "no-direct",
     "no-agent", 
@@ -165,8 +188,27 @@ export const assessmentSchema = z.object({
   const isExplorerTier = data.readiness === 'researching' || data.projectUnitCount === 0;
   const isStarterTier = !isExplorerTier && data.projectUnitCount <= 49;
   
-  // For Pioneer, Preferred, and Elite tiers (non-Explorer/Starter), require these fields
-  if (!isExplorerTier && !isStarterTier) {
+  // For Explorer tier, require education fields
+  if (isExplorerTier) {
+    if (!data.learningInterest) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['learningInterest'],
+        message: 'Please select your primary learning interest'
+      });
+    }
+    
+    if (!data.informationPreference) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['informationPreference'],
+        message: 'Please select your information preference'
+      });
+    }
+  }
+  
+  // For ALL non-Explorer tiers (Starter, Pioneer, Preferred, Elite), require these fields  
+  if (!isExplorerTier) {
     if (!data.budgetRange) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

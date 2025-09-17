@@ -1,0 +1,319 @@
+// ILLÜMMAA Assessment Form - Explorer Education Enhancement
+// Complete implementation prompt for Replit
+
+Please implement the following comprehensive updates to the ILLÜMMAA assessment form to enhance the Explorer tier user experience with education-focused questions while maintaining enterprise security standards:
+
+// FRONTEND UPDATES - React Component Modifications
+
+// 1. Add new state variables for education fields
+const [formData, setFormData] = useState({
+  // ... existing fields
+  learningInterest: '',
+  informationPreference: ''
+});
+
+// 2. Update Step 2 conditional rendering - Replace existing Step 2 section with:
+{currentStep === 2 && (
+  <div className="space-y-6">
+    {isExplorer ? (
+      // NEW EXPLORER SECTION
+      <>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Learning Preferences
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Help us provide the most relevant educational resources for your modular housing research.
+        </p>
+        
+        <div>
+          <label className="block text-sm text-gray-700 mb-1.5">
+            What aspect of modular construction interests you most? <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="learningInterest"
+            value={formData.learningInterest || ''}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border ${
+              errors.learningInterest ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+              backgroundPosition: 'right 0.5rem center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '1.5em 1.5em',
+              paddingRight: '2.5rem'
+            }}
+            required
+          >
+            <option value="">Select your primary interest...</option>
+            <option value="Cost comparison vs traditional construction">Cost comparison vs traditional construction</option>
+            <option value="Construction process and timeline understanding">Construction process and timeline understanding</option>
+            <option value="Building codes and regulatory requirements">Building codes and regulatory requirements</option>
+            <option value="Design options and customization capabilities">Design options and customization capabilities</option>
+            <option value="Financing and government program options">Financing and government program options</option>
+            <option value="Sustainability and energy efficiency benefits">Sustainability and energy efficiency benefits</option>
+            <option value="Site preparation and installation requirements">Site preparation and installation requirements</option>
+            <option value="Long-term maintenance and durability">Long-term maintenance and durability</option>
+            <option value="Comprehensive overview of all aspects">Comprehensive overview of all aspects</option>
+          </select>
+          {errors.learningInterest && (
+            <p className="text-red-500 text-xs mt-1">{errors.learningInterest}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-700 mb-1.5">
+            How would you prefer to receive information? <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="informationPreference"
+            value={formData.informationPreference || ''}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border ${
+              errors.informationPreference ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+              backgroundPosition: 'right 0.5rem center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '1.5em 1.5em',
+              paddingRight: '2.5rem'
+            }}
+            required
+          >
+            <option value="">Select information preference...</option>
+            <option value="Email guides and case studies">Email guides and case studies</option>
+            <option value="One-on-one educational consultation">One-on-one educational consultation</option>
+            <option value="Video walkthroughs and virtual tours">Video walkthroughs and virtual tours</option>
+            <option value="Downloadable planning resources">Downloadable planning resources</option>
+            <option value="Industry webinar invitations">Industry webinar invitations</option>
+            <option value="Mixed approach - email and consultation">Mixed approach - email and consultation</option>
+          </select>
+          {errors.informationPreference && (
+            <p className="text-red-500 text-xs mt-1">{errors.informationPreference}</p>
+          )}
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📚</span>
+            <div>
+              <h4 className="font-semibold text-blue-800">Educational Journey</h4>
+              <p className="text-sm text-blue-700">
+                We'll provide personalized resources based on your interests and preferred learning style.
+              </p>
+            </div>
+          </div>
+        </div>
+      </>
+    ) : (
+      // EXISTING BUDGET + TIMELINE FOR NON-EXPLORERS
+      <>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Budget & Timeline
+        </h2>
+        
+        <div>
+          <label className="block text-sm text-gray-700 mb-1.5">
+            Project Budget Range (CAD) <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="budget"
+            value={formData.budget || ''}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border ${
+              errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+              backgroundPosition: 'right 0.5rem center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '1.5em 1.5em',
+              paddingRight: '2.5rem'
+            }}
+            required
+          >
+            <option value="">Select budget range...</option>
+            <option value="Under $500K">Under $500K</option>
+            <option value="$500K - $2M">$500K - $2M</option>
+            <option value="$2M - $5M">$2M - $5M</option>
+            <option value="$5M - $15M">$5M - $15M</option>
+            <option value="$15M - $30M">$15M - $30M</option>
+            <option value="$30M - $50M">$30M - $50M</option>
+            <option value="Over $50M">Over $50M</option>
+          </select>
+          {errors.budget && (
+            <p className="text-red-500 text-xs mt-1">{errors.budget}</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-700 mb-1.5">
+            Delivery Timeline <span className="text-red-500">*</span>
+          </label>
+          <select
+            name="timeline"
+            value={formData.timeline || ''}
+            onChange={handleInputChange}
+            className={`w-full px-4 py-3 rounded-lg border ${
+              errors.timeline ? 'border-red-300 bg-red-50' : 'border-gray-300'
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+              backgroundPosition: 'right 0.5rem center',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: '1.5em 1.5em',
+              paddingRight: '2.5rem'
+            }}
+            required
+          >
+            <option value="">Select timeline...</option>
+            <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
+            <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
+            <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
+            <option value="Long-term (12+ months)">Long-term (12+ months)</option>
+          </select>
+          {errors.timeline && (
+            <p className="text-red-500 text-xs mt-1">{errors.timeline}</p>
+          )}
+        </div>
+      </>
+    )}
+  </div>
+)}
+
+// 3. Update validation logic in validateStep function - Replace case 2:
+case 2:
+  if (isExplorer) {
+    if (!formData.learningInterest) {
+      newErrors.learningInterest = 'Please select your primary interest';
+    }
+    if (!formData.informationPreference) {
+      newErrors.informationPreference = 'Please select your information preference';
+    }
+  } else {
+    if (!formData.budget) {
+      newErrors.budget = 'Budget range is required';
+    }
+    if (!formData.timeline) {
+      newErrors.timeline = 'Timeline is required';
+    }
+  }
+  break;
+
+// BACKEND UPDATES - API Endpoint Modifications
+
+// 4. Add new validation rules in assessmentValidation array:
+body('learningInterest').optional().isIn([
+  'Cost comparison vs traditional construction',
+  'Construction process and timeline understanding', 
+  'Building codes and regulatory requirements',
+  'Design options and customization capabilities',
+  'Financing and government program options',
+  'Sustainability and energy efficiency benefits',
+  'Site preparation and installation requirements',
+  'Long-term maintenance and durability',
+  'Comprehensive overview of all aspects'
+]),
+body('informationPreference').optional().isIn([
+  'Email guides and case studies',
+  'One-on-one educational consultation',
+  'Video walkthroughs and virtual tours',
+  'Downloadable planning resources', 
+  'Industry webinar invitations',
+  'Mixed approach - email and consultation'
+]),
+
+// 5. Update webhook payload generation - Add new fields:
+const payload = {
+  // ... existing fields
+  learningInterest: sanitizeInput(formData.learningInterest || ''),
+  informationPreference: sanitizeInput(formData.informationPreference || ''),
+  isEducationalLead: customerTier === 'tier_0_explorer' ? 'true' : 'false',
+  educationalJourneyOptimized: formData.learningInterest ? 'true' : 'false',
+  // ... rest of existing fields
+};
+
+// 6. Update input sanitization to handle new fields:
+const sanitizeInput = (value) => {
+  if (typeof value !== 'string') return value;
+  return value.trim().replace(/[<>]/g, '').substring(0, 1000);
+};
+
+// Apply sanitization to new fields in form submission
+const sanitizedData = {};
+for (const [key, value] of Object.entries(req.body)) {
+  if (typeof value === 'string') {
+    sanitizedData[key] = DOMPurify.sanitize(value);
+  } else {
+    sanitizedData[key] = value;
+  }
+}
+
+// SECURITY ENHANCEMENTS
+
+// 7. Add conditional validation logic for Explorer vs non-Explorer:
+// Additional validation after standard validation
+if (sanitizedData.customerTier === 'tier_0_explorer') {
+  if (!sanitizedData.learningInterest) {
+    return res.status(400).json({
+      success: false,
+      message: 'Learning interest is required for educational inquiries.'
+    });
+  }
+  if (!sanitizedData.informationPreference) {
+    return res.status(400).json({
+      success: false, 
+      message: 'Information preference is required for educational inquiries.'
+    });
+  }
+} else {
+  if (!sanitizedData.projectBudgetRange) {
+    return res.status(400).json({
+      success: false,
+      message: 'Budget range is required for project inquiries.'
+    });
+  }
+  if (!sanitizedData.deliveryTimeline) {
+    return res.status(400).json({
+      success: false,
+      message: 'Delivery timeline is required for project inquiries.'
+    });
+  }
+}
+
+// 8. Enhanced logging for educational leads:
+console.log('Assessment submission processed:', {
+  submissionId,
+  tier: sanitizedData.customerTier,
+  priorityScore: sanitizedData.aiPriorityScore,
+  isEducational: sanitizedData.isEducationalLead,
+  learningFocus: sanitizedData.learningInterest || 'N/A',
+  caslCompliant: sanitizedData.caslCompliant,
+  pipedaCompliant: sanitizedData.pipedaCompliant
+});
+
+// GOHIGHLEVEL CUSTOM FIELDS SETUP
+
+// 9. Required custom fields to add in GoHighLevel:
+/*
+Field Name: Learning_Interest
+Type: Dropdown
+Options: Cost comparison vs traditional construction, Construction process and timeline understanding, Building codes and regulatory requirements, Design options and customization capabilities, Financing and government program options, Sustainability and energy efficiency benefits, Site preparation and installation requirements, Long-term maintenance and durability, Comprehensive overview of all aspects
+
+Field Name: Information_Preference  
+Type: Dropdown
+Options: Email guides and case studies, One-on-one educational consultation, Video walkthroughs and virtual tours, Downloadable planning resources, Industry webinar invitations, Mixed approach - email and consultation
+
+Field Name: Educational_Lead_Flag
+Type: Boolean/Checkbox
+*/
+
+// IMPLEMENTATION NOTES:
+// - All existing functionality for non-Explorer tiers remains unchanged
+// - Enterprise security measures (CSRF, rate limiting, input sanitization) maintained
+// - Form validation properly handles conditional logic
+// - Webhook payload includes new educational fields
+// - UI/UX optimized for educational journey while maintaining consistency
+
+// This implementation enhances the Explorer experience with meaningful questions while preserving all security and business logic for other customer tiers.

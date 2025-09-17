@@ -21,6 +21,8 @@ interface FormData {
   developerType?: string;
   governmentPrograms?: string;
   projectDescription?: string;
+  learningInterest?: string;
+  informationPreference?: string;
   consentCommunications?: boolean;
   consentSMS?: boolean;
   consentSMSTimestamp?: string;
@@ -321,12 +323,21 @@ const IllummaaAssessmentForm = () => {
         }
         break;
         
-      case 2: // Only validate budget if not "Just researching" Explorer
-        if (!isExplorer && !formData.budget) {
-          newErrors.budget = 'Budget range is required';
-        }
-        if (!formData.timeline) {
-          newErrors.timeline = 'Timeline is required';
+      case 2:
+        if (isExplorer) {
+          if (!formData.learningInterest) {
+            newErrors.learningInterest = 'Please select your primary interest';
+          }
+          if (!formData.informationPreference) {
+            newErrors.informationPreference = 'Please select your information preference';
+          }
+        } else {
+          if (!formData.budget) {
+            newErrors.budget = 'Budget range is required';
+          }
+          if (!formData.timeline) {
+            newErrors.timeline = 'Timeline is required';
+          }
         }
         break;
         
@@ -488,6 +499,10 @@ const IllummaaAssessmentForm = () => {
         developerType: sanitizeInput(formData.developerType || 'Not Specified'),
         governmentPrograms: sanitizeInput(formData.governmentPrograms || 'Not Specified'),
         projectDescription: sanitizeInput(formData.projectDescription || ''),
+        
+        // Education-specific fields for Explorer tier
+        learningInterest: sanitizeInput(formData.learningInterest || 'Not specified'),
+        informationPreference: sanitizeInput(formData.informationPreference || 'Not specified'),
         
         // Flags for automation
         buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
@@ -702,90 +717,177 @@ const IllummaaAssessmentForm = () => {
               </div>
             )}
             
-            {/* STEP 2: Budget + Timeline */}
+            {/* STEP 2: Learning Preferences / Budget & Timeline */}
             {currentStep === 2 && (
               <div className="space-y-6" data-testid="step-2">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
-                  Project Planning
-                </h2>
-
-                {/* Only hide budget for "Just researching" explorers */}
                 {isExplorer ? (
-                  <div className="text-center py-8">
-                    <div className="text-5xl mb-4">📚</div>
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900">Education Journey</h3>
-                    <p className="text-gray-600">
-                      Budget planning will be discussed during your educational consultation.
+                  // NEW EXPLORER SECTION
+                  <>
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
+                      Learning Preferences
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                      Help us provide the most relevant educational resources for your modular housing research.
                     </p>
-                  </div>
-                ) : (
-                  <div>
-                    <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-budget">
-                      Project Budget Range (CAD) <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="budget"
-                      value={formData.budget || ''}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                        backgroundPosition: 'right 0.5rem center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '1.5em 1.5em',
-                        paddingRight: '2.5rem'
-                      }}
-                      required
-                      data-testid="select-budget"
-                    >
-                      <option value="">Select budget range...</option>
-                      <option value="Under $500K">Under $500K</option>
-                      <option value="$500K - $2M">$500K - $2M</option>
-                      <option value="$2M - $5M">$2M - $5M</option>
-                      <option value="$5M - $15M">$5M - $15M</option>
-                      <option value="$15M - $30M">$15M - $30M</option>
-                      <option value="$30M - $50M">$30M - $50M</option>
-                      <option value="Over $50M">Over $50M</option>
-                    </select>
-                    {errors.budget && (
-                      <p className="text-red-500 text-xs mt-1" data-testid="error-budget">{errors.budget}</p>
-                    )}
-                  </div>
-                )}
+                    
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-learning-interest">
+                        What aspect of modular construction interests you most? <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="learningInterest"
+                        value={formData.learningInterest || ''}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.learningInterest ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                          backgroundPosition: 'right 0.5rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.5em 1.5em',
+                          paddingRight: '2.5rem'
+                        }}
+                        required
+                        data-testid="select-learning-interest"
+                      >
+                        <option value="">Select your primary interest...</option>
+                        <option value="Cost comparison vs traditional construction">Cost comparison vs traditional construction</option>
+                        <option value="Construction process and timeline understanding">Construction process and timeline understanding</option>
+                        <option value="Building codes and regulatory requirements">Building codes and regulatory requirements</option>
+                        <option value="Design options and customization capabilities">Design options and customization capabilities</option>
+                        <option value="Financing and government program options">Financing and government program options</option>
+                        <option value="Sustainability and energy efficiency benefits">Sustainability and energy efficiency benefits</option>
+                        <option value="Site preparation and installation requirements">Site preparation and installation requirements</option>
+                        <option value="Long-term maintenance and durability">Long-term maintenance and durability</option>
+                        <option value="Comprehensive overview of all aspects">Comprehensive overview of all aspects</option>
+                      </select>
+                      {errors.learningInterest && (
+                        <p className="text-red-500 text-xs mt-1" data-testid="error-learning-interest">{errors.learningInterest}</p>
+                      )}
+                    </div>
 
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
-                    Timeline <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="timeline"
-                    value={formData.timeline || ''}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.timeline ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.5rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                    required
-                    data-testid="select-timeline"
-                  >
-                    <option value="">Select timeline...</option>
-                    <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
-                    <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
-                    <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
-                    <option value="Long-term (12+ months)">Long-term (12+ months)</option>
-                  </select>
-                  {errors.timeline && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
-                  )}
-                </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-information-preference">
+                        How would you prefer to receive information? <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="informationPreference"
+                        value={formData.informationPreference || ''}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.informationPreference ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                          backgroundPosition: 'right 0.5rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.5em 1.5em',
+                          paddingRight: '2.5rem'
+                        }}
+                        required
+                        data-testid="select-information-preference"
+                      >
+                        <option value="">Select information preference...</option>
+                        <option value="Email guides and case studies">Email guides and case studies</option>
+                        <option value="One-on-one educational consultation">One-on-one educational consultation</option>
+                        <option value="Video walkthroughs and virtual tours">Video walkthroughs and virtual tours</option>
+                        <option value="Downloadable planning resources">Downloadable planning resources</option>
+                        <option value="Industry webinar invitations">Industry webinar invitations</option>
+                        <option value="Mixed approach - email and consultation">Mixed approach - email and consultation</option>
+                      </select>
+                      {errors.informationPreference && (
+                        <p className="text-red-500 text-xs mt-1" data-testid="error-information-preference">{errors.informationPreference}</p>
+                      )}
+                    </div>
+
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">📚</span>
+                        <div>
+                          <h4 className="font-semibold text-blue-800">Educational Journey</h4>
+                          <p className="text-sm text-blue-700">
+                            We'll provide personalized resources based on your interests and preferred learning style.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  // EXISTING BUDGET + TIMELINE FOR NON-EXPLORERS
+                  <>
+                    <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
+                      Budget & Timeline
+                    </h2>
+                    
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-budget">
+                        Project Budget Range (CAD) <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="budget"
+                        value={formData.budget || ''}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                          backgroundPosition: 'right 0.5rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.5em 1.5em',
+                          paddingRight: '2.5rem'
+                        }}
+                        required
+                        data-testid="select-budget"
+                      >
+                        <option value="">Select budget range...</option>
+                        <option value="Under $500K">Under $500K</option>
+                        <option value="$500K - $2M">$500K - $2M</option>
+                        <option value="$2M - $5M">$2M - $5M</option>
+                        <option value="$5M - $15M">$5M - $15M</option>
+                        <option value="$15M - $30M">$15M - $30M</option>
+                        <option value="$30M - $50M">$30M - $50M</option>
+                        <option value="Over $50M">Over $50M</option>
+                      </select>
+                      {errors.budget && (
+                        <p className="text-red-500 text-xs mt-1" data-testid="error-budget">{errors.budget}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
+                        Delivery Timeline <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="timeline"
+                        value={formData.timeline || ''}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.timeline ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                          backgroundPosition: 'right 0.5rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.5em 1.5em',
+                          paddingRight: '2.5rem'
+                        }}
+                        required
+                        data-testid="select-timeline"
+                      >
+                        <option value="">Select timeline...</option>
+                        <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
+                        <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
+                        <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
+                        <option value="Long-term (12+ months)">Long-term (12+ months)</option>
+                      </select>
+                      {errors.timeline && (
+                        <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             )}
 

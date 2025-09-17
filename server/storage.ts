@@ -32,6 +32,8 @@ export class MemStorage implements IStorage {
       constructionProvince: insertAssessment.constructionProvince || null,
       developerType: insertAssessment.developerType || null,
       governmentPrograms: insertAssessment.governmentPrograms || null,
+      learningInterest: insertAssessment.learningInterest || null,
+      informationPreference: insertAssessment.informationPreference || null,
     };
     
     this.assessments.set(id, assessment);
@@ -97,6 +99,8 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
       developerType: sanitizeOptionalEnum(rawData.developerType),
       governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
+      learningInterest: sanitizeOptionalEnum(rawData.learningInterest),
+      informationPreference: sanitizeOptionalEnum(rawData.informationPreference),
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
       ageVerification: Boolean(rawData.ageVerification),
