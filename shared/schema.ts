@@ -23,7 +23,7 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   consentMarketing: boolean("consent_marketing").default(false),
   ageVerification: boolean("age_verification").default(false),
   projectDescription: text("project_description"),
-  priorityScore: integer("priority_score").notNull(),
+  priorityScore: integer("priority_score"),
   customerTier: text("customer_tier").notNull(),
   priorityLevel: text("priority_level").notNull(),
   tags: text("tags").array(),

@@ -108,7 +108,7 @@ function mapFrontendToBackend(frontendData: any): any {
     responseTime: frontendData.responseTime,
     
     // Tags handling (convert string to array if needed)
-    tags: typeof frontendData.tags === 'string' ? frontendData.tags.split(',').filter(tag => tag.trim()) : frontendData.tags,
+    tags: typeof frontendData.tags === 'string' ? frontendData.tags.split(',').filter((tag: string) => tag.trim()) : frontendData.tags,
     
     contactTags: frontendData.contactTags,
     consentTimestamp: frontendData.consentTimestamp,
@@ -119,7 +119,9 @@ function mapFrontendToBackend(frontendData: any): any {
     // Additional new fields from Partnership & Learning Assessment
     buildCanadaEligible: frontendData.buildCanadaEligible,
     isEducationOnly: frontendData.isEducationOnly,
-    responseCommitment: frontendData.responseCommitment
+    isEducationalLead: frontendData.isEducationalLead,
+    responseCommitment: frontendData.responseCommitment,
+    responseCommitmentLevel: frontendData.responseCommitmentLevel
   };
 }
 
@@ -468,14 +470,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         projectDescription: sanitized.projectDescription || '',
         
         // New Partnership & Learning Assessment fields
-        customerTier: sanitized.customerTier,
         partnershipLevel: sanitized.partnershipLevel,
         aiPriorityScore: sanitized.aiPriorityScore || priorityScore,
         pipeline: sanitized.pipeline,
         stage: sanitized.stage,
         buildCanadaEligible: sanitized.buildCanadaEligible,
         isEducationOnly: sanitized.isEducationOnly,
+        isEducationalLead: sanitized.isEducationalLead,
         responseCommitment: sanitized.responseCommitment,
+        responseCommitmentLevel: sanitized.responseCommitmentLevel,
         developerType: sanitized.developerType,
         governmentPrograms: sanitized.governmentPrograms,
         
