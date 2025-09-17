@@ -75,6 +75,14 @@ export async function validateFormData(rawData: any): Promise<{
   tags?: string[];
 }> {
   try {
+    // Helper function to handle optional enum fields
+    const sanitizeOptionalEnum = (value: any) => {
+      if (!value || value === '' || value === null || value === undefined) {
+        return undefined;
+      }
+      return DOMPurify.sanitize(value).trim();
+    };
+
     // Sanitize input data
     const sanitizedData = {
       readiness: DOMPurify.sanitize(rawData.readiness || ''),
@@ -84,17 +92,17 @@ export async function validateFormData(rawData: any): Promise<{
       phone: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, ''),
       company: DOMPurify.sanitize(rawData.company || '').trim(),
       projectUnitCount: parseInt(rawData.projectUnitCount) || 0,
-      budgetRange: DOMPurify.sanitize(rawData.budgetRange || ''),
-      decisionTimeline: DOMPurify.sanitize(rawData.decisionTimeline || ''),
-      constructionProvince: DOMPurify.sanitize(rawData.constructionProvince || ''),
-      developerType: DOMPurify.sanitize(rawData.developerType || ''),
-      governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms || ''),
-      agentSupport: rawData.agentSupport ? DOMPurify.sanitize(rawData.agentSupport) : undefined,
+      budgetRange: sanitizeOptionalEnum(rawData.budgetRange),
+      decisionTimeline: sanitizeOptionalEnum(rawData.decisionTimeline),
+      constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
+      developerType: sanitizeOptionalEnum(rawData.developerType),
+      governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
+      agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
       ageVerification: Boolean(rawData.ageVerification),
       projectDescriptionText: rawData.projectDescriptionText ? 
         DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
-        "",
+        undefined,
     };
 
     // Validate with Zod schema

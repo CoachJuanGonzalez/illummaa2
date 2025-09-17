@@ -49,6 +49,12 @@ function mapFrontendToBackend(frontendData: any): any {
     return timelineMap[value] || value;
   };
 
+  // Helper function to handle empty strings for optional fields
+  const emptyToUndefined = (value: any) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    return value;
+  };
+
   // Field name mapping with enum normalization
   return {
     // Basic contact fields (direct mapping)
@@ -57,41 +63,63 @@ function mapFrontendToBackend(frontendData: any): any {
     email: frontendData.email,
     phone: frontendData.phone,
     
-    // Company field mapping
+    // Company field mapping (handles both old 'company' and new 'companyName' fields)
     company: frontendData.company || frontendData.companyName || 'Individual Investor',
     
     // CRITICAL FIELD NAME MAPPING FIXES:
     projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
-    budgetRange: frontendData.budget ? normalizeBudget(frontendData.budget) : frontendData.budgetRange,
-    decisionTimeline: frontendData.timeline ? normalizeTimeline(frontendData.timeline) : frontendData.decisionTimeline,
-    constructionProvince: frontendData.province || frontendData.constructionProvince,
-    projectDescriptionText: frontendData.projectDescription || frontendData.projectDescriptionText,
+    budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : (frontendData.projectBudgetRange || frontendData.budgetRange)),
+    decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : (frontendData.deliveryTimeline || frontendData.decisionTimeline)),
+    constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),
+    projectDescriptionText: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
     consentMarketing: frontendData.consentCommunications || frontendData.consentMarketing,
     
-    // Readiness with enum normalization
-    readiness: frontendData.readiness ? normalizeReadiness(frontendData.readiness) : frontendData.readiness,
+    // Readiness with enum normalization (handles both old 'readiness' and new 'readinessToBuy' fields)
+    readiness: frontendData.readiness ? normalizeReadiness(frontendData.readiness) : 
+               frontendData.readinessToBuy ? normalizeReadiness(frontendData.readinessToBuy) : 
+               frontendData.readiness,
     
     // Age verification (direct mapping)
     ageVerification: frontendData.ageVerification,
     
-    // Optional fields that may not be present
-    developerType: frontendData.developerType,
-    governmentPrograms: frontendData.governmentPrograms,
-    agentSupport: frontendData.agentSupport,
+    // Optional fields that may not be present (convert empty strings to undefined)
+    developerType: emptyToUndefined(frontendData.developerType),
+    governmentPrograms: emptyToUndefined(frontendData.governmentPrograms),
+    agentSupport: emptyToUndefined(frontendData.agentSupport),
     
     // Additional form metadata (keep as-is)
     isExplorer: frontendData.isExplorer,
     illummaaOnly: frontendData.illummaaOnly,
     noExternalReferrals: frontendData.noExternalReferrals,
-    priorityScore: frontendData.priorityScore,
+    
+    // Priority score mapping (handles both old 'priorityScore' and new 'aiPriorityScore' fields)
+    priorityScore: frontendData.priorityScore || frontendData.aiPriorityScore,
+    
+    // Partnership level and tier mapping (new fields)
+    customerTier: frontendData.customerTier,
+    partnershipLevel: frontendData.partnershipLevel,
+    
+    // Pipeline and stage mapping (new fields)
+    pipeline: frontendData.pipeline,
+    stage: frontendData.stage,
+    
+    // Remaining metadata
     assignedTo: frontendData.assignedTo,
     responseTime: frontendData.responseTime,
-    tags: frontendData.tags,
+    
+    // Tags handling (convert string to array if needed)
+    tags: typeof frontendData.tags === 'string' ? frontendData.tags.split(',').filter(tag => tag.trim()) : frontendData.tags,
+    
     contactTags: frontendData.contactTags,
     consentTimestamp: frontendData.consentTimestamp,
     source: frontendData.source || 'ILLÜMMAA Website Assessment',
     submissionId: frontendData.submissionId,
-    userAgent: frontendData.userAgent
+    userAgent: frontendData.userAgent,
+    
+    // Additional new fields from Partnership & Learning Assessment
+    buildCanadaEligible: frontendData.buildCanadaEligible,
+    isEducationOnly: frontendData.isEducationOnly,
+    responseCommitment: frontendData.responseCommitment
   };
 }
 
@@ -198,7 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // SMS-specific rate limiting for enhanced security
   const smsConsentLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 1, // Only 1 SMS consent per IP per 5 minutes
+    max: process.env.NODE_ENV === 'development' ? 50 : 1, // Development: 50, Production: 1 SMS consent per IP per 5 minutes
     skipSuccessfulRequests: false,
     keyGenerator: undefined, // Use default key generator for IPv6 safety
     message: { 
@@ -210,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enhanced strict rate limiting for assessment submissions
   const enhancedStrictLimiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    max: 2, // 2 submissions per IP
+    max: process.env.NODE_ENV === 'development' ? 100 : 2, // Development: 100, Production: 2 submissions per IP
     skipSuccessfulRequests: true,
     standardHeaders: true,
     legacyHeaders: false,
@@ -374,14 +402,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Business logic validation
-      const isExplorer = req.body.isExplorer === 'true' || req.body.isExplorer === true;
-      if (!isExplorer && !req.body.company?.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Company name required for business inquiries'
-        });
-      }
+      // Business logic validation - moved after mapping for proper field handling
+      // (Validation moved to after field mapping to handle new field names properly)
 
       // Triple sanitization for maximum security
       const sanitized: any = {};
@@ -402,6 +424,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('[MAPPING] Frontend data:', JSON.stringify(sanitized, null, 2));
       console.log('[MAPPING] Mapped backend data:', JSON.stringify(mappedBody, null, 2));
       
+      // Business logic validation AFTER field mapping
+      const isExplorer = sanitized.isExplorer === 'true' || sanitized.isExplorer === true || sanitized.isEducationOnly === 'Yes';
+      const companyName = mappedBody.company || '';
+      if (!isExplorer && !companyName?.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'Company name required for business inquiries'
+        });
+      }
+      
       // Validate and sanitize form data using mapped fields
       const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
       
@@ -419,15 +451,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         lastName: sanitized.lastName,
         email: sanitized.email,
         phone: sanitized.phone,
-        company: sanitized.company || '',
+        company: sanitized.company || sanitized.companyName || '',
+        companyName: sanitized.companyName || sanitized.company || '',
         
-        // Project details
-        unitCount: parseInt(sanitized.unitCount) || 0,
-        budget: sanitized.budget,
-        timeline: sanitized.timeline,
-        province: sanitized.province,
-        readiness: sanitized.readiness,
+        // Project details (using both old and new field names for compatibility)
+        unitCount: parseInt(sanitized.unitCount || sanitized.projectUnitCount) || 0,
+        projectUnitCount: parseInt(sanitized.projectUnitCount || sanitized.unitCount) || 0,
+        budget: sanitized.budget || sanitized.projectBudgetRange,
+        projectBudgetRange: sanitized.projectBudgetRange || sanitized.budget,
+        timeline: sanitized.timeline || sanitized.deliveryTimeline,
+        deliveryTimeline: sanitized.deliveryTimeline || sanitized.timeline,
+        province: sanitized.province || sanitized.constructionProvince,
+        constructionProvince: sanitized.constructionProvince || sanitized.province,
+        readiness: sanitized.readiness || sanitized.readinessToBuy,
+        readinessToBuy: sanitized.readinessToBuy || sanitized.readiness,
         projectDescription: sanitized.projectDescription || '',
+        
+        // New Partnership & Learning Assessment fields
+        customerTier: sanitized.customerTier,
+        partnershipLevel: sanitized.partnershipLevel,
+        aiPriorityScore: sanitized.aiPriorityScore || priorityScore,
+        pipeline: sanitized.pipeline,
+        stage: sanitized.stage,
+        buildCanadaEligible: sanitized.buildCanadaEligible,
+        isEducationOnly: sanitized.isEducationOnly,
+        responseCommitment: sanitized.responseCommitment,
+        developerType: sanitized.developerType,
+        governmentPrograms: sanitized.governmentPrograms,
         
         // Enhanced legal consent tracking with SMS security
         consentCommunications: sanitized.consentCommunications ? 'true' : 'false',
@@ -462,10 +512,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         source: 'ILLÜMMAA Secure Website Assessment',
         
         // Priority and tagging from existing logic
-        priorityScore,
-        customerTier,
+        priorityScore: priorityScore || sanitized.aiPriorityScore,
+        customerTier: customerTier || sanitized.customerTier,
         priorityLevel,
-        tags: tags?.join(',') || ''
+        tags: tags?.join(',') || sanitized.tags || ''
       };
 
       // Store in database with Customer Journey fields
