@@ -98,16 +98,20 @@ function mapFrontendToBackend(frontendData: any): any {
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enterprise Security Configuration v13.2
   
-  // Enhanced Helmet security headers with comprehensive CSP
+  // Enhanced Helmet security headers with development-friendly CSP
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
+        scriptSrc: process.env.NODE_ENV === 'development' 
+          ? ["'self'", "'unsafe-inline'", "'unsafe-eval'"] 
+          : ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "https://images.unsplash.com", "data:", "blob:"],
-        connectSrc: ["'self'", "https://services.leadconnectorhq.com"],
+        connectSrc: process.env.NODE_ENV === 'development'
+          ? ["'self'", "ws:", "http:", "https:", "https://services.leadconnectorhq.com"]
+          : ["'self'", "https://services.leadconnectorhq.com"],
         frameSrc: ["'none'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
