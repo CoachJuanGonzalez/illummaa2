@@ -239,7 +239,7 @@ export default function PartnershipTiers() {
             className="btn-primary text-white font-semibold text-sm xs:text-base sm:text-lg w-full max-w-xs xs:max-w-sm sm:max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal leading-tight"
             data-testid="button-schedule-assessment"
           >
-            Schedule Partnership Assessment
+Take Partnership & Learning Assessment
           </Button>
         </div>
         
