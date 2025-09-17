@@ -423,6 +423,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION
       const mappedBody = mapFrontendToBackend(sanitized);
       
+      // Enhanced unit count validation with tier consistency (Step 5 implementation)
+      const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
+      const readiness = mappedBody.readiness;
+      
+      // Security: Explorer tier can have 0 units
+      if (readiness === 'researching' && unitCount === 0) {
+        // This is valid - Explorer tier research
+      } else if (readiness !== 'researching' && unitCount <= 0) {
+        // Security: Commitment-level tiers must have > 0 units
+        return res.status(400).json({
+          success: false,
+          message: 'Commitment-level inquiries must specify actual unit count',
+          securityViolation: true
+        });
+      }
+      
+      // Range validation
+      if (unitCount < 0 || unitCount > 10000) {
+        return res.status(400).json({
+          success: false,
+          message: 'Unit count must be between 1 and 10,000',
+          securityViolation: true
+        });
+      }
+      
       console.log('[MAPPING] Frontend data:', JSON.stringify(sanitized, null, 2));
       console.log('[MAPPING] Mapped backend data:', JSON.stringify(mappedBody, null, 2));
       
@@ -447,7 +472,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Enhanced payload with comprehensive SMS security tracking
-      const securePayload = {
+      // Enhanced webhook payload generation with security validation (Step 6 implementation)
+      const generateSecurePayload = (sanitizedData: any) => {
+        // Security validation before webhook delivery
+        const unitCount = parseInt(sanitizedData.projectUnitCount) || 0;
+        const readiness = sanitizedData.readinessToBuy;
+        
+        // Validate tier consistency
+        if (readiness !== 'researching' && unitCount <= 0) {
+          throw new Error('Security: Invalid unit count for commitment-level tier');
+        }
+        
+        return {
         // Contact information (sanitized)
         firstName: sanitized.firstName,
         lastName: sanitized.lastName,
@@ -518,8 +554,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
         priorityScore: priorityScore || sanitized.aiPriorityScore,
         customerTier: customerTier || sanitized.customerTier,
         priorityLevel,
-        tags: tags?.join(',') || sanitized.tags || ''
+        tags: tags?.join(',') || sanitized.tags || '',
+        
+        // Enhanced security validation fields (Step 6)
+        tierConsistencyValidated: 'true',
+        unitCountSecurityValidated: 'true'
+        };
       };
+
+      // Generate secure payload with enhanced security validation (Step 7 implementation)
+      let securePayload;
+      try {
+        // Additional tier consistency security check
+        const unitCount = parseInt(sanitized.projectUnitCount) || 0;
+        const readiness = sanitized.readinessToBuy;
+        
+        if (readiness !== 'researching' && unitCount <= 0) {
+          throw new Error('Commitment-level inquiries must specify actual unit count');
+        }
+        
+        securePayload = generateSecurePayload(sanitized);
+      } catch (error) {
+        // Enhanced error logging with security context
+        console.error('Assessment submission error:', {
+          error: (error as Error).message,
+          securityValidation: 'failed',
+          timestamp: new Date().toISOString(),
+          unitCount: sanitized.projectUnitCount,
+          readiness: sanitized.readinessToBuy,
+          ip: req.ip
+        });
+        
+        return res.status(400).json({
+          success: false,
+          message: 'Security validation failed. Please verify your selections.',
+          securityViolation: true,
+          errorId: crypto.randomBytes(8).toString('hex')
+        });
+      }
 
       // Store in database with Customer Journey fields
       const submission = await storage.createAssessment({

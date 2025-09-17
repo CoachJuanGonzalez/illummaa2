@@ -72,22 +72,28 @@ const IllummaaAssessmentForm = () => {
   const determineCustomerTier = (units: string, readiness: string): TierType => {
     const unitCount = parseInt(units) || 0;
     
-    // Just researching ALWAYS = Explorer
+    // Just researching ALWAYS = Explorer (secure default)
     if (readiness === 'researching') {
       return 'tier_0_explorer';
     }
     
-    // Planning long-term (12+ months) - weighted by units
+    // Security check: Commitment-level users must have actual unit counts
+    if (readiness !== 'researching' && unitCount === 0) {
+      console.warn('Security: Zero units for non-research tier - maintaining Explorer classification');
+      return 'tier_0_explorer'; // Secure fallback
+    }
+    
+    // Planning long-term (12+ months) - weighted by units with minimum threshold
     if (readiness === 'planning-long') {
-      if (unitCount === 0) return 'tier_0_explorer'; // No units = still exploring
-      if (unitCount <= 49) return 'tier_1_starter';   // Even 1-2 units = Starter (committed buyers)
+      if (unitCount <= 0) return 'tier_0_explorer'; // Security fallback
+      if (unitCount <= 49) return 'tier_1_starter';
       if (unitCount <= 149) return 'tier_2_pioneer';
       if (unitCount <= 299) return 'tier_3_preferred';
       return 'tier_4_elite';
     }
     
-    // All other readiness levels - standard logic
-    if (unitCount === 0) return 'tier_0_explorer';
+    // All other readiness levels - standard logic with validation
+    if (unitCount <= 0) return 'tier_0_explorer'; // Security fallback
     if (unitCount <= 49) return 'tier_1_starter';
     if (unitCount <= 149) return 'tier_2_pioneer';
     if (unitCount <= 299) return 'tier_3_preferred';
@@ -184,33 +190,38 @@ const IllummaaAssessmentForm = () => {
       return;
     }
     
-    setErrors(prev => ({ ...prev, [name]: '' }));
-    
-    // In handleInputChange function, readiness handling with conditional logic
+    // Enhanced readiness handling with secure unit count enforcement
     if (name === 'readiness') {
       const isResearching = value === 'researching';
-      setIsExplorer(isResearching); // Only "Just researching" is Explorer for form display
+      setIsExplorer(isResearching);
       
       if (isResearching) {
         // Auto-set Explorer defaults for researchers only
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: '0', // Hidden from user but set in data
+          unitCount: '0', // Hidden from user but set securely in data
           budget: 'Just exploring options' // Auto-set for consistency
         }));
         setCustomerTier('tier_0_explorer');
       } else {
-        // For ALL other options including "planning-long", clear units to force selection
+        // For ALL commitment-level options, clear units to force meaningful selection
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: '', // Clear to force selection
+          unitCount: '', // Clear to force actual unit count selection
           budget: '' // Clear budget for non-researchers
         }));
         // Don't set tier yet - wait for units selection
       }
     } else if (name === 'unitCount') {
+      // Security validation: Ensure non-Explorer tiers cannot select exploration values
+      const isCommitmentTier = formData.readiness !== 'researching';
+      if (isCommitmentTier && (value === '0' || value === 'Just exploring options')) {
+        console.warn('Security: Invalid unit count for commitment-level tier');
+        return; // Block invalid selection
+      }
+      
       // When units change, recalculate tier with current readiness
       setFormData(prev => ({ ...prev, unitCount: value }));
       const tier = determineCustomerTier(value, formData.readiness || '');
@@ -233,7 +244,10 @@ const IllummaaAssessmentForm = () => {
       }));
     }
     
-    // Calculate priority score
+    // Clear errors
+    setErrors(prev => ({ ...prev, [name]: '' }));
+    
+    // Calculate priority score for relevant fields
     if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
       setTimeout(calculatePriorityScore, 100);
     }
@@ -330,13 +344,22 @@ const IllummaaAssessmentForm = () => {
     const newErrors: FormErrors = {};
     
     switch(step) {
-      case 1: // Validate units only if NOT "Just researching"
+      case 1:
         if (!formData.readiness) {
           newErrors.readiness = 'Please select your journey stage';
         }
-        // Only validate units if not "Just researching" (but validate for "planning-long")
-        if (formData.readiness !== 'researching' && (!formData.unitCount || formData.unitCount === '')) {
-          newErrors.unitCount = 'Please select number of units';
+        
+        // Enhanced validation: Only validate units if NOT "Just researching"
+        if (formData.readiness !== 'researching') {
+          if (!formData.unitCount || formData.unitCount === '') {
+            newErrors.unitCount = 'Please select number of units';
+          }
+          
+          // Security validation: Ensure commitment-level users have meaningful unit counts
+          const unitCount = parseInt(formData.unitCount) || 0;
+          if (unitCount <= 0) {
+            newErrors.unitCount = 'Please select a valid number of units for your project';
+          }
         }
         break;
         
@@ -682,39 +705,38 @@ const IllummaaAssessmentForm = () => {
                 {/* Only show units question if NOT "Just researching" (but show for "planning-long") */}
                 {formData.readiness && formData.readiness !== 'researching' && (
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-units">
-                      Number of units needed <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="unitCount"
-                      value={formData.unitCount || ''}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                        backgroundPosition: 'right 0.5rem center',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: '1.5em 1.5em',
-                        paddingRight: '2.5rem'
-                      }}
-                      required
-                      data-testid="select-units"
-                    >
-                      <option value="">Select number of units...</option>
-                      <option value="0">Just exploring options</option>
-                      <option value="1">1 home</option>
-                      <option value="2">2 homes</option>
-                      <option value="25">3-49 units (Starter)</option>
-                      <option value="75">50-149 units (Pioneer)</option>
-                      <option value="200">150-299 units (Preferred)</option>
-                      <option value="500">300+ units (Elite)</option>
-                    </select>
-                    {errors.unitCount && (
-                      <p className="text-red-500 text-xs mt-1" data-testid="error-units">{errors.unitCount}</p>
-                    )}
-                  </div>
+                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-units">
+                        Number of units needed <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        name="unitCount"
+                        value={formData.unitCount || ''}
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                        style={{
+                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                          backgroundPosition: 'right 0.5rem center',
+                          backgroundRepeat: 'no-repeat',
+                          backgroundSize: '1.5em 1.5em',
+                          paddingRight: '2.5rem'
+                        }}
+                        required
+                        data-testid="select-units"
+                      >
+                        <option value="">Select number of units...</option>
+                        <option value="1">1 home</option>
+                        <option value="2">2 homes</option>
+                        <option value="25">3-49 units (Starter)</option>
+                        <option value="75">50-149 units (Pioneer)</option>
+                        <option value="200">150-299 units (Preferred)</option>
+                        <option value="500">300+ units (Elite)</option>
+                      </select>
+                      {errors.unitCount && (
+                        <p className="text-red-500 text-xs mt-1" data-testid="error-units">{errors.unitCount}</p>
+                      )}
+                    </div>
                 )}
 
                 {/* Tier Preview - Only show when meaningful data entered */}
