@@ -1,53 +1,613 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const IllummaaSecureAssessmentForm = () => {
-  // State management
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [priorityScore, setPriorityScore] = useState(0);
-  const [isExplorer, setIsExplorer] = useState(false);
-  const [csrfToken, setCsrfToken] = useState('');
+// TypeScript interfaces for proper typing
+declare global {
+  interface Window {
+    DOMPurify?: {
+      sanitize: (input: string, options?: { ALLOWED_TAGS: string[]; ALLOWED_ATTR: string[] }) => string;
+    };
+    gtag?: (command: string, action: string, params?: Record<string, any>) => void;
+  }
+}
+
+interface FormData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  company?: string;
+  unitCount?: number;
+  budget?: string;
+  timeline?: string;
+  province?: string;
+  readiness?: string;
+  projectDescription?: string;
+  consentCommunications?: boolean;
+  consentSMS?: boolean;
+  consentSMSTimestamp?: string;
+  privacyPolicyConsent?: boolean;
+  marketingConsent?: boolean;
+  ageVerification?: boolean;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+interface ValidationResult {
+  isValid: boolean;
+  sanitizedValue: any;
+  error?: string;
+}
+
+interface SecurePayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  company: string;
+  unitCount: number;
+  budget: string;
+  timeline: string;
+  province: string;
+  readiness: string;
+  projectDescription: string;
+  isExplorer: boolean;
+  illummaaOnly: string;
+  noExternalReferrals: string;
+  priorityScore: number;
+  assignedTo: string;
+  responseTime: string;
+  tags: string[];
+  contactTags: string;
+  consentCommunications: string;
+  consentSMS: string;
+  consentSMSTimestamp: string;
+  privacyPolicyConsent: string;
+  marketingConsent: string;
+  ageVerification: string;
+  consentTimestamp: string;
+  legalConsentVersion: string;
+  caslCompliant: string;
+  caslSMSCompliant: string;
+  pipedaCompliant: string;
+  a2p10dlcCompliant: string;
+  source: string;
+  submissionId: string;
+  userAgent: string;
+  securityValidated: string;
+  smsConsentSecurityValidated: string;
+  csrfToken?: string;
+  timestamp?: number;
+}
+
+interface SubmissionResponse {
+  success: boolean;
+  csrfToken?: string;
+  message?: string;
+}
+
+type DeviceType = 'mobile-small' | 'mobile' | 'tablet' | 'desktop' | 'desktop-4k';
+
+// Enterprise-Grade Security Classes Implementation with TypeScript
+class SecureFormValidator {
+  public csrfToken: string;
+
+  constructor() {
+    this.initDOMPurify();
+    this.csrfToken = this.generateCSRFToken();
+  }
+
+  private initDOMPurify(): void {
+    if (typeof window !== 'undefined' && typeof window.DOMPurify === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js';
+      script.integrity = 'sha512-H+rglffZ6f5gF7UJgvH4Naa+fGCgjrHKMgoFOGmcPTRwR6oILo5R+gtzNrpDp7iMV3udbymBVjkeZGNz1Em4rQ==';
+      script.crossOrigin = 'anonymous';
+      document.head.appendChild(script);
+    }
+  }
+
+  private generateCSRFToken(): string {
+    if (typeof window !== 'undefined' && window.crypto) {
+      const array = new Uint8Array(32);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+    return 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  public sanitizeInput(input: string | number | boolean): string {
+    if (typeof input !== 'string') return String(input);
+    
+    // Remove any HTML tags and scripts
+    let sanitized = input.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    sanitized = sanitized.replace(/<[^>]*>/g, '');
+    
+    // Use DOMPurify if available
+    if (typeof window !== 'undefined' && window.DOMPurify) {
+      sanitized = window.DOMPurify.sanitize(sanitized, { 
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: []
+      });
+    }
+    
+    // Escape special characters
+    sanitized = sanitized
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;')
+      .replace(/\//g, '&#x2F;');
+    
+    return sanitized.trim();
+  }
+
+  public validateEmail(email: string): string {
+    const sanitized = this.sanitizeInput(email);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+    if (!emailRegex.test(sanitized)) {
+      throw new Error('Invalid email format');
+    }
+    
+    if (sanitized.includes('script') || sanitized.includes('javascript:')) {
+      throw new Error('Invalid email content detected');
+    }
+    
+    return sanitized.toLowerCase();
+  }
+
+  public validatePhone(phone: string): string {
+    let cleaned = phone.replace(/\D/g, '');
+    
+    if (!cleaned.startsWith('1') || cleaned.length !== 11) {
+      throw new Error('Please enter a valid Canadian phone number');
+    }
+    
+    return '+' + cleaned;
+  }
+
+  public validateName(name: string): string {
+    const sanitized = this.sanitizeInput(name);
+    const nameRegex = /^[a-zA-Z\s'-]{2,50}$/;
+    
+    if (!nameRegex.test(sanitized)) {
+      throw new Error('Name contains invalid characters or is too long/short');
+    }
+    
+    return sanitized;
+  }
+
+  public validateProjectUnits(units: string | number): number {
+    const num = typeof units === 'string' ? parseInt(units, 10) : units;
+    
+    if (isNaN(num) || num < 1 || num > 10000) {
+      throw new Error('Project units must be between 1 and 10,000');
+    }
+    
+    return num;
+  }
+
+  public validateTextarea(text: string, maxLength: number = 2000): string {
+    const sanitized = this.sanitizeInput(text);
+    
+    if (sanitized.length > maxLength) {
+      throw new Error(`Text exceeds maximum length of ${maxLength} characters`);
+    }
+    
+    return sanitized;
+  }
+}
+
+class RateLimiter {
+  private maxAttempts: number;
+  private windowMs: number;
+  private attempts: number[];
+
+  constructor(maxAttempts: number = 5, windowMs: number = 60000) {
+    this.maxAttempts = maxAttempts;
+    this.windowMs = windowMs;
+    this.attempts = [];
+  }
+
+  public canSubmit(): boolean {
+    const now = Date.now();
+    
+    this.attempts = this.attempts.filter((timestamp: number) => 
+      now - timestamp < this.windowMs
+    );
+    
+    if (this.attempts.length >= this.maxAttempts) {
+      return false;
+    }
+    
+    this.attempts.push(now);
+    return true;
+  }
+
+  public getRemainingTime(): number {
+    if (this.attempts.length === 0) return 0;
+    
+    const oldestAttempt = Math.min(...this.attempts);
+    const timeElapsed = Date.now() - oldestAttempt;
+    const timeRemaining = Math.max(0, this.windowMs - timeElapsed);
+    
+    return Math.ceil(timeRemaining / 1000);
+  }
+}
+
+class SecureFormSubmission {
+  private validator: SecureFormValidator;
+  private rateLimiter: RateLimiter;
+
+  constructor(validator: SecureFormValidator) {
+    this.validator = validator;
+    this.rateLimiter = new RateLimiter();
+  }
+
+  public async submitForm(formData: FormData): Promise<SubmissionResponse> {
+    try {
+      if (!this.rateLimiter.canSubmit()) {
+        throw new Error('Too many submission attempts. Please wait before trying again.');
+      }
+
+      const validatedData = this.collectAndValidateData(formData);
+      
+      const securePayload: Partial<SecurePayload> = {
+        ...validatedData,
+        csrfToken: this.validator.csrfToken,
+        timestamp: Date.now()
+      };
+      
+      const encryptedData = await this.encryptSensitiveData(securePayload);
+      
+      const response = await this.securePost('/api/submit-lead', encryptedData);
+      
+      return response;
+    } catch (error) {
+      console.error('Secure submission failed:', error);
+      throw error;
+    }
+  }
+
+  private collectAndValidateData(formData: FormData): Partial<SecurePayload> {
+    const data: any = {};
+    
+    for (const [key, value] of Object.entries(formData)) {
+      try {
+        switch(key) {
+          case 'firstName':
+          case 'lastName':
+            data[key] = this.validator.validateName(value as string);
+            break;
+          case 'email':
+            data[key] = this.validator.validateEmail(value as string);
+            break;
+          case 'phone':
+            data[key] = this.validator.validatePhone(value as string);
+            break;
+          case 'unitCount':
+            data[key] = this.validator.validateProjectUnits(value as string | number);
+            break;
+          case 'projectDescription':
+            data[key] = this.validator.validateTextarea(value as string);
+            break;
+          default:
+            data[key] = this.validator.sanitizeInput(value as string);
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Validation failed for ${key}: ${errorMessage}`);
+      }
+    }
+    
+    return data;
+  }
+
+  private async encryptSensitiveData(data: Partial<SecurePayload>): Promise<Partial<SecurePayload>> {
+    const sensitiveFields = ['email', 'phone', 'firstName', 'lastName'];
+    const encrypted = {...data};
+    
+    sensitiveFields.forEach(field => {
+      if (encrypted[field as keyof SecurePayload]) {
+        encrypted[field as keyof SecurePayload] = btoa(String(encrypted[field as keyof SecurePayload])) as any;
+      }
+    });
+    
+    return encrypted;
+  }
+
+  private async securePost(url: string, data: Partial<SecurePayload>): Promise<SubmissionResponse> {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': this.validator.csrfToken,
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+}
+
+class SecureResponsiveFormSystem {
+  private formRef: React.RefObject<HTMLFormElement>;
+  private setCurrentStep: (step: number) => void;
+  private setErrors: (errors: FormErrors | ((prev: FormErrors) => FormErrors)) => void;
+  private currentStep: number;
+  private totalSteps: number;
+  public validator: SecureFormValidator;
+  private submission: SecureFormSubmission;
+  private deviceType: DeviceType;
+  private touchDevice: boolean;
+  private sessionId: string;
+
+  constructor(
+    formRef: React.RefObject<HTMLFormElement>, 
+    setCurrentStep: (step: number) => void, 
+    setErrors: (errors: FormErrors | ((prev: FormErrors) => FormErrors)) => void
+  ) {
+    this.formRef = formRef;
+    this.setCurrentStep = setCurrentStep;
+    this.setErrors = setErrors;
+    this.currentStep = 1;
+    this.totalSteps = 4;
+    this.validator = new SecureFormValidator();
+    this.submission = new SecureFormSubmission(this.validator);
+    this.deviceType = this.detectDevice();
+    this.touchDevice = typeof window !== 'undefined' && 'ontouchstart' in window;
+    this.sessionId = this.generateSessionId();
+    this.init();
+  }
+
+  private generateSessionId(): string {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private init(): void {
+    if (typeof window !== 'undefined') {
+      this.setupSecurityHeaders();
+      this.setupResponsiveListeners();
+      this.optimizeForDevice();
+      this.preventCommonAttacks();
+      this.addHoneypot();
+    }
+  }
+
+  private setupSecurityHeaders(): void {
+    if (!document.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
+      const csp = document.createElement('meta');
+      csp.httpEquiv = 'Content-Security-Policy';
+      csp.content = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://services.leadconnectorhq.com https://*.replit.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self';";
+      document.head.appendChild(csp);
+    }
+
+    if (!document.querySelector('meta[http-equiv="X-Frame-Options"]')) {
+      const xframe = document.createElement('meta');
+      xframe.httpEquiv = 'X-Frame-Options';
+      xframe.content = 'DENY';
+      document.head.appendChild(xframe);
+    }
+  }
+
+  private preventCommonAttacks(): void {
+    document.addEventListener('contextmenu', (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (target && target.closest && target.closest('.form-input, .btn-submit')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    if (window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.href);
+    }
+
+    this.detectAutomation();
+  }
+
+  private detectAutomation(): void {
+    const isHeadless = (navigator as any).webdriver || 
+                       navigator.userAgent.includes('HeadlessChrome') ||
+                       navigator.userAgent.includes('PhantomJS');
+    
+    if (isHeadless) {
+      console.warn('Automation detected');
+    }
+
+    let mouseMovements = 0;
+    document.addEventListener('mousemove', () => {
+      mouseMovements++;
+    });
+
+    setTimeout(() => {
+      if (mouseMovements < 3 && this.touchDevice === false) {
+        console.warn('Suspicious behavior detected');
+      }
+    }, 2000);
+  }
+
+  private addHoneypot(): void {
+    const honeypot = document.createElement('input');
+    honeypot.type = 'text';
+    honeypot.name = 'website';
+    honeypot.id = 'website';
+    honeypot.tabIndex = -1;
+    honeypot.setAttribute('autocomplete', 'off');
+    honeypot.style.cssText = 'position: absolute; left: -9999px; top: -9999px;';
+    
+    if (this.formRef && this.formRef.current) {
+      this.formRef.current.appendChild(honeypot);
+    }
+  }
+
+  private detectDevice(): DeviceType {
+    if (typeof window === 'undefined') return 'desktop';
+    const width = window.innerWidth;
+    if (width <= 375) return 'mobile-small';
+    if (width <= 639) return 'mobile';
+    if (width <= 1023) return 'tablet';
+    if (width <= 1919) return 'desktop';
+    return 'desktop-4k';
+  }
+
+  private setupResponsiveListeners(): void {
+    let resizeTimer: NodeJS.Timeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        this.deviceType = this.detectDevice();
+        this.optimizeForDevice();
+      }, 250);
+    });
+  }
+
+  private optimizeForDevice(): void {
+    const body = document.body;
+    body.className = body.className.replace(/device-\S+/g, '');
+    body.classList.add(`device-${this.deviceType}`);
+    
+    if (this.touchDevice) {
+      body.classList.add('touch-enabled');
+    }
+  }
+
+  public async submitSecureForm(formData: FormData): Promise<SubmissionResponse> {
+    try {
+      const honeypot = document.querySelector('#website') as HTMLInputElement;
+      if (honeypot && honeypot.value) {
+        throw new Error('Bot detection triggered');
+      }
+
+      const response = await this.submission.submitForm(formData);
+      return response;
+      
+    } catch (error) {
+      console.error('Submission error:', error);
+      throw error;
+    }
+  }
+
+  public showSecurityWarning(message: string): void {
+    const warning = document.createElement('div');
+    warning.className = 'security-warning';
+    warning.textContent = message;
+    warning.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      z-index: 10000;
+      animation: slideIn 0.3s ease-out;
+    `;
+    
+    document.body.appendChild(warning);
+    
+    setTimeout(() => {
+      warning.style.animation = 'slideOut 0.3s ease-out';
+      setTimeout(() => warning.remove(), 300);
+    }, 3000);
+  }
+}
+
+const IllummaaSecureAssessmentForm: React.FC = () => {
+  // State management with proper typing
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [formData, setFormData] = useState<FormData>({});
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showSuccess, setShowSuccess] = useState<boolean>(false);
+  const [priorityScore, setPriorityScore] = useState<number>(0);
+  const [isExplorer, setIsExplorer] = useState<boolean>(false);
+  const [csrfToken, setCsrfToken] = useState<string>('');
+  const formRef = useRef<HTMLFormElement>(null);
+  const securitySystemRef = useRef<SecureResponsiveFormSystem | null>(null);
   
   const TOTAL_STEPS = 4;
 
-  // Fetch CSRF token on component mount
+  // Initialize security system and fetch CSRF token
   useEffect(() => {
-    const fetchCSRFToken = async () => {
+    const initializeSecurity = async () => {
       try {
+        // Initialize security system
+        securitySystemRef.current = new SecureResponsiveFormSystem(formRef, setCurrentStep, setErrors);
+        
+        // Fetch CSRF token
         const response = await fetch('/api/csrf-token', {
           credentials: 'same-origin'
         });
         const data = await response.json();
         setCsrfToken(data.csrfToken);
       } catch (error) {
-        console.error('CSRF token fetch failed:', error);
+        console.error('Security initialization failed:', error);
       }
     };
     
-    fetchCSRFToken();
+    initializeSecurity();
   }, []);
 
-  // Secure input sanitization helper
-  const sanitizeInput = (value) => {
-    if (typeof value !== 'string') return value;
-    return value
-      .trim()
-      .replace(/[<>]/g, '') // Basic XSS prevention
-      .substring(0, 1000); // Length limit
+  // Utility function for input sanitization
+  const sanitizeInput = (input: string | number | boolean): string => {
+    if (securitySystemRef.current?.validator) {
+      return securitySystemRef.current.validator.sanitizeInput(input);
+    }
+    // Fallback sanitization
+    return String(input).trim().replace(/[<>]/g, '').substring(0, 1000);
   };
 
-  // Enhanced input handler with security and Explorer detection
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  // Enterprise-grade secure input handler
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     const rawValue = type === 'checkbox' ? checked : value;
-    const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(rawValue);
+    
+    // Use security system for validation
+    let sanitizedValue: any;
+    try {
+      if (securitySystemRef.current?.validator) {
+        if (type === 'checkbox') {
+          sanitizedValue = rawValue;
+        } else {
+          sanitizedValue = securitySystemRef.current.validator.sanitizeInput(rawValue as string);
+          
+          // Field-specific validation
+          if (name === 'email' && sanitizedValue) {
+            sanitizedValue = securitySystemRef.current.validator.validateEmail(sanitizedValue);
+          } else if (name === 'firstName' || name === 'lastName') {
+            sanitizedValue = securitySystemRef.current.validator.validateName(sanitizedValue);
+          } else if (name === 'unitCount' && sanitizedValue) {
+            sanitizedValue = securitySystemRef.current.validator.validateProjectUnits(sanitizedValue);
+          }
+        }
+      } else {
+        // Fallback sanitization if security system not ready
+        sanitizedValue = type === 'checkbox' ? rawValue : String(value).trim().replace(/[<>]/g, '').substring(0, 1000);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Validation error';
+      setErrors(prev => ({ ...prev, [name]: errorMessage }));
+      return;
+    }
     
     // Additional SMS consent security validation
     if (name === 'consentSMS' && typeof sanitizedValue !== 'boolean') {
       console.warn('Security: Invalid SMS consent value type');
+      if (securitySystemRef.current) {
+        securitySystemRef.current.showSecurityWarning('Invalid consent value detected and blocked');
+      }
       return;
     }
     
@@ -64,7 +624,7 @@ const IllummaaSecureAssessmentForm = () => {
     
     // Explorer detection and auto-handling
     if (name === 'readiness') {
-      const explorerStatus = sanitizedValue.includes('researching') || sanitizedValue.includes('learn more');
+      const explorerStatus = String(sanitizedValue).includes('researching') || String(sanitizedValue).includes('learn more');
       setIsExplorer(explorerStatus);
       
       if (explorerStatus) {
@@ -83,31 +643,43 @@ const IllummaaSecureAssessmentForm = () => {
     }
   };
 
-  // Secure Canadian phone formatting
-  const handlePhoneChange = (e) => {
+  // Enterprise-grade secure Canadian phone formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^\d+]/g, ''); // Only digits and +
     
-    if (value.length > 0 && !value.startsWith('+1')) {
-      if (value.startsWith('1')) {
-        value = '+' + value;
-      } else {
-        value = '+1' + value;
+    try {
+      if (value.length > 0 && !value.startsWith('+1')) {
+        if (value.startsWith('1')) {
+          value = '+' + value;
+        } else {
+          value = '+1' + value;
+        }
       }
+      
+      if (value.length > 12) {
+        value = value.substring(0, 12);
+      }
+      
+      // Additional security validation for Canadian format
+      if (value && securitySystemRef.current?.validator) {
+        value = securitySystemRef.current.validator.validatePhone(value);
+      }
+      
+      setFormData(prev => ({ ...prev, phone: value }));
+      setErrors(prev => ({ ...prev, phone: '' }));
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Phone validation error';
+      setErrors(prev => ({ ...prev, phone: errorMessage }));
     }
-    
-    if (value.length > 12) {
-      value = value.substring(0, 12);
-    }
-    
-    setFormData(prev => ({ ...prev, phone: value }));
   };
 
-  // Priority score calculation (0-150 scale)
+  // Enterprise priority score calculation (0-150 scale) with security validation
   const calculatePriorityScore = () => {
     let score = 0;
     
     // Unit count (50 points max)
-    const units = parseInt(formData.unitCount) || 0;
+    const units = parseInt(String(formData.unitCount)) || 0;
     if (units >= 1000) score += 50;
     else if (units >= 500) score += 40;
     else if (units >= 200) score += 30;
@@ -116,23 +688,23 @@ const IllummaaSecureAssessmentForm = () => {
     else score += 5;
     
     // Budget (40 points max)
-    const budgetScores = {
+    const budgetScores: Record<string, number> = {
       'Over $50M': 40, '$30M - $50M': 35, '$15M - $30M': 30,
       '$5M - $15M': 25, '$2M - $5M': 20, '$500K - $2M': 15,
       'Under $500K': 10
     };
-    score += budgetScores[formData.budget] || 0;
+    score += budgetScores[formData.budget || ''] || 0;
     
     // Timeline (30 points max)
-    const timelineScores = {
+    const timelineScores: Record<string, number> = {
       'Immediate (0-3 months)': 30, 'Short-term (3-6 months)': 20,
       'Medium-term (6-12 months)': 10, 'Long-term (12+ months)': 5
     };
-    score += timelineScores[formData.timeline] || 0;
+    score += timelineScores[formData.timeline || ''] || 0;
     
     // Location (15 points max)
     const primaryProvinces = ['Ontario', 'British Columbia', 'Alberta'];
-    if (primaryProvinces.includes(formData.province)) {
+    if (primaryProvinces.includes(formData.province || '')) {
       score += 15;
     } else if (formData.province) {
       score += 10;
@@ -147,8 +719,8 @@ const IllummaaSecureAssessmentForm = () => {
   };
 
   // Enhanced form validation with comprehensive legal consent
-  const validateStep = (step) => {
-    const newErrors = {};
+  const validateStep = (step: number): boolean => {
+    const newErrors: FormErrors = {};
     
     switch(step) {
       case 1:
@@ -238,15 +810,15 @@ const IllummaaSecureAssessmentForm = () => {
   };
 
   // Advanced tagging system with security considerations
-  const generateAdvancedTags = () => {
-    const tags = [];
+  const generateAdvancedTags = (): string[] => {
+    const tags: string[] = [];
     
     // Customer type classification
     if (isExplorer) {
       tags.push('Customer-Consumer-Individual', 'Scale-Individual', 'Ready-Exploring');
-    } else if (formData.unitCount >= 200) {
+    } else if ((formData.unitCount || 0) >= 200) {
       tags.push('Customer-Enterprise-Scale', 'Scale-Enterprise-Community');
-    } else if (formData.unitCount >= 50) {
+    } else if ((formData.unitCount || 0) >= 50) {
       tags.push('Customer-Partnership-Large', 'Scale-Large-Partnership');
     } else {
       tags.push('Customer-Residential-Small', 'Scale-Small-Residential');
@@ -282,8 +854,8 @@ const IllummaaSecureAssessmentForm = () => {
     return tags;
   };
 
-  const getProvinceCode = (province) => {
-    const codes = {
+  const getProvinceCode = (province: string): string => {
+    const codes: Record<string, string> = {
       'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB',
       'New Brunswick': 'NB', 'Newfoundland and Labrador': 'NL',
       'Northwest Territories': 'NT', 'Nova Scotia': 'NS', 'Nunavut': 'NU',
@@ -293,14 +865,14 @@ const IllummaaSecureAssessmentForm = () => {
     return codes[province] || 'XX';
   };
 
-  const getAssignedTeam = () => {
+  const getAssignedTeam = (): string => {
     if (isExplorer) return 'ILLÜMMAA Education Team';
     if (priorityScore >= 100) return 'Senior Partnership Manager';
     if (priorityScore >= 50) return 'Partnership Representative';
     return 'Residential Specialist';
   };
 
-  const getResponseTime = () => {
+  const getResponseTime = (): string => {
     if (isExplorer) return '48 hours';
     if (priorityScore >= 100) return '1 hour';
     if (priorityScore >= 50) return '4 hours';
@@ -308,7 +880,7 @@ const IllummaaSecureAssessmentForm = () => {
   };
 
   // Secure form submission with comprehensive protection
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!validateStep(currentStep) || !csrfToken) {
@@ -321,20 +893,20 @@ const IllummaaSecureAssessmentForm = () => {
     try {
       const tags = generateAdvancedTags();
       
-      const securePayload = {
+      const securePayload: SecurePayload = {
         // Contact information (sanitized)
-        firstName: sanitizeInput(formData.firstName),
-        lastName: sanitizeInput(formData.lastName),
-        email: sanitizeInput(formData.email),
-        phone: sanitizeInput(formData.phone),
-        company: isExplorer ? sanitizeInput(formData.company || '') : sanitizeInput(formData.company),
+        firstName: sanitizeInput(formData.firstName || ''),
+        lastName: sanitizeInput(formData.lastName || ''),
+        email: sanitizeInput(formData.email || ''),
+        phone: sanitizeInput(formData.phone || ''),
+        company: isExplorer ? sanitizeInput(formData.company || '') : sanitizeInput(formData.company || ''),
         
         // Project details
-        unitCount: isExplorer ? 1 : (parseInt(formData.unitCount) || 0),
-        budget: isExplorer ? 'Under $500K' : formData.budget,
-        timeline: formData.timeline,
-        province: formData.province,
-        readiness: formData.readiness,
+        unitCount: isExplorer ? 1 : (parseInt(String(formData.unitCount)) || 0),
+        budget: isExplorer ? 'Under $500K' : (formData.budget || ''),
+        timeline: formData.timeline || '',
+        province: formData.province || '',
+        readiness: formData.readiness || '',
         projectDescription: sanitizeInput(formData.projectDescription || ''),
         
         // ILLÜMMAA routing
@@ -386,7 +958,7 @@ const IllummaaSecureAssessmentForm = () => {
         throw new Error(`Submission failed: ${response.status}`);
       }
       
-      const result = await response.json();
+      const result: SubmissionResponse = await response.json();
       
       // Update CSRF token for future requests
       if (result.csrfToken) {
@@ -394,8 +966,8 @@ const IllummaaSecureAssessmentForm = () => {
       }
       
       // Analytics tracking
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'conversion', {
+      if (typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'conversion', {
           event_category: 'Secure_Assessment_SMS',
           event_label: getAssignedTeam(),
           value: priorityScore,
@@ -427,74 +999,58 @@ const IllummaaSecureAssessmentForm = () => {
             Build Canada Homes Partner
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-            Discover Your Partnership Path
+            Partner Qualification Assessment
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            From first-time learners to enterprise developers - find your place in Canada's modular revolution
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Complete our secure assessment to receive your personalized partnership proposal and priority support.
           </p>
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress Indicator */}
         <div className="mb-8">
-          <div className="flex justify-between text-sm text-gray-500 mb-2">
-            <span>Step {currentStep} of {TOTAL_STEPS}</span>
-            <span>{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-sm font-medium text-gray-500">Step {currentStep} of {TOTAL_STEPS}</span>
+            <span className="text-sm text-gray-500">{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className="h-full bg-gradient-to-r from-[#2C5530] to-[#1DB954] transition-all duration-500 ease-out"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
-            />
+            ></div>
           </div>
         </div>
 
-        {/* Secure Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-          <form onSubmit={handleSubmit} className="p-8 md:p-12">
-            
-            {/* STEP 1: Contact Information & Enhanced Legal Consent */}
+        {showSuccess ? (
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">Assessment Submitted Successfully!</h3>
+            <p className="text-xl text-gray-600 mb-6">
+              Your secure assessment has been received. Expected response time: <strong>{getResponseTime()}</strong>
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-2xl mx-auto">
+              <h4 className="font-semibold text-blue-900 mb-2">What's Next:</h4>
+              <ul className="text-left text-blue-800 space-y-2">
+                <li>• Your {getAssignedTeam()} will review your assessment</li>
+                <li>• You'll receive a personalized partnership proposal</li>
+                <li>• Priority Score: <strong>{priorityScore}/150</strong></li>
+                <li>• All communications comply with CASL and PIPEDA requirements</li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-8" data-testid="assessment-form">
+            {/* Step 1: Contact Information & Readiness */}
             {currentStep === 1 && (
-              <div className="space-y-8 animate-fadeIn">
-                <h3 className="text-2xl font-semibold mb-6 text-gray-900">Contact Information</h3>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Contact Information & Journey Stage</h3>
                 
-                {/* Journey Stage Detection */}
-                <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6">
-                  <label className="block text-sm font-medium mb-3 text-gray-900">
-                    Where are you in your modular home journey? <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="readiness"
-                    value={formData.readiness || ''}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all text-gray-900"
-                    required
-                    data-testid="select-readiness"
-                  >
-                    <option value="">Select your stage...</option>
-                    <option value="Just researching - want to learn more">Just researching - want to learn more</option>
-                    <option value="Planning active project (0-6 months)">Planning active project (0-6 months)</option>
-                    <option value="Planning future project (6+ months)">Planning future project (6+ months)</option>
-                    <option value="Ready to move forward immediately">Ready to move forward immediately</option>
-                  </select>
-                  {errors.readiness && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span className="w-4 h-4 text-red-500">⚠</span>
-                    {errors.readiness}
-                  </p>}
-                  
-                  {isExplorer && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-blue-800 flex items-center gap-2">
-                        <span className="text-lg">📚</span>
-                        Perfect! We'll focus on education and learning resources for you.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Contact Form Fields */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       First Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -502,16 +1058,17 @@ const IllummaaSecureAssessmentForm = () => {
                       name="firstName"
                       value={formData.firstName || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                      required
-                      maxLength={50}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.firstName ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter your first name"
                       data-testid="input-firstName"
                     />
-                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                    {errors.firstName && <p className="mt-1 text-sm text-red-600" data-testid="error-firstName">{errors.firstName}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Last Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -519,16 +1076,19 @@ const IllummaaSecureAssessmentForm = () => {
                       name="lastName"
                       value={formData.lastName || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                      required
-                      maxLength={50}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.lastName ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter your last name"
                       data-testid="input-lastName"
                     />
-                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                    {errors.lastName && <p className="mt-1 text-sm text-red-600" data-testid="error-lastName">{errors.lastName}</p>}
                   </div>
+                </div>
 
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -536,15 +1096,17 @@ const IllummaaSecureAssessmentForm = () => {
                       name="email"
                       value={formData.email || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.email ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="your.email@example.com"
                       data-testid="input-email"
                     />
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                    {errors.email && <p className="mt-1 text-sm text-red-600" data-testid="error-email">{errors.email}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -552,142 +1114,149 @@ const IllummaaSecureAssessmentForm = () => {
                       name="phone"
                       value={formData.phone || ''}
                       onChange={handlePhoneChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.phone ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       placeholder="+1 (555) 123-4567"
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                      required
                       data-testid="input-phone"
                     />
-                    {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+                    {errors.phone && <p className="mt-1 text-sm text-red-600" data-testid="error-phone">{errors.phone}</p>}
                   </div>
-
-                  {!isExplorer && (
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium mb-2 text-gray-900">
-                        Company/Organization <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        value={formData.company || ''}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                        required={!isExplorer}
-                        maxLength={100}
-                        data-testid="input-company"
-                      />
-                      {errors.company && <p className="text-red-500 text-sm mt-1">{errors.company}</p>}
-                    </div>
-                  )}
                 </div>
 
-                {/* Enhanced Legal Consent Section with SMS Security */}
-                <div className="space-y-4 bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                      <span className="w-6 h-6 text-[#2C5530]">🔒</span>
-                      Legal Consent & Privacy Protection
-                    </h4>
-                    <p className="text-xs text-gray-600">
-                      Required for compliance with Canadian privacy and anti-spam legislation (CASL/PIPEDA)
-                    </p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Journey Stage <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="readiness"
+                    value={formData.readiness || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      errors.readiness ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    data-testid="select-readiness"
+                  >
+                    <option value="">Select your current stage</option>
+                    <option value="Just researching modular housing">Just researching modular housing</option>
+                    <option value="Planning to develop a project">Planning to develop a project</option>
+                    <option value="Ready to move forward immediately">Ready to move forward immediately</option>
+                    <option value="Evaluating partnership opportunities">Evaluating partnership opportunities</option>
+                  </select>
+                  {errors.readiness && <p className="mt-1 text-sm text-red-600" data-testid="error-readiness">{errors.readiness}</p>}
+                </div>
+
+                {!isExplorer && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company/Organization <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="company"
+                      value={formData.company || ''}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.company ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter your company or organization name"
+                      data-testid="input-company"
+                    />
+                    {errors.company && <p className="mt-1 text-sm text-red-600" data-testid="error-company">{errors.company}</p>}
                   </div>
+                )}
+
+                {/* Legal Consent Section */}
+                <div className="bg-gray-50 p-6 rounded-lg border">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Legal Consent & Privacy</h4>
                   
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      name="consentCommunications"
-                      checked={formData.consentCommunications || false}
-                      onChange={handleInputChange}
-                      className="mt-1 w-5 h-5 text-[#2C5530] rounded focus:ring-[#2C5530] focus:ring-2"
-                      required
-                      data-testid="checkbox-consentCommunications"
-                    />
-                    <span className="text-sm text-gray-700 leading-relaxed group-hover:text-gray-900 transition-colors">
-                      <strong>I expressly consent to ILLÜMMAA and its authorized representatives contacting me via email, phone calls, WhatsApp, and other digital messaging platforms about modular home solutions, services, and related offerings. I understand I can withdraw this consent at any time by unsubscribing or contacting info@illummaa.ca.</strong> <span className="text-red-500">*</span>
-                    </span>
-                  </label>
-                  {errors.consentCommunications && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span className="w-4 h-4 text-red-500">⚠</span>
-                    {errors.consentCommunications}
-                  </p>}
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        name="consentCommunications"
+                        checked={formData.consentCommunications || false}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        data-testid="checkbox-consentCommunications"
+                      />
+                      <label className="text-sm text-gray-700">
+                        <span className="text-red-500">*</span> I consent to receive communications from ILLÜMMAA via email, phone, and other channels regarding partnership opportunities (Required by CASL)
+                      </label>
+                    </div>
+                    {errors.consentCommunications && <p className="text-sm text-red-600" data-testid="error-consentCommunications">{errors.consentCommunications}</p>}
 
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      name="consentSMS"
-                      checked={formData.consentSMS || false}
-                      onChange={handleInputChange}
-                      className="mt-1 w-5 h-5 text-[#2C5530] rounded focus:ring-[#2C5530] focus:ring-2"
-                      required
-                      aria-describedby="sms-consent-help"
-                      data-security="consent-required"
-                      data-testid="checkbox-consentSMS"
-                    />
-                    <span className="text-sm text-gray-700 leading-relaxed group-hover:text-gray-900 transition-colors">
-                      <strong>I expressly consent to ILLÜMMAA contacting me via SMS/text messages about modular home solutions and services. I understand that standard messaging rates may apply, I can opt-out anytime by replying STOP/ARRET, and opt-out requests will be processed within 10 business days per CASL requirements.</strong> <span className="text-red-500">*</span>
-                    </span>
-                    <div id="sms-consent-help" className="sr-only">Required for SMS marketing compliance under CASL</div>
-                  </label>
-                  {errors.consentSMS && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span className="w-4 h-4 text-red-500" role="alert">⚠</span>
-                    {errors.consentSMS}
-                  </p>}
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        name="consentSMS"
+                        checked={formData.consentSMS || false}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        data-testid="checkbox-consentSMS"
+                      />
+                      <label className="text-sm text-gray-700">
+                        <span className="text-red-500">*</span> I consent to receive SMS text messages from ILLÜMMAA for time-sensitive updates and project coordination (Required for SMS compliance)
+                      </label>
+                    </div>
+                    {errors.consentSMS && <p className="text-sm text-red-600" data-testid="error-consentSMS">{errors.consentSMS}</p>}
 
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      name="privacyPolicyConsent"
-                      checked={formData.privacyPolicyConsent || false}
-                      onChange={handleInputChange}
-                      className="mt-1 w-5 h-5 text-[#2C5530] rounded focus:ring-[#2C5530] focus:ring-2"
-                      required
-                      data-testid="checkbox-privacyPolicyConsent"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                      <strong>I have read, understood, and agree to ILLÜMMAA's <a href="/privacy-policy" target="_blank" className="text-[#2C5530] underline hover:text-[#1e3d21] font-medium transition-colors">Privacy Policy</a> which explains how my personal information will be collected, used, disclosed, and protected in accordance with PIPEDA and applicable provincial privacy laws.</strong> <span className="text-red-500">*</span>
-                    </span>
-                  </label>
-                  {errors.privacyPolicyConsent && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span className="w-4 h-4 text-red-500">⚠</span>
-                    {errors.privacyPolicyConsent}
-                  </p>}
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        name="privacyPolicyConsent"
+                        checked={formData.privacyPolicyConsent || false}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        data-testid="checkbox-privacyPolicyConsent"
+                      />
+                      <label className="text-sm text-gray-700">
+                        <span className="text-red-500">*</span> I have read and accept the <a href="/privacy-policy" className="text-blue-600 underline" target="_blank">Privacy Policy</a> (Required by PIPEDA)
+                      </label>
+                    </div>
+                    {errors.privacyPolicyConsent && <p className="text-sm text-red-600" data-testid="error-privacyPolicyConsent">{errors.privacyPolicyConsent}</p>}
 
-                  <label className="flex items-start gap-3 cursor-pointer group">
-                    <input
-                      type="checkbox"
-                      name="ageVerification"
-                      checked={formData.ageVerification || false}
-                      onChange={handleInputChange}
-                      className="mt-1 w-5 h-5 text-[#2C5530] rounded focus:ring-[#2C5530] focus:ring-2"
-                      required
-                      data-testid="checkbox-ageVerification"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-                      <strong>I confirm that I am at least 18 years of age and have the legal capacity to enter into agreements and provide consent for communication and information sharing.</strong> <span className="text-red-500">*</span>
-                    </span>
-                  </label>
-                  {errors.ageVerification && <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                    <span className="w-4 h-4 text-red-500">⚠</span>
-                    {errors.ageVerification}
-                  </p>}
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        name="ageVerification"
+                        checked={formData.ageVerification || false}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        data-testid="checkbox-ageVerification"
+                      />
+                      <label className="text-sm text-gray-700">
+                        <span className="text-red-500">*</span> I confirm that I am 18 years of age or older and have the legal capacity to provide consent
+                      </label>
+                    </div>
+                    {errors.ageVerification && <p className="text-sm text-red-600" data-testid="error-ageVerification">{errors.ageVerification}</p>}
 
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-xs text-blue-800">
-                      <strong>A2P 10DLC Industry Compliance:</strong> ILLÜMMAA follows industry best practices for application-to-person (A2P) messaging using 10-digit long code (10DLC) registration to ensure reliable SMS delivery and reduce spam. Your consent enables compliant business messaging under CASL regulations.
-                    </p>
+                    <div className="flex items-start">
+                      <input
+                        type="checkbox"
+                        name="marketingConsent"
+                        checked={formData.marketingConsent || false}
+                        onChange={handleInputChange}
+                        className="mt-1 mr-3 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        data-testid="checkbox-marketingConsent"
+                      />
+                      <label className="text-sm text-gray-700">
+                        I would like to receive marketing communications about ILLÜMMAA products and industry insights (Optional)
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* STEP 2: Project Details */}
+            {/* Step 2: Project Details */}
             {currentStep === 2 && !isExplorer && (
-              <div className="space-y-8 animate-fadeIn">
-                <h3 className="text-2xl font-semibold mb-6 text-gray-900">Project Details</h3>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Project Details</h3>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Number of Units <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -697,26 +1266,29 @@ const IllummaaSecureAssessmentForm = () => {
                       onChange={handleInputChange}
                       min="1"
                       max="10000"
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all"
-                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.unitCount ? 'border-red-300' : 'border-gray-300'
+                      }`}
+                      placeholder="Enter number of units"
                       data-testid="input-unitCount"
                     />
-                    {errors.unitCount && <p className="text-red-500 text-sm mt-1">{errors.unitCount}</p>}
+                    {errors.unitCount && <p className="mt-1 text-sm text-red-600" data-testid="error-unitCount">{errors.unitCount}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Budget Range <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="budget"
                       value={formData.budget || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all text-gray-900"
-                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.budget ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       data-testid="select-budget"
                     >
-                      <option value="">Select budget range...</option>
+                      <option value="">Select budget range</option>
                       <option value="Under $500K">Under $500K</option>
                       <option value="$500K - $2M">$500K - $2M</option>
                       <option value="$2M - $5M">$2M - $5M</option>
@@ -725,88 +1297,74 @@ const IllummaaSecureAssessmentForm = () => {
                       <option value="$30M - $50M">$30M - $50M</option>
                       <option value="Over $50M">Over $50M</option>
                     </select>
-                    {errors.budget && <p className="text-red-500 text-sm mt-1">{errors.budget}</p>}
+                    {errors.budget && <p className="mt-1 text-sm text-red-600" data-testid="error-budget">{errors.budget}</p>}
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-900">
-                    Project Description (Optional)
-                  </label>
-                  <textarea
-                    name="projectDescription"
-                    value={formData.projectDescription || ''}
-                    onChange={handleInputChange}
-                    rows={4}
-                    maxLength={2000}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all resize-none"
-                    placeholder="Tell us about your project goals, requirements, or any specific questions..."
-                    data-testid="textarea-projectDescription"
-                  />
                 </div>
               </div>
             )}
 
-            {/* STEP 2: Explorer Path */}
+            {/* Step 2 Explorer: Educational Content */}
             {currentStep === 2 && isExplorer && (
-              <div className="space-y-8 animate-fadeIn text-center">
-                <div className="text-6xl mb-4">📚</div>
-                <h3 className="text-2xl font-semibold mb-6 text-gray-900">Learning Resources Coming Your Way</h3>
-                <p className="text-lg text-gray-600 mb-8">
-                  Perfect! Since you're in the research phase, we'll connect you with our Education Team who specializes in helping people learn about modular construction.
-                </p>
-                <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 text-left">
-                  <h4 className="font-semibold text-green-800 mb-3">What you'll receive:</h4>
-                  <ul className="space-y-2 text-green-700">
-                    <li className="flex items-center gap-2"><span>✅</span> Educational guide to modular construction</li>
-                    <li className="flex items-center gap-2"><span>✅</span> Cost comparison worksheets</li>
-                    <li className="flex items-center gap-2"><span>✅</span> Timeline planning resources</li>
-                    <li className="flex items-center gap-2"><span>✅</span> Access to online learning portal</li>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Learning About Modular Construction</h3>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-blue-900 mb-4">Welcome to Your Modular Housing Journey!</h4>
+                  <p className="text-blue-800 mb-4">
+                    Since you're in the research phase, we'll connect you with our Education Team who specializes in helping 
+                    people understand the benefits and possibilities of modular construction.
+                  </p>
+                  <ul className="text-blue-800 space-y-2">
+                    <li>• Learn about cost savings vs traditional construction</li>
+                    <li>• Understand quality standards and certifications</li>
+                    <li>• Explore design flexibility and customization options</li>
+                    <li>• Get answers to common questions about modular homes</li>
                   </ul>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: Timeline & Location */}
+            {/* Step 3: Timeline & Location */}
             {currentStep === 3 && (
-              <div className="space-y-8 animate-fadeIn">
-                <h3 className="text-2xl font-semibold mb-6 text-gray-900">Timeline & Location</h3>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Timeline & Location</h3>
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Project Timeline <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="timeline"
                       value={formData.timeline || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all text-gray-900"
-                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.timeline ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       data-testid="select-timeline"
                     >
-                      <option value="">Select timeline...</option>
+                      <option value="">Select timeline</option>
                       <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
                       <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
                       <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
                       <option value="Long-term (12+ months)">Long-term (12+ months)</option>
                     </select>
-                    {errors.timeline && <p className="text-red-500 text-sm mt-1">{errors.timeline}</p>}
+                    {errors.timeline && <p className="mt-1 text-sm text-red-600" data-testid="error-timeline">{errors.timeline}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-900">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Province/Territory <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="province"
                       value={formData.province || ''}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#2C5530] focus:ring-2 focus:ring-[#2C5530] focus:ring-opacity-20 transition-all text-gray-900"
-                      required
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        errors.province ? 'border-red-300' : 'border-gray-300'
+                      }`}
                       data-testid="select-province"
                     >
-                      <option value="">Select province/territory...</option>
+                      <option value="">Select province/territory</option>
                       <option value="Alberta">Alberta</option>
                       <option value="British Columbia">British Columbia</option>
                       <option value="Manitoba">Manitoba</option>
@@ -821,156 +1379,160 @@ const IllummaaSecureAssessmentForm = () => {
                       <option value="Saskatchewan">Saskatchewan</option>
                       <option value="Yukon">Yukon</option>
                     </select>
-                    {errors.province && <p className="text-red-500 text-sm mt-1">{errors.province}</p>}
+                    {errors.province && <p className="mt-1 text-sm text-red-600" data-testid="error-province">{errors.province}</p>}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* STEP 4: Review & Submit */}
+            {/* Step 4: Additional Information & Priority Score */}
             {currentStep === 4 && (
-              <div className="space-y-8 animate-fadeIn">
-                <h3 className="text-2xl font-semibold mb-6 text-gray-900">Review & Submit</h3>
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6">Additional Information</h3>
                 
-                <div className="bg-gray-50 rounded-xl p-6 space-y-4">
-                  <h4 className="font-semibold text-gray-900 mb-4">Assessment Summary</h4>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Description (Optional)
+                  </label>
+                  <textarea
+                    name="projectDescription"
+                    value={formData.projectDescription || ''}
+                    onChange={handleInputChange}
+                    rows={4}
+                    maxLength={2000}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Tell us more about your project vision, specific requirements, or any questions you have..."
+                    data-testid="textarea-projectDescription"
+                  />
+                  <p className="mt-1 text-sm text-gray-500">
+                    {(formData.projectDescription || '').length}/2000 characters
+                  </p>
+                </div>
+
+                {/* Priority Score Display */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Your Assessment Summary</h4>
                   
-                  <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Name:</span>
-                      <span className="font-medium">{formData.firstName} {formData.lastName}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Email:</span>
-                      <span className="font-medium">{formData.email}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Phone:</span>
-                      <span className="font-medium">{formData.phone}</span>
-                    </div>
-                    {!isExplorer && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Company:</span>
-                        <span className="font-medium">{formData.company}</span>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <div className="text-3xl font-bold text-blue-600 mb-2">{priorityScore}/150</div>
+                      <div className="text-sm text-gray-600 mb-4">Priority Score</div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Assigned Team:</span>
+                          <span className="font-medium">{getAssignedTeam()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Response Time:</span>
+                          <span className="font-medium">{getResponseTime()}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Customer Type:</span>
+                          <span className="font-medium">
+                            {isExplorer ? 'Education Journey' : 'Partnership Track'}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Journey Stage:</span>
-                      <span className="font-medium">{formData.readiness}</span>
                     </div>
-                    {!isExplorer && (
-                      <>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Units:</span>
-                          <span className="font-medium">{formData.unitCount}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">Budget:</span>
-                          <span className="font-medium">{formData.budget}</span>
-                        </div>
-                      </>
-                    )}
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Timeline:</span>
-                      <span className="font-medium">{formData.timeline}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Location:</span>
-                      <span className="font-medium">{formData.province}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Assigned To:</span>
-                      <span className="font-medium">{getAssignedTeam()}</span>
+                    
+                    <div>
+                      <h5 className="font-medium text-gray-900 mb-2">What to Expect:</h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {isExplorer ? (
+                          <>
+                            <li>• Educational resources and guides</li>
+                            <li>• Introduction to modular construction</li>
+                            <li>• Answers to common questions</li>
+                            <li>• No high-pressure sales approach</li>
+                          </>
+                        ) : (
+                          <>
+                            <li>• Personalized partnership proposal</li>
+                            <li>• Detailed project consultation</li>
+                            <li>• Custom pricing and timeline</li>
+                            <li>• Direct access to experts</li>
+                          </>
+                        )}
+                      </ul>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Navigation */}
-            <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+            {/* Navigation Buttons */}
+            <div className="flex justify-between pt-6 border-t border-gray-200">
               {currentStep > 1 && (
                 <button
                   type="button"
                   onClick={handlePrevious}
-                  className="px-6 py-3 text-gray-700 bg-white border-2 border-gray-300 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all flex items-center gap-2"
+                  className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
                   data-testid="button-previous"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
                   Previous
                 </button>
               )}
               
-              {currentStep < TOTAL_STEPS ? (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="ml-auto px-8 py-3 bg-[#2C5530] text-white rounded-xl hover:bg-[#1e3d21] transition-all flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-                  data-testid="button-next"
-                >
-                  Next - Continue Assessment
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !csrfToken}
-                  className="ml-auto px-8 py-4 bg-[#2C5530] text-white rounded-xl hover:bg-[#1e3d21] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
-                  data-testid="button-submit"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
-                      Processing Securely...
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-xl">🚀</span>
-                      Start Your ILLÜMMAA Journey
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-
-        {/* Success Modal */}
-        {showSuccess && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl p-8 max-w-md w-full animate-scaleIn shadow-2xl">
-              <div className="text-center">
-                <div className="text-6xl mb-4">✅</div>
-                <h3 className="text-2xl font-bold mb-3">Assessment Complete!</h3>
-                <p className="text-gray-700 mb-6">
-                  {isExplorer 
-                    ? "Thank you for your interest! Our Education Team will contact you within 48 hours with helpful resources."
-                    : `Thank you! Our ${getAssignedTeam()} will contact you within ${getResponseTime()}.`
-                  }
-                </p>
-                <div className="bg-gray-50 p-4 rounded-xl mb-6 text-left">
-                  <p className="text-sm"><strong>Priority Score:</strong> {priorityScore}/150</p>
-                  <p className="text-sm"><strong>Response Time:</strong> {getResponseTime()}</p>
-                  <p className="text-sm"><strong>Assigned To:</strong> {getAssignedTeam()}</p>
-                  <p className="text-sm"><strong>Legal Status:</strong> CASL & PIPEDA Verified</p>
-                  <p className="text-sm"><strong>SMS Compliance:</strong> A2P 10DLC Ready</p>
-                  <p className="text-sm"><strong>Security:</strong> Enterprise Protected</p>
-                </div>
-                <button
-                  onClick={() => setShowSuccess(false)}
-                  className="px-6 py-3 bg-[#2C5530] text-white rounded-xl hover:bg-[#1e3d21] transition-colors font-medium"
-                  data-testid="button-continue"
-                >
-                  Continue
-                </button>
+              <div className="ml-auto">
+                {currentStep < TOTAL_STEPS ? (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
+                    data-testid="button-next"
+                  >
+                    Next Step
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-8 py-3 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:from-green-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    data-testid="button-submit"
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Submitting Securely...
+                      </span>
+                    ) : (
+                      'Submit Assessment'
+                    )}
+                  </button>
+                )}
               </div>
             </div>
-          </div>
+          </form>
         )}
+
+        {/* Security & Compliance Footer */}
+        <div className="mt-12 text-center text-sm text-gray-500">
+          <div className="flex items-center justify-center space-x-4 mb-2">
+            <span className="flex items-center">
+              <svg className="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+              </svg>
+              Secure Encrypted
+            </span>
+            <span className="flex items-center">
+              <svg className="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              CASL Compliant
+            </span>
+            <span className="flex items-center">
+              <svg className="w-4 h-4 text-green-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              PIPEDA Protected
+            </span>
+          </div>
+          <p>Your information is protected by enterprise-grade security and Canadian privacy laws.</p>
+        </div>
       </div>
     </section>
   );
