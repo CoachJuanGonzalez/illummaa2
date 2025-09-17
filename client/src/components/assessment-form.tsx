@@ -282,9 +282,12 @@ const IllummaaAssessmentForm = () => {
       score += 10;
     }
     
-    // Government programs (10 points max)
-    if (formData.governmentPrograms === 'Yes - Currently participating') score += 10;
-    else if (formData.governmentPrograms === 'Interested - Tell us more') score += 5;
+    // Enhanced government program scoring
+    if (formData.governmentPrograms === 'Currently participating') score += 10;
+    else if (formData.governmentPrograms === 'Very interested') score += 7;
+    else if (formData.governmentPrograms === 'Somewhat interested') score += 5;
+    else if (formData.governmentPrograms === 'Just learning about options') score += 2;
+    else if (formData.governmentPrograms === 'Not interested') score += 0;
     
     // Developer type (5 points max)
     if (['Commercial Developer', 'Government/Municipal Developer'].includes(formData.developerType)) {
@@ -308,21 +311,22 @@ const IllummaaAssessmentForm = () => {
     const newErrors: FormErrors = {};
     
     switch(step) {
-      case 1: // Readiness + Units
+      case 1: // Validate units only if NOT "Just researching"
         if (!formData.readiness) {
           newErrors.readiness = 'Please select your journey stage';
         }
-        if (!formData.unitCount && formData.unitCount !== '0') {
+        // Only validate units if not "Just researching" (but validate for "planning-long")
+        if (formData.readiness !== 'researching' && (!formData.unitCount || formData.unitCount === '')) {
           newErrors.unitCount = 'Please select number of units';
         }
         break;
         
-      case 2: // Budget + Timeline
-        if (customerTier !== 'tier_0_explorer' && !formData.budget) {
-          newErrors.budget = 'Budget range required';
+      case 2: // Only validate budget if not "Just researching" Explorer
+        if (!isExplorer && !formData.budget) {
+          newErrors.budget = 'Budget range is required';
         }
         if (!formData.timeline) {
-          newErrors.timeline = 'Timeline required';
+          newErrors.timeline = 'Timeline is required';
         }
         break;
         
@@ -345,9 +349,15 @@ const IllummaaAssessmentForm = () => {
         }
         break;
         
-      case 4: // Location + Developer Type
+      case 4: // Validate required fields for ALL tiers
         if (!formData.province) {
           newErrors.province = 'Province/territory is required';
+        }
+        if (!formData.developerType) {
+          newErrors.developerType = 'Please select a developer type';
+        }
+        if (!formData.governmentPrograms) {
+          newErrors.governmentPrograms = 'Please select your interest level';
         }
         break;
         
@@ -470,13 +480,13 @@ const IllummaaAssessmentForm = () => {
         aiPriorityScore: priorityScore,
         
         // Project Details
-        projectUnitCount: formData.unitCount,
+        projectUnitCount: sanitizeInput(formData.unitCount || '0'),
         readinessToBuy: formData.readiness,
-        projectBudgetRange: formData.budget || '',
+        projectBudgetRange: sanitizeInput(formData.budget || 'Just exploring options'),
         deliveryTimeline: formData.timeline,
         constructionProvince: formData.province,
-        developerType: formData.developerType || '',
-        governmentPrograms: formData.governmentPrograms || '',
+        developerType: sanitizeInput(formData.developerType || 'Not Specified'),
+        governmentPrograms: sanitizeInput(formData.governmentPrograms || 'Not Specified'),
         projectDescription: sanitizeInput(formData.projectDescription || ''),
         
         // Flags for automation
@@ -699,10 +709,19 @@ const IllummaaAssessmentForm = () => {
                   Project Planning
                 </h2>
 
-                {customerTier !== 'tier_0_explorer' && (
+                {/* Only hide budget for "Just researching" explorers */}
+                {isExplorer ? (
+                  <div className="text-center py-8">
+                    <div className="text-5xl mb-4">📚</div>
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900">Education Journey</h3>
+                    <p className="text-gray-600">
+                      Budget planning will be discussed during your educational consultation.
+                    </p>
+                  </div>
+                ) : (
                   <div>
                     <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-budget">
-                      Budget range <span className="text-red-500">*</span>
+                      Project Budget Range (CAD) <span className="text-red-500">*</span>
                     </label>
                     <select
                       name="budget"
@@ -718,7 +737,7 @@ const IllummaaAssessmentForm = () => {
                         backgroundSize: '1.5em 1.5em',
                         paddingRight: '2.5rem'
                       }}
-                      required={customerTier !== 'tier_0_explorer'}
+                      required
                       data-testid="select-budget"
                     >
                       <option value="">Select budget range...</option>
@@ -935,7 +954,7 @@ const IllummaaAssessmentForm = () => {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-developer-type">
-                    Developer Type
+                    Developer Type <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="developerType"
@@ -949,21 +968,22 @@ const IllummaaAssessmentForm = () => {
                       backgroundSize: '1.5em 1.5em',
                       paddingRight: '2.5rem'
                     }}
+                    required
                     data-testid="select-developer-type"
                   >
                     <option value="">Select developer type...</option>
-                    <option value="Individual Home Buyer">Individual Home Buyer</option>
-                    <option value="Residential Developer">Residential Developer</option>
+                    <option value="I don't know yet">I don't know yet</option>
+                    <option value="Individual/Family">Individual/Family</option>
                     <option value="Commercial Developer">Commercial Developer</option>
-                    <option value="Government/Municipal Developer">Government/Municipal Developer</option>
+                    <option value="Government/Municipal">Government/Municipal</option>
                     <option value="Non-Profit Organization">Non-Profit Organization</option>
-                    <option value="Other">Other</option>
+                    <option value="Private Developer">Private Developer</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
-                    Interest in Government Housing Programs
+                    Interest in Government Housing Programs <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="governmentPrograms"
@@ -977,13 +997,15 @@ const IllummaaAssessmentForm = () => {
                       backgroundSize: '1.5em 1.5em',
                       paddingRight: '2.5rem'
                     }}
+                    required
                     data-testid="select-government-programs"
                   >
                     <option value="">Select interest level...</option>
-                    <option value="Yes - Currently participating">Yes - Currently participating</option>
-                    <option value="Interested - Tell us more">Interested - Tell us more</option>
+                    <option value="Just learning about options">Just learning about options</option>
                     <option value="Not interested">Not interested</option>
-                    <option value="Unsure">Unsure</option>
+                    <option value="Somewhat interested">Somewhat interested</option>
+                    <option value="Very interested">Very interested</option>
+                    <option value="Currently participating">Currently participating</option>
                   </select>
                 </div>
 
