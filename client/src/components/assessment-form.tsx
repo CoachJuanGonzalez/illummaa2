@@ -69,6 +69,11 @@ const IllummaaAssessmentForm = () => {
   const determineCustomerTier = (units: string, readiness: string): TierType => {
     const unitCount = parseInt(units) || 0;
     
+    // Don't show tier until user has made selections
+    if (!readiness || (!units && units !== '0')) {
+      return 'tier_0_explorer'; // Default but won't display until data entered
+    }
+    
     // CRITICAL: Research ALWAYS = Explorer, regardless of units
     if (readiness === 'researching' || readiness === 'planning-long' || unitCount === 0) {
       return 'tier_0_explorer';
@@ -162,6 +167,15 @@ const IllummaaAssessmentForm = () => {
     }));
     
     setErrors(prev => ({ ...prev, [name]: '' }));
+    
+    // Auto-selection: "Just researching" → "Just exploring options"
+    if (name === 'readiness' && value === 'researching') {
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: sanitizedValue,
+        unitCount: '0' // Auto-set to "Just exploring options"
+      }));
+    }
     
     // Update tier when readiness or units change
     if (name === 'readiness' || name === 'unitCount') {
@@ -338,13 +352,21 @@ const IllummaaAssessmentForm = () => {
   const handleNext = () => {
     if (validateStep(currentStep)) {
       setCurrentStep(Math.min(currentStep + 1, TOTAL_STEPS));
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to form section, not page top
+      const formElement = document.getElementById('developer-qualification');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   };
 
   const handlePrevious = () => {
     setCurrentStep(Math.max(currentStep - 1, 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scroll to form section, not page top
+    const formElement = document.getElementById('developer-qualification');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   // Generate tags for single pipeline
@@ -511,7 +533,7 @@ const IllummaaAssessmentForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12" data-testid="assessment-form-container">
+    <div id="developer-qualification" className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12" data-testid="assessment-form-container">
       <div className="container mx-auto px-4 max-w-3xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -625,8 +647,8 @@ const IllummaaAssessmentForm = () => {
                   )}
                 </div>
 
-                {/* Tier Preview */}
-                {customerTier && (
+                {/* Tier Preview - Only show when meaningful data entered */}
+                {(formData.readiness && formData.unitCount !== undefined && formData.unitCount !== '') && (
                   <div className="bg-gray-50 rounded-xl p-4" data-testid="tier-preview">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl" data-testid="tier-icon">{getTierInfo(customerTier).icon}</span>
@@ -985,25 +1007,28 @@ const IllummaaAssessmentForm = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6 p-4 bg-white rounded-lg border-l-4 border-indigo-400" data-testid="tier-summary">
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-2xl" data-testid="summary-tier-icon">{getTierInfo(customerTier).icon}</span>
-                      <div>
-                        <p className="font-semibold text-gray-900" data-testid="summary-tier-name">
-                          {getTierInfo(customerTier).name} Partnership
-                        </p>
-                        <p className="text-sm text-gray-600" data-testid="summary-priority-score">
-                          Priority Score: {priorityScore}/150
-                        </p>
+                  {/* Only show tier summary when meaningful data is entered */}
+                  {(formData.readiness && formData.unitCount !== undefined) && (
+                    <div className="mt-6 p-4 bg-white rounded-lg border-l-4 border-indigo-400" data-testid="tier-summary">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-2xl" data-testid="summary-tier-icon">{getTierInfo(customerTier).icon}</span>
+                        <div>
+                          <p className="font-semibold text-gray-900" data-testid="summary-tier-name">
+                            {getTierInfo(customerTier).name} Partnership
+                          </p>
+                          <p className="text-sm text-gray-600" data-testid="summary-priority-score">
+                            Priority Score: {priorityScore}/150
+                          </p>
+                        </div>
                       </div>
+                      <p className="text-sm text-gray-700 font-medium" data-testid="summary-response-commitment">
+                        {getResponseCommitment(customerTier)}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2 italic" data-testid="summary-response-disclaimer">
+                        *Response times vary based on project urgency and current volume.
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-700 font-medium" data-testid="summary-response-commitment">
-                      {getResponseCommitment(customerTier)}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2 italic" data-testid="summary-response-disclaimer">
-                      *Response times vary based on project urgency and current volume.
-                    </p>
-                  </div>
+                  )}
                 </div>
 
                 {/* Legal Consent & Privacy Section */}
