@@ -1,0 +1,298 @@
+Please update the existing ILLÜMMAA Assessment Form with these specific changes. DO NOT replace the entire form - just modify the necessary sections:
+
+## CHANGE 1: Update Tier Determination Logic
+Find the determineCustomerTier function and REPLACE it entirely with this new logic that weights long-term planners by units:
+```javascript
+// Tier determination function with weighted logic for long-term planners
+const determineCustomerTier = (units, readiness) => {
+  const unitCount = parseInt(units) || 0;
+  
+  // Just researching ALWAYS = Explorer
+  if (readiness === 'researching') {
+    return 'tier_0_explorer';
+  }
+  
+  // Planning long-term (12+ months) - weighted by units
+  if (readiness === 'planning-long') {
+    if (unitCount === 0) return 'tier_0_explorer'; // No units = still exploring
+    if (unitCount <= 49) return 'tier_1_starter';   // Even 1-2 units = Starter (committed buyers)
+    if (unitCount <= 149) return 'tier_2_pioneer';
+    if (unitCount <= 299) return 'tier_3_preferred';
+    return 'tier_4_elite';
+  }
+  
+  // All other readiness levels - standard logic
+  if (unitCount === 0) return 'tier_0_explorer';
+  if (unitCount <= 49) return 'tier_1_starter';
+  if (unitCount <= 149) return 'tier_2_pioneer';
+  if (unitCount <= 299) return 'tier_3_preferred';
+  return 'tier_4_elite';
+};
+CHANGE 2: Add isExplorer state variable
+At the top with other state declarations, ADD:
+javascriptconst [isExplorer, setIsExplorer] = useState(false);
+CHANGE 3: Update handleInputChange for conditional logic
+Find the handleInputChange function and UPDATE the readiness handling section:
+javascript// In handleInputChange function, find where name === 'readiness' and REPLACE that entire if block with:
+if (name === 'readiness') {
+  const isResearching = value === 'researching';
+  setIsExplorer(isResearching); // Only "Just researching" is Explorer for form display
+  
+  if (isResearching) {
+    // Auto-set Explorer defaults for researchers only
+    setFormData(prev => ({
+      ...prev,
+      readiness: value,
+      unitCount: '0', // Hidden from user but set in data
+      budget: 'Just exploring options' // Auto-set for consistency
+    }));
+    setCustomerTier('tier_0_explorer');
+  } else {
+    // For ALL other options including "planning-long", clear units to force selection
+    setFormData(prev => ({
+      ...prev,
+      readiness: value,
+      unitCount: '', // Clear to force selection
+      budget: '' // Clear budget for non-researchers
+    }));
+    // Don't set tier yet - wait for units selection
+  }
+} else if (name === 'unitCount') {
+  // When units change, recalculate tier with current readiness
+  setFormData(prev => ({ ...prev, unitCount: value }));
+  const tier = determineCustomerTier(value, formData.readiness);
+  setCustomerTier(tier);
+  
+  // Update company requirement based on tier
+  const companyRequired = tier !== 'tier_0_explorer' && tier !== 'tier_1_starter';
+  if (document.getElementById('company')) {
+    document.getElementById('company').required = companyRequired;
+  }
+} else {
+  // Keep existing logic for other fields
+  setFormData(prev => ({ 
+    ...prev, 
+    [name]: sanitizedValue,
+    ...(name === 'consentSMS' && sanitizedValue && {
+      consentSMSTimestamp: new Date().toISOString()
+    })
+  }));
+}
+
+// Clear errors
+setErrors(prev => ({ ...prev, [name]: '' }));
+
+// Calculate priority score for relevant fields
+if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
+  setTimeout(calculatePriorityScore, 100);
+}
+CHANGE 4: Update Step 1 JSX for conditional units display
+In Step 1, WRAP the units dropdown to only hide for "Just researching":
+jsx{/* Only show units question if NOT "Just researching" (but show for "planning-long") */}
+{formData.readiness && formData.readiness !== 'researching' && (
+  <div>
+    <label className="block text-sm text-gray-700 mb-1.5">
+      Number of units needed <span className="text-red-500">*</span>
+    </label>
+    {/* Keep existing select dropdown code exactly as is */}
+    <select
+      name="unitCount"
+      value={formData.unitCount || ''}
+      onChange={handleInputChange}
+      className={`w-full px-4 py-3 rounded-lg border ${
+        errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
+      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+        backgroundPosition: 'right 0.5rem center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '1.5em 1.5em',
+        paddingRight: '2.5rem'
+      }}
+      required
+    >
+      <option value="">Select number of units...</option>
+      <option value="0">Just exploring options</option>
+      <option value="1">1 home</option>
+      <option value="2">2 homes</option>
+      <option value="25">3-49 units (Starter)</option>
+      <option value="75">50-149 units (Pioneer)</option>
+      <option value="200">150-299 units (Preferred)</option>
+      <option value="500">300+ units (Elite)</option>
+    </select>
+    {errors.unitCount && (
+      <p className="text-red-500 text-xs mt-1">{errors.unitCount}</p>
+    )}
+  </div>
+)}
+CHANGE 5: Update Budget Display Logic in Step 2
+REPLACE the budget section condition to only hide for true Explorers:
+jsx{/* Only hide budget for "Just researching" explorers */}
+{isExplorer ? (
+  <div className="text-center py-8">
+    <div className="text-5xl mb-4">📚</div>
+    <h3 className="text-xl font-semibold mb-3 text-gray-900">Education Journey</h3>
+    <p className="text-gray-600">
+      Budget planning will be discussed during your educational consultation.
+    </p>
+  </div>
+) : (
+  <div>
+    <label className="block text-sm text-gray-700 mb-1.5">
+      Project Budget Range (CAD) <span className="text-red-500">*</span>
+    </label>
+    {/* Keep existing budget select dropdown exactly as is */}
+    <select
+      name="budget"
+      value={formData.budget || ''}
+      onChange={handleInputChange}
+      className={`w-full px-4 py-3 rounded-lg border ${
+        errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-300'
+      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+      required
+    >
+      {/* Keep all existing options */}
+    </select>
+  </div>
+)}
+CHANGE 6: Make Developer Type & Government Programs Required for ALL tiers
+In Step 4, REMOVE any conditional rendering and show these fields for everyone:
+jsx{/* Developer Type - Required for ALL tiers */}
+<div>
+  <label className="block text-sm text-gray-700 mb-1.5">
+    Developer Type <span className="text-red-500">*</span>
+  </label>
+  <select
+    name="developerType"
+    value={formData.developerType || ''}
+    onChange={handleInputChange}
+    className={`w-full px-4 py-3 rounded-lg border ${
+      errors.developerType ? 'border-red-300 bg-red-50' : 'border-gray-300'
+    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+    style={{
+      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+      backgroundPosition: 'right 0.5rem center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '1.5em 1.5em',
+      paddingRight: '2.5rem'
+    }}
+    required
+  >
+    <option value="">Select developer type...</option>
+    <option value="I don't know yet">I don't know yet</option>
+    <option value="Individual/Family">Individual/Family</option>
+    <option value="Commercial Developer">Commercial Developer</option>
+    <option value="Government/Municipal">Government/Municipal</option>
+    <option value="Non-Profit Organization">Non-Profit Organization</option>
+    <option value="Private Developer">Private Developer</option>
+  </select>
+  {errors.developerType && (
+    <p className="text-red-500 text-xs mt-1">{errors.developerType}</p>
+  )}
+</div>
+
+{/* Government Programs - Required for ALL tiers */}
+<div>
+  <label className="block text-sm text-gray-700 mb-1.5">
+    Interest in Government Housing Programs <span className="text-red-500">*</span>
+  </label>
+  <select
+    name="governmentPrograms"
+    value={formData.governmentPrograms || ''}
+    onChange={handleInputChange}
+    className={`w-full px-4 py-3 rounded-lg border ${
+      errors.governmentPrograms ? 'border-red-300 bg-red-50' : 'border-gray-300'
+    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+    style={{
+      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+      backgroundPosition: 'right 0.5rem center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '1.5em 1.5em',
+      paddingRight: '2.5rem'
+    }}
+    required
+  >
+    <option value="">Select interest level...</option>
+    <option value="Just learning about options">Just learning about options</option>
+    <option value="Not interested">Not interested</option>
+    <option value="Somewhat interested">Somewhat interested</option>
+    <option value="Very interested">Very interested</option>
+    <option value="Currently participating">Currently participating</option>
+  </select>
+  {errors.governmentPrograms && (
+    <p className="text-red-500 text-xs mt-1">{errors.governmentPrograms}</p>
+  )}
+</div>
+CHANGE 7: Update Validation Logic
+In validateStep function, UPDATE these cases:
+javascriptcase 1: // Validate units only if NOT "Just researching"
+  if (!formData.readiness) {
+    newErrors.readiness = 'Please select your journey stage';
+  }
+  // Only validate units if not "Just researching" (but validate for "planning-long")
+  if (formData.readiness !== 'researching' && (!formData.unitCount || formData.unitCount === '')) {
+    newErrors.unitCount = 'Please select number of units';
+  }
+  break;
+
+case 2: // Only validate budget if not "Just researching" Explorer
+  if (!isExplorer && !formData.budget) {
+    newErrors.budget = 'Budget range is required';
+  }
+  if (!formData.timeline) {
+    newErrors.timeline = 'Timeline is required';
+  }
+  break;
+
+case 4: // Validate required fields for ALL tiers
+  if (!formData.province) {
+    newErrors.province = 'Province/territory is required';
+  }
+  if (!formData.developerType) {
+    newErrors.developerType = 'Please select a developer type';
+  }
+  if (!formData.governmentPrograms) {
+    newErrors.governmentPrograms = 'Please select your interest level';
+  }
+  break;
+CHANGE 8: Update Priority Score Calculation
+In calculatePriorityScore function, ensure it handles the new budget option:
+javascriptconst budgetScores = {
+  'Over $50M': 40,
+  '$30M - $50M': 35,
+  '$15M - $30M': 30,
+  '$5M - $15M': 25,
+  '$2M - $5M': 20,
+  '$500K - $2M': 15,
+  'Under $500K': 10,
+  'Just exploring options': 0 // For true explorers only
+};
+score += budgetScores[formData.budget] || 0;
+
+// Enhanced government program scoring
+if (formData.governmentPrograms === 'Currently participating') score += 10;
+else if (formData.governmentPrograms === 'Very interested') score += 7;
+else if (formData.governmentPrograms === 'Somewhat interested') score += 5;
+else if (formData.governmentPrograms === 'Just learning about options') score += 2;
+else if (formData.governmentPrograms === 'Not interested') score += 0;
+CHANGE 9: Update webhook payload with secure defaults
+In handleSubmit function, ensure these fields have proper defaults:
+javascript// In the payload object, update these fields:
+projectUnitCount: sanitizeInput(formData.unitCount || '0'),
+projectBudgetRange: sanitizeInput(formData.budget || 'Just exploring options'),
+developerType: sanitizeInput(formData.developerType || 'Not Specified'),
+governmentPrograms: sanitizeInput(formData.governmentPrograms || 'Not Specified'),
+
+// Ensure SMS consent security is maintained
+consentSMSTimestamp: formData.consentSMSTimestamp || new Date().toISOString(),
+smsConsentSecurityValidated: formData.consentSMS ? 'true' : 'false',
+IMPORTANT NOTES:
+
+ALL security features remain intact (CSRF, sanitization, SMS consent tracking)
+"Just researching" = Always Explorer (hides units & budget)
+"Planning to buy in 12+ months" = Tier by units (shows units & budget)
+Even 1-2 units for long-term planners = Starter tier (not Explorer)
+Developer Type and Government Programs are required for ALL tiers
+All input sanitization and validation continue to work as before
+
+These changes maintain all enterprise security while implementing the agreed business logic improvements.
