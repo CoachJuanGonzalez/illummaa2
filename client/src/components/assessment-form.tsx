@@ -137,15 +137,32 @@ const IllummaaAssessmentForm = () => {
   };
 
   // Response commitments (NO TIME PROMISES)
-  const getResponseCommitment = (tier: TierType) => {
-    const responseCommitments = {
-      'tier_0_explorer': 'Educational resources at your pace',
-      'tier_1_starter': 'Personal consultation support',
-      'tier_2_pioneer': 'Priority partnership attention',
-      'tier_3_preferred': 'Expedited senior team handling',
-      'tier_4_elite': 'Executive VIP engagement'
+  // RESPONSE COMMITMENT FUNCTIONS - Professional Service Levels (No Numerical Scoring)
+  const getResponseCommitmentLevel = (tier: TierType) => {
+    const levels = {
+      'tier_0_explorer': 'Educational Support Track',
+      'tier_1_starter': 'Standard Partnership Attention', 
+      'tier_2_pioneer': 'Enhanced Partnership Priority',
+      'tier_3_preferred': 'Executive Partnership Track',
+      'tier_4_elite': 'VIP Implementation Support'
     };
-    return responseCommitments[tier] || 'Personal support';
+    return levels[tier] || 'Standard Partnership Attention';
+  };
+
+  const getResponseDescription = (tier: TierType) => {
+    const descriptions = {
+      'tier_0_explorer': 'Comprehensive educational resources and learning guidance',
+      'tier_1_starter': 'Personal consultation support for your modular journey',
+      'tier_2_pioneer': 'Priority partnership coordination with dedicated team attention',
+      'tier_3_preferred': 'Expedited processing with senior team engagement',
+      'tier_4_elite': 'Executive-level partnership with comprehensive project support'
+    };
+    return descriptions[tier] || 'Personal support for your modular housing needs';
+  };
+
+  // Legacy function for backward compatibility
+  const getResponseCommitment = (tier: TierType) => {
+    return getResponseDescription(tier);
   };
 
   // Secure input sanitization
@@ -507,9 +524,11 @@ const IllummaaAssessmentForm = () => {
         // Flags for automation
         buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
         isEducationOnly: customerTier === 'tier_0_explorer' ? 'Yes' : 'No',
+        isEducationalLead: customerTier === 'tier_0_explorer' ? 'true' : 'false',
         
-        // Response commitment (NO time promises)
+        // Response commitment (Professional Service Levels - No Numerical Scoring)
         responseCommitment: getResponseCommitment(customerTier),
+        responseCommitmentLevel: getResponseCommitmentLevel(customerTier),
         
         // Tags for single pipeline automation
         tags: tags.join(','),
@@ -1128,55 +1147,129 @@ const IllummaaAssessmentForm = () => {
               </div>
             )}
 
-            {/* STEP 5: Review + Legal Consent */}
+            {/* STEP 5: Dynamic Assessment Summary */}
             {currentStep === 5 && (
               <div className="space-y-6" data-testid="step-5">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-5">
-                  Review & Consent
+                  Review & Submit
                 </h2>
-
-                {/* Assessment Summary */}
-                <div className="bg-gray-50 rounded-xl p-6" data-testid="assessment-summary">
-                  <h3 className="font-semibold text-gray-900 mb-4" data-testid="title-summary">Assessment Summary</h3>
+                
+                {/* DYNAMIC ASSESSMENT SUMMARY */}
+                <div className="space-y-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Assessment Summary</h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div data-testid="summary-contact">
-                      <p className="font-medium text-gray-700">Contact</p>
-                      <p data-testid="text-contact-name">{formData.firstName} {formData.lastName}</p>
-                      <p data-testid="text-contact-email">{formData.email}</p>
-                      <p data-testid="text-contact-phone">{formData.phone}</p>
-                      {formData.company && <p data-testid="text-contact-company">{formData.company}</p>}
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Contact Information Card */}
+                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Contact Details</h4>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <p><span className="text-gray-600">Name:</span> <span className="font-medium">{formData.firstName} {formData.lastName}</span></p>
+                        <p><span className="text-gray-600">Email:</span> <span className="font-medium">{formData.email}</span></p>
+                        <p><span className="text-gray-600">Phone:</span> <span className="font-medium">{formData.phone}</span></p>
+                        {formData.company && <p><span className="text-gray-600">Company:</span> <span className="font-medium">{formData.company}</span></p>}
+                      </div>
                     </div>
-                    
-                    <div data-testid="summary-project">
-                      <p className="font-medium text-gray-700">Project</p>
-                      <p data-testid="text-project-units">{formData.unitCount} units</p>
-                      <p data-testid="text-project-timeline">{formData.timeline}</p>
-                      <p data-testid="text-project-location">{formData.province}</p>
-                      {formData.budget && <p data-testid="text-project-budget">{formData.budget}</p>}
+
+                    {/* Journey/Project Information Card */}
+                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                        </div>
+                        <h4 className="font-semibold text-gray-900">{customerTier === 'tier_0_explorer' ? 'Learning Journey' : 'Project Scope'}</h4>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        {formData.readiness && <p><span className="text-gray-600">Journey Stage:</span> <span className="font-medium">{formData.readiness === 'researching' ? 'Research & Learning' : formData.readiness === 'planning-long' ? 'Planning (12+ months)' : formData.readiness === 'planning-medium' ? 'Actively Looking (6-12 months)' : formData.readiness === 'planning-short' ? 'Ready to Move Forward (3-6 months)' : formData.readiness === 'immediate' ? 'Need Solution Now (0-3 months)' : formData.readiness}</span></p>}
+                        
+                        {customerTier === 'tier_0_explorer' && (
+                          <>
+                            {formData.learningInterest && <p><span className="text-gray-600">Primary Interest:</span> <span className="font-medium">{formData.learningInterest}</span></p>}
+                            {formData.informationPreference && <p><span className="text-gray-600">Information Preference:</span> <span className="font-medium">{formData.informationPreference}</span></p>}
+                          </>
+                        )}
+                        
+                        {customerTier !== 'tier_0_explorer' && (
+                          <>
+                            {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{formData.unitCount} units</span></p>}
+                            {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
+                            {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Only show tier summary when meaningful data is entered */}
-                  {(formData.readiness && formData.unitCount !== undefined) && (
-                    <div className="mt-6 p-4 bg-white rounded-lg border-l-4 border-indigo-400" data-testid="tier-summary">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-2xl" data-testid="summary-tier-icon">{getTierInfo(customerTier).icon}</span>
+                  {/* Location & Developer Information Card */}
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <h4 className="font-semibold text-gray-900">Location & Profile</h4>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-2">
+                        {formData.province && <p><span className="text-gray-600">Province:</span> <span className="font-medium">{formData.province}</span></p>}
+                        {formData.developerType && <p><span className="text-gray-600">Developer Type:</span> <span className="font-medium">{formData.developerType}</span></p>}
+                      </div>
+                      <div className="space-y-2">
+                        {formData.governmentPrograms && <p><span className="text-gray-600">Government Programs:</span> <span className="font-medium">{formData.governmentPrograms}</span></p>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Project Description - If Provided */}
+                  {formData.projectDescription && (
+                    <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <h4 className="font-semibold text-gray-900">Project Vision</h4>
+                      </div>
+                      <p className="text-sm text-gray-700 bg-white rounded-lg p-3 border border-gray-200">"{formData.projectDescription}"</p>
+                    </div>
+                  )}
+
+                  {/* RESPONSE COMMITMENT LEVEL - No Numerical Score */}
+                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm">
+                        <span className="text-2xl">{getTierInfo(customerTier).icon}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-lg text-gray-900 mb-1">{getResponseCommitmentLevel(customerTier)}</h4>
+                        <p className="text-sm text-gray-700">{getResponseDescription(customerTier)}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Verified Assessment</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {buildCanadaEligible && (
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-xl p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">🍁</span>
                         <div>
-                          <p className="font-semibold text-gray-900" data-testid="summary-tier-name">
-                            {getTierInfo(customerTier).name} Partnership
-                          </p>
-                          <p className="text-sm text-gray-600" data-testid="summary-priority-score">
-                            Priority Score: {priorityScore}/150
-                          </p>
+                          <h4 className="font-semibold text-green-800">Build Canada Homes Eligible</h4>
+                          <p className="text-sm text-green-700">Your project scope qualifies for enhanced federal partnership opportunities.</p>
                         </div>
                       </div>
-                      <p className="text-sm text-gray-700 font-medium" data-testid="summary-response-commitment">
-                        {getResponseCommitment(customerTier)}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-2 italic" data-testid="summary-response-disclaimer">
-                        *Response times vary based on project urgency and current volume.
-                      </p>
                     </div>
                   )}
                 </div>
