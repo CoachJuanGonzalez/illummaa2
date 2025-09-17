@@ -93,9 +93,9 @@ type DeviceType = 'mobile-small' | 'mobile' | 'tablet' | 'desktop' | 'desktop-4k
 class SecureFormValidator {
   public csrfToken: string;
 
-  constructor() {
+  constructor(csrfToken?: string) {
     this.initDOMPurify();
-    this.csrfToken = this.generateCSRFToken();
+    this.csrfToken = csrfToken || '';
   }
 
   private initDOMPurify(): void {
@@ -108,13 +108,8 @@ class SecureFormValidator {
     }
   }
 
-  private generateCSRFToken(): string {
-    if (typeof window !== 'undefined' && window.crypto) {
-      const array = new Uint8Array(32);
-      crypto.getRandomValues(array);
-      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-    }
-    return 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  public updateCSRFToken(token: string): void {
+    this.csrfToken = token;
   }
 
   public sanitizeInput(input: string | number | boolean): string {
@@ -246,6 +241,10 @@ class SecureFormSubmission {
     this.validator = validator;
     this.rateLimiter = new RateLimiter();
   }
+  
+  public updateCSRFToken(token: string): void {
+    this.validator.updateCSRFToken(token);
+  }
 
   public async submitForm(formData: FormData): Promise<SubmissionResponse> {
     try {
@@ -261,9 +260,9 @@ class SecureFormSubmission {
         timestamp: Date.now()
       };
       
-      const encryptedData = await this.encryptSensitiveData(securePayload);
+      const secureData = await this.prepareSecureData(securePayload);
       
-      const response = await this.securePost('/api/submit-lead', encryptedData);
+      const response = await this.securePost('/api/submit-assessment', secureData);
       
       return response;
     } catch (error) {
@@ -306,17 +305,16 @@ class SecureFormSubmission {
     return data;
   }
 
-  private async encryptSensitiveData(data: Partial<SecurePayload>): Promise<Partial<SecurePayload>> {
-    const sensitiveFields = ['email', 'phone', 'firstName', 'lastName'];
-    const encrypted = {...data};
+  private async prepareSecureData(data: Partial<SecurePayload>): Promise<Partial<SecurePayload>> {
+    // Remove fake base64 'encryption' - data should be sent as-is over HTTPS
+    // The server handles all encryption and security processing
+    const secureData = {...data};
     
-    sensitiveFields.forEach(field => {
-      if (encrypted[field as keyof SecurePayload]) {
-        encrypted[field as keyof SecurePayload] = btoa(String(encrypted[field as keyof SecurePayload])) as any;
-      }
-    });
+    // Add security metadata for server validation
+    secureData.securityValidated = 'client-validated';
+    secureData.smsConsentSecurityValidated = data.consentSMS ? 'validated' : 'not-applicable';
     
-    return encrypted;
+    return secureData;
   }
 
   private async securePost(url: string, data: Partial<SecurePayload>): Promise<SubmissionResponse> {
@@ -354,14 +352,15 @@ class SecureResponsiveFormSystem {
   constructor(
     formRef: React.RefObject<HTMLFormElement>, 
     setCurrentStep: (step: number) => void, 
-    setErrors: (errors: FormErrors | ((prev: FormErrors) => FormErrors)) => void
+    setErrors: (errors: FormErrors | ((prev: FormErrors) => FormErrors)) => void,
+    csrfToken: string
   ) {
     this.formRef = formRef;
     this.setCurrentStep = setCurrentStep;
     this.setErrors = setErrors;
     this.currentStep = 1;
     this.totalSteps = 4;
-    this.validator = new SecureFormValidator();
+    this.validator = new SecureFormValidator(csrfToken);
     this.submission = new SecureFormSubmission(this.validator);
     this.deviceType = this.detectDevice();
     this.touchDevice = typeof window !== 'undefined' && 'ontouchstart' in window;
@@ -384,19 +383,9 @@ class SecureResponsiveFormSystem {
   }
 
   private setupSecurityHeaders(): void {
-    if (!document.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
-      const csp = document.createElement('meta');
-      csp.httpEquiv = 'Content-Security-Policy';
-      csp.content = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://services.leadconnectorhq.com https://*.replit.app; frame-ancestors 'none'; base-uri 'self'; form-action 'self';";
-      document.head.appendChild(csp);
-    }
-
-    if (!document.querySelector('meta[http-equiv="X-Frame-Options"]')) {
-      const xframe = document.createElement('meta');
-      xframe.httpEquiv = 'X-Frame-Options';
-      xframe.content = 'DENY';
-      document.head.appendChild(xframe);
-    }
+    // Security headers are now handled server-side via Helmet middleware
+    // Client-side CSP injection removed for proper security implementation
+    console.log('[SECURITY] Security headers managed by server-side middleware');
   }
 
   private preventCommonAttacks(): void {
@@ -430,7 +419,7 @@ class SecureResponsiveFormSystem {
     });
 
     setTimeout(() => {
-      if (mouseMovements < 3 && this.touchDevice === false) {
+      if (mouseMovements < 3 && this.touchDevice === false && process.env.NODE_ENV === 'production') {
         console.warn('Suspicious behavior detected');
       }
     }, 2000);
@@ -542,15 +531,16 @@ const IllummaaSecureAssessmentForm: React.FC = () => {
   useEffect(() => {
     const initializeSecurity = async () => {
       try {
-        // Initialize security system
-        securitySystemRef.current = new SecureResponsiveFormSystem(formRef, setCurrentStep, setErrors);
-        
-        // Fetch CSRF token
+        // Fetch CSRF token first
         const response = await fetch('/api/csrf-token', {
           credentials: 'same-origin'
         });
         const data = await response.json();
-        setCsrfToken(data.csrfToken);
+        const serverCsrfToken = data.csrfToken;
+        setCsrfToken(serverCsrfToken);
+        
+        // Initialize security system with server CSRF token
+        securitySystemRef.current = new SecureResponsiveFormSystem(formRef, setCurrentStep, setErrors, serverCsrfToken);
       } catch (error) {
         console.error('Security initialization failed:', error);
       }

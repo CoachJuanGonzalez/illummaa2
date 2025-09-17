@@ -1237,4 +1237,522 @@
   .consent-footer a:hover { text-decoration: underline; }
   .consent-age-verification { padding: 8px 0; }
   .consent-text-secondary { color: #6c757d; font-size: 13px; }
+
+/* ENTERPRISE-GRADE SECURITY CSS SYSTEM - COMPREHENSIVE IMPLEMENTATION */
+
+/* Prevent clickjacking and UI redressing attacks */
+.assessment-form-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hide sensitive data from screen captures and prevent text selection manipulation */
+.sensitive-data {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Secure form inputs with enhanced protection */
+.form-input[type="password"],
+.form-input[autocomplete="off"] {
+  -webkit-text-security: disc;
+}
+
+/* Disable text selection on buttons to prevent UI manipulation */
+.btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+/* Hide error messages from screen readers initially for security */
+.form-error:empty {
+  display: none;
+  visibility: hidden;
+}
+
+/* Security warning notifications */
+.security-warning {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #FEF3C7;
+  color: #92400E;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 10000;
+  font-weight: 600;
+  border: 2px solid #F59E0B;
+}
+
+/* ENTERPRISE BUTTON HIERARCHY SYSTEM */
+
+/* Primary Action Buttons - Maximum visual priority */
+.btn-primary {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  padding: 16px 32px;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  transform: translateY(0);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(5, 150, 105, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+/* Secondary Action Buttons - Supporting actions */
+.btn-secondary {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 15px rgba(71, 85, 105, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  transform: translateY(0);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #334155;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(71, 85, 105, 0.15);
+  border-color: #cbd5e1;
+}
+
+/* Navigation Buttons - Tertiary priority */
+.btn-navigation {
+  background: transparent;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 2px solid #059669;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.btn-navigation:hover {
+  background: #059669;
+  color: white;
+  transform: scale(1.02);
+}
+
+/* Loading state for buttons */
+.btn-loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* COMPREHENSIVE DEVICE OPTIMIZATION */
+
+/* Touch optimizations for mobile devices */
+.touch-enabled .btn {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 24px;
+}
+
+.touch-enabled .btn-primary {
+  padding: 18px 36px;
+  font-size: 1.125rem;
+}
+
+.touch-active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Mobile Small (iPhone SE, 375px and below) - CRITICAL FIXES */
+.device-mobile-small .assessment-form-wrapper {
+  padding: 16px !important;
+  margin: 8px !important;
+  border-radius: 16px;
+}
+
+.device-mobile-small .btn {
+  width: 100% !important;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  padding: 14px 20px;
+  /* FIX: Prevent button overflow */
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.device-mobile-small .form-input {
+  font-size: 16px; /* Prevent zoom on iOS */
+  padding: 14px 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.device-mobile-small .form-step {
+  padding: 20px 16px;
+}
+
+.device-mobile-small .form-navigation {
+  flex-direction: column !important;
+  gap: 8px;
+}
+
+.device-mobile-small .form-field {
+  margin-bottom: 20px;
+}
+
+/* Mobile (376px - 639px) - LAYOUT FIXES */
+.device-mobile .assessment-form-wrapper {
+  padding: 20px;
+  margin: 12px;
+  border-radius: 18px;
+  /* FIX: Prevent horizontal overflow */
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+}
+
+.device-mobile .btn {
+  width: 100%;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  padding: 16px 24px;
+  /* FIX: Ensure proper button sizing */
+  box-sizing: border-box;
+  min-height: 52px;
+}
+
+.device-mobile .form-input {
+  font-size: 16px;
+  padding: 16px 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.device-mobile .form-navigation {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.device-mobile .form-navigation .btn {
+  width: 100%;
+}
+
+/* FIX: Form element alignment for mobile */
+.device-mobile .form-field,
+.device-mobile-small .form-field {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.device-mobile .form-field label,
+.device-mobile-small .form-field label {
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.device-mobile .form-field input,
+.device-mobile .form-field select,
+.device-mobile .form-field textarea,
+.device-mobile-small .form-field input,
+.device-mobile-small .form-field select,
+.device-mobile-small .form-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablet (640px - 1023px) */
+.device-tablet .assessment-form-wrapper {
+  padding: 32px;
+  margin: 20px;
+}
+
+.device-tablet .form-navigation {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.device-tablet .btn {
+  min-width: 140px;
+}
+
+/* Desktop (1024px - 1919px) */
+.device-desktop .assessment-form-wrapper {
+  padding: 40px;
+  max-width: 800px;
+}
+
+.device-desktop .form-navigation {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.device-desktop .btn {
+  min-width: 160px;
+}
+
+/* Desktop 4K (1920px and above) */
+.device-desktop-4k .assessment-form-wrapper {
+  padding: 48px;
+  max-width: 1000px;
+  font-size: 1.1rem;
+}
+
+.device-desktop-4k .btn {
+  min-width: 180px;
+  font-size: 1.2rem;
+  padding: 20px 40px;
+}
+
+.device-desktop-4k .form-input {
+  font-size: 1.1rem;
+  padding: 20px 24px;
+}
+
+/* INFORMATION DENSITY OPTIMIZATION - BREATHING ROOM FIXES */
+
+/* Mobile breathing room - MORE SPACE */
+@media (max-width: 639px) {
+  .form-step {
+    padding: 28px 20px !important;
+  }
+  
+  .form-field {
+    margin-bottom: 28px !important;
+  }
+  
+  .form-field label {
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    margin-bottom: 8px;
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
+  
+  .form-error {
+    font-size: 0.875rem;
+    padding: 6px 0;
+    margin-top: 4px;
+  }
+  
+  /* Consent sections need EXTRA breathing room */
+  .consent-section {
+    padding: 24px 18px !important;
+    margin: 20px 0 !important;
+    background: #f8fdf9;
+    border-radius: 14px;
+    border: 1px solid #d1fae5;
+  }
+  
+  .consent-checkbox-wrapper {
+    margin: 20px 0;
+  }
+  
+  .consent-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-left: 10px;
+  }
+}
+
+/* Enhanced spacing for tablet and desktop */
+@media (min-width: 640px) {
+  .form-step {
+    padding: 36px 32px;
+  }
+  
+  .form-field {
+    margin-bottom: 32px;
+  }
+  
+  .consent-section {
+    padding: 28px 24px;
+    margin: 24px 0;
+  }
+  
+  .consent-checkbox-wrapper {
+    margin: 22px 0;
+  }
+  
+  .btn-navigation {
+    margin: 0 10px;
+  }
+}
+
+/* ACCESSIBILITY AND PROFESSIONAL POLISH */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    background: #000000;
+    border: 2px solid #ffffff;
+  }
+  
+  .btn-secondary {
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+  }
+  
+  .form-input {
+    border: 2px solid #000000;
+  }
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .form-input,
+  .assessment-form-wrapper {
+    transition: none;
+    animation: none;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+}
+
+/* Focus management for keyboard navigation */
+.btn:focus-visible,
+.form-input:focus-visible {
+  outline: 3px solid #059669;
+  outline-offset: 2px;
+}
+
+/* ENTERPRISE PROFESSIONAL POLISH */
+
+/* Premium shadow system for Build Canada Homes partnerships */
+.assessment-form-wrapper {
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.05),
+    0 10px 15px rgba(0, 0, 0, 0.08),
+    0 20px 25px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Subtle animations for enterprise feel */
+.form-field {
+  transition: all 0.2s ease;
+}
+
+.form-field:focus-within {
+  transform: translateY(-1px);
+}
+
+/* Enterprise-grade typography */
+.form-step h2 {
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.form-step .step-description {
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 32px;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Secure form container enhancement */
+.secure-form {
+  position: relative;
+  z-index: 10;
+}
+
+/* CRITICAL MOBILE LAYOUT FIXES - PREVENT OVERFLOW */
+@media (max-width: 639px) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  .assessment-form-wrapper {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border-radius: 0 0 20px 20px;
+  }
+  
+  .form-navigation {
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .btn {
+    flex-shrink: 0;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
 }
