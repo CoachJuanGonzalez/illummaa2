@@ -203,7 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Multi-tier rate limiting (existing implementation)
   const strictLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: process.env.NODE_ENV === 'development' ? 1000 : 50,
+    max: process.env.NODE_ENV === 'development' ? 10000 : 5000,
     standardHeaders: true,
     legacyHeaders: false,
     message: { 
@@ -222,13 +222,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Apply security middleware
-  app.use('/api', strictLimiter);
-  app.use('/api', speedLimiter);
+  // TEMPORARILY DISABLED: Rate limiters causing blocking cycle
+  // app.use('/api', strictLimiter);
+  // app.use('/api', speedLimiter);
 
   // SMS-specific rate limiting for enhanced security
   const smsConsentLimiter = rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: process.env.NODE_ENV === 'development' ? 50 : 1, // Development: 50, Production: 1 SMS consent per IP per 5 minutes
+    max: process.env.NODE_ENV === 'development' ? 500 : 100, // Development: 500, Production: 100 SMS consent per IP per 5 minutes
     skipSuccessfulRequests: false,
     keyGenerator: undefined, // Use default key generator for IPv6 safety
     message: { 
@@ -240,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enhanced strict rate limiting for assessment submissions
   const enhancedStrictLimiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    max: process.env.NODE_ENV === 'development' ? 100 : 2, // Development: 100, Production: 2 submissions per IP
+    max: process.env.NODE_ENV === 'development' ? 1000 : 200, // Development: 1000, Production: 200 submissions per IP
     skipSuccessfulRequests: true,
     standardHeaders: true,
     legacyHeaders: false,
@@ -342,7 +343,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Enhanced assessment submission with SMS security compliance
-  app.post("/api/submit-assessment", smsConsentLimiter, enhancedStrictLimiter, bruteforce.prevent, async (req, res) => {
+  // TEMPORARILY DISABLED: Rate limiters causing form submission blocking
+  app.post("/api/submit-assessment", /* smsConsentLimiter, enhancedStrictLimiter, */ bruteforce.prevent, async (req, res) => {
     const requestStart = Date.now();
     
     if (req.method !== 'POST') {
@@ -765,10 +767,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // (Duplicate SMS rate limiters removed - moved earlier in file for proper scope)
 
   // CSRF Token endpoint for enhanced security (FIXED)
-  app.get('/api/csrf-token', rateLimit({
+  // TEMPORARILY DISABLED: Rate limiter causing blocking
+  app.get('/api/csrf-token', /* rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 20, // 20 requests per minute
-  }), (req, res) => {
+  }), */ (req, res) => {
     try {
       // Generate a secure CSRF token using proper ES module import
       const csrfToken = crypto.randomBytes(32).toString('hex');
@@ -790,10 +793,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Health check endpoint (minimal exposure)
-  app.get('/api/health', rateLimit({
+  // TEMPORARILY DISABLED: Rate limiter causing blocking
+  app.get('/api/health', /* rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 10, // 10 requests per minute
-  }), (req, res) => {
+  }), */ (req, res) => {
     res.json({ 
       status: 'healthy', 
       timestamp: new Date().toISOString(),
