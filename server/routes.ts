@@ -339,7 +339,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ];
     
     function containsDangerousContent(value: string): boolean {
-      return dangerousPatterns.some(pattern => pattern.test(value));
+      // Allow legitimate HTML entities like &amp; &lt; &gt; etc.
+      const cleanValue = value.replace(/&[a-zA-Z0-9#]+;/g, '');
+      return dangerousPatterns.some(pattern => pattern.test(cleanValue));
     }
     
     // Check all string values for dangerous content
