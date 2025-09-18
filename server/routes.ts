@@ -85,6 +85,8 @@ function mapFrontendToBackend(frontendData: any): any {
     // Optional fields that may not be present (convert empty strings to undefined)
     developerType: emptyToUndefined(frontendData.developerType),
     governmentPrograms: emptyToUndefined(frontendData.governmentPrograms),
+    learningInterest: emptyToUndefined(frontendData.learningInterest),
+    informationPreference: emptyToUndefined(frontendData.informationPreference),
     agentSupport: emptyToUndefined(frontendData.agentSupport),
     
     // Additional form metadata (keep as-is)
