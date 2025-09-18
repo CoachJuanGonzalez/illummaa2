@@ -39,7 +39,7 @@ class IllummaaAnalytics {
   private isProduction: boolean;
 
   constructor() {
-    this.measurementId = 'G-VNLBCYGCRZ';
+    this.measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || '';
     this.isProduction = import.meta.env.PROD;
   }
 
