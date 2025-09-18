@@ -265,8 +265,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     };
   };
   
-  // Input validation middleware for all API routes
-  app.use('/api', (req, res, next) => {
+  // Fast response for API root endpoint (before middleware)
+  app.get('/api', (req, res) => {
+    res.json({ status: 'ok', timestamp: Date.now() });
+  });
+
+  // Input validation middleware for all other API routes
+  app.use('/api/*', (req, res, next) => {
     // Security headers for API responses
     res.set({
       'X-Content-Type-Options': 'nosniff',

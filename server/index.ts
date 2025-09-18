@@ -45,8 +45,8 @@ app.use((req, res, next) => {
     'X-Request-ID': Date.now().toString(36)
   });
 
-  // Enhanced logging for security monitoring
-  if (path.startsWith("/api")) {
+  // Enhanced logging for security monitoring (exclude health checks)
+  if (path.startsWith("/api") && !(req.method === 'HEAD' && path === '/api')) {
     const clientInfo = {
       ip: req.ip,
       userAgent: req.get('User-Agent')?.substring(0, 200),
