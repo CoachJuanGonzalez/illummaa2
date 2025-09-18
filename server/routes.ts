@@ -494,14 +494,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Validate and sanitize form data using mapped fields
+      console.log('[DEBUG] Calling validateFormData with mappedBody...');
       const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
+      console.log('[DEBUG] validateFormData result:', { isValid, errors, priorityScore, customerTier });
       
       if (!isValid) {
+        console.log('[DEBUG] FORM VALIDATION FAILED - errors:', errors);
         return res.status(400).json({ 
           error: "Validation failed", 
           details: errors 
         });
       }
+      console.log('[DEBUG] Form validation passed!');
 
       // Enhanced payload with comprehensive SMS security tracking
       // Enhanced webhook payload generation with security validation (Step 6 implementation)
