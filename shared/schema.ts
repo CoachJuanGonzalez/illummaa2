@@ -100,11 +100,13 @@ export const assessmentSchema = z.object({
     .max(1000, "Number of units must be less than 1000"),
   
   budgetRange: z.enum([
-    "Under $5 Million",
-    "$5M - $15 Million", 
-    "$15M - $30 Million",
-    "$30M - $50 Million",
-    "Over $50 Million",
+    "Under $500K",
+    "$500K - $2M",
+    "$2M - $5M",
+    "$5M - $15M",
+    "$15M - $30M",
+    "$30M - $50M",
+    "Over $50M",
     "Just exploring options"
   ]).optional(),
   
@@ -140,10 +142,11 @@ export const assessmentSchema = z.object({
   ]).optional(),
   
   governmentPrograms: z.enum([
-    "Yes - Currently participating",
-    "Interested - Tell us more",
-    "No - Private development only",
-    "Just learning about options"
+    "Just learning about options",
+    "Not interested",
+    "Somewhat interested", 
+    "Very interested",
+    "Currently participating"
   ]).optional(),
   
   learningInterest: z.enum([

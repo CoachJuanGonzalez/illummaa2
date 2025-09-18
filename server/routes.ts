@@ -30,10 +30,10 @@ function mapFrontendToBackend(frontendData: any): any {
       'Under $500K': 'Under $500K',
       '$500K - $2M': '$500K - $2M',
       '$2M - $5M': '$2M - $5M',
-      '$5M - $15M': '$5M - $15 Million',
-      '$15M - $30M': '$15M - $30 Million',
-      '$30M - $50M': '$30M - $50 Million',
-      'Over $50M': 'Over $50 Million',
+      '$5M - $15M': '$5M - $15M',
+      '$15M - $30M': '$15M - $30M',
+      '$30M - $50M': '$30M - $50M',
+      'Over $50M': 'Over $50M',
       'Just exploring options': 'Just exploring options'
     };
     return budgetMap[value] || value;
