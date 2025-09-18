@@ -86,21 +86,28 @@ export async function validateFormData(rawData: any): Promise<{
     };
 
     // Sanitize input data
+    const readiness = DOMPurify.sanitize(rawData.readiness || '');
+    const projectUnitCount = parseInt(rawData.projectUnitCount) || 0;
+    
+    // Determine if this is Explorer tier (same logic as schema validation)
+    const isExplorerTier = readiness === 'researching' || projectUnitCount === 0;
+    
     const sanitizedData = {
-      readiness: DOMPurify.sanitize(rawData.readiness || ''),
+      readiness,
       firstName: DOMPurify.sanitize(rawData.firstName || '').trim(),
       lastName: DOMPurify.sanitize(rawData.lastName || '').trim(),
       email: DOMPurify.sanitize(rawData.email || '').trim().toLowerCase(),
       phone: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, ''),
       company: DOMPurify.sanitize(rawData.company || '').trim(),
-      projectUnitCount: parseInt(rawData.projectUnitCount) || 0,
+      projectUnitCount,
       budgetRange: sanitizeOptionalEnum(rawData.budgetRange),
       decisionTimeline: sanitizeOptionalEnum(rawData.decisionTimeline),
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
       developerType: sanitizeOptionalEnum(rawData.developerType),
       governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
-      learningInterest: sanitizeOptionalEnum(rawData.learningInterest),
-      informationPreference: sanitizeOptionalEnum(rawData.informationPreference),
+      // Explorer fields: only sanitize for Explorer tier, set to undefined for business tiers
+      learningInterest: isExplorerTier ? sanitizeOptionalEnum(rawData.learningInterest) : undefined,
+      informationPreference: isExplorerTier ? sanitizeOptionalEnum(rawData.informationPreference) : undefined,
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
       ageVerification: Boolean(rawData.ageVerification),
