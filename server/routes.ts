@@ -382,11 +382,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Enhanced SMS consent validation
-      if (!req.body.consentSMS || req.body.consentSMS !== 'true') {
+      // Enhanced SMS consent validation with debug logging
+      console.log('[DEBUG] SMS consent check:', {
+        consentSMS: req.body.consentSMS,
+        type: typeof req.body.consentSMS,
+        stringified: String(req.body.consentSMS)
+      });
+      
+      // More flexible SMS consent validation (handle both string and boolean)
+      const consentSMSValue = String(req.body.consentSMS).toLowerCase();
+      if (!req.body.consentSMS || (consentSMSValue !== 'true' && req.body.consentSMS !== true)) {
         console.warn('SMS consent security validation failed:', {
           ip: req.ip,
           consentSMS: req.body.consentSMS,
+          consentSMSValue,
+          type: typeof req.body.consentSMS,
           timestamp: new Date().toISOString()
         });
         
