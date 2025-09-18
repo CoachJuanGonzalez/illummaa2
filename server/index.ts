@@ -65,6 +65,12 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+    
+    // Skip logging for health checks completely
+    if (path === '/api' && (req.method === 'HEAD' || req.method === 'GET')) {
+      return;
+    }
+    
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       

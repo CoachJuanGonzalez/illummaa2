@@ -265,9 +265,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     };
   };
   
-  // Fast response for API root endpoint (before middleware)
+  // Suppress health check logging completely
+  app.head('/api', (req, res) => {
+    res.status(200).end();
+  });
+
+  // Also suppress GET requests to /api
   app.get('/api', (req, res) => {
-    res.json({ status: 'ok', timestamp: Date.now() });
+    res.status(200).json({ status: 'ok' });
   });
 
   // Input validation middleware for all other API routes
