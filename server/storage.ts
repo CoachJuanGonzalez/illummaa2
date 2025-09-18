@@ -278,6 +278,10 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     customer_tags: tags.join(', '),
     tags_array: tags,
     
+    // Journey Stage for proper GHL mapping
+    journey_stage: customerTier === 'tier_0_explorer' ? 'Education & Awareness' : 'Partnership Development',
+    lead_stage: customerTier === 'tier_0_explorer' ? 'Research & Learning' : 'Business Partnership',
+    
     // Explorer-specific fields (for tier_0_explorer leads)
     ...(customerTier === 'tier_0_explorer' && {
       learning_interest: formData.learningInterest || "",

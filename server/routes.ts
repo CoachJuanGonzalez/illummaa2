@@ -679,41 +679,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store in database with Customer Journey fields
       const submission = await storage.createAssessment({
         ...data!,
+        projectDescription: data!.projectDescriptionText, // Fix field name mapping
         priorityScore: priorityScore!,
         customerTier: customerTier!,
         priorityLevel: priorityLevel!,
         tags: tags!
       });
 
-      // Secure webhook delivery with SMS consent verification
+      // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
-        const payload = JSON.stringify(securePayload);
-        const signature = crypto
-          .createHmac('sha256', process.env.WEBHOOK_SECRET || 'fallback-secret')
-          .update(payload)
-          .digest('hex');
-
-        if (process.env.GHL_WEBHOOK_URL) {
-          const response = await fetch(process.env.GHL_WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'User-Agent': 'ILLUMMAA-SMS-Secure/2.0',
-              'X-Signature-256': `sha256=${signature}`,
-              'X-SMS-Consent-Audit': smsAuditTrail.auditId,
-              'X-Source': 'ILLUMMAA-Enterprise'
-            },
-            body: payload
-          });
-
-          if (!response.ok) {
-            throw new Error(`SMS consent webhook delivery failed: ${response.status}`);
-          }
-        } else {
-          console.log('GHL_WEBHOOK_URL not configured, payload prepared:', Object.keys(securePayload));
-        }
+        console.log('[DEBUG] Calling submitToGoHighLevel webhook...');
+        await submitToGoHighLevel(data, priorityScore, customerTier, priorityLevel, tags);
+        console.log('[DEBUG] GoHighLevel webhook submitted successfully');
       } catch (webhookError) {
-        console.error("SMS consent webhook delivery failed:", webhookError);
+        console.error("GoHighLevel webhook failed:", webhookError);
         // Don't fail the request if webhook fails, but log it
       }
 
