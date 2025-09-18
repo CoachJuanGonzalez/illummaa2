@@ -34,6 +34,7 @@ export class MemStorage implements IStorage {
       governmentPrograms: insertAssessment.governmentPrograms || null,
       learningInterest: insertAssessment.learningInterest || null,
       informationPreference: insertAssessment.informationPreference || null,
+      priorityScore: insertAssessment.priorityScore ?? null,
     };
     
     this.assessments.set(id, assessment);

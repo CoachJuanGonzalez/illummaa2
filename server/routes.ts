@@ -33,7 +33,8 @@ function mapFrontendToBackend(frontendData: any): any {
       '$5M - $15M': '$5M - $15 Million',
       '$15M - $30M': '$15M - $30 Million',
       '$30M - $50M': '$30M - $50 Million',
-      'Over $50M': 'Over $50 Million'
+      'Over $50M': 'Over $50 Million',
+      'Just exploring options': 'Just exploring options'
     };
     return budgetMap[value] || value;
   };
@@ -47,6 +48,38 @@ function mapFrontendToBackend(frontendData: any): any {
       'Long-term (12+ months)': 'Long-term (12+ months)'
     };
     return timelineMap[value] || value;
+  };
+
+  const normalizeDeveloperType = (value: string): string => {
+    const developerMap: { [key: string]: string } = {
+      'Individual/Family': "I don't know yet",
+      'Individual': "I don't know yet",
+      'Family': "I don't know yet",
+      'Commercial Developer': 'Commercial Developer (Large Projects)',
+      'Government/Municipal': 'Government/Municipal Developer',
+      'Non-Profit Organization': 'Non-Profit Housing Developer',
+      'Private Developer': 'Private Developer (Medium Projects)',
+      'Commercial Developer (Large Projects)': 'Commercial Developer (Large Projects)',
+      'Government/Municipal Developer': 'Government/Municipal Developer',
+      'Non-Profit Housing Developer': 'Non-Profit Housing Developer',
+      'Private Developer (Medium Projects)': 'Private Developer (Medium Projects)',
+      "I don't know yet": "I don't know yet"
+    };
+    return developerMap[value] || value;
+  };
+
+  const normalizeGovernmentPrograms = (value: string): string => {
+    const programsMap: { [key: string]: string } = {
+      'Not interested': 'No - Private development only',
+      'Somewhat interested': 'Interested - Tell us more',
+      'Very interested': 'Interested - Tell us more',
+      'Currently participating': 'Yes - Currently participating',
+      'Yes - Currently participating': 'Yes - Currently participating',
+      'Interested - Tell us more': 'Interested - Tell us more',
+      'No - Private development only': 'No - Private development only',
+      'Just learning about options': 'Just learning about options'
+    };
+    return programsMap[value] || value;
   };
 
   // Helper function to handle empty strings for optional fields
@@ -68,8 +101,8 @@ function mapFrontendToBackend(frontendData: any): any {
     
     // CRITICAL FIELD NAME MAPPING FIXES:
     projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
-    budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : (frontendData.projectBudgetRange || frontendData.budgetRange)),
-    decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : (frontendData.deliveryTimeline || frontendData.decisionTimeline)),
+    budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : normalizeBudget(frontendData.projectBudgetRange || frontendData.budgetRange)),
+    decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : normalizeTimeline(frontendData.deliveryTimeline || frontendData.decisionTimeline)),
     constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),
     projectDescriptionText: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
     consentMarketing: frontendData.consentCommunications || frontendData.consentMarketing,
@@ -83,8 +116,8 @@ function mapFrontendToBackend(frontendData: any): any {
     ageVerification: frontendData.ageVerification,
     
     // Optional fields that may not be present (convert empty strings to undefined)
-    developerType: emptyToUndefined(frontendData.developerType),
-    governmentPrograms: emptyToUndefined(frontendData.governmentPrograms),
+    developerType: emptyToUndefined(frontendData.developerType ? normalizeDeveloperType(frontendData.developerType) : frontendData.developerType),
+    governmentPrograms: emptyToUndefined(frontendData.governmentPrograms ? normalizeGovernmentPrograms(frontendData.governmentPrograms) : frontendData.governmentPrograms),
     learningInterest: emptyToUndefined(frontendData.learningInterest),
     informationPreference: emptyToUndefined(frontendData.informationPreference),
     agentSupport: emptyToUndefined(frontendData.agentSupport),
