@@ -104,7 +104,8 @@ export const assessmentSchema = z.object({
     "$5M - $15 Million", 
     "$15M - $30 Million",
     "$30M - $50 Million",
-    "Over $50 Million"
+    "Over $50 Million",
+    "Just exploring options"
   ]).optional(),
   
   decisionTimeline: z.enum([
@@ -134,13 +135,15 @@ export const assessmentSchema = z.object({
     "Commercial Developer (Large Projects)",
     "Government/Municipal Developer",
     "Non-Profit Housing Developer",
-    "Private Developer (Medium Projects)"
+    "Private Developer (Medium Projects)",
+    "I don't know yet"
   ]).optional(),
   
   governmentPrograms: z.enum([
     "Yes - Currently participating",
     "Interested - Tell us more",
-    "No - Private development only"
+    "No - Private development only",
+    "Just learning about options"
   ]).optional(),
   
   learningInterest: z.enum([
