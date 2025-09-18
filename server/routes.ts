@@ -486,12 +486,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Business logic validation AFTER field mapping
       const isExplorer = sanitized.isExplorer === 'true' || sanitized.isExplorer === true || sanitized.isEducationOnly === 'Yes';
       const companyName = mappedBody.company || '';
+      console.log('[DEBUG] Business logic check:', {
+        isExplorer,
+        companyName,
+        sanitizedIsExplorer: sanitized.isExplorer,
+        sanitizedIsEducationOnly: sanitized.isEducationOnly,
+        mappedBodyCompany: mappedBody.company
+      });
+      
       if (!isExplorer && !companyName?.trim()) {
+        console.log('[DEBUG] BUSINESS LOGIC FAILED - Company name required for non-explorer');
         return res.status(400).json({
           success: false,
           message: 'Company name required for business inquiries'
         });
       }
+      console.log('[DEBUG] Business logic validation passed!');
       
       // Validate and sanitize form data using mapped fields
       console.log('[DEBUG] Calling validateFormData with mappedBody...');
