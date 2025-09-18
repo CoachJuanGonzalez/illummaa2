@@ -1,11 +1,30 @@
 import { Linkedin, Twitter, Instagram, Phone, Mail, MapPin } from "lucide-react";
+import { trackFooterNavClick, analytics } from "../lib/analytics";
 
 export default function Footer() {
-  const scrollToSection = (id: string) => {
+  const scrollToSection = (id: string, sectionName?: string) => {
+    // Track footer navigation click
+    trackFooterNavClick(sectionName || id, id);
+    
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  const trackSocialClick = (platform: string) => {
+    analytics.trackNavigation({
+      action: 'social_link_click',
+      category: 'Social Media',
+      section_name: platform,
+      navigation_type: 'footer',
+      label: `${platform} Link`,
+      custom_parameters: {
+        platform: platform,
+        location: 'footer',
+        link_type: 'external'
+      }
+    });
   };
 
   return (
@@ -28,13 +47,13 @@ export default function Footer() {
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
             <div className="flex space-x-4" data-testid="social-links">
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
+              <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
                 <Linkedin className="text-white" size={20} />
               </a>
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
+              <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
                 <Twitter className="text-white" size={20} />
               </a>
-              <a href="#" className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
+              <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
                 <Instagram className="text-white" size={20} />
               </a>
             </div>
@@ -46,7 +65,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <button 
-                  onClick={() => scrollToSection("developer-qualification")} 
+                  onClick={() => scrollToSection("developer-qualification", "Assessment")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-assessment"
                 >
@@ -55,7 +74,7 @@ export default function Footer() {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection("why")} 
+                  onClick={() => scrollToSection("why", "Why ILLÜMMAA")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-why"
                 >
@@ -64,7 +83,7 @@ export default function Footer() {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection("models")} 
+                  onClick={() => scrollToSection("models", "Models")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-models"
                 >
@@ -73,7 +92,7 @@ export default function Footer() {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection("partnership-tiers")} 
+                  onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-partnership"
                 >

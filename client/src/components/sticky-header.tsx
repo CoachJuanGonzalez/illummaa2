@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { trackHeaderNavClick, analytics } from "../lib/analytics";
 
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location, navigate] = useLocation();
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = (id: string, sectionName?: string) => {
+    // Track navigation click
+    trackHeaderNavClick(sectionName || id, id);
+    
     const element = document.getElementById(id);
     if (element) {
       // Close mobile menu first to get accurate header height
@@ -36,6 +40,19 @@ export default function StickyHeader() {
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
+    // Track logo click
+    analytics.trackNavigation({
+      action: 'logo_click',
+      category: 'Navigation',
+      section_name: 'Logo',
+      navigation_type: 'header',
+      label: 'ILLÜMMAA Logo',
+      custom_parameters: {
+        current_location: location,
+        action_type: location === "/" || location === "" ? 'scroll_to_top' : 'navigate_home'
+      }
+    });
+    
     // If already on home page, scroll to top instead of navigating
     if (location === "/" || location === "") {
       e.preventDefault();
@@ -67,49 +84,49 @@ export default function StickyHeader() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8" data-testid="nav-desktop">
             <button 
-              onClick={() => scrollToSection("developer-qualification")} 
+              onClick={() => scrollToSection("developer-qualification", "Assessment")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-assessment"
             >
               Assessment
             </button>
             <button 
-              onClick={() => scrollToSection("why")} 
+              onClick={() => scrollToSection("why", "Why")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-why"
             >
               Why
             </button>
             <button 
-              onClick={() => scrollToSection("leadership")} 
+              onClick={() => scrollToSection("leadership", "Leadership")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-leadership"
             >
               Leadership
             </button>
             <button 
-              onClick={() => scrollToSection("models")} 
+              onClick={() => scrollToSection("models", "Models")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-models"
             >
               Models
             </button>
             <button 
-              onClick={() => scrollToSection("developer-qualification")} 
+              onClick={() => scrollToSection("developer-qualification", "Developers")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-developers"
             >
               Developers
             </button>
             <button 
-              onClick={() => scrollToSection("partnership-tiers")} 
+              onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-partnership"
             >
               Partnership
             </button>
             <button 
-              onClick={() => scrollToSection("contact")} 
+              onClick={() => scrollToSection("contact", "Contact")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-contact"
             >
@@ -133,49 +150,49 @@ export default function StickyHeader() {
           <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
             <div className="flex flex-col space-y-2 pt-4">
               <button 
-                onClick={() => scrollToSection("developer-qualification")} 
+                onClick={() => scrollToSection("developer-qualification", "Assessment")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-assessment"
               >
                 Assessment
               </button>
               <button 
-                onClick={() => scrollToSection("why")} 
+                onClick={() => scrollToSection("why", "Why")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-why"
               >
                 Why
               </button>
               <button 
-                onClick={() => scrollToSection("leadership")} 
+                onClick={() => scrollToSection("leadership", "Leadership")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-leadership"
               >
                 Leadership
               </button>
               <button 
-                onClick={() => scrollToSection("models")} 
+                onClick={() => scrollToSection("models", "Models")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-models"
               >
                 Models
               </button>
               <button 
-                onClick={() => scrollToSection("developer-qualification")} 
+                onClick={() => scrollToSection("developer-qualification", "Developers")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-developers"
               >
                 Developers
               </button>
               <button 
-                onClick={() => scrollToSection("partnership-tiers")} 
+                onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-partnership"
               >
                 Partnership
               </button>
               <button 
-                onClick={() => scrollToSection("contact")} 
+                onClick={() => scrollToSection("contact", "Contact")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-contact"
               >

@@ -1,4 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { 
+  analytics, 
+  trackAssessmentStart, 
+  trackAssessmentStepComplete,
+  trackAssessmentComplete,
+  trackCustomerTierDetermination,
+  trackUnitCountSelection
+} from "../lib/analytics";
 
 // TypeScript interfaces
 declare global {
@@ -49,10 +57,11 @@ const IllummaaAssessmentForm = () => {
   const [buildCanadaEligible, setBuildCanadaEligible] = useState(false);
   const [isExplorer, setIsExplorer] = useState(false);
   const [csrfToken, setCsrfToken] = useState('');
+  const [startTime] = useState(Date.now());
   
   const TOTAL_STEPS = 5;
 
-  // Fetch CSRF token on mount
+  // Fetch CSRF token on mount and track assessment start
   useEffect(() => {
     const fetchCSRFToken = async () => {
       try {
@@ -61,43 +70,61 @@ const IllummaaAssessmentForm = () => {
         });
         const data = await response.json();
         setCsrfToken(data.csrfToken);
+        
+        // Track assessment start when component loads
+        trackAssessmentStart();
       } catch (error) {
         console.error('CSRF token fetch failed:', error);
       }
     };
     fetchCSRFToken();
-  }, []);
+
+    // Track abandonment on page unload
+    const handleBeforeUnload = () => {
+      const stepNames = ['', 'readiness_units', 'project_details', 'contact_info', 'consent_review'];
+      const timeSpent = Math.round((Date.now() - startTime) / 1000);
+      analytics.trackAssessmentAbandonment(currentStep, stepNames[currentStep] || 'unknown', timeSpent);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [currentStep, startTime]);
 
   // Tier determination function with weighted logic for long-term planners
   const determineCustomerTier = (units: string, readiness: string): TierType => {
     const unitCount = parseInt(units) || 0;
+    let determinedTier: TierType;
     
     // Just researching ALWAYS = Explorer (secure default)
     if (readiness === 'researching') {
-      return 'tier_0_explorer';
+      determinedTier = 'tier_0_explorer';
     }
-    
     // Security check: Commitment-level users must have actual unit counts
-    if (readiness !== 'researching' && unitCount === 0) {
+    else if (readiness !== 'researching' && unitCount === 0) {
       console.warn('Security: Zero units for non-research tier - maintaining Explorer classification');
-      return 'tier_0_explorer'; // Secure fallback
+      determinedTier = 'tier_0_explorer'; // Secure fallback
     }
-    
     // Planning long-term (12+ months) - weighted by units with minimum threshold
-    if (readiness === 'planning-long') {
-      if (unitCount <= 0) return 'tier_0_explorer'; // Security fallback
-      if (unitCount <= 49) return 'tier_1_starter';
-      if (unitCount <= 149) return 'tier_2_pioneer';
-      if (unitCount <= 299) return 'tier_3_preferred';
-      return 'tier_4_elite';
+    else if (readiness === 'planning-long') {
+      if (unitCount <= 0) determinedTier = 'tier_0_explorer'; // Security fallback
+      else if (unitCount <= 49) determinedTier = 'tier_1_starter';
+      else if (unitCount <= 149) determinedTier = 'tier_2_pioneer';
+      else if (unitCount <= 299) determinedTier = 'tier_3_preferred';
+      else determinedTier = 'tier_4_elite';
+    }
+    // All other readiness levels - standard logic with validation
+    else {
+      if (unitCount <= 0) determinedTier = 'tier_0_explorer'; // Security fallback
+      else if (unitCount <= 49) determinedTier = 'tier_1_starter';
+      else if (unitCount <= 149) determinedTier = 'tier_2_pioneer';
+      else if (unitCount <= 299) determinedTier = 'tier_3_preferred';
+      else determinedTier = 'tier_4_elite';
     }
     
-    // All other readiness levels - standard logic with validation
-    if (unitCount <= 0) return 'tier_0_explorer'; // Security fallback
-    if (unitCount <= 49) return 'tier_1_starter';
-    if (unitCount <= 149) return 'tier_2_pioneer';
-    if (unitCount <= 299) return 'tier_3_preferred';
-    return 'tier_4_elite';
+    // Track tier determination for analytics
+    trackCustomerTierDetermination(determinedTier, units, readiness);
+    
+    return determinedTier;
   };
 
   // Get tier display information
@@ -195,6 +222,9 @@ const IllummaaAssessmentForm = () => {
       const isResearching = value === 'researching';
       setIsExplorer(isResearching);
       
+      // Track readiness selection change
+      analytics.trackReadinessSelection(value, formData.readiness);
+      
       if (isResearching) {
         // Auto-set Explorer defaults for researchers only
         setFormData(prev => ({
@@ -221,6 +251,9 @@ const IllummaaAssessmentForm = () => {
         console.warn('Security: Invalid unit count for commitment-level tier');
         return; // Block invalid selection
       }
+      
+      // Track unit count selection
+      trackUnitCountSelection(value, formData.unitCount);
       
       // When units change, recalculate tier with current readiness
       setFormData(prev => ({ ...prev, unitCount: value }));
@@ -435,7 +468,19 @@ const IllummaaAssessmentForm = () => {
   // Navigation
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      setCurrentStep(Math.min(currentStep + 1, TOTAL_STEPS));
+      const newStep = Math.min(currentStep + 1, TOTAL_STEPS);
+      const stepNames = ['', 'readiness_units', 'project_details', 'contact_info', 'consent_review', 'complete'];
+      
+      // Track step completion
+      trackAssessmentStepComplete(currentStep, stepNames[currentStep], formData);
+      
+      setCurrentStep(newStep);
+      
+      // Track new step start (unless it's the completion step)
+      if (newStep <= TOTAL_STEPS && stepNames[newStep]) {
+        analytics.trackAssessmentStepStart(newStep, stepNames[newStep]);
+      }
+      
       // Scroll to form section, not page top
       const formElement = document.getElementById('developer-qualification');
       if (formElement) {
@@ -599,18 +644,18 @@ const IllummaaAssessmentForm = () => {
       const result = await response.json();
       
       // Analytics tracking
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'conversion', {
-          event_category: 'Assessment_Complete',
-          event_label: tierInfo.name,
-          value: priorityScore,
-          custom_parameters: {
-            tier: customerTier,
-            build_canada: buildCanadaEligible,
-            compliance: 'casl_verified'
-          }
-        });
-      }
+      // Enhanced assessment completion tracking
+      trackAssessmentComplete(formData, priorityScore, customerTier);
+      
+      // Track lead generation conversion
+      analytics.trackLeadGeneration({
+        customerTier,
+        priorityScore,
+        unitCount: formData.unitCount,
+        province: formData.province,
+        readiness: formData.readiness,
+        buildCanadaEligible
+      });
       
       setShowSuccess(true);
       
