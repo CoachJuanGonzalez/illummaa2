@@ -268,7 +268,18 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     customer_tier: customerTier,
     customer_priority_level: priorityLevel,
     customer_tags: tags.join(', '),
-    tags_array: tags
+    tags_array: tags,
+    
+    // Explorer-specific fields (for tier_0_explorer leads)
+    ...(customerTier === 'tier_0_explorer' && {
+      learning_interest: formData.learningInterest || "",
+      information_preference: formData.informationPreference || "",
+      build_canada_eligible: "No",
+      is_education_only: "Yes",
+      is_educational_lead: "true",
+      response_commitment: "Comprehensive educational resources and learning guidance",
+      response_commitment_level: "Educational Support Track"
+    })
   };
 
   // Webhook delivery with retry logic (v13.1 required)
