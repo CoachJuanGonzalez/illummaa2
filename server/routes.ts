@@ -346,8 +346,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     // Check all string values for dangerous content
     for (const key in body) {
-      if (typeof body[key] === 'string' && containsDangerousContent(body[key])) {
-        errors.push(`Invalid content detected in ${key}`);
+      if (typeof body[key] === 'string') {
+        const isDangerous = containsDangerousContent(body[key]);
+        console.log('[VALIDATION DEBUG]', key, ':', body[key], 'dangerous:', isDangerous);
+        if (isDangerous) {
+          errors.push(`Invalid content detected in ${key}: ${body[key]}`);
+        }
       }
     }
     
@@ -375,14 +379,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Additional input validation
+      // Additional input validation with debug logging
+      console.log('[DEBUG] Starting input validation...');
       const validationErrors = validateInput(req.body);
+      console.log('[DEBUG] Validation errors:', validationErrors);
       if (validationErrors.length > 0) {
+        console.log('[DEBUG] VALIDATION FAILED - errors:', validationErrors);
         return res.status(400).json({
           error: 'Input validation failed',
           details: validationErrors
         });
       }
+      console.log('[DEBUG] Input validation passed!');
 
       // Enhanced SMS consent validation with debug logging
       console.log('[DEBUG] SMS consent check:', {
