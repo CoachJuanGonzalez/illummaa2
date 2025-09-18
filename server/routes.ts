@@ -483,6 +483,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('[MAPPING] Frontend data:', JSON.stringify(sanitized, null, 2));
       console.log('[MAPPING] Mapped backend data:', JSON.stringify(mappedBody, null, 2));
       
+      console.log('[DEBUG] About to start business logic validation...');
+      
       // Business logic validation AFTER field mapping
       const isExplorer = sanitized.isExplorer === 'true' || sanitized.isExplorer === true || sanitized.isEducationOnly === 'Yes';
       const companyName = mappedBody.company || '';
