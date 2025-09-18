@@ -412,10 +412,10 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
 
 // Residential GoHighLevel webhook function
 export async function submitToGoHighLevelResidential(data: any): Promise<any> {
-  const webhookUrl = process.env.GHL_RESIDENTIAL_WEBHOOK_URL;
+  const webhookUrl = process.env.GHL_WEBHOOK_URL;
   
   if (!webhookUrl) {
-    throw new Error('GHL_RESIDENTIAL_WEBHOOK_URL not configured in environment variables');
+    throw new Error('GHL_WEBHOOK_URL not configured in environment variables');
   }
   
   const webhookPayload = {
