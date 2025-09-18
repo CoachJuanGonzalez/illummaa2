@@ -554,124 +554,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.log('[DEBUG] Form validation passed!');
 
-      // Enhanced payload with comprehensive SMS security tracking
-      // Enhanced webhook payload generation with security validation (Step 6 implementation)
-      const generateSecurePayload = (sanitizedData: any) => {
-        // Security validation before webhook delivery
-        const unitCount = parseInt(sanitizedData.projectUnitCount) || 0;
-        const readiness = sanitizedData.readinessToBuy;
-        
-        // Validate tier consistency
-        if (readiness !== 'researching' && unitCount <= 0) {
-          throw new Error('Security: Invalid unit count for commitment-level tier');
-        }
-        
-        return {
-        // Contact information (sanitized)
-        firstName: sanitized.firstName,
-        lastName: sanitized.lastName,
-        email: sanitized.email,
-        phone: sanitized.phone,
-        company: sanitized.company || sanitized.companyName || '',
-        companyName: sanitized.companyName || sanitized.company || '',
-        
-        // Project details (using both old and new field names for compatibility)
-        unitCount: parseInt(sanitized.unitCount || sanitized.projectUnitCount) || 0,
-        projectUnitCount: parseInt(sanitized.projectUnitCount || sanitized.unitCount) || 0,
-        budget: sanitized.budget || sanitized.projectBudgetRange,
-        projectBudgetRange: sanitized.projectBudgetRange || sanitized.budget,
-        timeline: sanitized.timeline || sanitized.deliveryTimeline,
-        deliveryTimeline: sanitized.deliveryTimeline || sanitized.timeline,
-        province: sanitized.province || sanitized.constructionProvince,
-        constructionProvince: sanitized.constructionProvince || sanitized.province,
-        readiness: sanitized.readiness || sanitized.readinessToBuy,
-        readinessToBuy: sanitized.readinessToBuy || sanitized.readiness,
-        projectDescription: sanitized.projectDescription || '',
-        
-        // New Partnership & Learning Assessment fields
-        partnershipLevel: sanitized.partnershipLevel,
-        aiPriorityScore: sanitized.aiPriorityScore || priorityScore,
-        pipeline: sanitized.pipeline,
-        stage: sanitized.stage,
-        buildCanadaEligible: sanitized.buildCanadaEligible,
-        isEducationOnly: sanitized.isEducationOnly,
-        isEducationalLead: sanitized.isEducationalLead,
-        responseCommitment: sanitized.responseCommitment,
-        responseCommitmentLevel: sanitized.responseCommitmentLevel,
-        developerType: sanitized.developerType,
-        governmentPrograms: sanitized.governmentPrograms,
-        
-        // Enhanced legal consent tracking with SMS security
-        consentCommunications: sanitized.consentCommunications ? 'true' : 'false',
-        consentSMS: sanitized.consentSMS ? 'true' : 'false',
-        consentSMSTimestamp: sanitized.consentSMSTimestamp || new Date().toISOString(),
-        smsAuditTrail: smsAuditTrail,
-        privacyPolicyConsent: sanitized.privacyPolicyConsent ? 'true' : 'false',
-        marketingConsent: sanitized.marketingConsent ? 'true' : 'false',
-        ageVerification: sanitized.ageVerification ? 'true' : 'false',
-        consentTimestamp: new Date().toISOString(),
-        legalConsentVersion: '2025.1',
-        caslCompliant: 'true',
-        caslSMSCompliant: sanitized.consentSMS ? 'true' : 'false',
-        pipedaCompliant: 'true',
-        a2p10dlcCompliant: 'true',
-        
-        // Security metadata
-        submissionIP: req.ip,
-        userAgent: req.headers['user-agent'],
-        timestamp: new Date().toISOString(),
-        sessionId: (req as any).sessionID || 'no-session',
-        securityValidated: 'true',
-        csrfProtected: 'true',
-        rateLimitPassed: 'true',
-        inputSanitized: 'true',
-        smsConsentSecurityValidated: 'true',
-        smsConsentRateLimitPassed: 'true',
-        smsConsentAuditId: smsAuditTrail.auditId,
-        
-        // System tracking
-        submissionId: `ILLUMMAA-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
-        source: 'ILLÜMMAA Secure Website Assessment',
-        
-        // Priority and tagging from existing logic
-        priorityScore: priorityScore || sanitized.aiPriorityScore,
-        customerTier: customerTier || sanitized.customerTier,
-        priorityLevel,
-        tags: tags?.join(',') || sanitized.tags || '',
-        
-        // Enhanced security validation fields (Step 6)
-        tierConsistencyValidated: 'true',
-        unitCountSecurityValidated: 'true'
-        };
-      };
-
-      // Generate secure payload with enhanced security validation (Step 7 implementation)
-      let securePayload;
-      try {
-        // Additional tier consistency security check
-        const unitCount = parseInt(sanitized.projectUnitCount) || 0;
-        const readiness = sanitized.readinessToBuy;
-        
-        if (readiness !== 'researching' && unitCount <= 0) {
-          throw new Error('Commitment-level inquiries must specify actual unit count');
-        }
-        
-        securePayload = generateSecurePayload(sanitized);
-      } catch (error) {
-        // Enhanced error logging with security context
-        console.error('Assessment submission error:', {
-          error: (error as Error).message,
-          securityValidation: 'failed',
-          timestamp: new Date().toISOString(),
-          unitCount: sanitized.projectUnitCount,
-          readiness: sanitized.readinessToBuy,
-          ip: req.ip
-        });
-        
+      // Additional business tier validation
+      const finalUnitCount = parseInt(sanitized.projectUnitCount) || 0;
+      const finalReadiness = sanitized.readinessToBuy;
+      
+      if (finalReadiness !== 'researching' && finalUnitCount <= 0) {
         return res.status(400).json({
           success: false,
-          message: 'Security validation failed. Please verify your selections.',
-          securityViolation: true,
+          message: 'Please specify the number of units for your project.',
           errorId: crypto.randomBytes(8).toString('hex')
         });
       }
@@ -689,7 +579,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
         console.log('[DEBUG] Calling submitToGoHighLevel webhook...');
-        await submitToGoHighLevel(data, priorityScore, customerTier, priorityLevel, tags);
+        await submitToGoHighLevel(data!, priorityScore!, customerTier!, priorityLevel!, tags!);
         console.log('[DEBUG] GoHighLevel webhook submitted successfully');
       } catch (webhookError) {
         console.error("GoHighLevel webhook failed:", webhookError);
