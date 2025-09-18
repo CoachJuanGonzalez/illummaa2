@@ -27,9 +27,9 @@ function mapFrontendToBackend(frontendData: any): any {
 
   const normalizeBudget = (value: string): string => {
     const budgetMap: { [key: string]: string } = {
-      'Under $500K': 'Under $5 Million',
-      '$500K - $2M': 'Under $5 Million',
-      '$2M - $5M': 'Under $5 Million',
+      'Under $500K': 'Under $500K',
+      '$500K - $2M': '$500K - $2M',
+      '$2M - $5M': '$2M - $5M',
       '$5M - $15M': '$5M - $15 Million',
       '$15M - $30M': '$15M - $30 Million',
       '$30M - $50M': '$30M - $50 Million',
@@ -70,14 +70,11 @@ function mapFrontendToBackend(frontendData: any): any {
 
   const normalizeGovernmentPrograms = (value: string): string => {
     const programsMap: { [key: string]: string } = {
-      'Not interested': 'No - Private development only',
-      'Somewhat interested': 'Interested - Tell us more',
-      'Very interested': 'Interested - Tell us more',
-      'Currently participating': 'Yes - Currently participating',
-      'Yes - Currently participating': 'Yes - Currently participating',
-      'Interested - Tell us more': 'Interested - Tell us more',
-      'No - Private development only': 'No - Private development only',
-      'Just learning about options': 'Just learning about options'
+      "Just learning about options": "Just learning about options",
+      "Not interested": "Not interested", 
+      "Somewhat interested": "Somewhat interested",
+      "Very interested": "Very interested", 
+      "Currently participating": "Currently participating"
     };
     return programsMap[value] || value;
   };
