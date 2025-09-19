@@ -227,8 +227,10 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
     default: score += 0;
   }
 
-  // 5. DEVELOPER TYPE (20 points max)
-  if (devType.includes("Government") || devType === "Government/Municipal Developer") {
+  // 5. DEVELOPER TYPE (20 points max) - SYNCHRONIZED WITH FRONTEND
+  if (devType === "Indigenous Community/Organization") {
+    score += 20;  // CRITICAL FIX: Added missing Indigenous scoring
+  } else if (devType === "Government/Municipal" || devType.includes("Government") || devType === "Government/Municipal Developer") {
     score += 15;
   } else if (devType.includes("Commercial") || devType === "Commercial Developer (Large Projects)") {
     score += 10;
@@ -250,12 +252,14 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
     score += 3;
   }
 
-  // 7. BUILD CANADA ELIGIBILITY (10 points)
+  // 7. BUILD CANADA ELIGIBILITY (10 points) - SYNCHRONIZED WITH FRONTEND
   if (units >= 300) {
     score += 10;
-  } else if (units >= 200 && (devType.includes("Government") || 
+  } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
+                              devType === "Government/Municipal" ||
+                              devType.includes("Government") || 
                               devType === "Government/Municipal Developer")) {
-    score += 10;
+    score += 10;  // CRITICAL FIX: Added missing Indigenous Community
   } else if (units >= 100 && govPrograms === "Currently participating") {
     score += 5;
   }
@@ -281,18 +285,19 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
     score = Math.floor(score * 0.9);
   }
 
-  // 11. MINIMUM GUARANTEES
-  const isIndigenousProject = hasIndigenous;
+  // 11. MINIMUM GUARANTEES - SYNCHRONIZED WITH FRONTEND
+  const isIndigenousProject = hasIndigenous || devType === "Indigenous Community/Organization";
   
-  if ((devType.includes("Government") || devType === "Government/Municipal Developer") && 
+  if ((devType === "Government/Municipal" || devType === "Indigenous Community/Organization" ||
+       devType.includes("Government") || devType === "Government/Municipal Developer") && 
       units >= 100 && score < 75) {
-    score = 75;
+    score = 75;  // CRITICAL FIX: Added missing Indigenous Community
   }
   if (govPrograms === "Currently participating" && units >= 50 && score < 50) {
     score = 50;
   }
   if (isIndigenousProject && score < 40) {
-    score = 40;
+    score = 40;  // Now properly includes Indigenous Community/Organization
   }
 
   // Apply Explorer cap LAST
