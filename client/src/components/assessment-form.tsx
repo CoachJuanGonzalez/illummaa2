@@ -94,6 +94,22 @@ const IllummaaAssessmentForm = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, startTime]);
 
+  // Safety net: Ensure tier recalculation on field changes
+  useEffect(() => {
+    // Only recalculate if both fields have values
+    if (formData.readiness && formData.unitCount !== undefined && formData.unitCount !== '') {
+      const calculatedTier = determineCustomerTier(formData.unitCount, formData.readiness);
+      
+      // Only update if tier actually changed to prevent infinite loops
+      if (calculatedTier !== customerTier) {
+        setCustomerTier(calculatedTier);
+        
+        // Also recalculate score when tier changes
+        calculatePriorityScore();
+      }
+    }
+  }, [formData.readiness, formData.unitCount]); // Only watch these two fields
+
   // Tier determination function with weighted logic for long-term planners
   const determineCustomerTier = (units: string, readiness: string): TierType => {
     const unitCount = parseInt(units) || 0;
@@ -202,103 +218,101 @@ const IllummaaAssessmentForm = () => {
     return getResponseDescription(tier);
   };
 
-  // Secure input sanitization
-  const sanitizeInput = (value: any) => {
+  // Add this helper function if it doesn't exist
+  const sanitizeInput = (value: string): string => {
     if (typeof value !== 'string') return value;
-    return value.trim().replace(/[<>]/g, '').substring(0, 1000);
+    // Enterprise-grade sanitization
+    return value
+      .trim()
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .replace(/javascript:/gi, '') // Remove javascript: protocols
+      .substring(0, 1000); // Limit length to prevent DoS
   };
 
-  // Input handler with tier detection
+  // Enhanced input handler with immediate tier recalculation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    const checked = 'checked' in e.target ? e.target.checked : false;
+    const checked = (e.target as HTMLInputElement).checked;
+    
+    // Sanitize input value
     const rawValue = type === 'checkbox' ? checked : value;
-    const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(rawValue);
+    const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
     
-    // SMS consent security validation
-    if (name === 'consentSMS' && typeof sanitizedValue !== 'boolean') {
-      console.warn('Security: Invalid SMS consent value type');
-      return;
-    }
-    
-    // Enhanced readiness handling with secure unit count enforcement
+    // Special handling for readiness changes
     if (name === 'readiness') {
       const isResearching = value === 'researching';
       setIsExplorer(isResearching);
       
-      // Track readiness selection change
-      analytics.trackReadinessSelection(value, formData.readiness);
-      
       if (isResearching) {
-        // Auto-set Explorer defaults for researchers only
+        // Explorer path: auto-set defaults
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: '0', // Hidden from user but set securely in data
-          budget: 'Just exploring options' // Auto-set for consistency
+          unitCount: '0',
+          budget: 'Just exploring options',
+          timeline: ''
         }));
         setCustomerTier('tier_0_explorer');
+        setPriorityScore(0);
       } else {
-        // For ALL commitment-level options, clear units to force meaningful selection
+        // Non-explorer path: clear fields for user selection
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: '', // Clear to force actual unit count selection
-          budget: '' // Clear budget for non-researchers
+          unitCount: '', // Clear to force selection
+          budget: '',
+          timeline: ''
         }));
-        // Don't set tier yet - wait for units selection
+        // Don't set tier yet - wait for unit selection
       }
     } else if (name === 'unitCount') {
-      // Security validation: Ensure non-Explorer tiers cannot select exploration values
-      const isCommitmentTier = formData.readiness !== 'researching';
-      if (isCommitmentTier && (value === '0' || value === 'Just exploring options')) {
-        console.warn('Security: Invalid unit count for commitment-level tier');
-        return; // Block invalid selection
+      // Unit count change - always recalculate tier
+      const updatedUnitCount = value;
+      const currentReadiness = formData.readiness;
+      
+      // Security validation for commitment tiers
+      if (currentReadiness && currentReadiness !== 'researching' && (value === '0' || value === '')) {
+        setErrors(prev => ({ ...prev, unitCount: 'Please select actual number of units needed' }));
+        return;
       }
       
-      // Track unit count selection
-      trackUnitCountSelection(value, formData.unitCount);
-      
-      // When units change, recalculate tier with current readiness
+      // Update form data
       setFormData(prev => ({ ...prev, unitCount: value }));
-      const tier = determineCustomerTier(value, formData.readiness || '');
-      setCustomerTier(tier);
       
-      // Update company requirement based on tier
-      const companyRequired = tier !== 'tier_0_explorer' && tier !== 'tier_1_starter';
-      const companyElement = document.getElementById('company') as HTMLInputElement;
-      if (companyElement) {
-        companyElement.required = companyRequired;
+      // CRITICAL FIX: Immediately recalculate tier with current values
+      if (currentReadiness && value) {
+        const newTier = determineCustomerTier(value, currentReadiness);
+        setCustomerTier(newTier);
+        
+        // Log for debugging (remove in production)
+        console.log('Tier Calculation Debug:', {
+          readiness: currentReadiness,
+          unitCount: value,
+          calculatedTier: newTier
+        });
       }
-    } else {
-      // Keep existing logic for other fields with bidirectional mirroring
-      const updates: any = { [name]: sanitizedValue };
-      
-      // Implement bidirectional field mirroring for synonyms
-      if (name === 'budget') updates.projectBudgetRange = sanitizedValue;
-      if (name === 'projectBudgetRange') updates.budget = sanitizedValue;
-      if (name === 'timeline') updates.deliveryTimeline = sanitizedValue;
-      if (name === 'deliveryTimeline') updates.timeline = sanitizedValue;
-      if (name === 'province') updates.constructionProvince = sanitizedValue;
-      if (name === 'constructionProvince') updates.province = sanitizedValue;
-      
-      setFormData(prev => ({ 
-        ...prev, 
-        ...updates,
-        ...(name === 'consentSMS' && sanitizedValue && {
-          consentSMSTimestamp: new Date().toISOString()
-        })
+    } else if (name === 'consentSMS' && checked) {
+      // SMS consent with timestamp
+      setFormData(prev => ({
+        ...prev,
+        consentSMS: true,
+        consentSMSTimestamp: new Date().toISOString()
       }));
+    } else {
+      // All other fields
+      setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
     }
     
-    // Clear errors
+    // Clear field-specific errors
     setErrors(prev => ({ ...prev, [name]: '' }));
     
-    // CRITICAL: Calculate score immediately after state update
-    // Use setTimeout with 0 to ensure state has updated
-    setTimeout(() => {
-      calculatePriorityScore();
-    }, 0);
+    // Trigger score calculation for relevant fields
+    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
+      // Use setTimeout(0) to ensure state updates are applied
+      setTimeout(() => {
+        calculatePriorityScore();
+      }, 0);
+    }
   };
 
   // Phone formatting
