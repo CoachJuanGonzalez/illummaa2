@@ -1,0 +1,68 @@
+Instructions for Replit Agent - Comprehensive Priority Score Synchronization Fix
+"I need a comprehensive fix for ALL priority score discrepancies between frontend and backend. Please perform a complete audit and synchronization:
+Step 1: Find Both Scoring Functions
+
+Locate calculatePriorityScore in client/src/components/assessment-form.tsx
+Locate calculatePriorityScore in server/storage.ts
+Copy both functions to a comparison file
+
+Step 2: Create a Unified Scoring Logic
+Compare EVERY scoring element and identify ALL differences:
+
+Unit count scoring thresholds
+Budget scoring values
+Timeline scoring values
+Province scoring (especially Alberta, Quebec, other provinces)
+Government programs scoring (all 5 options)
+Developer type scoring (all types)
+Build Canada bonus logic
+Explorer tier caps and penalties
+Any multipliers or special rules
+
+Step 3: Fix ALL Discrepancies
+Create identical scoring logic by:
+
+Making a SINGLE source of truth for scoring values
+Ensuring both functions use EXACT same values for:
+
+'Just learning about options' (should be 3 points)
+'Somewhat interested' (should be 10 points)
+'Very interested' (should be 20 points)
+'Currently participating' (should be 30 points)
+Alberta province (should be 7 points)
+All developer types for ALL tiers
+
+
+
+Step 4: Add Comprehensive Debug Logging
+Add a scoring breakdown that shows:
+javascriptconsole.log('SCORING BREAKDOWN:', {
+  units: unitScore,
+  budget: budgetScore,
+  timeline: timelineScore,
+  province: provinceScore,
+  government: govScore,
+  developer: devScore,
+  buildCanada: bonusScore,
+  penalties: penaltyAmount,
+  explorerCap: wasCapApplied,
+  TOTAL: finalScore
+});
+Step 5: Create Test Cases
+Test these exact scenarios and verify frontend and backend give SAME score:
+
+Alberta Explorer with 'Just learning' = should be same front/back
+Ontario Starter with 50 units = should be same front/back
+BC Pioneer with 'Currently participating' = should be same front/back
+Any province Elite with 500 units = should be same front/back
+
+Step 6: Fix the Company Field Issue
+While you're at it, add this right before sending webhook:
+javascript// Force correct company values by tier
+if (customerTier === 'tier_0_explorer') {
+  webhookPayload.company = '';
+} else if (!webhookPayload.company && customerTier === 'tier_1_starter') {
+  webhookPayload.company = 'Individual Investor';
+}
+The goal is to make the scoring 100% identical between frontend and backend for ALL possible combinations. No more individual patches!"
+This comprehensive approach will fix all scoring issues at once instead of playing whack-a-mole with individual cases.

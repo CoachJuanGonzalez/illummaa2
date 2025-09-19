@@ -341,14 +341,6 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     (units >= 200 && (formData.developerType === "Government/Municipal Developer" || 
                      formData.developerType?.includes("Government")));
 
-  // DEBUG: Log inputs for company field calculation
-  console.log('🔍 COMPANY FIELD DEBUG:', {
-    customerTier,
-    formDataCompany: formData.company,
-    formDataCompanyLength: formData.company?.length,
-    units: parseInt(formData.projectUnitCount.toString()),
-    readiness: formData.readiness
-  });
 
   // SMART PAYLOAD: Only essential fields for GoHighLevel
   const webhookPayload = {
