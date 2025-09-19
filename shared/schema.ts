@@ -189,6 +189,10 @@ export const assessmentSchema = z.object({
   projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
+  
+  projectDescription: z.string()
+    .max(1000, "Project description must be less than 1000 characters")
+    .optional(),
 }).superRefine((data, ctx) => {
   // Determine if this is Explorer or Starter tier based on Customer Journey logic
   const isExplorerTier = data.readiness === 'researching' || data.projectUnitCount === 0;

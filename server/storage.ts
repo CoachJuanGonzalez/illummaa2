@@ -112,8 +112,11 @@ export async function validateFormData(rawData: any): Promise<{
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
       ageVerification: Boolean(rawData.ageVerification),
-      projectDescriptionText: rawData.projectDescriptionText ? 
-        DOMPurify.sanitize(rawData.projectDescriptionText).trim().slice(0, 1000) : 
+      projectDescriptionText: (rawData.projectDescriptionText || rawData.projectDescription) ? 
+        DOMPurify.sanitize((rawData.projectDescriptionText || rawData.projectDescription)).trim().slice(0, 1000) : 
+        undefined,
+      projectDescription: (rawData.projectDescriptionText || rawData.projectDescription) ? 
+        DOMPurify.sanitize((rawData.projectDescriptionText || rawData.projectDescription)).trim().slice(0, 1000) : 
         undefined,
     };
 
@@ -268,7 +271,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     construction_province: formData.constructionProvince || "",
     developer_type: formData.developerType || "",
     government_programs: formData.governmentPrograms || "",
-    project_description: sanitizeInput(formData.projectDescriptionText || ""),
+    project_description: sanitizeInput(formData.projectDescription || formData.projectDescriptionText || ""),
     ai_priority_score: priorityData.score,
     lead_source_details: "ILLUMMAA Website - Advanced Multi-Step Form",
     

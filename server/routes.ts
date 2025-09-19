@@ -102,7 +102,7 @@ function mapFrontendToBackend(frontendData: any): any {
     budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : normalizeBudget(frontendData.projectBudgetRange || frontendData.budgetRange)),
     decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : normalizeTimeline(frontendData.deliveryTimeline || frontendData.decisionTimeline)),
     constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),
-    projectDescriptionText: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
+    projectDescription: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
     consentMarketing: frontendData.consentCommunications || frontendData.consentMarketing,
     
     // Readiness with enum normalization (handles both old 'readiness' and new 'readinessToBuy' fields)
