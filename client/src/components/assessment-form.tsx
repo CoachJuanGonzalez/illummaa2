@@ -413,10 +413,18 @@ const IllummaaAssessmentForm = () => {
     else if (units >= 50) score += 8;
     else if (units > 0) score += 3;
 
-    // 2. GOVERNMENT PROGRAMS - BULLETPROOF VERSION
+    // 2. GOVERNMENT PROGRAMS - SYNCHRONIZED WITH BACKEND
     const govPrograms = fd.governmentPrograms || '';
     
-    if (govPrograms && govPrograms !== 'none') score += 15;
+    if (govPrograms === "Currently participating") {
+      score += 30;
+    } else if (govPrograms === "Very interested") {
+      score += 20;
+    } else if (govPrograms === "Somewhat interested") {
+      score += 10;  // MATCHES BACKEND: "Somewhat interested" = 10 points
+    } else if (govPrograms === "Just learning about options") {
+      score += 3;
+    }
 
     // 3. TIMELINE (20 points max)
     const timeline = fd.timeline || '';
@@ -432,11 +440,18 @@ const IllummaaAssessmentForm = () => {
     else if (budget.includes('500K-1M') || budget.includes('250-500K')) score += 10;
     else if (budget.includes('100-250K') || budget.includes('50-100K')) score += 5;
 
-    // 5. PROVINCIAL FOCUS (10 points max)
-    const province = fd.province || '';
-    if (['ontario', 'british-columbia', 'alberta'].includes(province)) score += 10;
-    else if (['quebec', 'manitoba', 'saskatchewan'].includes(province)) score += 8;
-    else if (province && province !== 'none') score += 5;
+    // 5. PROVINCIAL FOCUS (10 points max) - SYNCHRONIZED WITH BACKEND
+    const province = fd.province || fd.constructionProvince || '';
+    if (province === "Ontario" || province === "British Columbia") {
+      score += 10;
+    } else if (province === "Alberta" || province === "Quebec") {
+      score += 7;  // MATCHES BACKEND: Alberta gets 7 points
+    } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
+              "Newfoundland and Labrador"].includes(province)) {
+      score += 5;
+    } else if (province) {
+      score += 3;
+    }
 
     // 6. DEVELOPER TYPE (10 points max)
     const devType = fd.developerType || '';
@@ -451,14 +466,12 @@ const IllummaaAssessmentForm = () => {
     // 8. SUSTAINABILITY FOCUS (10 bonus points)
     if (hasSustainability) score += 10;
 
-    // 9. READINESS LEVEL MULTIPLIER (1.0x - 1.5x)
-    let multiplier = 1.0;
-    if (readiness === 'planning-soon') multiplier = 1.5;
-    else if (readiness === 'planning-6-months') multiplier = 1.3;
-    else if (readiness === 'planning-long') multiplier = 1.1;
-    else if (readiness === 'researching') multiplier = 0.5;
+    // 9. EXPLORER CAP - SYNCHRONIZED WITH BACKEND (25 max for researching)
+    if (readiness === 'researching') {
+      score = Math.min(score, 25);
+    }
 
-    const finalScore = Math.round(score * multiplier);
+    const finalScore = Math.round(score);
     setPriorityScore(finalScore);
 
     // Enhanced analytics with tier information
