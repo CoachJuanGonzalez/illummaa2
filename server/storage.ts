@@ -429,15 +429,6 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // - lead_source_details (redundant with source)
   };
 
-  // DEBUG: Log final webhook payload company value
-  console.log('🚀 FINAL WEBHOOK COMPANY VALUE:', {
-    webhookCompany: webhookPayload.company,
-    webhookCompanyType: typeof webhookPayload.company,
-    webhookCompanyLength: webhookPayload.company?.length,
-    isEmptyString: webhookPayload.company === '',
-    customerTier: webhookPayload.customer_tier
-  });
-
     // REMOVED FROM WEBHOOK (but kept in internal code):
     // - journey_stage (use customer_tier)
     // - lead_stage (use customer_tier)
@@ -449,9 +440,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
   const maxRetries = 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // DEBUG: Log final webhook being sent (as requested)
-      console.log('🚀 FINAL WEBHOOK BEING SENT:', JSON.stringify(webhookPayload, null, 2));
-      
+
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
@@ -592,9 +581,7 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
   const maxRetries = 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      // DEBUG: Log final webhook being sent (as requested)
-      console.log('🚀 FINAL WEBHOOK BEING SENT:', JSON.stringify(webhookPayload, null, 2));
-      
+
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
