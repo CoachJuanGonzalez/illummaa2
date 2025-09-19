@@ -1,0 +1,203 @@
+structions for Replit
+IMPORTANT: This is a complete replacement of the previous fix. Follow these instructions exactly.
+Step 1: Locate the File
+Open client/src/components/assessment-form.tsx in Replit
+Step 2: Find and DELETE These Sections
+
+Search for const handleInputChange and DELETE the entire function (approximately 40-60 lines)
+Search for useEffect that contains [formData.readiness, formData.unitCount] and DELETE it completely
+Search for any // Safety net: comment and DELETE that entire useEffect block if it exists
+
+Step 3: Add the Complete Replacement Code
+Find where you deleted handleInputChange and paste this complete replacement:
+typescript  // ============ COMPLETE TIER CALCULATION FIX - v2.0 ============
+  // This replaces the entire handleInputChange function and adds proper tier calculation
+  
+  // Helper function for input sanitization (add if not exists)
+  const sanitizeInput = (value: string): string => {
+    if (typeof value !== 'string') return value;
+    return value
+      .trim()
+      .replace(/[<>]/g, '')
+      .replace(/javascript:/gi, '')
+      .substring(0, 1000);
+  };
+
+  // REPLACEMENT handleInputChange with inline tier calculation
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    
+    const rawValue = type === 'checkbox' ? checked : value;
+    const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
+    
+    // Handle readiness field changes
+    if (name === 'readiness') {
+      const isResearching = value === 'researching';
+      setIsExplorer(isResearching);
+      
+      if (isResearching) {
+        // Explorer path
+        setFormData(prev => ({
+          ...prev,
+          readiness: value,
+          unitCount: '0',
+          budget: 'Just exploring options',
+          timeline: ''
+        }));
+        setCustomerTier('tier_0_explorer');
+        setPriorityScore(0);
+      } else {
+        // Non-explorer path - keep existing unit count if present
+        setFormData(prev => ({
+          ...prev,
+          readiness: value,
+          unitCount: prev.unitCount || '',
+          budget: '',
+          timeline: ''
+        }));
+        
+        // CRITICAL FIX: Recalculate tier if units exist
+        if (formData.unitCount) {
+          const unitNum = parseInt(formData.unitCount) || 0;
+          let newTier = 'tier_0_explorer';
+          
+          if (unitNum > 0 && unitNum <= 49) {
+            newTier = 'tier_1_starter';
+          } else if (unitNum <= 149) {
+            newTier = 'tier_2_pioneer';
+          } else if (unitNum <= 299) {
+            newTier = 'tier_3_preferred';
+          } else if (unitNum >= 300) {
+            newTier = 'tier_4_elite';
+          }
+          
+          setCustomerTier(newTier);
+        }
+      }
+    } 
+    // Handle unit count changes
+    else if (name === 'unitCount') {
+      const currentReadiness = formData.readiness;
+      
+      // Validation for non-explorers
+      if (currentReadiness && currentReadiness !== 'researching' && (value === '0' || value === '')) {
+        setErrors(prev => ({ ...prev, unitCount: 'Please select actual number of units needed' }));
+        return;
+      }
+      
+      setFormData(prev => ({ ...prev, unitCount: value }));
+      
+      // INLINE TIER CALCULATION - Always recalculate immediately
+      if (value && currentReadiness) {
+        const unitNum = parseInt(value) || 0;
+        let calculatedTier = 'tier_0_explorer';
+        
+        // Direct tier determination
+        if (currentReadiness === 'researching' || unitNum === 0) {
+          calculatedTier = 'tier_0_explorer';
+        } else if (unitNum === 1 || unitNum === 2) {
+          // EXPLICIT: 1 or 2 homes = Starter
+          calculatedTier = 'tier_1_starter';
+        } else if (unitNum > 2 && unitNum <= 49) {
+          calculatedTier = 'tier_1_starter';
+        } else if (unitNum <= 149) {
+          calculatedTier = 'tier_2_pioneer';
+        } else if (unitNum <= 299) {
+          calculatedTier = 'tier_3_preferred';
+        } else {
+          calculatedTier = 'tier_4_elite';
+        }
+        
+        // Force update
+        setCustomerTier(calculatedTier);
+        
+        // Debug logging
+        console.log('Tier Calculation:', {
+          readiness: currentReadiness,
+          unitInput: value,
+          unitNumber: unitNum,
+          result: calculatedTier,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+    // Handle SMS consent
+    else if (name === 'consentSMS' && checked) {
+      setFormData(prev => ({
+        ...prev,
+        consentSMS: true,
+        consentSMSTimestamp: new Date().toISOString()
+      }));
+    }
+    // Handle all other fields
+    else {
+      setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
+    }
+    
+    // Clear errors
+    setErrors(prev => ({ ...prev, [name]: '' }));
+    
+    // Trigger score recalculation for relevant fields
+    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
+      setTimeout(() => {
+        calculatePriorityScore();
+      }, 10);
+    }
+  };
+
+  // ============ FORCED RECALCULATION SAFETY NET ============
+  // Add this useEffect after your other useEffects (around line 250-300)
+  useEffect(() => {
+    // Double-check tier calculation whenever these fields change
+    if (formData.readiness && formData.unitCount && formData.unitCount !== '') {
+      const unitNum = parseInt(formData.unitCount) || 0;
+      let expectedTier = 'tier_0_explorer';
+      
+      if (formData.readiness === 'researching' || unitNum === 0) {
+        expectedTier = 'tier_0_explorer';
+      } else if (unitNum <= 49) {
+        expectedTier = 'tier_1_starter';
+      } else if (unitNum <= 149) {
+        expectedTier = 'tier_2_pioneer';
+      } else if (unitNum <= 299) {
+        expectedTier = 'tier_3_preferred';
+      } else {
+        expectedTier = 'tier_4_elite';
+      }
+      
+      // Only update if different
+      if (expectedTier !== customerTier) {
+        console.log('useEffect Tier Correction:', {
+          current: customerTier,
+          expected: expectedTier,
+          units: formData.unitCount,
+          readiness: formData.readiness
+        });
+        setCustomerTier(expectedTier);
+        calculatePriorityScore();
+      }
+    }
+  }, [formData.readiness, formData.unitCount]);
+  // ============ END OF FIX ============
+Step 4: Save and Test
+
+Save the file (Ctrl+S or Cmd+S)
+Open browser console (F12)
+Test this exact sequence:
+
+Select "Just researching" → Should show Explorer
+Change to "Planning to buy in 12+ months" → Units field appears
+Select "1 home" → Should now show Starter Tier
+Check console for: Tier Calculation: {readiness: "planning-long", unitInput: "1", unitNumber: 1, result: "tier_1_starter"}
+
+
+
+What This Fix Does:
+
+Removes dependency on external determineCustomerTier function
+Calculates tier inline with explicit logic for "1 home" = Starter
+Includes debug logging to see exactly what's happening
+Has double safety with both handler and useEffect
+
+This will definitively fix the "1 home showing Explorer" bug while maintaining all other functionality and security measures.

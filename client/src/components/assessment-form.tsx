@@ -94,21 +94,40 @@ const IllummaaAssessmentForm = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, startTime]);
 
-  // Safety net: Ensure tier recalculation on field changes
+  // ============ FORCED RECALCULATION SAFETY NET ============
+  // Add this useEffect after your other useEffects (around line 250-300)
   useEffect(() => {
-    // Only recalculate if both fields have values
-    if (formData.readiness && formData.unitCount !== undefined && formData.unitCount !== '') {
-      const calculatedTier = determineCustomerTier(formData.unitCount, formData.readiness);
+    // Double-check tier calculation whenever these fields change
+    if (formData.readiness && formData.unitCount && formData.unitCount !== '') {
+      const unitNum = parseInt(formData.unitCount) || 0;
+      let expectedTier = 'tier_0_explorer';
       
-      // Only update if tier actually changed to prevent infinite loops
-      if (calculatedTier !== customerTier) {
-        setCustomerTier(calculatedTier);
-        
-        // Also recalculate score when tier changes
+      if (formData.readiness === 'researching' || unitNum === 0) {
+        expectedTier = 'tier_0_explorer';
+      } else if (unitNum <= 49) {
+        expectedTier = 'tier_1_starter';
+      } else if (unitNum <= 149) {
+        expectedTier = 'tier_2_pioneer';
+      } else if (unitNum <= 299) {
+        expectedTier = 'tier_3_preferred';
+      } else {
+        expectedTier = 'tier_4_elite';
+      }
+      
+      // Only update if different
+      if (expectedTier !== customerTier) {
+        console.log('useEffect Tier Correction:', {
+          current: customerTier,
+          expected: expectedTier,
+          units: formData.unitCount,
+          readiness: formData.readiness
+        });
+        setCustomerTier(expectedTier as TierType);
         calculatePriorityScore();
       }
     }
-  }, [formData.readiness, formData.unitCount]); // Only watch these two fields
+  }, [formData.readiness, formData.unitCount]);
+  // ============ END OF FIX ============
 
   // Tier determination function with weighted logic for long-term planners
   const determineCustomerTier = (units: string, readiness: string): TierType => {
@@ -229,22 +248,24 @@ const IllummaaAssessmentForm = () => {
       .substring(0, 1000); // Limit length to prevent DoS
   };
 
-  // Enhanced input handler with immediate tier recalculation
+  // ============ COMPLETE TIER CALCULATION FIX - v2.0 ============
+  // This replaces the entire handleInputChange function and adds proper tier calculation
+
+  // REPLACEMENT handleInputChange with inline tier calculation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
     
-    // Sanitize input value
     const rawValue = type === 'checkbox' ? checked : value;
     const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
     
-    // Special handling for readiness changes
+    // Handle readiness field changes
     if (name === 'readiness') {
       const isResearching = value === 'researching';
       setIsExplorer(isResearching);
       
       if (isResearching) {
-        // Explorer path: auto-set defaults
+        // Explorer path
         setFormData(prev => ({
           ...prev,
           readiness: value,
@@ -255,63 +276,101 @@ const IllummaaAssessmentForm = () => {
         setCustomerTier('tier_0_explorer');
         setPriorityScore(0);
       } else {
-        // Non-explorer path: clear fields for user selection
+        // Non-explorer path - keep existing unit count if present
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: '', // Clear to force selection
+          unitCount: prev.unitCount || '',
           budget: '',
           timeline: ''
         }));
-        // Don't set tier yet - wait for unit selection
+        
+        // CRITICAL FIX: Recalculate tier if units exist
+        if (formData.unitCount) {
+          const unitNum = parseInt(formData.unitCount) || 0;
+          let newTier = 'tier_0_explorer';
+          
+          if (unitNum > 0 && unitNum <= 49) {
+            newTier = 'tier_1_starter';
+          } else if (unitNum <= 149) {
+            newTier = 'tier_2_pioneer';
+          } else if (unitNum <= 299) {
+            newTier = 'tier_3_preferred';
+          } else if (unitNum >= 300) {
+            newTier = 'tier_4_elite';
+          }
+          
+          setCustomerTier(newTier as TierType);
+        }
       }
-    } else if (name === 'unitCount') {
-      // Unit count change - always recalculate tier
-      const updatedUnitCount = value;
+    } 
+    // Handle unit count changes
+    else if (name === 'unitCount') {
       const currentReadiness = formData.readiness;
       
-      // Security validation for commitment tiers
+      // Validation for non-explorers
       if (currentReadiness && currentReadiness !== 'researching' && (value === '0' || value === '')) {
         setErrors(prev => ({ ...prev, unitCount: 'Please select actual number of units needed' }));
         return;
       }
       
-      // Update form data
       setFormData(prev => ({ ...prev, unitCount: value }));
       
-      // CRITICAL FIX: Immediately recalculate tier with current values
-      if (currentReadiness && value) {
-        const newTier = determineCustomerTier(value, currentReadiness);
-        setCustomerTier(newTier);
+      // INLINE TIER CALCULATION - Always recalculate immediately
+      if (value && currentReadiness) {
+        const unitNum = parseInt(value) || 0;
+        let calculatedTier = 'tier_0_explorer';
         
-        // Log for debugging (remove in production)
-        console.log('Tier Calculation Debug:', {
+        // Direct tier determination
+        if (currentReadiness === 'researching' || unitNum === 0) {
+          calculatedTier = 'tier_0_explorer';
+        } else if (unitNum === 1 || unitNum === 2) {
+          // EXPLICIT: 1 or 2 homes = Starter
+          calculatedTier = 'tier_1_starter';
+        } else if (unitNum > 2 && unitNum <= 49) {
+          calculatedTier = 'tier_1_starter';
+        } else if (unitNum <= 149) {
+          calculatedTier = 'tier_2_pioneer';
+        } else if (unitNum <= 299) {
+          calculatedTier = 'tier_3_preferred';
+        } else {
+          calculatedTier = 'tier_4_elite';
+        }
+        
+        // Force update
+        setCustomerTier(calculatedTier as TierType);
+        
+        // Debug logging
+        console.log('Tier Calculation:', {
           readiness: currentReadiness,
-          unitCount: value,
-          calculatedTier: newTier
+          unitInput: value,
+          unitNumber: unitNum,
+          result: calculatedTier,
+          timestamp: new Date().toISOString()
         });
       }
-    } else if (name === 'consentSMS' && checked) {
-      // SMS consent with timestamp
+    }
+    // Handle SMS consent
+    else if (name === 'consentSMS' && checked) {
       setFormData(prev => ({
         ...prev,
         consentSMS: true,
         consentSMSTimestamp: new Date().toISOString()
       }));
-    } else {
-      // All other fields
+    }
+    // Handle all other fields
+    else {
       setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
     }
     
-    // Clear field-specific errors
+    // Clear errors
     setErrors(prev => ({ ...prev, [name]: '' }));
     
-    // Trigger score calculation for relevant fields
+    // Trigger score recalculation for relevant fields
     if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
-      // Use setTimeout(0) to ensure state updates are applied
       setTimeout(() => {
         calculatePriorityScore();
-      }, 0);
+      }, 10);
     }
   };
 
