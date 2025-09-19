@@ -94,40 +94,6 @@ const IllummaaAssessmentForm = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, startTime]);
 
-  // ============ FORCED RECALCULATION SAFETY NET ============
-  // Add this useEffect after your other useEffects (around line 250-300)
-  useEffect(() => {
-    // Double-check tier calculation whenever these fields change
-    if (formData.readiness && formData.unitCount && formData.unitCount !== '') {
-      const unitNum = parseInt(formData.unitCount) || 0;
-      let expectedTier = 'tier_0_explorer';
-      
-      if (formData.readiness === 'researching' || unitNum === 0) {
-        expectedTier = 'tier_0_explorer';
-      } else if (unitNum <= 49) {
-        expectedTier = 'tier_1_starter';
-      } else if (unitNum <= 149) {
-        expectedTier = 'tier_2_pioneer';
-      } else if (unitNum <= 299) {
-        expectedTier = 'tier_3_preferred';
-      } else {
-        expectedTier = 'tier_4_elite';
-      }
-      
-      // Only update if different
-      if (expectedTier !== customerTier) {
-        console.log('useEffect Tier Correction:', {
-          current: customerTier,
-          expected: expectedTier,
-          units: formData.unitCount,
-          readiness: formData.readiness
-        });
-        setCustomerTier(expectedTier as TierType);
-        calculatePriorityScore();
-      }
-    }
-  }, [formData.readiness, formData.unitCount]);
-  // ============ END OF FIX ============
 
   // Tier determination function with weighted logic for long-term planners
   const determineCustomerTier = (units: string, readiness: string): TierType => {
@@ -276,11 +242,11 @@ const IllummaaAssessmentForm = () => {
         setCustomerTier('tier_0_explorer');
         setPriorityScore(0);
       } else {
-        // Non-explorer path - keep existing unit count if present
+        // Non-explorer path - clear sentinel '0' from researching mode
         setFormData(prev => ({
           ...prev,
           readiness: value,
-          unitCount: prev.unitCount || '',
+          unitCount: (prev.unitCount && prev.unitCount !== '0') ? prev.unitCount : '',
           budget: '',
           timeline: ''
         }));
@@ -348,6 +314,10 @@ const IllummaaAssessmentForm = () => {
           result: calculatedTier,
           timestamp: new Date().toISOString()
         });
+        
+        // Recalculate score with current values immediately
+        calculatePriorityScoreWith({ ...formData, unitCount: value });
+        console.log('Unit change recalc', { readiness: currentReadiness, unitCount: value, tier: calculatedTier });
       }
     }
     // Handle SMS consent
@@ -366,11 +336,10 @@ const IllummaaAssessmentForm = () => {
     // Clear errors
     setErrors(prev => ({ ...prev, [name]: '' }));
     
-    // Trigger score recalculation for relevant fields
+    // Trigger score recalculation for relevant fields using current values
     if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
-      setTimeout(() => {
-        calculatePriorityScore();
-      }, 10);
+      const nextFormData = { ...formData, [name]: type === 'checkbox' ? checked : sanitizedValue } as typeof formData;
+      calculatePriorityScoreWith(nextFormData);
     }
   };
 
@@ -391,6 +360,105 @@ const IllummaaAssessmentForm = () => {
     }
     
     setFormData(prev => ({ ...prev, phone: value }));
+  };
+
+  // Pure calculator that takes latest values to avoid race conditions
+  const calculatePriorityScoreWith = (fd: typeof formData) => {
+    let score = 0;
+    const units = parseInt(fd.unitCount) || 0;
+    
+    const currentTier = determineCustomerTier(fd.unitCount || '0', fd.readiness || '');
+    setCustomerTier(currentTier);
+    
+    console.log('Score calc using', { units: fd.unitCount, readiness: fd.readiness });
+    
+    const description = (fd.projectDescription || "").toLowerCase().substring(0, 5000);
+    const readiness = fd.readiness || "";
+    
+    const indigenousKeywords = [
+      "indigenous", "first nation", "first nations", "métis", "metis", 
+      "inuit", "aboriginal", "treaty", "reserve", "band council"
+    ];
+    
+    const sustainabilityKeywords = [
+      "net-zero", "net zero", "passive house", "passivhaus", "leed", 
+      "carbon neutral", "sustainable", "green building", "energy efficient",
+      "solar", "geothermal", "heat pump"
+    ];
+    
+    const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
+    const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
+
+    // 1. UNIT COUNT (30 points max)
+    if (units >= 1000) score += 30;
+    else if (units >= 500) score += 25;
+    else if (units >= 200) score += 20;
+    else if (units >= 100) score += 15;
+    else if (units >= 50) score += 8;
+    else if (units > 0) score += 3;
+
+    // 2. GOVERNMENT PROGRAMS - BULLETPROOF VERSION
+    const govPrograms = fd.governmentPrograms || '';
+    
+    if (govPrograms && govPrograms !== 'none') score += 15;
+
+    // 3. TIMELINE (20 points max)
+    const timeline = fd.timeline || '';
+    if (timeline.includes('6-months') || timeline.includes('6-12-months')) score += 20;
+    else if (timeline.includes('1-year') || timeline.includes('year-2')) score += 15;
+    else if (timeline.includes('2-years')) score += 10;
+    else if (timeline.includes('3-years')) score += 5;
+
+    // 4. BUDGET (20 points max)
+    const budget = fd.budget || '';
+    if (budget.includes('10M+') || budget.includes('5-10M')) score += 20;
+    else if (budget.includes('2-5M') || budget.includes('1-2M')) score += 15;
+    else if (budget.includes('500K-1M') || budget.includes('250-500K')) score += 10;
+    else if (budget.includes('100-250K') || budget.includes('50-100K')) score += 5;
+
+    // 5. PROVINCIAL FOCUS (10 points max)
+    const province = fd.province || '';
+    if (['ontario', 'british-columbia', 'alberta'].includes(province)) score += 10;
+    else if (['quebec', 'manitoba', 'saskatchewan'].includes(province)) score += 8;
+    else if (province && province !== 'none') score += 5;
+
+    // 6. DEVELOPER TYPE (10 points max)
+    const devType = fd.developerType || '';
+    if (devType === 'commercial-developer') score += 10;
+    else if (devType === 'residential-builder') score += 8;
+    else if (devType === 'government-housing') score += 9;
+    else if (devType === 'non-profit') score += 7;
+
+    // 7. INDIGENOUS COMMUNITY SUPPORT (15 bonus points)
+    if (hasIndigenous) score += 15;
+
+    // 8. SUSTAINABILITY FOCUS (10 bonus points)
+    if (hasSustainability) score += 10;
+
+    // 9. READINESS LEVEL MULTIPLIER (1.0x - 1.5x)
+    let multiplier = 1.0;
+    if (readiness === 'planning-soon') multiplier = 1.5;
+    else if (readiness === 'planning-6-months') multiplier = 1.3;
+    else if (readiness === 'planning-long') multiplier = 1.1;
+    else if (readiness === 'researching') multiplier = 0.5;
+
+    const finalScore = Math.round(score * multiplier);
+    setPriorityScore(finalScore);
+
+    // Enhanced analytics with tier information
+    if (typeof (window as any).gtag !== 'undefined') {
+      (window as any).gtag('event', 'customer_tier_determination', {
+        event_category: 'Business Logic',
+        action: 'tier_classification',
+        customer_tier: currentTier,
+        unit_count: fd.unitCount || '0',
+        readiness_level: readiness,
+        lead_type: currentTier.startsWith('tier_0') ? 'explorer' : 
+                   currentTier.startsWith('tier_1') ? 'residential' : 'partnership',
+      });
+    }
+
+    return finalScore;
   };
 
   const calculatePriorityScore = () => {
