@@ -341,6 +341,15 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     (units >= 200 && (formData.developerType === "Government/Municipal Developer" || 
                      formData.developerType?.includes("Government")));
 
+  // DEBUG: Log inputs for company field calculation
+  console.log('🔍 COMPANY FIELD DEBUG:', {
+    customerTier,
+    formDataCompany: formData.company,
+    formDataCompanyLength: formData.company?.length,
+    units: parseInt(formData.projectUnitCount.toString()),
+    readiness: formData.readiness
+  });
+
   // SMART PAYLOAD: Only essential fields for GoHighLevel
   const webhookPayload = {
     // Contact fields
@@ -351,19 +360,31 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // Company field with tier-appropriate defaults
     company: (() => {
       const providedCompany = sanitizeInput(formData.company);
+      console.log('🔍 Company calculation:', {
+        providedCompany,
+        providedCompanyTrimmed: providedCompany?.trim(),
+        customerTier,
+        tierCheck_explorer: customerTier === 'tier_0_explorer',
+        tierCheck_starter: customerTier === 'tier_1_starter'
+      });
+      
       // If company was provided, use it
       if (providedCompany && providedCompany.trim()) {
+        console.log('✅ Using provided company:', providedCompany);
         return providedCompany;
       }
       // Explorer tier - empty string
       if (customerTier === 'tier_0_explorer') {
+        console.log('✅ Explorer tier detected - returning empty string');
         return '';
       }
       // Starter tier - Individual Investor
       if (customerTier === 'tier_1_starter') {
+        console.log('✅ Starter tier detected - returning Individual Investor');
         return 'Individual Investor';
       }
       // Pioneer+ tiers - Organization fallback
+      console.log('✅ Pioneer+ tier detected - returning Organization');
       return 'Organization';
     })(),
     source: "ILLUMMAA Website",
@@ -406,6 +427,16 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // REMOVED FROM WEBHOOK (but kept in internal code):
     // - customer_priority_level (redundant with priority_level)
     // - lead_source_details (redundant with source)
+  };
+
+  // DEBUG: Log final webhook payload company value
+  console.log('🚀 FINAL WEBHOOK COMPANY VALUE:', {
+    webhookCompany: webhookPayload.company,
+    webhookCompanyType: typeof webhookPayload.company,
+    webhookCompanyLength: webhookPayload.company?.length,
+    isEmptyString: webhookPayload.company === '',
+    customerTier: webhookPayload.customer_tier
+  });
     // - journey_stage (use customer_tier)
     // - lead_stage (use customer_tier)
     // - is_education_only (use is_educational_lead)
