@@ -190,9 +190,11 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   // Government programs scoring (v13.1 exact) - handle optional field
   if (data.governmentPrograms) {
     switch (data.governmentPrograms) {
-      case "Yes - Currently participating": score += 20; break;
-      case "Interested - Tell us more": score += 10; break;
-      case "No - Private development only": score += 0; break;
+      case "Currently participating": score += 20; break;
+      case "Very interested": score += 15; break;
+      case "Somewhat interested": score += 10; break;
+      case "Just learning about options": score += 3; break;
+      case "Not interested": score += 0; break;
     }
   }
 
