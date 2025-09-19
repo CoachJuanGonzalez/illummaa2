@@ -153,6 +153,9 @@ export async function validateFormData(rawData: any): Promise<{
 
 export function calculatePriorityScore(data: AssessmentFormData): number {
   let score = 0;
+  let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0, 
+      provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0, 
+      penaltyAmount = 0, wasCapApplied = false;
   
   let units = 0;
   const unitValue = data.projectUnitCount;
@@ -188,102 +191,104 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
 
   // 1. UNIT COUNT (30 points max)
-  if (units >= 1000) score += 30;
-  else if (units >= 500) score += 25;
-  else if (units >= 200) score += 20;
-  else if (units >= 100) score += 15;
-  else if (units >= 50) score += 8;
-  else if (units > 0) score += 3;
+  if (units >= 1000) { unitScore = 30; score += 30; }
+  else if (units >= 500) { unitScore = 25; score += 25; }
+  else if (units >= 200) { unitScore = 20; score += 20; }
+  else if (units >= 100) { unitScore = 15; score += 15; }
+  else if (units >= 50) { unitScore = 8; score += 8; }
+  else if (units > 0) { unitScore = 3; score += 3; }
 
   // 2. GOVERNMENT PROGRAMS (30 points max)
   switch (govPrograms) {
-    case "Currently participating": score += 30; break;
-    case "Very interested": score += 20; break;
-    case "Somewhat interested": score += 10; break;
-    case "Just learning about options": score += 3; break;
-    case "Not interested": score += 0; break;
-    default: score += 0;
+    case "Currently participating": govScore = 30; score += 30; break;
+    case "Very interested": govScore = 20; score += 20; break;
+    case "Somewhat interested": govScore = 10; score += 10; break;
+    case "Just learning about options": govScore = 3; score += 3; break;
+    case "Not interested": govScore = 0; break;
+    default: govScore = 0;
   }
 
   // 3. BUDGET (25 points max)
   switch (budget) {
-    case "Over $50M": score += 25; break;
-    case "$30M - $50M": score += 20; break;
-    case "$15M - $30M": score += 15; break;
-    case "$5M - $15M": score += 10; break;
-    case "$2M - $5M": score += 6; break;
-    case "$500K - $2M": score += 3; break;
-    case "Under $500K": score += 1; break;
-    case "Just exploring options": score += 0; break;
-    default: score += 0;
+    case "Over $50M": budgetScore = 25; score += 25; break;
+    case "$30M - $50M": budgetScore = 20; score += 20; break;
+    case "$15M - $30M": budgetScore = 15; score += 15; break;
+    case "$5M - $15M": budgetScore = 10; score += 10; break;
+    case "$2M - $5M": budgetScore = 6; score += 6; break;
+    case "$500K - $2M": budgetScore = 3; score += 3; break;
+    case "Under $500K": budgetScore = 1; score += 1; break;
+    case "Just exploring options": budgetScore = 0; break;
+    default: budgetScore = 0;
   }
 
   // 4. TIMELINE (20 points max)
   switch (timeline) {
-    case "Immediate (0-3 months)": score += 20; break;
-    case "Short-term (3-6 months)": score += 12; break;
-    case "Medium-term (6-12 months)": score += 6; break;
-    case "Long-term (12+ months)": score += 2; break;
-    default: score += 0;
+    case "Immediate (0-3 months)": timelineScore = 20; score += 20; break;
+    case "Short-term (3-6 months)": timelineScore = 12; score += 12; break;
+    case "Medium-term (6-12 months)": timelineScore = 6; score += 6; break;
+    case "Long-term (12+ months)": timelineScore = 2; score += 2; break;
+    default: timelineScore = 0;
   }
 
   // 5. DEVELOPER TYPE (20 points max) - SYNCHRONIZED WITH FRONTEND
   if (devType === "Indigenous Community/Organization") {
-    score += 20;  // CRITICAL FIX: Added missing Indigenous scoring
+    devScore = 20; score += 20;  // CRITICAL FIX: Added missing Indigenous scoring
   } else if (devType === "Government/Municipal" || devType.includes("Government") || devType === "Government/Municipal Developer") {
-    score += 15;
+    devScore = 15; score += 15;
   } else if (devType.includes("Commercial") || devType === "Commercial Developer (Large Projects)") {
-    score += 10;
+    devScore = 10; score += 10;
   } else if (devType.includes("Non-Profit") || devType === "Non-Profit Housing Developer") {
-    score += 8;
+    devScore = 8; score += 8;
   } else if (devType.includes("Private") || devType === "Private Developer (Medium Projects)") {
-    score += 5;
+    devScore = 5; score += 5;
   }
 
   // 6. GEOGRAPHY (10 points max)
   if (province === "Ontario" || province === "British Columbia") {
-    score += 10;
+    provinceScore = 10; score += 10;
   } else if (province === "Alberta" || province === "Quebec") {
-    score += 7;
+    provinceScore = 7; score += 7;
   } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
             "Newfoundland and Labrador"].includes(province)) {
-    score += 5;
+    provinceScore = 5; score += 5;
   } else if (province) {
-    score += 3;
+    provinceScore = 3; score += 3;
   }
 
   // 7. BUILD CANADA ELIGIBILITY (10 points) - SYNCHRONIZED WITH FRONTEND
   if (units >= 300) {
-    score += 10;
+    buildCanadaScore = 10; score += 10;
   } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
                               devType === "Government/Municipal" ||
                               devType.includes("Government") || 
                               devType === "Government/Municipal Developer")) {
-    score += 10;  // CRITICAL FIX: Added missing Indigenous Community
+    buildCanadaScore = 10; score += 10;  // CRITICAL FIX: Added missing Indigenous Community
   } else if (units >= 100 && govPrograms === "Currently participating") {
-    score += 5;
+    buildCanadaScore = 5; score += 5;
   }
 
   // 8. KEYWORD BONUSES (5 points max)
-  if (hasIndigenous) score += 3;
-  if (hasSustainability) score += 2;
+  if (hasIndigenous) { keywordScore += 3; score += 3; }
+  if (hasSustainability) { keywordScore += 2; score += 2; }
 
   // 9. DEAL VELOCITY (10 points max)
   if (timeline === "Immediate (0-3 months)" && 
       (budget === "Over $50M" || budget === "$30M - $50M")) {
-    score += 10;
+    velocityScore = 10; score += 10;
   } else if (timeline === "Short-term (3-6 months)" && 
              (budget === "$15M - $30M" || budget === "$30M - $50M")) {
-    score += 5;
+    velocityScore = 5; score += 5;
   }
 
   // 10. PENALTIES
+  const beforePenalties = score;
   if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
     score = Math.floor(score * 0.85);
   }
   if (budget === "Over $50M" && units < 50) {
     score = Math.floor(score * 0.9);
   }
+  penaltyAmount = beforePenalties - score;
 
   // 11. MINIMUM GUARANTEES - SYNCHRONIZED WITH FRONTEND
   const isIndigenousProject = hasIndigenous || devType === "Indigenous Community/Organization";
@@ -302,10 +307,39 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
 
   // Apply Explorer cap LAST
   if (readiness === 'researching') {
+    const beforeCap = score;
     score = Math.min(score, 25);
+    wasCapApplied = beforeCap > 25;
   }
 
-  return Math.min(Math.max(0, Math.round(score)), 150);
+  const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
+
+  // COMPREHENSIVE SCORING BREAKDOWN (as requested)
+  console.log('🎯 BACKEND SCORING BREAKDOWN:', {
+    units: unitScore,
+    budget: budgetScore,
+    timeline: timelineScore,
+    province: provinceScore,
+    government: govScore,
+    developer: devScore,
+    buildCanada: buildCanadaScore,
+    keywords: keywordScore,
+    velocity: velocityScore,
+    penalties: penaltyAmount,
+    explorerCap: wasCapApplied,
+    TOTAL: finalScore,
+    inputs: {
+      unitCount: units,
+      readiness: readiness,
+      budget: budget,
+      timeline: timeline,
+      province: province,
+      devType: devType,
+      govPrograms: govPrograms
+    }
+  });
+
+  return finalScore;
 }
 
 function formatCanadianPhone(phone: string): string {
@@ -340,10 +374,11 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     priorityLevel: getPriorityLevel(priorityScore)
   };
 
-  // Calculate Build Canada eligibility
+  // Calculate Build Canada eligibility - FIXED: Include Indigenous Community
   const units = parseInt(formData.projectUnitCount.toString());
   const buildCanadaEligible = units >= 300 || 
-    (units >= 200 && (formData.developerType === "Government/Municipal Developer" || 
+    (units >= 200 && (formData.developerType === "Indigenous Community/Organization" ||
+                     formData.developerType === "Government/Municipal Developer" || 
                      formData.developerType?.includes("Government")));
 
 
@@ -404,6 +439,13 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // - is_education_only (use is_educational_lead)
     // - response_commitment (use response_time)
     // - response_commitment_level (use priority_level)
+
+  // STEP 6: Force correct company values by tier (as requested)
+  if (customerTier === 'tier_0_explorer') {
+    webhookPayload.company = '';
+  } else if (!webhookPayload.company && customerTier === 'tier_1_starter') {
+    webhookPayload.company = 'Individual Investor';
+  }
 
   // Webhook delivery with enterprise-grade retry logic
   const maxRetries = 3;

@@ -492,6 +492,9 @@ const IllummaaAssessmentForm = () => {
 
   const calculatePriorityScore = () => {
     let score = 0;
+    let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0, 
+        provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0, 
+        penaltyAmount = 0;
     const units = parseInt(formData.unitCount) || 0;
     
     const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
@@ -652,6 +655,18 @@ const IllummaaAssessmentForm = () => {
 
     const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
     setPriorityScore(finalScore);
+
+    // FRONTEND SCORING DEBUG (simplified for testing)
+    console.log('🎯 FRONTEND SCORE:', {
+      TOTAL: finalScore,
+      inputs: {
+        unitCount: units,
+        readiness: formData.readiness,
+        devType: formData.developerType,
+        govPrograms: formData.governmentPrograms,
+        province: formData.province || formData.constructionProvince
+      }
+    });
   };
 
   // Validation
