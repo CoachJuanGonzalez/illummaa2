@@ -583,6 +583,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Store in database with Customer Journey fields
       const submission = await storage.createAssessment({
         ...data!,
+        company: data!.company || '', // Ensure company is always a string
         projectDescription: data!.projectDescriptionText, // Fix field name mapping
         priorityScore: priorityScore!,
         customerTier: customerTier!,
