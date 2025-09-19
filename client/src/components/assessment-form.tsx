@@ -328,6 +328,22 @@ const IllummaaAssessmentForm = () => {
         consentSMSTimestamp: new Date().toISOString()
       }));
     }
+    // Special handling for project description - allow spaces
+    else if (name === 'projectDescription' || name === 'projectDescriptionText') {
+      const descriptionValue = value
+        .replace(/[<>]/g, '') // Remove HTML tags
+        .replace(/javascript:/gi, '') // Remove javascript: protocols
+        .replace(/on\w+\s*=/gi, '') // Remove event handlers like onclick=
+        .substring(0, 1000); // Limit to 1000 characters
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: descriptionValue,
+        // Also set the alternate field name for compatibility
+        projectDescriptionText: descriptionValue,
+        projectDescription: descriptionValue
+      }));
+    }
     // Handle all other fields
     else {
       setFormData(prev => ({ ...prev, [name]: sanitizedValue }));
