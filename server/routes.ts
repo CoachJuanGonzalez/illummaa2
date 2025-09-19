@@ -14,6 +14,34 @@ import { storage } from "./storage";
 
 // COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION FUNCTION
 function mapFrontendToBackend(frontendData: any): any {
+  // Calculate appropriate company value based on tier
+  let companyValue = '';
+  
+  // Check for existing company data
+  const providedCompany = frontendData.company || frontendData.companyName || '';
+  
+  if (providedCompany) {
+    // Use provided company name if available
+    companyValue = providedCompany;
+  } else {
+    // Determine appropriate default based on user's tier
+    const readiness = (frontendData.readiness || frontendData.readinessToBuy || '').toLowerCase();
+    const unitCount = parseInt(frontendData.unitCount || frontendData.projectUnitCount || '0');
+    
+    // Explorer tier (researching or 0 units) - keep empty
+    if (readiness.includes('researching') || unitCount === 0) {
+      companyValue = ''; // Empty string for educational inquiries
+    } 
+    // Starter tier (1-49 units) - default to Individual Investor
+    else if (unitCount >= 1 && unitCount <= 49) {
+      companyValue = 'Individual Investor';
+    } 
+    // Pioneer+ tiers (50+ units) - generic organization fallback
+    else if (unitCount >= 50) {
+      companyValue = 'Organization'; // Should have real company name
+    }
+  }
+
   // Enum value mapping functions
   const normalizeReadiness = (value: string): string => {
     const readinessMap: { [key: string]: string } = {
@@ -94,8 +122,8 @@ function mapFrontendToBackend(frontendData: any): any {
     email: frontendData.email,
     phone: frontendData.phone,
     
-    // Company field mapping (handles both old 'company' and new 'companyName' fields)
-    company: frontendData.company || frontendData.companyName || 'Individual Investor',
+    // Company field mapping (uses calculated value based on tier)
+    company: companyValue,
     
     // CRITICAL FIELD NAME MAPPING FIXES:
     projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
@@ -508,10 +536,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const isExplorer = sanitized.isExplorer === 'true' || sanitized.isExplorer === true || sanitized.isEducationOnly === 'Yes';
       const companyName = mappedBody.company || '';
       
-      if (!isExplorer && !companyName?.trim()) {
+      // Company validation - only required for Pioneer+ tiers (50+ units)
+      // Reuse unitCount variable already declared above
+
+      if (!isExplorer && unitCount >= 50 && !companyName?.trim()) {
         return res.status(400).json({
           success: false,
-          message: 'Company name required for business inquiries'
+          message: 'Company name required for partnership inquiries (50+ units)',
+          requiredFor: 'pioneer_and_above'
+        });
+      }
+
+      // Log company assignment for debugging (remove in production)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Company Assignment:', {
+          isExplorer,
+          unitCount,
+          providedCompany: sanitized.company || sanitized.companyName,
+          assignedCompany: companyName,
+          tier: isExplorer ? 'explorer' : unitCount < 50 ? 'starter' : 'pioneer+'
         });
       }
       
