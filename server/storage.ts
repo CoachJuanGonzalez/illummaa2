@@ -155,15 +155,6 @@ export async function validateFormData(rawData: any): Promise<{
   }
 }
 
-// ADD THIS ENTIRE HELPER FUNCTION BEFORE calculatePriorityScore
-function determineCustomerTier(units: number, readiness?: string): string {
-  if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
-  if (units <= 49) return 'tier_1_starter';
-  if (units <= 149) return 'tier_2_pioneer';
-  if (units <= 299) return 'tier_3_preferred';
-  return 'tier_4_elite';
-}
-
 export function calculatePriorityScore(data: AssessmentFormData): number {
   let score = 0;
   

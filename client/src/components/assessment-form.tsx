@@ -306,16 +306,6 @@ const IllummaaAssessmentForm = () => {
     setFormData(prev => ({ ...prev, phone: value }));
   };
 
-  // ADD THIS ENTIRE HELPER FUNCTION BEFORE calculatePriorityScore
-  const determineCustomerTier = (unitCount, readiness) => {
-    const units = parseInt(unitCount) || 0;
-    if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
-    if (units <= 49) return 'tier_1_starter';
-    if (units <= 149) return 'tier_2_pioneer';
-    if (units <= 299) return 'tier_3_preferred';
-    return 'tier_4_elite';
-  };
-
   const calculatePriorityScore = () => {
     let score = 0;
     const units = Math.max(0, Math.min(parseInt(formData.unitCount) || 0, 10000));
