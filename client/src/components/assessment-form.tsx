@@ -680,10 +680,22 @@ const IllummaaAssessmentForm = () => {
         if (!formData.phone?.trim() || formData.phone.length < 12) {
           newErrors.phone = 'Valid Canadian phone number is required';
         }
+        // Company validation - Required only for Pioneer tier and above
         const companyRequired = customerTier !== 'tier_0_explorer' && customerTier !== 'tier_1_starter';
+        
         if (companyRequired && !formData.company?.trim()) {
-          newErrors.company = 'Company name is required for partnership inquiries';
+          if (customerTier === 'tier_2_pioneer') {
+            newErrors.company = 'Company name is required for partnership inquiries (50+ units)';
+          } else if (customerTier === 'tier_3_preferred') {
+            newErrors.company = 'Company name is required for preferred partnership (150+ units)';
+          } else if (customerTier === 'tier_4_elite') {
+            newErrors.company = 'Company name is required for elite partnership (300+ units)';
+          } else {
+            newErrors.company = 'Company name is required';
+          }
         }
+        
+        // No validation error for Starter tier - company is optional
         break;
         
       case 4: // Validate required fields for ALL tiers
@@ -1321,26 +1333,39 @@ const IllummaaAssessmentForm = () => {
                   )}
                 </div>
 
-                {customerTier !== 'tier_0_explorer' && customerTier !== 'tier_1_starter' && (
+                {/* Company Field - Smart Display Based on Tier */}
+                {(customerTier && customerTier !== 'tier_0_explorer') && (
                   <div>
-                    <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-company">
-                      Company Name <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Company/Organization 
+                      {customerTier !== 'tier_1_starter' && <span className="text-red-500 ml-1">*</span>}
+                      {customerTier === 'tier_1_starter' && <span className="text-gray-500 ml-2">(Optional)</span>}
                     </label>
                     <input
                       type="text"
                       name="company"
                       id="company"
-                      value={formData.company || ''}
+                      value={formData.company}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.company ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
-                      required
-                      data-testid="input-company"
+                      required={customerTier !== 'tier_1_starter'}
+                      placeholder={
+                        customerTier === 'tier_1_starter' 
+                          ? "Company name (if applicable)" 
+                          : "Company/Organization name"
+                      }
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"
+                      aria-label="Company or organization name"
                     />
                     {errors.company && (
-                      <p className="text-red-500 text-xs mt-1" data-testid="error-company">{errors.company}</p>
+                      <p className="mt-1 text-xs text-red-600" role="alert">{errors.company}</p>
                     )}
+                    {/* Helper text based on tier */}
+                    <p className="mt-1 text-xs text-gray-500">
+                      {customerTier === 'tier_1_starter' && "Optional for individuals/families. Recommended for business entities."}
+                      {customerTier === 'tier_2_pioneer' && "Required for partnership inquiries (50-149 units)"}
+                      {customerTier === 'tier_3_preferred' && "Required for preferred partnership (150-299 units)"}
+                      {customerTier === 'tier_4_elite' && "Required for elite partnership (300+ units)"}
+                    </p>
                   </div>
                 )}
               </div>
