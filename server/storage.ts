@@ -357,36 +357,8 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     last_name: sanitizeInput(formData.lastName),
     email: sanitizeInput(formData.email),
     phone: formatCanadianPhone(formData.phone),
-    // Company field with tier-appropriate defaults
-    company: (() => {
-      const providedCompany = sanitizeInput(formData.company);
-      console.log('🔍 Company calculation:', {
-        providedCompany,
-        providedCompanyTrimmed: providedCompany?.trim(),
-        customerTier,
-        tierCheck_explorer: customerTier === 'tier_0_explorer',
-        tierCheck_starter: customerTier === 'tier_1_starter'
-      });
-      
-      // If company was provided, use it
-      if (providedCompany && providedCompany.trim()) {
-        console.log('✅ Using provided company:', providedCompany);
-        return providedCompany;
-      }
-      // Explorer tier - empty string
-      if (customerTier === 'tier_0_explorer') {
-        console.log('✅ Explorer tier detected - returning empty string');
-        return '';
-      }
-      // Starter tier - Individual Investor
-      if (customerTier === 'tier_1_starter') {
-        console.log('✅ Starter tier detected - returning Individual Investor');
-        return 'Individual Investor';
-      }
-      // Pioneer+ tiers - Organization fallback
-      console.log('✅ Pioneer+ tier detected - returning Organization');
-      return 'Organization';
-    })(),
+    // Company field - use what was already calculated in routes.ts
+    company: sanitizeInput(formData.company) || '',
     source: "ILLUMMAA Website",
     
     // Project details
