@@ -155,69 +155,171 @@ export async function validateFormData(rawData: any): Promise<{
   }
 }
 
+// ADD THIS ENTIRE HELPER FUNCTION BEFORE calculatePriorityScore
+function determineCustomerTier(units: number, readiness?: string): string {
+  if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
+  if (units <= 49) return 'tier_1_starter';
+  if (units <= 149) return 'tier_2_pioneer';
+  if (units <= 299) return 'tier_3_preferred';
+  return 'tier_4_elite';
+}
+
 export function calculatePriorityScore(data: AssessmentFormData): number {
   let score = 0;
-
-  // Unit count scoring (v13.1 exact)
-  const units = data.projectUnitCount;
-  if (units >= 1000) score += 50;
-  else if (units >= 500) score += 40;
-  else if (units >= 200) score += 30;
-  else if (units >= 100) score += 20;
-  else if (units >= 50) score += 10;
-
-  // Budget scoring (v13.1 exact) - handle optional field
-  if (data.budgetRange) {
-    switch (data.budgetRange) {
-      case "Over $50M": score += 40; break;
-      case "$30M - $50M": score += 35; break;
-      case "$15M - $30M": score += 25; break;
-      case "$5M - $15M": score += 15; break;
-      case "$2M - $5M": score += 10; break;
-      case "$500K - $2M": score += 5; break;
-      case "Under $500K": score += 3; break;
-      case "Just exploring options": score += 1; break;
+  
+  // Safe type handling for unit count
+  let units = 0;
+  const unitValue = data.projectUnitCount;
+  if (unitValue !== undefined && unitValue !== null && unitValue !== '') {
+    if (typeof unitValue === 'string') {
+      const parsed = parseInt(unitValue);
+      units = isNaN(parsed) ? 0 : Math.max(0, Math.min(parsed, 10000));
+    } else if (typeof unitValue === 'number') {
+      units = Math.max(0, Math.min(unitValue, 10000));
     }
   }
+  
+  // Normalize all field values with fallbacks
+  const description = String(data.projectDescription || data.projectDescriptionText || "").toLowerCase().substring(0, 5000);
+  const readiness = String(data.readiness || data.readinessToBuy || "");
+  const budget = String(data.budgetRange || data.budget || "");
+  const timeline = String(data.decisionTimeline || data.timeline || "");
+  const province = String(data.constructionProvince || data.province || "");
+  const devType = String(data.developerType || "");
+  const govPrograms = String(data.governmentPrograms || "");
+  
+  // Keyword detection
+  const indigenousKeywords = [
+    "indigenous", "first nation", "first nations", "métis", "metis", 
+    "inuit", "aboriginal", "treaty", "reserve", "band council"
+  ];
+  
+  const sustainabilityKeywords = [
+    "net-zero", "net zero", "passive house", "passivhaus", "leed", 
+    "carbon neutral", "sustainable", "green building", "energy efficient",
+    "solar", "geothermal", "heat pump"
+  ];
+  
+  const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
+  const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
 
-  // Timeline scoring (v13.1 exact) - handle optional field
-  if (data.decisionTimeline) {
-    switch (data.decisionTimeline) {
-      case "Immediate (0-3 months)": score += 30; break;
-      case "Short-term (3-6 months)": score += 20; break;
-      case "Medium-term (6-12 months)": score += 10; break;
-      case "Long-term (12+ months)": score += 5; break;
-    }
+  // 1. UNIT COUNT (30 points max)
+  if (units >= 1000) score += 30;
+  else if (units >= 500) score += 25;
+  else if (units >= 200) score += 20;
+  else if (units >= 100) score += 15;
+  else if (units >= 50) score += 8;
+  else if (units > 0) score += 3;
+
+  // 2. GOVERNMENT PROGRAMS (30 points max)
+  switch (govPrograms) {
+    case "Currently participating": score += 30; break;
+    case "Very interested": score += 20; break;
+    case "Somewhat interested": score += 10; break;
+    case "Just learning about options": score += 3; break;
+    case "Not interested": score += 0; break;
+    default: score += 0;
   }
 
-  // Government programs scoring (v13.1 exact) - handle optional field
-  if (data.governmentPrograms) {
-    switch (data.governmentPrograms) {
-      case "Currently participating": score += 20; break;
-      case "Very interested": score += 15; break;
-      case "Somewhat interested": score += 10; break;
-      case "Just learning about options": score += 3; break;
-      case "Not interested": score += 0; break;
-    }
+  // 3. BUDGET (25 points max)
+  switch (budget) {
+    case "Over $50M": score += 25; break;
+    case "$30M - $50M": score += 20; break;
+    case "$15M - $30M": score += 15; break;
+    case "$5M - $15M": score += 10; break;
+    case "$2M - $5M": score += 6; break;
+    case "$500K - $2M": score += 3; break;
+    case "Under $500K": score += 1; break;
+    case "Just exploring options": score += 0; break;
+    default: score += 0;
   }
 
-  // Developer type scoring (v13.1 exact) - handle optional field
-  if (data.developerType) {
-    if (data.developerType === "Commercial Developer (Large Projects)" || 
-        data.developerType === "Government/Municipal Developer") {
-      score += 10;
-    } else if (data.developerType === "Private Developer (Medium Projects)" || 
-               data.developerType === "Non-Profit Housing Developer") {
-      score += 5;
-    }
+  // 4. TIMELINE (20 points max)
+  switch (timeline) {
+    case "Immediate (0-3 months)": score += 20; break;
+    case "Short-term (3-6 months)": score += 12; break;
+    case "Medium-term (6-12 months)": score += 6; break;
+    case "Long-term (12+ months)": score += 2; break;
+    default: score += 0;
   }
 
-  // Geography scoring (v13.1 exact) - handle optional field
-  if (data.constructionProvince && ["Ontario", "British Columbia", "Alberta"].includes(data.constructionProvince)) {
+  // 5. DEVELOPER TYPE (20 points max for Indigenous)
+  if (devType === "Indigenous Community/Organization") {
+    score += 20;
+  } else if (devType === "Government/Municipal") {
+    score += 15;
+  } else if (devType.includes("Commercial")) {
+    score += 10;
+  } else if (devType.includes("Non-Profit")) {
+    score += 8;
+  } else if (devType.includes("Private")) {
     score += 5;
   }
 
-  return Math.min(score, 150); // Cap at 150 points
+  // 6. GEOGRAPHY (10 points max)
+  if (province === "Ontario" || province === "British Columbia") {
+    score += 10;
+  } else if (province === "Alberta" || province === "Quebec") {
+    score += 7;
+  } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
+            "Newfoundland and Labrador"].includes(province)) {
+    score += 5;
+  } else if (province) {
+    score += 3;
+  }
+
+  // 7. BUILD CANADA ELIGIBILITY (10 points)
+  if (units >= 300) {
+    score += 10;
+  } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
+                              devType === "Government/Municipal")) {
+    score += 10;
+  } else if (units >= 100 && govPrograms === "Currently participating") {
+    score += 5;
+  }
+
+  // 8. KEYWORD BONUSES (5 points max)
+  if (hasIndigenous) score += 3;
+  if (hasSustainability) score += 2;
+
+  // 9. DEAL VELOCITY (10 points max)
+  if (timeline === "Immediate (0-3 months)" && 
+      (budget === "Over $50M" || budget === "$30M - $50M")) {
+    score += 10;
+  } else if (timeline === "Short-term (3-6 months)" && 
+             (budget === "$15M - $30M" || budget === "$30M - $50M")) {
+    score += 5;
+  }
+
+  // 10. PENALTIES
+  if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
+    score = Math.floor(score * 0.85);
+  }
+  if (budget === "Over $50M" && units < 50) {
+    score = Math.floor(score * 0.9);
+  }
+
+  // 11. MINIMUM GUARANTEES
+  const isIndigenousProject = hasIndigenous || devType === "Indigenous Community/Organization";
+  
+  if ((devType === "Government/Municipal" || devType === "Indigenous Community/Organization") && 
+      units >= 100 && score < 75) {
+    score = 75;
+  }
+  if (govPrograms === "Currently participating" && units >= 50 && score < 50) {
+    score = 50;
+  }
+  if (isIndigenousProject && score < 40) {
+    score = 40;
+  }
+
+  // 12. EXPLORER CAP
+  const customerTier = determineCustomerTier(units, readiness);
+  if (customerTier === 'tier_0_explorer') {
+    score = Math.min(score, 25);
+  }
+
+  return Math.min(Math.max(0, Math.round(score)), 150);
 }
 
 // Add missing formatCanadianPhone function
