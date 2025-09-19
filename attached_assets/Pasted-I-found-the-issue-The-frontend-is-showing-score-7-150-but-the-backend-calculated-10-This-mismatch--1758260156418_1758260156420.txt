@@ -1,0 +1,64 @@
+I found the issue! The frontend is showing score 7/150 but the backend calculated 10. This mismatch is happening because the frontend and backend are calculating the Explorer tier cap differently.
+The Problem:
+Looking at your submission data:
+
+readiness is "researching" (Explorer tier)
+Frontend shows: 7 points
+Backend shows: 10 points
+
+The issue is that the frontend is applying the Explorer cap (25 points max) BEFORE calculating certain bonuses, while the backend might be applying it differently.
+The Solution:
+Fix in Frontend (assessment-form.tsx):
+Find the calculatePriorityScore function and ensure the Explorer cap is applied at the VERY END, just before setting the final score:
+javascriptconst calculatePriorityScore = () => {
+  let score = 0;
+  const units = Math.max(0, Math.min(parseInt(formData.unitCount) || 0, 10000));
+  
+  const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
+  setCustomerTier(currentTier);
+  
+  // ... all scoring logic ...
+  
+  // MOVE THE EXPLORER CAP TO THE VERY END
+  // Remove it from wherever it currently is and put it here:
+  
+  // Apply Explorer cap LAST
+  if (formData.readiness === 'researching') {
+    score = Math.min(score, 25);
+  }
+  
+  const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
+  setPriorityScore(finalScore);
+  
+  // ... rest of function
+};
+Fix in Backend (storage.ts):
+Similarly, ensure the Explorer cap is applied at the very end:
+typescriptexport function calculatePriorityScore(data: AssessmentFormData): number {
+  let score = 0;
+  
+  // ... all scoring logic ...
+  
+  // Apply Explorer cap LAST (before final return)
+  const readiness = String(data.readiness || data.readinessToBuy || "");
+  if (readiness === 'researching') {
+    score = Math.min(score, 25);
+  }
+  
+  return Math.min(Math.max(0, Math.round(score)), 150);
+}
+Why This Is Happening:
+Your test case:
+
+Province: Alberta (7 points)
+Government Programs: "Just learning about options" (3 points)
+Total: 10 points
+
+The backend correctly calculated 10 points, but the frontend is showing 7, suggesting it's not adding the government programs points for Explorers.
+Quick Fix:
+Check if your frontend has a condition that's preventing government program points from being added for researchers. The scoring should be:
+
+Calculate ALL points normally
+THEN apply the 25-point cap if it's an Explorer
+
+This ensures Explorers can still score up to 25 points from any combination of factors.

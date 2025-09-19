@@ -459,12 +459,13 @@ const IllummaaAssessmentForm = () => {
       score = 40;
     }
 
-    // 12. EXPLORER CAP
-    if (currentTier === 'tier_0_explorer') {
+    // Apply Explorer cap LAST (before final return)
+    if (formData.readiness === 'researching') {
       score = Math.min(score, 25);
     }
 
-    setPriorityScore(Math.min(Math.max(0, Math.round(score)), 150));
+    const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
+    setPriorityScore(finalScore);
   };
 
   // Validation

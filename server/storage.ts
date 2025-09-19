@@ -304,9 +304,8 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
     score = 40;
   }
 
-  // 12. EXPLORER CAP
-  const customerTier = determineCustomerTier(units, readiness);
-  if (customerTier === 'tier_0_explorer') {
+  // Apply Explorer cap LAST (before final return)
+  if (readiness === 'researching') {
     score = Math.min(score, 25);
   }
 
