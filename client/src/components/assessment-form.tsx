@@ -268,10 +268,20 @@ const IllummaaAssessmentForm = () => {
         companyElement.required = companyRequired;
       }
     } else {
-      // Keep existing logic for other fields
+      // Keep existing logic for other fields with bidirectional mirroring
+      const updates: any = { [name]: sanitizedValue };
+      
+      // Implement bidirectional field mirroring for synonyms
+      if (name === 'budget') updates.projectBudgetRange = sanitizedValue;
+      if (name === 'projectBudgetRange') updates.budget = sanitizedValue;
+      if (name === 'timeline') updates.deliveryTimeline = sanitizedValue;
+      if (name === 'deliveryTimeline') updates.timeline = sanitizedValue;
+      if (name === 'province') updates.constructionProvince = sanitizedValue;
+      if (name === 'constructionProvince') updates.province = sanitizedValue;
+      
       setFormData(prev => ({ 
         ...prev, 
-        [name]: sanitizedValue,
+        ...updates,
         ...(name === 'consentSMS' && sanitizedValue && {
           consentSMSTimestamp: new Date().toISOString()
         })
@@ -282,7 +292,7 @@ const IllummaaAssessmentForm = () => {
     setErrors(prev => ({ ...prev, [name]: '' }));
     
     // Calculate priority score for relevant fields
-    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
+    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms', 'projectBudgetRange', 'deliveryTimeline', 'constructionProvince'].includes(name)) {
       setTimeout(calculatePriorityScore, 100);
     }
   };
@@ -490,10 +500,10 @@ const IllummaaAssessmentForm = () => {
             newErrors.informationPreference = 'Please select your information preference';
           }
         } else {
-          if (!formData.budget) {
+          if (!formData.budget && !formData.projectBudgetRange) {
             newErrors.budget = 'Budget range is required';
           }
-          if (!formData.timeline) {
+          if (!formData.timeline && !formData.deliveryTimeline) {
             newErrors.timeline = 'Timeline is required';
           }
         }
@@ -519,7 +529,7 @@ const IllummaaAssessmentForm = () => {
         break;
         
       case 4: // Validate required fields for ALL tiers
-        if (!formData.province) {
+        if (!formData.province && !formData.constructionProvince) {
           newErrors.province = 'Province/territory is required';
         }
         if (!formData.developerType) {
@@ -604,18 +614,19 @@ const IllummaaAssessmentForm = () => {
     else tags.push('Scale-Individual');
     
     // Location tags
-    if (formData.province) {
+    const province = formData.province || formData.constructionProvince;
+    if (province) {
       const provinceCode = {
         'Alberta': 'AB', 'British Columbia': 'BC', 'Manitoba': 'MB',
         'New Brunswick': 'NB', 'Newfoundland and Labrador': 'NL',
         'Northwest Territories': 'NT', 'Nova Scotia': 'NS', 'Nunavut': 'NU',
         'Ontario': 'ON', 'Prince Edward Island': 'PE', 'Quebec': 'QC',
         'Saskatchewan': 'SK', 'Yukon': 'YT'
-      }[formData.province] || 'XX';
+      }[province] || 'XX';
       
-      tags.push(`Location-${provinceCode}-${formData.province.replace(/\s+/g, '')}`);
+      tags.push(`Location-${provinceCode}-${province.replace(/\s+/g, '')}`);
       
-      if (['Ontario', 'British Columbia', 'Alberta'].includes(formData.province)) {
+      if (['Ontario', 'British Columbia', 'Alberta'].includes(province)) {
         tags.push('Market-Primary');
       } else {
         tags.push('Market-Secondary');
@@ -663,9 +674,9 @@ const IllummaaAssessmentForm = () => {
         // Project Details
         projectUnitCount: sanitizeInput(formData.unitCount || '0'),
         readinessToBuy: formData.readiness,
-        projectBudgetRange: sanitizeInput(formData.budget || 'Just exploring options'),
-        deliveryTimeline: formData.timeline,
-        constructionProvince: formData.province,
+        projectBudgetRange: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
+        deliveryTimeline: formData.timeline || formData.deliveryTimeline,
+        constructionProvince: formData.province || formData.constructionProvince,
         developerType: sanitizeInput(formData.developerType || 'Not Specified'),
         governmentPrograms: sanitizeInput(formData.governmentPrograms || 'Not Specified'),
         projectDescription: sanitizeInput(formData.projectDescription || ''),
