@@ -166,11 +166,14 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   // Budget scoring (v13.1 exact) - handle optional field
   if (data.budgetRange) {
     switch (data.budgetRange) {
-      case "Over $50 Million": score += 40; break;
-      case "$30M - $50 Million": score += 35; break;
-      case "$15M - $30 Million": score += 25; break;
-      case "$5M - $15 Million": score += 15; break;
-      case "Under $5 Million": score += 5; break;
+      case "Over $50M": score += 40; break;
+      case "$30M - $50M": score += 35; break;
+      case "$15M - $30M": score += 25; break;
+      case "$5M - $15M": score += 15; break;
+      case "$2M - $5M": score += 10; break;
+      case "$500K - $2M": score += 5; break;
+      case "Under $500K": score += 3; break;
+      case "Just exploring options": score += 1; break;
     }
   }
 
