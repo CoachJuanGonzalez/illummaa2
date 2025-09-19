@@ -349,7 +349,8 @@ const IllummaaAssessmentForm = () => {
     }
 
     // 3. BUDGET (25 points max)
-    switch (formData.budget) {
+    const budget = formData.budget || formData.projectBudgetRange || '';
+    switch (budget) {
       case "Over $50M": score += 25; break;
       case "$30M - $50M": score += 20; break;
       case "$15M - $30M": score += 15; break;
@@ -362,7 +363,8 @@ const IllummaaAssessmentForm = () => {
     }
 
     // 4. TIMELINE (20 points max)
-    switch (formData.timeline) {
+    const timeline = formData.timeline || formData.deliveryTimeline || '';
+    switch (timeline) {
       case "Immediate (0-3 months)": score += 20; break;
       case "Short-term (3-6 months)": score += 12; break;
       case "Medium-term (6-12 months)": score += 6; break;
@@ -385,14 +387,15 @@ const IllummaaAssessmentForm = () => {
     }
 
     // 6. GEOGRAPHY (10 points max)
-    if (formData.province === "Ontario" || formData.province === "British Columbia") {
+    const province = formData.province || formData.constructionProvince || '';
+    if (province === "Ontario" || province === "British Columbia") {
       score += 10;
-    } else if (formData.province === "Alberta" || formData.province === "Quebec") {
+    } else if (province === "Alberta" || province === "Quebec") {
       score += 7;
     } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
-              "Newfoundland and Labrador"].includes(formData.province)) {
+              "Newfoundland and Labrador"].includes(province)) {
       score += 5;
-    } else if (formData.province) {
+    } else if (province) {
       score += 3;
     }
 
@@ -416,11 +419,11 @@ const IllummaaAssessmentForm = () => {
     if (hasSustainability) score += 2;
 
     // 9. DEAL VELOCITY (10 points max)
-    if (formData.timeline === "Immediate (0-3 months)" && 
-        (formData.budget === "Over $50M" || formData.budget === "$30M - $50M")) {
+    if (timeline === "Immediate (0-3 months)" && 
+        (budget === "Over $50M" || budget === "$30M - $50M")) {
       score += 10;
-    } else if (formData.timeline === "Short-term (3-6 months)" && 
-               (formData.budget === "$15M - $30M" || formData.budget === "$30M - $50M")) {
+    } else if (timeline === "Short-term (3-6 months)" && 
+               (budget === "$15M - $30M" || budget === "$30M - $50M")) {
       score += 5;
     }
 
@@ -428,7 +431,7 @@ const IllummaaAssessmentForm = () => {
     if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
       score = Math.floor(score * 0.85);
     }
-    if (formData.budget === "Over $50M" && units < 50) {
+    if (budget === "Over $50M" && units < 50) {
       score = Math.floor(score * 0.9);
     }
 
