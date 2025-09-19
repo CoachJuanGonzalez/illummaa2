@@ -129,13 +129,6 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     console.log(`ILLUMMAA Form Server running on port ${PORT}`);
-    console.log('CORRECTED Features:');
-    console.log('- Tier-based response times (not priority-override)');
-    console.log('- Priority scores for routing within tiers');  
-    console.log('- Advanced tagging system for GHL automation');
-    console.log('- ILLUMMAA-only routing enforced');
-    console.log('- Explorer conditional field handling');
-    console.log('- Comprehensive security validation');
     log(`serving on port ${PORT}`);
   });
 })();

@@ -381,7 +381,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     for (const key in body) {
       if (typeof body[key] === 'string') {
         const isDangerous = containsDangerousContent(body[key]);
-        console.log('[VALIDATION DEBUG]', key, ':', body[key], 'dangerous:', isDangerous);
         if (isDangerous) {
           errors.push(`Invalid content detected in ${key}: ${body[key]}`);
         }
@@ -412,25 +411,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Additional input validation with debug logging
-      console.log('[DEBUG] Starting input validation...');
+      // Additional input validation
       const validationErrors = validateInput(req.body);
-      console.log('[DEBUG] Validation errors:', validationErrors);
       if (validationErrors.length > 0) {
-        console.log('[DEBUG] VALIDATION FAILED - errors:', validationErrors);
         return res.status(400).json({
           error: 'Input validation failed',
           details: validationErrors
         });
       }
-      console.log('[DEBUG] Input validation passed!');
 
-      // Enhanced SMS consent validation with debug logging
-      console.log('[DEBUG] SMS consent check:', {
-        consentSMS: req.body.consentSMS,
-        type: typeof req.body.consentSMS,
-        stringified: String(req.body.consentSMS)
-      });
+      // Enhanced SMS consent validation
       
       // More flexible SMS consent validation (handle both string and boolean)
       const consentSMSValue = String(req.body.consentSMS).toLowerCase();
@@ -513,44 +503,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log('[MAPPING] Frontend data:', JSON.stringify(sanitized, null, 2));
-      console.log('[MAPPING] Mapped backend data:', JSON.stringify(mappedBody, null, 2));
-      
-      console.log('[DEBUG] About to start business logic validation...');
       
       // Business logic validation AFTER field mapping
       const isExplorer = sanitized.isExplorer === 'true' || sanitized.isExplorer === true || sanitized.isEducationOnly === 'Yes';
       const companyName = mappedBody.company || '';
-      console.log('[DEBUG] Business logic check:', {
-        isExplorer,
-        companyName,
-        sanitizedIsExplorer: sanitized.isExplorer,
-        sanitizedIsEducationOnly: sanitized.isEducationOnly,
-        mappedBodyCompany: mappedBody.company
-      });
       
       if (!isExplorer && !companyName?.trim()) {
-        console.log('[DEBUG] BUSINESS LOGIC FAILED - Company name required for non-explorer');
         return res.status(400).json({
           success: false,
           message: 'Company name required for business inquiries'
         });
       }
-      console.log('[DEBUG] Business logic validation passed!');
       
       // Validate and sanitize form data using mapped fields
-      console.log('[DEBUG] Calling validateFormData with mappedBody...');
       const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
-      console.log('[DEBUG] validateFormData result:', { isValid, errors, priorityScore, customerTier });
       
       if (!isValid) {
-        console.log('[DEBUG] FORM VALIDATION FAILED - errors:', errors);
         return res.status(400).json({ 
           error: "Validation failed", 
           details: errors 
         });
       }
-      console.log('[DEBUG] Form validation passed!');
 
       // Additional business tier validation
       const finalUnitCount = parseInt(sanitized.projectUnitCount) || 0;
@@ -576,9 +549,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
-        console.log('[DEBUG] Calling submitToGoHighLevel webhook...');
         await submitToGoHighLevel(data!, priorityScore!, customerTier!, priorityLevel!, tags!);
-        console.log('[DEBUG] GoHighLevel webhook submitted successfully');
       } catch (webhookError) {
         console.error("GoHighLevel webhook failed:", webhookError);
         // Don't fail the request if webhook fails, but log it
