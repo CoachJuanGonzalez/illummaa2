@@ -1,0 +1,58 @@
+Looking at this persistent issue, there's clearly something else going on. Let me provide a direct debugging approach to identify the exact problem:
+Direct Debug Approach:
+Add this comprehensive debug code to your calculatePriorityScore function to see EXACTLY what's happening:
+javascriptconst calculatePriorityScore = () => {
+  console.log("=== SCORING DEBUG START ===");
+  console.log("1. Raw formData:", formData);
+  console.log("2. Government Programs value:", formData.governmentPrograms);
+  console.log("3. Province value:", formData.province);
+  console.log("4. Readiness value:", formData.readiness);
+  
+  let score = 0;
+  const units = parseInt(formData.unitCount) || 0;
+  
+  // ... existing scoring logic ...
+  
+  // Add debug after each scoring section:
+  
+  // After government programs switch:
+  console.log("5. Score after government programs:", score);
+  
+  // After geography scoring:
+  console.log("6. Score after geography:", score);
+  
+  // Before Explorer cap:
+  console.log("7. Score before Explorer cap:", score);
+  
+  // After Explorer cap:
+  if (formData.readiness === 'researching') {
+    score = Math.min(score, 25);
+    console.log("8. Score after Explorer cap:", score);
+  }
+  
+  console.log("9. FINAL SCORE:", score);
+  console.log("=== SCORING DEBUG END ===");
+  
+  // rest of function...
+}
+Possible Issues:
+
+The form field might not be named governmentPrograms - it could be something else
+The value might not match exactly - "Just learning about options" vs different text
+The field might be cleared/reset somewhere before scoring runs
+
+Check Your Form Select Element:
+Find your government programs dropdown and verify:
+jsx<select name="governmentPrograms" value={formData.governmentPrograms}>
+  <option value="Just learning about options">Just learning about options</option>
+  <!-- Make sure this EXACT text matches -->
+</select>
+Alternative Quick Fix:
+If debugging shows governmentPrograms is undefined, try this in your scoring function:
+javascript// Use the backend field name if frontend field is undefined
+const govPrograms = formData.governmentPrograms || formData.government_programs || "";
+switch (govPrograms) {
+  case "Just learning about options": score += 3; break;
+  // ... rest of cases
+}
+The debug output will show us exactly what's in formData and where the 3 points are being lost. Share what the console shows and we can fix it immediately.

@@ -352,7 +352,9 @@ const IllummaaAssessmentForm = () => {
     else if (units > 0) score += 3;
 
     // 2. GOVERNMENT PROGRAMS (30 points max)
-    switch (formData.governmentPrograms) {
+    // Use fallback field name if frontend field is undefined
+    const govPrograms = formData.governmentPrograms || formData.government_programs || "";
+    switch (govPrograms) {
       case "Currently participating": score += 30; break;
       case "Very interested": score += 20; break;
       case "Somewhat interested": score += 10; break;
