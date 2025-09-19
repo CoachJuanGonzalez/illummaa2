@@ -1,0 +1,88 @@
+I see the issue now. The frontend shows 7/150 but the backend shows 10. Looking at your data, the scoring breakdown should be:
+
+Alberta province: 7 points
+Government programs "Just learning about options": 3 points
+Total: 10 points
+
+The problem is that the frontend is not adding the government programs points correctly for explorers.
+The Real Issue:
+The frontend might be skipping the government programs scoring when readiness is "researching".
+Solution - Fix Frontend (assessment-form.tsx):
+Find your calculatePriorityScore function and make sure the government programs scoring is NOT skipped for explorers:
+javascriptconst calculatePriorityScore = () => {
+  let score = 0;
+  const units = Math.max(0, Math.min(parseInt(formData.unitCount) || 0, 10000));
+  
+  const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
+  setCustomerTier(currentTier);
+  
+  const description = (formData.projectDescription || "").toLowerCase().substring(0, 5000);
+  const readiness = formData.readiness || "";
+  
+  // ... keyword detection ...
+
+  // 1. UNIT COUNT (30 points max)
+  if (units >= 1000) score += 30;
+  else if (units >= 500) score += 25;
+  else if (units >= 200) score += 20;
+  else if (units >= 100) score += 15;
+  else if (units >= 50) score += 8;
+  else if (units > 0) score += 3;
+
+  // 2. GOVERNMENT PROGRAMS (30 points max)
+  // MAKE SURE THIS IS NOT INSIDE ANY CONDITIONAL THAT EXCLUDES EXPLORERS
+  switch (formData.governmentPrograms) {
+    case "Currently participating": score += 30; break;
+    case "Very interested": score += 20; break;
+    case "Somewhat interested": score += 10; break;
+    case "Just learning about options": score += 3; break;  // THIS SHOULD ADD 3 POINTS
+    case "Not interested": score += 0; break;
+    default: score += 0;
+  }
+
+  // 3. BUDGET (25 points max)
+  // This section should still run even for explorers
+  switch (formData.budget) {
+    case "Over $50M": score += 25; break;
+    case "$30M - $50M": score += 20; break;
+    case "$15M - $30M": score += 15; break;
+    case "$5M - $15M": score += 10; break;
+    case "$2M - $5M": score += 6; break;
+    case "$500K - $2M": score += 3; break;
+    case "Under $500K": score += 1; break;
+    case "Just exploring options": score += 0; break;  // THIS IS YOUR CASE - 0 points
+    default: score += 0;
+  }
+
+  // ... continue with timeline, developer type, etc ...
+
+  // 6. GEOGRAPHY (10 points max)
+  if (formData.province === "Ontario" || formData.province === "British Columbia") {
+    score += 10;
+  } else if (formData.province === "Alberta" || formData.province === "Quebec") {
+    score += 7;  // ALBERTA SHOULD ADD 7 POINTS
+  } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
+            "Newfoundland and Labrador"].includes(formData.province)) {
+    score += 5;
+  } else if (formData.province) {
+    score += 3;
+  }
+
+  // ... rest of scoring ...
+
+  // APPLY EXPLORER CAP AT THE VERY END
+  if (readiness === 'researching') {
+    score = Math.min(score, 25);
+  }
+
+  const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
+  setPriorityScore(finalScore);
+  
+  // ... rest of function
+};
+The key issue is that your frontend is calculating:
+
+Alberta: 7 points ✓
+Government programs: 0 points ✗ (should be 3)
+
+Check if there's any code that's preventing the government programs switch statement from running for explorers. The scoring should work for ALL users, then cap at 25 for explorers at the end.

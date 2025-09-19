@@ -23,8 +23,11 @@ interface FormData {
   company?: string;
   unitCount?: string;
   budget?: string;
+  projectBudgetRange?: string;  // Fallback field mapping
   timeline?: string;
+  deliveryTimeline?: string;    // Fallback field mapping
   province?: string;
+  constructionProvince?: string; // Fallback field mapping
   readiness?: string;
   developerType?: string;
   governmentPrograms?: string;
