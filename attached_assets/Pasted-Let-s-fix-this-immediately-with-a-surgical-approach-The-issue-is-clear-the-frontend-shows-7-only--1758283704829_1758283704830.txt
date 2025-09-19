@@ -1,0 +1,60 @@
+Let's fix this immediately with a surgical approach. The issue is clear: the frontend shows 7 (only Alberta points) while backend shows 10 (Alberta 7 + Government 3).
+IMMEDIATE FIX - Add This Debug Code:
+Open client/src/components/assessment-form.tsx and replace your calculatePriorityScore function with this debug version:
+javascriptconst calculatePriorityScore = () => {
+  // CRITICAL DEBUG
+  console.log("DEBUG - All formData fields:", Object.keys(formData));
+  console.log("DEBUG - governmentPrograms value:", formData.governmentPrograms);
+  
+  let score = 0;
+  const units = parseInt(formData.unitCount) || 0;
+  
+  // ... your existing code until government programs section ...
+  
+  // REPLACE your government programs switch with this:
+  console.log("DEBUG - Before gov programs, score:", score);
+  
+  // CHECK BOTH POSSIBLE FIELD NAMES
+  const govValue = formData.governmentPrograms || formData.government_programs || "";
+  console.log("DEBUG - Gov value being checked:", govValue);
+  
+  switch (govValue) {
+    case "Currently participating": 
+      score += 30; 
+      console.log("DEBUG - Added 30 for Currently participating");
+      break;
+    case "Very interested": 
+      score += 20; 
+      console.log("DEBUG - Added 20 for Very interested");
+      break;
+    case "Somewhat interested": 
+      score += 10; 
+      console.log("DEBUG - Added 10 for Somewhat interested");
+      break;
+    case "Just learning about options": 
+      score += 3; 
+      console.log("DEBUG - Added 3 for Just learning");
+      break;
+    case "Not interested": 
+      score += 0; 
+      break;
+    default: 
+      console.log("DEBUG - NO MATCH for gov programs:", govValue);
+      score += 0;
+  }
+  
+  console.log("DEBUG - After gov programs, score:", score);
+  
+  // Continue with rest of scoring...
+Most Likely Issues:
+
+Field name mismatch: The form might be saving as government_programs (underscore) but scoring expects governmentPrograms (camelCase)
+Value mismatch: The dropdown value might have extra spaces or different capitalization
+
+Quick Alternative Fix:
+If the debug shows the field is missing, add this right after you define let score = 0;:
+javascript// FORCE FIELD SYNC
+if (!formData.governmentPrograms && formData.government_programs) {
+  formData.governmentPrograms = formData.government_programs;
+}
+Run this, check your browser console (F12), and tell me what the DEBUG lines show. The issue will be immediately obvious from the output.

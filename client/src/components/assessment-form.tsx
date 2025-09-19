@@ -320,7 +320,12 @@ const IllummaaAssessmentForm = () => {
   };
 
   const calculatePriorityScore = () => {
+    // CRITICAL DEBUG
+    console.log("DEBUG - All formData fields:", Object.keys(formData));
+    console.log("DEBUG - governmentPrograms value:", formData.governmentPrograms);
+    
     let score = 0;
+    
     const units = Math.max(0, Math.min(parseInt(formData.unitCount) || 0, 10000));
     
     const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
@@ -352,16 +357,38 @@ const IllummaaAssessmentForm = () => {
     else if (units > 0) score += 3;
 
     // 2. GOVERNMENT PROGRAMS (30 points max)
-    // Use fallback field name if frontend field is undefined
-    const govPrograms = formData.governmentPrograms || formData.government_programs || "";
-    switch (govPrograms) {
-      case "Currently participating": score += 30; break;
-      case "Very interested": score += 20; break;
-      case "Somewhat interested": score += 10; break;
-      case "Just learning about options": score += 3; break;
-      case "Not interested": score += 0; break;
-      default: score += 0;
+    console.log("DEBUG - Before gov programs, score:", score);
+    
+    // CHECK GOVERNMENT PROGRAMS FIELD
+    const govValue = formData.governmentPrograms || "";
+    console.log("DEBUG - Gov value being checked:", govValue);
+    
+    switch (govValue) {
+      case "Currently participating": 
+        score += 30; 
+        console.log("DEBUG - Added 30 for Currently participating");
+        break;
+      case "Very interested": 
+        score += 20; 
+        console.log("DEBUG - Added 20 for Very interested");
+        break;
+      case "Somewhat interested": 
+        score += 10; 
+        console.log("DEBUG - Added 10 for Somewhat interested");
+        break;
+      case "Just learning about options": 
+        score += 3; 
+        console.log("DEBUG - Added 3 for Just learning");
+        break;
+      case "Not interested": 
+        score += 0; 
+        break;
+      default: 
+        console.log("DEBUG - NO MATCH for gov programs:", govValue);
+        score += 0;
     }
+    
+    console.log("DEBUG - After gov programs, score:", score);
 
     // 3. BUDGET (25 points max)
     const budget = formData.budget || formData.projectBudgetRange || '';
