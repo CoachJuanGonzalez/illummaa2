@@ -91,7 +91,6 @@ export const assessmentSchema = z.object({
     }),
   
   company: z.string()
-    .min(1, "Company name must be at least 1 character")
     .max(100, "Company name must be less than 100 characters")
     .optional(),
   

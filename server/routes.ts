@@ -506,13 +506,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION
       const mappedBody = mapFrontendToBackend(sanitized);
       
-      // DEBUG: Log company field after mapping
-      console.log('🔍 AFTER mapFrontendToBackend:', {
-        companyField: mappedBody.company,
-        unitCount: mappedBody.projectUnitCount,
-        readiness: mappedBody.readiness
-      });
-      
       // Enhanced unit count validation with tier consistency (Step 5 implementation)
       const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
       const readiness = mappedBody.readiness;
@@ -568,13 +561,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate and sanitize form data using mapped fields
       const { isValid, data, errors, priorityScore, customerTier, priorityLevel, tags } = await validateFormData(mappedBody);
       
-      // DEBUG: Log company field after validation
-      console.log('🔍 AFTER validateFormData:', {
-        companyField: data?.company,
-        customerTier,
-        isValid
-      });
-      
       if (!isValid) {
         return res.status(400).json({ 
           error: "Validation failed", 
@@ -607,12 +593,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
-        // DEBUG: Log company field before GoHighLevel call
-        console.log('🔍 BEFORE submitToGoHighLevel:', {
-          companyField: data!.company,
-          customerTier: customerTier!
-        });
-        
         await submitToGoHighLevel(data!, priorityScore!, customerTier!, priorityLevel!, tags!);
       } catch (webhookError) {
         console.error("GoHighLevel webhook failed:", webhookError);
