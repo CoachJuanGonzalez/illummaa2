@@ -294,10 +294,11 @@ const IllummaaAssessmentForm = () => {
     // Clear errors
     setErrors(prev => ({ ...prev, [name]: '' }));
     
-    // Calculate priority score for relevant fields  
-    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms', 'projectBudgetRange', 'deliveryTimeline', 'constructionProvince'].includes(name)) {
+    // CRITICAL: Calculate score immediately after state update
+    // Use setTimeout with 0 to ensure state has updated
+    setTimeout(() => {
       calculatePriorityScore();
-    }
+    }, 0);
   };
 
   // Phone formatting
@@ -320,13 +321,8 @@ const IllummaaAssessmentForm = () => {
   };
 
   const calculatePriorityScore = () => {
-    // CRITICAL DEBUG
-    console.log("DEBUG - All formData fields:", Object.keys(formData));
-    console.log("DEBUG - governmentPrograms value:", formData.governmentPrograms);
-    
     let score = 0;
-    
-    const units = Math.max(0, Math.min(parseInt(formData.unitCount) || 0, 10000));
+    const units = parseInt(formData.unitCount) || 0;
     
     const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
     setCustomerTier(currentTier);
@@ -356,39 +352,23 @@ const IllummaaAssessmentForm = () => {
     else if (units >= 50) score += 8;
     else if (units > 0) score += 3;
 
-    // 2. GOVERNMENT PROGRAMS (30 points max)
-    console.log("DEBUG - Before gov programs, score:", score);
+    // 2. GOVERNMENT PROGRAMS - BULLETPROOF VERSION
+    // Check all possible field locations
+    const govPrograms = formData.governmentPrograms || 
+                        formData.government_programs || 
+                        formData['governmentPrograms'] || 
+                        '';
     
-    // CHECK GOVERNMENT PROGRAMS FIELD
-    const govValue = formData.governmentPrograms || "";
-    console.log("DEBUG - Gov value being checked:", govValue);
-    
-    switch (govValue) {
-      case "Currently participating": 
-        score += 30; 
-        console.log("DEBUG - Added 30 for Currently participating");
-        break;
-      case "Very interested": 
-        score += 20; 
-        console.log("DEBUG - Added 20 for Very interested");
-        break;
-      case "Somewhat interested": 
-        score += 10; 
-        console.log("DEBUG - Added 10 for Somewhat interested");
-        break;
-      case "Just learning about options": 
-        score += 3; 
-        console.log("DEBUG - Added 3 for Just learning");
-        break;
-      case "Not interested": 
-        score += 0; 
-        break;
-      default: 
-        console.log("DEBUG - NO MATCH for gov programs:", govValue);
-        score += 0;
+    // Add scoring based on value
+    if (govPrograms === "Currently participating") {
+      score += 30;
+    } else if (govPrograms === "Very interested") {
+      score += 20;
+    } else if (govPrograms === "Somewhat interested") {
+      score += 10;
+    } else if (govPrograms === "Just learning about options") {
+      score += 3;  // THIS IS YOUR MISSING 3 POINTS
     }
-    
-    console.log("DEBUG - After gov programs, score:", score);
 
     // 3. BUDGET (25 points max)
     const budget = formData.budget || formData.projectBudgetRange || '';
@@ -428,12 +408,16 @@ const IllummaaAssessmentForm = () => {
       score += 5;
     }
 
-    // 6. GEOGRAPHY (10 points max)
-    const province = formData.province || formData.constructionProvince || '';
+    // 6. GEOGRAPHY - BULLETPROOF VERSION
+    const province = formData.province || 
+                     formData.constructionProvince || 
+                     formData['province'] || 
+                     '';
+    
     if (province === "Ontario" || province === "British Columbia") {
       score += 10;
     } else if (province === "Alberta" || province === "Quebec") {
-      score += 7;
+      score += 7;  // YOUR ALBERTA 7 POINTS
     } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
               "Newfoundland and Labrador"].includes(province)) {
       score += 5;
