@@ -294,9 +294,9 @@ const IllummaaAssessmentForm = () => {
     // Clear errors
     setErrors(prev => ({ ...prev, [name]: '' }));
     
-    // Calculate priority score for relevant fields
+    // Calculate priority score for relevant fields  
     if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms', 'projectBudgetRange', 'deliveryTimeline', 'constructionProvince'].includes(name)) {
-      setTimeout(calculatePriorityScore, 100);
+      calculatePriorityScore();
     }
   };
 
