@@ -19,7 +19,8 @@ function mapFrontendToBackend(frontendData: any): any {
     const readinessMap: { [key: string]: string } = {
       'Just researching - want to learn more': 'researching',
       'Planning future project (6+ months)': 'planning-long',
-      'Planning active project (0-6 months)': 'planning-medium',
+      'Planning active project (3-6 months)': 'planning-medium',
+      'Planning active project (0-3 months)': 'planning-short',
       'Ready to move forward immediately': 'immediate'
     };
     return readinessMap[value] || value;
