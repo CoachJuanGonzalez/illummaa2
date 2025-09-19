@@ -1,0 +1,119 @@
+ILLUMMAA Company Field Empty Value Fix - Complete Safe Implementation for Replit
+Instructions: This modification fixes the company field to correctly assign empty string for Explorer tier instead of "Individual Investor". Copy and update the following in your server/routes.ts file.
+Step 1: Locate the mapFrontendToBackend function
+Search for function mapFrontendToBackend (around line 20-40)
+Step 2: Add Company Logic Before the Return Statement
+Find the beginning of the mapFrontendToBackend function and add this company value calculation at the start:
+typescriptfunction mapFrontendToBackend(frontendData: any) {
+  // Calculate appropriate company value based on tier
+  let companyValue = '';
+  
+  // Check for existing company data
+  const providedCompany = frontendData.company || frontendData.companyName || '';
+  
+  if (providedCompany) {
+    // Use provided company name if available
+    companyValue = providedCompany;
+  } else {
+    // Determine appropriate default based on user's tier
+    const readiness = (frontendData.readiness || frontendData.readinessToBuy || '').toLowerCase();
+    const unitCount = parseInt(frontendData.unitCount || frontendData.projectUnitCount || '0');
+    
+    // Explorer tier (researching or 0 units) - keep empty
+    if (readiness.includes('researching') || unitCount === 0) {
+      companyValue = ''; // Empty string for educational inquiries
+    } 
+    // Starter tier (1-49 units) - default to Individual Investor
+    else if (unitCount >= 1 && unitCount <= 49) {
+      companyValue = 'Individual Investor';
+    } 
+    // Pioneer+ tiers (50+ units) - generic organization fallback
+    else if (unitCount >= 50) {
+      companyValue = 'Organization'; // Should have real company name
+    }
+  }
+  
+  // Now return the mapped object with calculated company value
+  return {
+    firstName: frontendData.firstName || '',
+    lastName: frontendData.lastName || '',
+    email: frontendData.email || '',
+    phone: frontendData.phone || '',
+    company: companyValue, // Use calculated value
+    // ... rest of your existing field mappings ...
+Step 3: Update the Validation Logic
+Find the validation section (around line 340-360) and replace the company validation:
+Find this block:
+typescriptif (!isExplorer && !companyName?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: 'Company name required for business inquiries'
+  });
+}
+Replace with:
+typescript// Company validation - only required for Pioneer+ tiers (50+ units)
+const unitCount = parseInt(mappedBody.projectUnitCount || '0');
+
+if (!isExplorer && unitCount >= 50 && !companyName?.trim()) {
+  return res.status(400).json({
+    success: false,
+    message: 'Company name required for partnership inquiries (50+ units)',
+    requiredFor: 'pioneer_and_above'
+  });
+}
+
+// Log company assignment for debugging (remove in production)
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Company Assignment:', {
+    isExplorer,
+    unitCount,
+    providedCompany: frontendData.company || frontendData.companyName,
+    assignedCompany: companyValue,
+    tier: isExplorer ? 'explorer' : unitCount < 50 ? 'starter' : 'pioneer+'
+  });
+}
+What This Implementation Does:
+
+Calculates company value before the return statement (avoids arrow function issues)
+Assigns correct defaults:
+
+Explorer (0 units/researching): Empty string ""
+Starter (1-49 units): "Individual Investor"
+Pioneer+ (50+ units): "Organization" (but expects real company)
+
+
+Updates validation to only require company for 50+ units
+Includes debug logging (remove in production)
+Maintains security through existing sanitization
+
+Security Features Maintained:
+✅ Input sanitization still applied through DOMPurify
+✅ No SQL injection risk (no direct database queries)
+✅ XSS protection preserved
+✅ Rate limiting unaffected
+✅ CSRF protection intact
+Testing After Implementation:
+
+Submit as Explorer → Company field in webhook should be empty ""
+Submit as Starter without company → Should show "Individual Investor"
+Submit as Pioneer without company → Should show "Organization" (and validation warning)
+
+This implementation is safe, maintains all security practices, and correctly handles the company field logic per tier.RetryJGdoes this last solution take care of: The arrow function syntax (() => { })() for the company field might not work correctly in the mapFrontendToBackend function context. This could cause a parsing error or undefined behavior.?EditYes, the last solution completely avoids the arrow function issue.
+Instead of using the problematic IIFE (Immediately Invoked Function Expression) syntax:
+javascriptcompany: (() => { })()  // This could cause parsing errors
+The solution calculates the company value before the return statement:
+javascriptlet companyValue = '';  // Calculate first
+// ... logic to determine value ...
+return {
+  company: companyValue,  // Then use the calculated value
+  // ... other fields
+}
+This approach:
+
+✅ Avoids arrow function parsing issues
+✅ Is more readable and debuggable
+✅ Works in all JavaScript environments
+✅ Allows you to add console.log statements for debugging
+✅ Is the safest approach for production code
+
+The solution completely eliminates the risk of undefined behavior from arrow functions in object literals.
