@@ -348,7 +348,24 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     last_name: sanitizeInput(formData.lastName),
     email: sanitizeInput(formData.email),
     phone: formatCanadianPhone(formData.phone),
-    company: sanitizeInput(formData.company),
+    // Company field with tier-appropriate defaults
+    company: (() => {
+      const providedCompany = sanitizeInput(formData.company);
+      // If company was provided, use it
+      if (providedCompany && providedCompany.trim()) {
+        return providedCompany;
+      }
+      // Explorer tier - empty string
+      if (customerTier === 'tier_0_explorer') {
+        return '';
+      }
+      // Starter tier - Individual Investor
+      if (customerTier === 'tier_1_starter') {
+        return 'Individual Investor';
+      }
+      // Pioneer+ tiers - Organization fallback
+      return 'Organization';
+    })(),
     source: "ILLUMMAA Website",
     
     // Project details
