@@ -426,19 +426,37 @@ const IllummaaAssessmentForm = () => {
       score += 3;
     }
 
-    // 3. TIMELINE (20 points max)
+    // 3. TIMELINE (20 points max) - SYNCHRONIZED WITH BACKEND
     const timeline = fd.timeline || '';
-    if (timeline.includes('6-months') || timeline.includes('6-12-months')) score += 20;
-    else if (timeline.includes('1-year') || timeline.includes('year-2')) score += 15;
-    else if (timeline.includes('2-years')) score += 10;
-    else if (timeline.includes('3-years')) score += 5;
+    if (timeline === "Immediate (0-3 months)") {
+      score += 20;
+    } else if (timeline === "Short-term (3-6 months)") {
+      score += 15;
+    } else if (timeline === "Medium-term (6-12 months)") {
+      score += 10;
+    } else if (timeline === "Long-term (12+ months)") {
+      score += 2;  // CRITICAL FIX: Was missing completely
+    } else if (timeline === "Planning phase (18+ months)") {
+      score += 1;
+    }
 
-    // 4. BUDGET (20 points max)
+    // 4. BUDGET (25 points max) - SYNCHRONIZED WITH BACKEND
     const budget = fd.budget || '';
-    if (budget.includes('10M+') || budget.includes('5-10M')) score += 20;
-    else if (budget.includes('2-5M') || budget.includes('1-2M')) score += 15;
-    else if (budget.includes('500K-1M') || budget.includes('250-500K')) score += 10;
-    else if (budget.includes('100-250K') || budget.includes('50-100K')) score += 5;
+    if (budget === "Over $50M") {
+      score += 25;
+    } else if (budget === "$30M - $50M") {
+      score += 20;
+    } else if (budget === "$15M - $30M") {
+      score += 15;
+    } else if (budget === "$5M - $15M") {
+      score += 10;
+    } else if (budget === "$1M - $5M") {
+      score += 5;
+    } else if (budget === "$500K - $1M") {
+      score += 3;
+    } else if (budget === "Under $500K") {
+      score += 1;  // CRITICAL FIX: Was missing completely
+    }
 
     // 5. PROVINCIAL FOCUS (10 points max) - SYNCHRONIZED WITH BACKEND
     const province = fd.province || fd.constructionProvince || '';
@@ -453,20 +471,64 @@ const IllummaaAssessmentForm = () => {
       score += 3;
     }
 
-    // 6. DEVELOPER TYPE (10 points max)
+    // 6. DEVELOPER TYPE (20 points max) - SYNCHRONIZED WITH BACKEND
     const devType = fd.developerType || '';
-    if (devType === 'commercial-developer') score += 10;
-    else if (devType === 'residential-builder') score += 8;
-    else if (devType === 'government-housing') score += 9;
-    else if (devType === 'non-profit') score += 7;
+    if (devType === "Indigenous Community/Organization") {
+      score += 20;  // CRITICAL FIX: Was missing completely
+    } else if (devType === "Government/Municipal Developer") {
+      score += 15;
+    } else if (devType === "Commercial Real Estate Developer") {
+      score += 12;
+    } else if (devType === "Non-profit Housing Provider") {
+      score += 10;
+    } else if (devType === "Private Builder/Contractor") {
+      score += 5;
+    }
+    // "I don't know yet" gets 0 points (no else clause)
 
-    // 7. INDIGENOUS COMMUNITY SUPPORT (15 bonus points)
-    if (hasIndigenous) score += 15;
+    // 7. BUILD CANADA ELIGIBILITY (10 points) - SYNCHRONIZED WITH BACKEND
+    if (units >= 300) {
+      score += 10;
+    } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
+                              devType === "Government/Municipal Developer" ||
+                              devType.includes("Government"))) {
+      score += 10;
+    } else if (units >= 100 && govPrograms === "Currently participating") {
+      score += 5;
+    }
 
-    // 8. SUSTAINABILITY FOCUS (10 bonus points)
-    if (hasSustainability) score += 10;
+    // 8. KEYWORD BONUSES (5 points max) - SYNCHRONIZED WITH BACKEND
+    if (hasIndigenous) score += 3;
+    if (hasSustainability) score += 2;
 
-    // 9. EXPLORER CAP - SYNCHRONIZED WITH BACKEND (25 max for researching)
+    // 9. DEAL VELOCITY (10 points max) - SYNCHRONIZED WITH BACKEND
+    if (timeline === "Immediate (0-3 months)" && 
+        (budget === "Over $50M" || budget === "$30M - $50M")) {
+      score += 10;
+    } else if (timeline === "Short-term (3-6 months)" && 
+               (budget === "$15M - $30M" || budget === "$30M - $50M")) {
+      score += 5;
+    }
+
+    // 10. PENALTIES - SYNCHRONIZED WITH BACKEND
+    if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
+      score = Math.floor(score * 0.85);
+    }
+    if (budget === "Over $50M" && units < 50) {
+      score = Math.floor(score * 0.9);
+    }
+
+    // 11. MINIMUM GUARANTEES - SYNCHRONIZED WITH BACKEND
+    if (units >= 100 && (devType === "Government/Municipal Developer" || 
+                        devType === "Indigenous Community/Organization")) {
+      score = Math.max(score, 75);
+    } else if (units >= 50 && govPrograms === "Currently participating") {
+      score = Math.max(score, 50);
+    } else if (devType === "Indigenous Community/Organization") {
+      score = Math.max(score, 40);
+    }
+
+    // 12. EXPLORER CAP - SYNCHRONIZED WITH BACKEND (25 max for researching) 
     if (readiness === 'researching') {
       score = Math.min(score, 25);
     }
@@ -528,7 +590,7 @@ const IllummaaAssessmentForm = () => {
     // 2. GOVERNMENT PROGRAMS - BULLETPROOF VERSION
     // Check all possible field locations
     const govPrograms = formData.governmentPrograms || 
-                        formData.government_programs || 
+                        (formData as any).government_programs || 
                         formData['governmentPrograms'] || 
                         '';
     
