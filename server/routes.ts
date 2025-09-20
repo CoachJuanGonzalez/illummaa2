@@ -131,7 +131,11 @@ function mapFrontendToBackend(frontendData: any): any {
     decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : normalizeTimeline(frontendData.deliveryTimeline || frontendData.decisionTimeline)),
     constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),
     projectDescription: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
-    consentMarketing: frontendData.consentCommunications || frontendData.consentMarketing,
+    // ENTERPRISE SECURITY: Correct separation of required CASL consent from optional marketing consent
+    // Required CASL consent (always true for form submissions)
+    consentMarketing: Boolean(frontendData.consentCommunications === true || frontendData.consentCommunications === 'true'),
+    // Optional marketing consent (only when user explicitly opts in)
+    marketingConsent: Boolean(frontendData.marketingConsent === true || frontendData.marketingConsent === 'true'),
     
     // Readiness with enum normalization (handles both old 'readiness' and new 'readinessToBuy' fields)
     readiness: frontendData.readiness ? normalizeReadiness(frontendData.readiness) : 
@@ -598,6 +602,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("GoHighLevel webhook failed:", webhookError);
         // Don't fail the request if webhook fails, but log it
       }
+
+      // ENTERPRISE SECURITY: Audit logging for marketing consent processing
+      console.log('[AUDIT] Marketing Consent Processing:', {
+        ip: req.ip,
+        timestamp: new Date().toISOString(),
+        requiredCASLConsent: mappedBody.consentMarketing, // Should always be true for CASL compliance
+        optionalMarketingConsent: mappedBody.marketingConsent || false, // Should match user selection
+        userAgent: req.headers['user-agent']?.substring(0, 100),
+        sessionId: (req as any).sessionID || 'no-session',
+        submissionId: submission.id
+      });
 
       // Success response with SMS compliance confirmation
       res.status(200).json({

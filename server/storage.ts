@@ -111,6 +111,7 @@ export async function validateFormData(rawData: any): Promise<{
       informationPreference: isExplorerTier ? sanitizeOptionalEnum(rawData.informationPreference) : undefined,
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
+      marketingConsent: Boolean(rawData.marketingConsent), // ENTERPRISE SECURITY: Add optional marketing consent to validation
       ageVerification: Boolean(rawData.ageVerification),
       projectDescriptionText: (rawData.projectDescriptionText || rawData.projectDescription) ? 
         DOMPurify.sanitize((rawData.projectDescriptionText || rawData.projectDescription)).trim().slice(0, 1000) : 
@@ -416,9 +417,19 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     customer_tags: tags.join(', '),
     tags_array: tags,
     
+    // ENTERPRISE SECURITY: Required CASL consent fields (always present)
+    casl_consent: true, // Always true for form submissions
+    consent_timestamp: new Date().toISOString(),
+    
     // Conditional fields only when relevant
     ...(buildCanadaEligible && {
       build_canada_eligible: "Yes"
+    }),
+    
+    // ENTERPRISE SECURITY: Conditional marketing consent - only add if explicitly granted
+    ...(formData.marketingConsent === true && {
+      marketing_consent: true,
+      marketing_consent_timestamp: new Date().toISOString()
     }),
     
     // Explorer-specific fields (minimal)
@@ -556,8 +567,17 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
     tags.push(`agent-${data.agentSupport}`);
   }
 
-  if (data.consentMarketing) {
+  // ENTERPRISE SECURITY: Only add marketing consent tag when explicitly granted
+  if (data.marketingConsent === true) {
     tags.push('marketing-consent');
+    tags.push('marketing-opt-in');
+  } else {
+    // Explicitly track users who did NOT opt in for marketing
+    tags.push('marketing-opt-out');
+  }
+  // Always add CASL compliance tag for audit trail (based on required consent)
+  if (data.consentMarketing === true) {
+    tags.push('casl-compliant');
   }
 
   tags.push(`priority-${priorityLevel.toLowerCase()}`);

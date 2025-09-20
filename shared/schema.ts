@@ -175,10 +175,16 @@ export const assessmentSchema = z.object({
     "yes"
   ]).optional(),
   
+  // ENTERPRISE SECURITY: Separate required CASL consent from optional marketing consent
   consentMarketing: z.boolean()
     .refine((val) => val === true, {
       message: "LEGAL REQUIREMENT: You must consent to communications before continuing. This is required under Canadian privacy law (CASL) to process your inquiry."
     }),
+  
+  // Add optional marketing consent field
+  marketingConsent: z.boolean()
+    .optional()
+    .default(false),
   
   ageVerification: z.boolean()
     .refine((val) => val === true, {
