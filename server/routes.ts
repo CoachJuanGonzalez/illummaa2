@@ -572,6 +572,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // ENTERPRISE TESTING: Tag optimization validation (development only)
+      if (process.env.NODE_ENV !== 'production') {
+        const tagValidation = {
+          totalTags: tags!.length,
+          uniqueTags: new Set(tags!).size,
+          optimizedPresent: tags!.includes('optimized-tags'),
+          hasCleanFormat: tags!.every(tag => /^[a-z0-9-_]+$/.test(tag)),
+          hasDuplicates: tags!.length !== new Set(tags!).size,
+          oversizedTags: tags!.filter(tag => tag.length > 50),
+          invalidTags: tags!.filter(tag => !/^[a-z0-9-_]+$/.test(tag))
+        };
+
+        console.log('[TAG-VALIDATION] Clean Optimization Results:', {
+          validation: tagValidation,
+          customerTier,
+          priorityLevel,
+          reductionPercentage: Math.round(((40 - tags!.length) / 40) * 100),
+          isCleanImplementation: tagValidation.optimizedPresent && tagValidation.hasCleanFormat
+        });
+
+        // Alert on validation issues
+        if (tagValidation.hasDuplicates) {
+          console.warn('[TAG-VALIDATION] WARNING: Duplicate tags detected');
+        }
+
+        if (tagValidation.oversizedTags.length > 0) {
+          console.warn('[TAG-VALIDATION] WARNING: Oversized tags:', tagValidation.oversizedTags);
+        }
+
+        if (tagValidation.invalidTags.length > 0) {
+          console.error('[TAG-VALIDATION] ERROR: Invalid tag format:', tagValidation.invalidTags);
+        }
+      }
+
       // Additional business tier validation
       const finalUnitCount = parseInt(sanitized.projectUnitCount) || 0;
       const finalReadiness = sanitized.readinessToBuy;
