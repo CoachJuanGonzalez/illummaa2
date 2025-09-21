@@ -3,18 +3,40 @@ import { randomUUID } from "crypto";
 import DOMPurify from 'isomorphic-dompurify';
 import { assessmentSchema, type AssessmentFormData } from "@shared/schema";
 
+// IP Submission tracking interface for duplicate prevention
+interface IPSubmissionRecord {
+  ipAddress: string;
+  submissionId: string;
+  customerTier: string;
+  timestamp: Date;
+}
+
 export interface IStorage {
   createAssessment(assessment: InsertAssessment): Promise<AssessmentSubmission>;
   getAssessment(id: string): Promise<AssessmentSubmission | undefined>;
   getAssessmentsByEmail(email: string): Promise<AssessmentSubmission[]>;
   createResidentialAssessment(data: any): Promise<any>;
+  
+  // IP-based duplicate submission prevention
+  canSubmitFromIP(ipAddress: string): boolean;
+  recordIPSubmission(ipAddress: string, submissionId: string, customerTier: string): void;
+  getIPSubmissionDetails(ipAddress: string): IPSubmissionRecord | undefined;
+  cleanupExpiredIPRecords(): void;
 }
 
 export class MemStorage implements IStorage {
   private assessments: Map<string, AssessmentSubmission>;
+  private ipSubmissions: Map<string, IPSubmissionRecord>;
+  private readonly IP_BLOCK_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
 
   constructor() {
     this.assessments = new Map();
+    this.ipSubmissions = new Map();
+    
+    // Automatic cleanup every 6 hours
+    setInterval(() => {
+      this.cleanupExpiredIPRecords();
+    }, 6 * 60 * 60 * 1000);
   }
 
   async createAssessment(insertAssessment: InsertAssessment): Promise<AssessmentSubmission> {
