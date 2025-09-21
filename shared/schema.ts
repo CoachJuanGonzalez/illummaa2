@@ -96,7 +96,7 @@ export const assessmentSchema = z.object({
   
   projectUnitCount: z.number()
     .min(0, "Please select the number of units for your project")
-    .max(1000, "Number of units must be less than 1000"),
+    .max(10000, "Number of units must be 10,000 or less"),
   
   budgetRange: z.enum([
     "Under $500K",

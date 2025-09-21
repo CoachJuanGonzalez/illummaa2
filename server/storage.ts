@@ -2,7 +2,7 @@ import { type AssessmentSubmission, type InsertAssessment } from "@shared/schema
 import { randomUUID } from "crypto";
 import DOMPurify from 'isomorphic-dompurify';
 import { assessmentSchema, type AssessmentFormData } from "@shared/schema";
-import { calculatePriorityScore as calculatePriorityScoreShared } from "../shared/utils/scoring";
+import { calculatePriorityScore as calculatePriorityScoreShared, determineCustomerTier } from "../shared/utils/scoring";
 
 // IP Submission tracking interface for duplicate prevention
 interface IPSubmissionRecord {
@@ -138,14 +138,6 @@ export class MemStorage implements IStorage {
 
 export const storage = new MemStorage();
 
-// Helper function for tier determination
-function determineCustomerTier(units: number, readiness?: string): string {
-  if (readiness === 'researching' || units === 0) return 'tier_0_explorer';
-  if (units <= 49) return 'tier_1_starter';
-  if (units <= 149) return 'tier_2_pioneer';
-  if (units <= 299) return 'tier_3_preferred';
-  return 'tier_4_elite';
-}
 
 export async function validateFormData(rawData: any): Promise<{
   isValid: boolean;
