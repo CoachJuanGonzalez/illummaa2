@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { 
   analytics, 
   trackAssessmentStart, 
@@ -7,6 +7,11 @@ import {
   trackCustomerTierDetermination,
   trackUnitCountSelection
 } from "../lib/analytics";
+import { 
+  calculatePriorityScore, 
+  determineCustomerTier as determineCustomerTierShared,
+  isBuildCanadaEligible 
+} from "../../../shared/utils/scoring";
 
 // TypeScript interfaces
 declare global {
@@ -63,6 +68,9 @@ const IllummaaAssessmentForm = () => {
   const [csrfToken, setCsrfToken] = useState('');
   const [startTime] = useState(Date.now());
   
+  // Debounce timer reference for real-time scoring
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
   const TOTAL_STEPS = 5;
 
   // Fetch CSRF token on mount and track assessment start
@@ -96,35 +104,10 @@ const IllummaaAssessmentForm = () => {
 
 
   // Tier determination function with weighted logic for long-term planners
+  // Use shared customer tier determination with analytics tracking
   const determineCustomerTier = (units: string, readiness: string): TierType => {
     const unitCount = parseInt(units) || 0;
-    let determinedTier: TierType;
-    
-    // Just researching ALWAYS = Explorer (secure default)
-    if (readiness === 'researching') {
-      determinedTier = 'tier_0_explorer';
-    }
-    // Security check: Commitment-level users must have actual unit counts
-    else if (readiness !== 'researching' && unitCount === 0) {
-      console.warn('Security: Zero units for non-research tier - maintaining Explorer classification');
-      determinedTier = 'tier_0_explorer'; // Secure fallback
-    }
-    // Planning long-term (12+ months) - weighted by units with minimum threshold
-    else if (readiness === 'planning-long') {
-      if (unitCount <= 0) determinedTier = 'tier_0_explorer'; // Security fallback
-      else if (unitCount <= 49) determinedTier = 'tier_1_starter';
-      else if (unitCount <= 149) determinedTier = 'tier_2_pioneer';
-      else if (unitCount <= 299) determinedTier = 'tier_3_preferred';
-      else determinedTier = 'tier_4_elite';
-    }
-    // All other readiness levels - standard logic with validation
-    else {
-      if (unitCount <= 0) determinedTier = 'tier_0_explorer'; // Security fallback
-      else if (unitCount <= 49) determinedTier = 'tier_1_starter';
-      else if (unitCount <= 149) determinedTier = 'tier_2_pioneer';
-      else if (unitCount <= 299) determinedTier = 'tier_3_preferred';
-      else determinedTier = 'tier_4_elite';
-    }
+    const determinedTier = determineCustomerTierShared(unitCount, readiness) as TierType;
     
     // Track tier determination for analytics
     trackCustomerTierDetermination(determinedTier, units, readiness);

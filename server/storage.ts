@@ -2,6 +2,7 @@ import { type AssessmentSubmission, type InsertAssessment } from "@shared/schema
 import { randomUUID } from "crypto";
 import DOMPurify from 'isomorphic-dompurify';
 import { assessmentSchema, type AssessmentFormData } from "@shared/schema";
+import { calculatePriorityScore as calculatePriorityScoreShared } from "../shared/utils/scoring";
 
 // IP Submission tracking interface for duplicate prevention
 interface IPSubmissionRecord {
@@ -226,25 +227,18 @@ export async function validateFormData(rawData: any): Promise<{
 }
 
 export function calculatePriorityScore(data: AssessmentFormData): number {
-  let score = 0;
-  let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0, 
-      provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0, 
-      penaltyAmount = 0, wasCapApplied = false;
+  // Use shared scoring utility for 100% frontend-backend consistency  
+  const { score } = calculatePriorityScoreShared(data);
+  return score;
+}
+
+function formatCanadianPhone(phone: string): string {
+  // Remove all non-digit characters except + 
+  let cleanPhone = phone.replace(/[^\d+]/g, '');
   
-  let units = 0;
-  const unitValue = data.projectUnitCount;
-  if (unitValue !== undefined && unitValue !== null) {
-    if (typeof unitValue === 'string' && unitValue !== '') {
-      const parsed = parseInt(unitValue);
-      units = isNaN(parsed) ? 0 : Math.max(0, Math.min(parsed, 10000));
-    } else if (typeof unitValue === 'number') {
-      units = Math.max(0, Math.min(unitValue, 10000));
-    }
-  }
-  
-  const description = String(data.projectDescription || data.projectDescriptionText || "").toLowerCase().substring(0, 5000);
-  const readiness = String(data.readiness || "");
-  const budget = String(data.budgetRange || "");
+  // Handle different input formats
+  if (cleanPhone.startsWith('+1')) {
+    return cleanPhone;
   const timeline = String(data.decisionTimeline || "");
   const province = String(data.constructionProvince || "");
   const devType = String(data.developerType || "");

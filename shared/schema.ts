@@ -133,6 +133,7 @@ export const assessmentSchema = z.object({
   ]).optional(),
   
   developerType: z.enum([
+    "Indigenous Community/Organization",
     "Commercial Developer (Large Projects)",
     "Government/Municipal Developer",
     "Non-Profit Housing Developer",
