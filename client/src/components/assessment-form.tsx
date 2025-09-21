@@ -381,7 +381,7 @@ const IllummaaAssessmentForm = () => {
   // Pure calculator that takes latest values to avoid race conditions
   const calculatePriorityScoreWith = (fd: typeof formData) => {
     let score = 0;
-    const units = parseInt(fd.unitCount) || 0;
+    const units = parseInt(fd.unitCount || '0') || 0;
     
     const currentTier = determineCustomerTier(fd.unitCount || '0', fd.readiness || '');
     setCustomerTier(currentTier);
@@ -557,7 +557,7 @@ const IllummaaAssessmentForm = () => {
     let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0, 
         provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0, 
         penaltyAmount = 0;
-    const units = parseInt(formData.unitCount) || 0;
+    const units = parseInt(formData.unitCount || '0') || 0;
     
     const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
     setCustomerTier(currentTier);
@@ -748,7 +748,7 @@ const IllummaaAssessmentForm = () => {
           }
           
           // Security validation: Ensure commitment-level users have meaningful unit counts
-          const unitCount = parseInt(formData.unitCount) || 0;
+          const unitCount = parseInt(formData.unitCount || '0') || 0;
           if (unitCount <= 0) {
             newErrors.unitCount = 'Please select a valid number of units for your project';
           }
@@ -882,7 +882,7 @@ const IllummaaAssessmentForm = () => {
     else tags.push('Priority-Standard-25', 'Response-24Hour-Follow');
     
     // Scale tags
-    const units = parseInt(formData.unitCount) || 0;
+    const units = parseInt(formData.unitCount || '0') || 0;
     if (units >= 200) tags.push('Scale-Enterprise-Community');
     else if (units >= 50) tags.push('Scale-Large-Partnership');
     else if (units >= 11) tags.push('Scale-Medium-Commercial');
@@ -928,6 +928,7 @@ const IllummaaAssessmentForm = () => {
     }
     
     setIsSubmitting(true);
+    setShowSuccess(true); // Show success immediately, hide Step 5
     
     try {
       const tags = generateTags();
@@ -936,10 +937,10 @@ const IllummaaAssessmentForm = () => {
       // Build webhook payload for single pipeline
       const payload = {
         // Contact Information
-        firstName: sanitizeInput(formData.firstName),
-        lastName: sanitizeInput(formData.lastName),
-        email: sanitizeInput(formData.email),
-        phone: sanitizeInput(formData.phone),
+        firstName: sanitizeInput(formData.firstName || ''),
+        lastName: sanitizeInput(formData.lastName || ''),
+        email: sanitizeInput(formData.email || ''),
+        phone: sanitizeInput(formData.phone || ''),
         companyName: sanitizeInput(formData.company || ''),
         
         // Classification (for single pipeline routing)
@@ -1042,41 +1043,184 @@ const IllummaaAssessmentForm = () => {
   return (
     <div id="developer-qualification" className="min-h-screen bg-gradient-to-br from-gray-50 to-white py-12" data-testid="assessment-form-container">
       <div className="container mx-auto px-4 max-w-3xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium mb-4" data-testid="badge-partner">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-            Build Canada Homes Partner
-          </div>
-          
-          <h1 className="text-4xl font-bold text-gray-900 mb-3" data-testid="title-main">
-            Partnership & Learning Assessment
-          </h1>
-          <p className="text-gray-600" data-testid="text-subtitle">
-            From learning to building. Find your path in Canada's modular housing revolution.
-          </p>
-        </div>
+        {showSuccess ? (
+          /* SUCCESS VIEW - Complete inline success display */
+          <div className="max-w-4xl mx-auto">
+            {/* Success Header with ILLÜMMAA Branding */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="success-title">
+                Assessment Complete!
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto" data-testid="success-subtitle">
+                {getResponseCommitment(customerTier)}
+              </p>
+            </div>
 
-        {/* Progress Bar */}
-        <div className="mb-8" data-testid="progress-container">
-          <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-            <span data-testid="text-step">Step {currentStep} of {TOTAL_STEPS}</span>
-            <span data-testid="text-progress">{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{ 
-                width: `${(currentStep / TOTAL_STEPS) * 100}%`,
-                background: 'linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%)'
-              }}
-              data-testid="progress-bar"
-            />
-          </div>
-        </div>
+            {/* Assessment Results Card */}
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Tier Information */}
+                <div className="text-center">
+                  <div className="text-4xl mb-3" data-testid="tier-icon">
+                    {getTierInfo(customerTier).icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Partnership Tier</h3>
+                  <p className="text-2xl font-bold text-indigo-600" data-testid="tier-display">
+                    {getTierInfo(customerTier).name}
+                  </p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {getTierInfo(customerTier).description}
+                  </p>
+                </div>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8" data-testid="form-card">
+                {/* Priority Score */}
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-3">
+                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Priority Score</h3>
+                  <p className="text-2xl font-bold text-green-600" data-testid="priority-score">
+                    {priorityScore}/150
+                  </p>
+                  <p className="text-sm text-gray-600 mt-2">
+                    {getResponseCommitmentLevel(customerTier)}
+                  </p>
+                </div>
+
+                {/* Compliance Status */}
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-3">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Compliance</h3>
+                  <p className="text-sm font-medium text-green-600 mb-1">CASL & PIPEDA Verified</p>
+                  <p className="text-xs text-gray-600">Enterprise-grade privacy compliance</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Next Steps Section */}
+            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">What's Next?</h2>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Confirmation Email Sent</h4>
+                    <p className="text-gray-600 text-sm">Assessment results and next steps delivered to your inbox</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{getResponseCommitmentLevel(customerTier)}</h4>
+                    <p className="text-gray-600 text-sm">{getResponseDescription(customerTier)}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">Personalized Consultation</h4>
+                    <p className="text-gray-600 text-sm">
+                      Direct consultation with our {customerTier === 'tier_0_explorer' ? 'education' : 'partnership'} team
+                    </p>
+                  </div>
+                </div>
+
+                {/* Build Canada Eligibility Notice */}
+                {buildCanadaEligible && (
+                  <div className="flex items-start space-x-4 bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">★</div>
+                    <div>
+                      <h4 className="font-semibold text-green-900">Build Canada Eligible</h4>
+                      <p className="text-green-700 text-sm">Your project qualifies for Build Canada funding programs</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contact Information */}
+            <div className="text-center bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                {customerTier === 'tier_0_explorer' ? 'Educational Resources Team Ready' :
+                 customerTier === 'tier_1_starter' ? 'Residential Specialist Standing By' :
+                 'Partnership Team Assigned'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {getResponseDescription(customerTier)}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="mailto:info@illummaa.ca"
+                  className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Contact Our Team
+                </a>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                  data-testid="button-new-assessment"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Start New Assessment
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* FORM VIEW */
+          <>
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium mb-4" data-testid="badge-partner">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                Build Canada Homes Partner
+              </div>
+              
+              <h1 className="text-4xl font-bold text-gray-900 mb-3" data-testid="title-main">
+                Partnership & Learning Assessment
+              </h1>
+              <p className="text-gray-600" data-testid="text-subtitle">
+                From learning to building. Find your path in Canada's modular housing revolution.
+              </p>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="mb-8" data-testid="progress-container">
+              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+                <span data-testid="text-step">Step {currentStep} of {TOTAL_STEPS}</span>
+                <span data-testid="text-progress">{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="h-full rounded-full transition-all duration-500 ease-out"
+                  style={{ 
+                    width: `${(currentStep / TOTAL_STEPS) * 100}%`,
+                    background: 'linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%)'
+                  }}
+                  data-testid="progress-bar"
+                />
+              </div>
+            </div>
+            {/* Form Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8" data-testid="form-card">
           <form onSubmit={handleSubmit} data-testid="form-assessment">
             
             {/* STEP 1: Readiness + Units */}
@@ -1903,272 +2047,6 @@ const IllummaaAssessmentForm = () => {
             <span>PIPEDA Protected</span>
           </div>
         </div>
-
-        {/* Enhanced Inline Success Display - Replaces entire form when completed */}
-        {showSuccess ? (
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white" data-testid="success-inline">
-            <div className="container mx-auto px-4 py-12">
-              <div className="max-w-4xl mx-auto">
-
-                {/* Success Header with ILLÜMMAA Branding */}
-                <div className="text-center mb-12">
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
-                    <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="success-title">
-                    Assessment Complete!
-                  </h1>
-                  <p className="text-xl text-gray-600 max-w-2xl mx-auto" data-testid="success-subtitle">
-                    {getResponseCommitment(customerTier)}
-                  </p>
-                </div>
-
-                {/* Assessment Results Card */}
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 mb-8">
-                  <div className="grid md:grid-cols-3 gap-8">
-
-                    {/* Tier Information */}
-                    <div className="text-center">
-                      <div className="text-4xl mb-3" data-testid="tier-icon">
-                        {getTierInfo(customerTier).icon}
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Partnership Tier</h3>
-                      <p className="text-2xl font-bold text-indigo-600" data-testid="tier-display">
-                        {getTierInfo(customerTier).name}
-                      </p>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {getTierInfo(customerTier).description}
-                      </p>
-                    </div>
-
-                    {/* Priority Score */}
-                    <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-3">
-                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Priority Score</h3>
-                      <p className="text-2xl font-bold text-green-600" data-testid="priority-score">
-                        {priorityScore}/150
-                      </p>
-                      <p className="text-sm text-gray-600 mt-2">
-                        {getResponseCommitmentLevel(customerTier)}
-                      </p>
-                    </div>
-
-                    {/* Compliance Status */}
-                    <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-3">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Compliance</h3>
-                      <p className="text-sm font-medium text-green-600 mb-1">CASL & PIPEDA Verified</p>
-                      <p className="text-xs text-gray-600">Enterprise-grade privacy compliance</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Next Steps Section */}
-                <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">What's Next?</h2>
-                  <div className="space-y-4">
-
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Confirmation Email Sent</h4>
-                        <p className="text-gray-600 text-sm">Assessment results and next steps delivered to your inbox</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">2</div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">{getResponseCommitmentLevel(customerTier)}</h4>
-                        <p className="text-gray-600 text-sm">{getResponseDescription(customerTier)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Personalized Consultation</h4>
-                        <p className="text-gray-600 text-sm">
-                          Direct consultation with our {customerTier === 'tier_0_explorer' ? 'education' : 'partnership'} team
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Build Canada Eligibility Notice */}
-                    {buildCanadaEligible && (
-                      <div className="flex items-start space-x-4 bg-green-50 p-4 rounded-lg border border-green-200">
-                        <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">★</div>
-                        <div>
-                          <h4 className="font-semibold text-green-900">Build Canada Eligible</h4>
-                          <p className="text-green-700 text-sm">Your project qualifies for Build Canada funding programs</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="text-center bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                    {customerTier === 'tier_0_explorer' ? 'Educational Resources Team Ready' :
-                     customerTier === 'tier_1_starter' ? 'Residential Specialist Standing By' :
-                     'Partnership Team Assigned'}
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    {getResponseDescription(customerTier)}
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a
-                      href="mailto:info@illummaa.ca"
-                      className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2v10a2 2 0 002 2z" />
-                      </svg>
-                      Contact Our Team
-                    </a>
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium"
-                      data-testid="button-new-assessment"
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Start New Assessment
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Original Form Card moved here to prevent double rendering
-          <>
-            {/* Form Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8" data-testid="form-card">
-              <form onSubmit={handleSubmit} data-testid="form-assessment">
-                
-                {/* STEP 1: Readiness + Units */}
-                {currentStep === 1 && (
-                  <div className="space-y-6" data-testid="step-1">
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-1">
-                      Your Modular Journey
-                    </h2>
-                    
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-readiness">
-                        Where are you in your modular home journey? <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="readiness"
-                        value={formData.readiness || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.readiness ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-readiness"
-                      >
-                        <option value="">Select your stage...</option>
-                        <option value="researching">Researching options (learning phase)</option>
-                        <option value="planning-short">Planning for this year</option>
-                        <option value="planning-long">Planning for future years</option>
-                        <option value="immediate">Ready to start immediately</option>
-                      </select>
-                      {errors.readiness && (
-                        <p className="text-red-600 text-sm mt-1" data-testid="error-readiness">{errors.readiness}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-units">
-                        How many units are you planning? <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="unitCount"
-                        value={formData.unitCount || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-units"
-                      >
-                        <option value="">Select unit count...</option>
-                        <option value="0">Just learning (no specific project yet)</option>
-                        <option value="1-5">1-5 units (Family homes)</option>
-                        <option value="6-25">6-25 units (Small developments)</option>
-                        <option value="26-50">26-50 units (Medium projects)</option>
-                        <option value="51-100">51-100 units (Large projects)</option>
-                        <option value="101-500">101-500 units (Major developments)</option>
-                        <option value="500+">500+ units (Enterprise scale)</option>
-                      </select>
-                      {errors.unitCount && (
-                        <p className="text-red-600 text-sm mt-1" data-testid="error-units">{errors.unitCount}</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Form Navigation Placeholder - Add other steps and navigation here */}
-                <div className="flex justify-between pt-8">
-                  <button
-                    type="button"
-                    className="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
-                    data-testid="button-continue"
-                  >
-                    Continue to Full Assessment
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* Security Badges */}
-            <div className="flex items-center justify-center gap-6 mt-8 text-xs text-gray-500" data-testid="security-badges">
-              <div className="flex items-center gap-2" data-testid="badge-encrypted">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                <span>256-bit Encrypted</span>
-              </div>
-              <div className="flex items-center gap-2" data-testid="badge-casl">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>CASL Compliant</span>
-              </div>
-              <div className="flex items-center gap-2" data-testid="badge-pipeda">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                <span>PIPEDA Protected</span>
-              </div>
-            </div>
           </>
         )}
       </div>
