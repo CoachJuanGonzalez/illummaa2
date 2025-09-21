@@ -190,8 +190,29 @@ function mapFrontendToBackend(frontendData: any): any {
   };
 }
 
+// IP normalization utility for consistent tracking
+function normalizeClientIP(req: any): string {
+  // Get IP with proxy trust
+  let clientIP = req.ip || req.connection?.remoteAddress || 'unknown';
+  
+  // Handle X-Forwarded-For header (take first IP if present)
+  const xForwardedFor = req.headers['x-forwarded-for'] as string | string[] | undefined;
+  if (xForwardedFor) {
+    const forwardedIPs = Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor;
+    clientIP = forwardedIPs.split(',')[0].trim();
+  }
+  
+  // Convert IPv6-mapped IPv4 to standard IPv4
+  if (clientIP.startsWith('::ffff:')) {
+    clientIP = clientIP.substring(7);
+  }
+  
+  return clientIP.toLowerCase().trim();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Enterprise Security Configuration v13.2
+  // Enterprise Security Configuration v13.2  
+  // Note: Trust proxy already configured in index.ts
   
   // Enhanced Helmet security headers with development-friendly CSP
   app.use(helmet({
@@ -426,8 +447,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // TEMPORARILY DISABLED: Rate limiters causing form submission blocking
   app.post("/api/submit-assessment", /* smsConsentLimiter, enhancedStrictLimiter, */ bruteforce.prevent, async (req, res) => {
     const requestStart = Date.now();
-    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
     
+    // Method check first
     if (req.method !== 'POST') {
       return res.status(405).json({ 
         success: false,
@@ -435,9 +456,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
-    try {
-      // IP-based duplicate submission prevention
-      if (!storage.canSubmitFromIP(clientIP)) {
+    // IMMEDIATE IP-based duplicate submission prevention (before any validation)
+    const clientIP = normalizeClientIP(req);
+    console.log(`[IP-DEBUG] Normalized client IP: ${clientIP} (length: ${clientIP?.length})`);
+    
+    // SECURITY HARDENING: Skip IP blocking if IP is unknown to prevent over-blocking multiple users
+    if (clientIP && clientIP !== 'unknown') {
+      const canSubmit = storage.canSubmitFromIP(clientIP);
+      console.log(`[IP-DEBUG] Can submit from IP ${clientIP.substring(0, 8)}***: ${canSubmit}`);
+      
+      if (!canSubmit) {
         const existingSubmission = storage.getIPSubmissionDetails(clientIP);
 
         console.log(`[SECURITY] Duplicate submission blocked from IP: ${clientIP.substring(0, 8)}***`);
@@ -452,6 +480,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           action: 'reload_page_for_new_assessment'
         });
       }
+    } else {
+      console.log(`[IP-DEBUG] Unknown IP detected, bypassing duplicate protection for security`);
+    }
+
+    try {
       // Enhanced validation and sanitization
       if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({
@@ -647,6 +680,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Record IP submission for duplicate prevention
+      console.log(`[IP-DEBUG] Recording IP submission: ${clientIP.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
       storage.recordIPSubmission(clientIP, submission.id, customerTier!);
 
       // Submit to GoHighLevel webhook with proper journey stage mapping
@@ -684,7 +718,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       // Enhanced error logging for IP-related issues
-      console.error(`[IP-SECURITY] Assessment submission error from ${clientIP.substring(0, 8)}***:`, error.message);
+      console.error(`[IP-SECURITY] Assessment submission error from ${clientIP.substring(0, 8)}***:`, error instanceof Error ? error.message : String(error));
       console.error('SMS consent security error:', error);
       
       res.status(500).json({

@@ -27,7 +27,9 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private assessments: Map<string, AssessmentSubmission>;
   private ipSubmissions: Map<string, IPSubmissionRecord>;
-  private readonly IP_BLOCK_DURATION_MS = 24 * 60 * 60 * 1000; // 24 hours
+  private readonly IP_BLOCK_DURATION_MS = process.env.NODE_ENV === 'development' 
+    ? parseInt(process.env.IP_BLOCK_DURATION_MS || '10000') // 10 seconds for dev testing
+    : 24 * 60 * 60 * 1000; // 24 hours for production
 
   constructor() {
     this.assessments = new Map();
