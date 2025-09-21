@@ -361,163 +361,37 @@ const IllummaaAssessmentForm = () => {
     setFormData(prev => ({ ...prev, phone: value }));
   };
 
-  // Pure calculator that takes latest values to avoid race conditions
+  // Use shared scoring utility for 100% frontend-backend consistency
   const calculatePriorityScoreWith = (fd: typeof formData) => {
-    let score = 0;
-    const units = parseInt(fd.unitCount || '0') || 0;
+    // Map frontend form data to shared utility format
+    const sharedData = {
+      unitCount: fd.unitCount || '0',
+      projectDescription: fd.projectDescription || '',
+      readiness: fd.readiness || '',
+      budgetRange: fd.budget || fd.budgetRange || fd.projectBudgetRange || '',
+      decisionTimeline: fd.timeline || fd.decisionTimeline || fd.deliveryTimeline || '',
+      constructionProvince: fd.province || fd.constructionProvince || '',
+      developerType: fd.developerType || '',
+      governmentPrograms: fd.governmentPrograms || ''
+    };
+
+    // Call shared utility
+    const { score, breakdown } = calculatePriorityScore(sharedData);
     
-    const currentTier = determineCustomerTier(fd.unitCount || '0', fd.readiness || '');
+    // Update state
+    setPriorityScore(score);
+    
+    // Determine tier using shared utility
+    const units = parseInt(fd.unitCount || '0') || 0;
+    const currentTier = determineCustomerTierShared(units, fd.readiness || '');
     setCustomerTier(currentTier);
     
-    console.log('Score calc using', { units: fd.unitCount, readiness: fd.readiness });
-    
-    const description = (fd.projectDescription || "").toLowerCase().substring(0, 5000);
-    const readiness = fd.readiness || "";
-    
-    const indigenousKeywords = [
-      "indigenous", "first nation", "first nations", "métis", "metis", 
-      "inuit", "aboriginal", "treaty", "reserve", "band council"
-    ];
-    
-    const sustainabilityKeywords = [
-      "net-zero", "net zero", "passive house", "passivhaus", "leed", 
-      "carbon neutral", "sustainable", "green building", "energy efficient",
-      "solar", "geothermal", "heat pump"
-    ];
-    
-    const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
-    const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
-
-    // 1. UNIT COUNT (30 points max)
-    if (units >= 1000) score += 30;
-    else if (units >= 500) score += 25;
-    else if (units >= 200) score += 20;
-    else if (units >= 100) score += 15;
-    else if (units >= 50) score += 8;
-    else if (units > 0) score += 3;
-
-    // 2. GOVERNMENT PROGRAMS - SYNCHRONIZED WITH BACKEND
-    const govPrograms = fd.governmentPrograms || '';
-    
-    if (govPrograms === "Currently participating") {
-      score += 30;
-    } else if (govPrograms === "Very interested") {
-      score += 20;
-    } else if (govPrograms === "Somewhat interested") {
-      score += 10;  // MATCHES BACKEND: "Somewhat interested" = 10 points
-    } else if (govPrograms === "Just learning about options") {
-      score += 3;
-    }
-
-    // 3. TIMELINE (20 points max) - SYNCHRONIZED WITH BACKEND
-    const timeline = fd.timeline || '';
-    if (timeline === "Immediate (0-3 months)") {
-      score += 20;
-    } else if (timeline === "Short-term (3-6 months)") {
-      score += 15;
-    } else if (timeline === "Medium-term (6-12 months)") {
-      score += 10;
-    } else if (timeline === "Long-term (12+ months)") {
-      score += 2;  // CRITICAL FIX: Was missing completely
-    } else if (timeline === "Planning phase (18+ months)") {
-      score += 1;
-    }
-
-    // 4. BUDGET (25 points max) - SYNCHRONIZED WITH BACKEND
-    const budget = fd.budget || '';
-    if (budget === "Over $50M") {
-      score += 25;
-    } else if (budget === "$30M - $50M") {
-      score += 20;
-    } else if (budget === "$15M - $30M") {
-      score += 15;
-    } else if (budget === "$5M - $15M") {
-      score += 10;
-    } else if (budget === "$1M - $5M") {
-      score += 5;
-    } else if (budget === "$500K - $1M") {
-      score += 3;
-    } else if (budget === "Under $500K") {
-      score += 1;  // CRITICAL FIX: Was missing completely
-    }
-
-    // 5. PROVINCIAL FOCUS (10 points max) - SYNCHRONIZED WITH BACKEND
-    const province = fd.province || fd.constructionProvince || '';
-    if (province === "Ontario" || province === "British Columbia") {
-      score += 10;
-    } else if (province === "Alberta" || province === "Quebec") {
-      score += 7;  // MATCHES BACKEND: Alberta gets 7 points
-    } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
-              "Newfoundland and Labrador"].includes(province)) {
-      score += 5;
-    } else if (province) {
-      score += 3;
-    }
-
-    // 6. DEVELOPER TYPE (20 points max) - SYNCHRONIZED WITH BACKEND
-    const devType = fd.developerType || '';
-    if (devType === "Indigenous Community/Organization") {
-      score += 20;  // CRITICAL FIX: Was missing completely
-    } else if (devType === "Government/Municipal Developer") {
-      score += 15;
-    } else if (devType === "Commercial Real Estate Developer") {
-      score += 12;
-    } else if (devType === "Non-profit Housing Provider") {
-      score += 10;
-    } else if (devType === "Private Builder/Contractor") {
-      score += 5;
-    }
-    // "I don't know yet" gets 0 points (no else clause)
-
-    // 7. BUILD CANADA ELIGIBILITY (10 points) - SYNCHRONIZED WITH BACKEND
-    if (units >= 300) {
-      score += 10;
-    } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
-                              devType === "Government/Municipal Developer" ||
-                              devType.includes("Government"))) {
-      score += 10;
-    } else if (units >= 100 && govPrograms === "Currently participating") {
-      score += 5;
-    }
-
-    // 8. KEYWORD BONUSES (5 points max) - SYNCHRONIZED WITH BACKEND
-    if (hasIndigenous) score += 3;
-    if (hasSustainability) score += 2;
-
-    // 9. DEAL VELOCITY (10 points max) - SYNCHRONIZED WITH BACKEND
-    if (timeline === "Immediate (0-3 months)" && 
-        (budget === "Over $50M" || budget === "$30M - $50M")) {
-      score += 10;
-    } else if (timeline === "Short-term (3-6 months)" && 
-               (budget === "$15M - $30M" || budget === "$30M - $50M")) {
-      score += 5;
-    }
-
-    // 10. PENALTIES - SYNCHRONIZED WITH BACKEND
-    if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
-      score = Math.floor(score * 0.85);
-    }
-    if (budget === "Over $50M" && units < 50) {
-      score = Math.floor(score * 0.9);
-    }
-
-    // 11. MINIMUM GUARANTEES - SYNCHRONIZED WITH BACKEND
-    if (units >= 100 && (devType === "Government/Municipal Developer" || 
-                        devType === "Indigenous Community/Organization")) {
-      score = Math.max(score, 75);
-    } else if (units >= 50 && govPrograms === "Currently participating") {
-      score = Math.max(score, 50);
-    } else if (devType === "Indigenous Community/Organization") {
-      score = Math.max(score, 40);
-    }
-
-    // 12. EXPLORER CAP - SYNCHRONIZED WITH BACKEND (25 max for researching) 
-    if (readiness === 'researching') {
-      score = Math.min(score, 25);
-    }
-
-    const finalScore = Math.round(score);
-    setPriorityScore(finalScore);
+    console.log('🎯 FRONTEND Score (using shared utility):', {
+      score,
+      breakdown,
+      tier: currentTier,
+      inputs: sharedData
+    });
 
     // Enhanced analytics with tier information
     if (typeof (window as any).gtag !== 'undefined') {
@@ -526,192 +400,14 @@ const IllummaaAssessmentForm = () => {
         action: 'tier_classification',
         customer_tier: currentTier,
         unit_count: fd.unitCount || '0',
-        readiness_level: readiness,
+        readiness_level: fd.readiness || '',
+        priority_score: score,
         lead_type: currentTier.startsWith('tier_0') ? 'explorer' : 
                    currentTier.startsWith('tier_1') ? 'residential' : 'partnership',
       });
     }
 
-    return finalScore;
-  };
-
-  const calculatePriorityScore = () => {
-    let score = 0;
-    let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0, 
-        provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0, 
-        penaltyAmount = 0;
-    const units = parseInt(formData.unitCount || '0') || 0;
-    
-    const currentTier = determineCustomerTier(formData.unitCount || '0', formData.readiness || '');
-    setCustomerTier(currentTier);
-    
-    const description = (formData.projectDescription || "").toLowerCase().substring(0, 5000);
-    const readiness = formData.readiness || "";
-    
-    const indigenousKeywords = [
-      "indigenous", "first nation", "first nations", "métis", "metis", 
-      "inuit", "aboriginal", "treaty", "reserve", "band council"
-    ];
-    
-    const sustainabilityKeywords = [
-      "net-zero", "net zero", "passive house", "passivhaus", "leed", 
-      "carbon neutral", "sustainable", "green building", "energy efficient",
-      "solar", "geothermal", "heat pump"
-    ];
-    
-    const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
-    const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
-
-    // 1. UNIT COUNT (30 points max)
-    if (units >= 1000) score += 30;
-    else if (units >= 500) score += 25;
-    else if (units >= 200) score += 20;
-    else if (units >= 100) score += 15;
-    else if (units >= 50) score += 8;
-    else if (units > 0) score += 3;
-
-    // 2. GOVERNMENT PROGRAMS - BULLETPROOF VERSION
-    // Check all possible field locations
-    const govPrograms = formData.governmentPrograms || 
-                        (formData as any).government_programs || 
-                        formData['governmentPrograms'] || 
-                        '';
-    
-    // Add scoring based on value
-    if (govPrograms === "Currently participating") {
-      score += 30;
-    } else if (govPrograms === "Very interested") {
-      score += 20;
-    } else if (govPrograms === "Somewhat interested") {
-      score += 10;
-    } else if (govPrograms === "Just learning about options") {
-      score += 3;  // THIS IS YOUR MISSING 3 POINTS
-    }
-
-    // 3. BUDGET (25 points max)
-    const budget = formData.budget || formData.projectBudgetRange || '';
-    switch (budget) {
-      case "Over $50M": score += 25; break;
-      case "$30M - $50M": score += 20; break;
-      case "$15M - $30M": score += 15; break;
-      case "$5M - $15M": score += 10; break;
-      case "$2M - $5M": score += 6; break;
-      case "$500K - $2M": score += 3; break;
-      case "Under $500K": score += 1; break;
-      case "Just exploring options": score += 0; break;
-      default: score += 0;
-    }
-
-    // 4. TIMELINE (20 points max)
-    const timeline = formData.timeline || formData.deliveryTimeline || '';
-    switch (timeline) {
-      case "Immediate (0-3 months)": score += 20; break;
-      case "Short-term (3-6 months)": score += 12; break;
-      case "Medium-term (6-12 months)": score += 6; break;
-      case "Long-term (12+ months)": score += 2; break;
-      default: score += 0;
-    }
-
-    // 5. DEVELOPER TYPE (20 points max)
-    const devType = formData.developerType || "";
-    if (devType === "Indigenous Community/Organization") {
-      score += 20;
-    } else if (devType === "Government/Municipal") {
-      score += 15;
-    } else if (devType.includes("Commercial")) {
-      score += 10;
-    } else if (devType.includes("Non-Profit")) {
-      score += 8;
-    } else if (devType.includes("Private")) {
-      score += 5;
-    }
-
-    // 6. GEOGRAPHY - BULLETPROOF VERSION
-    const province = formData.province || 
-                     formData.constructionProvince || 
-                     formData['province'] || 
-                     '';
-    
-    if (province === "Ontario" || province === "British Columbia") {
-      score += 10;
-    } else if (province === "Alberta" || province === "Quebec") {
-      score += 7;  // YOUR ALBERTA 7 POINTS
-    } else if (["Nova Scotia", "New Brunswick", "Prince Edward Island", 
-              "Newfoundland and Labrador"].includes(province)) {
-      score += 5;
-    } else if (province) {
-      score += 3;
-    }
-
-    // 7. BUILD CANADA ELIGIBILITY (10 points)
-    let buildCanadaQualifies = false;
-    if (units >= 300) {
-      score += 10;
-      buildCanadaQualifies = true;
-    } else if (units >= 200 && (devType === "Indigenous Community/Organization" || 
-                                devType === "Government/Municipal")) {
-      score += 10;
-      buildCanadaQualifies = true;
-    } else if (units >= 100 && formData.governmentPrograms === "Currently participating") {
-      score += 5;
-      buildCanadaQualifies = true;
-    }
-    setBuildCanadaEligible(buildCanadaQualifies);
-
-    // 8. KEYWORD BONUSES (5 points max)
-    if (hasIndigenous) score += 3;
-    if (hasSustainability) score += 2;
-
-    // 9. DEAL VELOCITY (10 points max)
-    if (timeline === "Immediate (0-3 months)" && 
-        (budget === "Over $50M" || budget === "$30M - $50M")) {
-      score += 10;
-    } else if (timeline === "Short-term (3-6 months)" && 
-               (budget === "$15M - $30M" || budget === "$30M - $50M")) {
-      score += 5;
-    }
-
-    // 10. PENALTIES
-    if ((readiness === "planning-long" || readiness === "researching") && units > 100) {
-      score = Math.floor(score * 0.85);
-    }
-    if (budget === "Over $50M" && units < 50) {
-      score = Math.floor(score * 0.9);
-    }
-
-    // 11. MINIMUM GUARANTEES
-    const isIndigenousProject = hasIndigenous || devType === "Indigenous Community/Organization";
-    
-    if ((devType === "Government/Municipal" || devType === "Indigenous Community/Organization") && 
-        units >= 100 && score < 75) {
-      score = 75;
-    }
-    if (formData.governmentPrograms === "Currently participating" && units >= 50 && score < 50) {
-      score = 50;
-    }
-    if (isIndigenousProject && score < 40) {
-      score = 40;
-    }
-
-    // Apply Explorer cap LAST (before final return)
-    if (formData.readiness === 'researching') {
-      score = Math.min(score, 25);
-    }
-
-    const finalScore = Math.min(Math.max(0, Math.round(score)), 150);
-    setPriorityScore(finalScore);
-
-    // FRONTEND SCORING DEBUG (simplified for testing)
-    console.log('🎯 FRONTEND SCORE:', {
-      TOTAL: finalScore,
-      inputs: {
-        unitCount: units,
-        readiness: formData.readiness,
-        devType: formData.developerType,
-        govPrograms: formData.governmentPrograms,
-        province: formData.province || formData.constructionProvince
-      }
-    });
+    return score;
   };
 
   // Validation
