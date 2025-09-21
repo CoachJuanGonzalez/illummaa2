@@ -426,6 +426,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // TEMPORARILY DISABLED: Rate limiters causing form submission blocking
   app.post("/api/submit-assessment", /* smsConsentLimiter, enhancedStrictLimiter, */ bruteforce.prevent, async (req, res) => {
     const requestStart = Date.now();
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
     
     if (req.method !== 'POST') {
       return res.status(405).json({ 
@@ -435,6 +436,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
+      // IP-based duplicate submission prevention
+      if (!storage.canSubmitFromIP(clientIP)) {
+        const existingSubmission = storage.getIPSubmissionDetails(clientIP);
+
+        console.log(`[SECURITY] Duplicate submission blocked from IP: ${clientIP.substring(0, 8)}***`);
+
+        return res.status(429).json({
+          success: false,
+          error: 'Assessment already completed',
+          message: 'An assessment has already been completed from this IP address. Each IP can only complete one assessment per day for security purposes.',
+          completedAt: existingSubmission?.timestamp,
+          previousTier: existingSubmission?.customerTier,
+          canRetry: false,
+          action: 'reload_page_for_new_assessment'
+        });
+      }
       // Enhanced validation and sanitization
       if (!req.body || Object.keys(req.body).length === 0) {
         return res.status(400).json({
@@ -629,6 +646,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tags: tags!
       });
 
+      // Record IP submission for duplicate prevention
+      storage.recordIPSubmission(clientIP, submission.id, customerTier!);
+
       // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
         await submitToGoHighLevel(data!, priorityScore!, customerTier!, priorityLevel!, tags!);
@@ -663,6 +683,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
     } catch (error) {
+      // Enhanced error logging for IP-related issues
+      console.error(`[IP-SECURITY] Assessment submission error from ${clientIP.substring(0, 8)}***:`, error.message);
       console.error('SMS consent security error:', error);
       
       res.status(500).json({

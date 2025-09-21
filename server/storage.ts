@@ -82,6 +82,55 @@ export class MemStorage implements IStorage {
       created_at: new Date().toISOString()
     };
   }
+
+  // IP-based duplicate submission prevention methods
+  canSubmitFromIP(ipAddress: string): boolean {
+    this.cleanupExpiredIPRecords();
+    const existingRecord = this.ipSubmissions.get(ipAddress);
+    
+    if (!existingRecord) {
+      return true; // No previous submission from this IP
+    }
+
+    const timeSinceSubmission = Date.now() - existingRecord.timestamp.getTime();
+    return timeSinceSubmission >= this.IP_BLOCK_DURATION_MS;
+  }
+
+  recordIPSubmission(ipAddress: string, submissionId: string, customerTier: string): void {
+    const record: IPSubmissionRecord = {
+      ipAddress,
+      submissionId,
+      customerTier,
+      timestamp: new Date()
+    };
+    
+    this.ipSubmissions.set(ipAddress, record);
+    
+    // Log for monitoring (with partial IP masking for privacy)
+    console.log(`[IP-SECURITY] Recorded submission from IP: ${ipAddress.substring(0, 8)}*** - Tier: ${customerTier}`);
+  }
+
+  getIPSubmissionDetails(ipAddress: string): IPSubmissionRecord | undefined {
+    return this.ipSubmissions.get(ipAddress);
+  }
+
+  cleanupExpiredIPRecords(): void {
+    const now = Date.now();
+    let cleanedCount = 0;
+
+    Array.from(this.ipSubmissions.entries()).forEach(([ipAddress, record]) => {
+      const timeSinceSubmission = now - record.timestamp.getTime();
+      
+      if (timeSinceSubmission >= this.IP_BLOCK_DURATION_MS) {
+        this.ipSubmissions.delete(ipAddress);
+        cleanedCount++;
+      }
+    });
+
+    if (cleanedCount > 0) {
+      console.log(`[IP-SECURITY] Cleaned up ${cleanedCount} expired IP records`);
+    }
+  }
 }
 
 export const storage = new MemStorage();
