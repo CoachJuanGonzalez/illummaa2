@@ -1,0 +1,76 @@
+● COMPLETE PROMPT FOR REPLIT: Fix Mobile Horizontal Scrolling    
+   Issue
+
+  CRITICAL ISSUE: On mobile devices, the entire website
+  content slides left/right when swiped with finger. This        
+  creates a poor user experience and suggests horizontal
+  overflow problems.
+
+  PROBLEM: The viewport content is wider than the screen,        
+  allowing horizontal scrolling/sliding behavior that should     
+  not exist on mobile.
+
+  REQUIRED FIX: Add CSS rules to prevent horizontal overflow     
+  and lock content to viewport width.
+
+  LOCATION: client/src/index.css
+
+  ADD THE FOLLOWING CSS at the end of the file (before the       
+  closing brace if inside @layer components):
+
+  /* CRITICAL FIX: Prevent horizontal scrolling/sliding on       
+  mobile */
+  @media (max-width: 767px) {
+    /* Lock body and html to viewport */
+    body, html {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      position: relative !important;
+    }
+
+    /* Constrain all containers to viewport width */
+    .container {
+      max-width: 100vw !important;
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Fix hero section components */
+    .hero-text-overlay,
+    .hero-content-width,
+    .button-group-hero-optimized {
+      max-width: 100% !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+
+    /* Prevent any element from exceeding viewport */
+    * {
+      max-width: 100vw !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Fix potential button overflow */
+    button,
+    .btn {
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+  }
+
+  EXPECTED RESULT:
+  - Mobile content will stay locked to screen width
+  - No more left/right sliding when swiping
+  - Content remains perfectly contained within viewport
+  - Improved mobile user experience
+
+  TESTING:
+  - Test on mobile device by swiping left/right on the hero      
+  section
+  - Verify content stays in place and doesn't slide
+  - Confirm no horizontal scrollbar appears
+  - Check that all text and buttons remain properly contained    
+
+  This fix will eliminate the horizontal scrolling/sliding       
+  behavior you're experiencing.
