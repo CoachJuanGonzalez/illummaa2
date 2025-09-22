@@ -71,20 +71,15 @@ export default function StickyHeader() {
           {/* Logo */}
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
             <div className="hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
-              <div 
-                className="h-9 md:h-10 lg:h-12 w-[120px] md:w-[133px] lg:w-[160px] flex items-center"
-                data-testid="logo-wrapper"
-              >
-                <img 
-                  src={logoUrl} 
-                  alt="ü ILLUMMAA logo" 
-                  data-testid="logo-image" 
-                  className="h-[36px] md:h-[40px] lg:h-[48px] w-auto" 
-                  style={{
-                    imageRendering: 'auto'
-                  }}
-                />
-              </div>
+              <img 
+                src={logoUrl} 
+                alt="ü ILLUMMAA logo" 
+                data-testid="logo-image" 
+                className="h-20 md:h-24 lg:h-28 w-auto" 
+                style={{
+                  imageRendering: 'auto'
+                }}
+              />
             </div>
           </Link>
           
