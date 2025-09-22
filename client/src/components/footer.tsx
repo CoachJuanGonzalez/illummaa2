@@ -38,7 +38,7 @@ export default function Footer() {
               <img 
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
-                className="h-12 w-auto" 
+                className="h-24 w-auto" 
                 style={{
                   filter: 'invert(1)'
                 }}
