@@ -81,7 +81,7 @@ export default function StickyHeader() {
                   data-testid="logo-image" 
                   className="h-[18px] md:h-[20px] lg:h-[24px] w-auto" 
                   style={{
-                    transform: 'scale(2)',
+                    transform: 'scale(1)',
                     transformOrigin: 'left center',
                     imageRendering: 'auto'
                   }}
