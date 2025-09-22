@@ -1974,73 +1974,28 @@ button > .icon,
   }
 }
 
-/* Mobile-only: PERFECT CENTER overlay box and buttons (HORIZONTAL & VERTICAL) - PRESERVE ASPECT RATIOS */
+/* Mobile-only: Center overlay box and buttons only */
 @media (max-width: 767px) {
-  /* FORCE THE HERO SECTION TO FULL HEIGHT */
-  .hero-layout-proportions {
-    min-height: 100vh !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  /* CENTER THE MAIN CONTAINER VERTICALLY & HORIZONTALLY */
+  /* CENTER THE PARENT CONTAINER FIRST - This was the missing piece! */
   .hero-content-width {
-    width: auto !important;
-    max-width: 90% !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     text-align: center !important;
-    min-height: 80vh !important;
   }
-
-  /* PERFECT CENTER the text overlay card - PRESERVE DIMENSIONS */
+  
+  /* Center the overlay card itself */
   .hero-text-overlay {
-    width: auto !important;
-    max-width: 90% !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     text-align: center !important;
-    /* PRESERVE original padding and sizing */
-    padding: 32px !important;
-    border-radius: 24px !important;
   }
-
-  /* PERFECT CENTER the button group - PRESERVE BUTTON SIZES */
+  
+  /* Center the button group container */
   .button-group-hero-optimized {
-    width: auto !important;
-    max-width: 90% !important;
-    margin: 24px auto 0 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     justify-content: center !important;
-    gap: 16px !important;
-  }
-
-  /* PERFECT CENTER each individual button - PRESERVE ORIGINAL BUTTON DIMENSIONS */
-  .btn-primary-hero,
-  .hero-secondary-btn-optimized {
-    width: auto !important;
-    min-width: 280px !important;
-    max-width: 320px !important;
-    margin: 0 auto !important;
-    display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    /* PRESERVE original button heights and padding */
-  }
-
-  /* REMOVE TOP/BOTTOM SPACING THAT INTERFERES WITH CENTERING */
-  .hero-content-spacing {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
   }
 }
 
