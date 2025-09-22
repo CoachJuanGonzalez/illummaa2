@@ -1952,9 +1952,9 @@ button > .icon,
   }
 }
 
-/* Custom override for Tailwind bg-white/20 */
-.bg-white\/20 {
-  background-color: rgb(255 255 255 / 0.4);
-}
-
 } /* Close @layer components */
+
+/* Custom override for Tailwind bg-white/20 - Must be outside @layer */
+.bg-white\/20 {
+  background-color: rgb(255 255 255 / 0.4) !important;
+}
