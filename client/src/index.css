@@ -2137,3 +2137,9 @@ button > .icon,
     gap: 1.5rem !important;
   }
 }
+
+/* Remove max-width constraint from footer images and videos */
+footer img,
+footer video {
+  max-width: none !important;
+}
