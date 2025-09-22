@@ -1756,109 +1756,110 @@
   }
 }
 
-/* ========================================
-   UNIVERSAL BUTTON OPTIMIZATION SYSTEM
-   ======================================== */
+/* =====================================================
+   COMPREHENSIVE UNIVERSAL BUTTON OPTIMIZATION SYSTEM
+   Business-Critical Fix for Mobile Text Overflow
+   ===================================================== */
 
-/* Universal Button Optimization - Complete Coverage */
-/* Target ALL button types: regular buttons, shadcn buttons, anchor buttons, role buttons */
-button, 
-.btn, 
-.button, 
-[role="button"], 
-.cta-button,
-input[type="submit"], 
+/* Universal Button Standards - ALL button types */
+button,
+.btn,
+[role="button"],
+input[type="submit"],
 input[type="button"],
-a[role="button"] {
-  /* Text Overflow Prevention - Complete */
-  white-space: normal !important;        /* Allow text wrapping */
-  text-wrap: wrap !important;            /* Modern text wrapping */
-  overflow-wrap: anywhere !important;    /* Break anywhere if needed */
-  word-break: break-word;                /* Break long words */
-  hyphens: auto;                         /* Smart hyphenation */
-  min-width: 0 !important;               /* Allow shrinking below content size */
+input[type="reset"],
+.shadcn-button,
+.ui-button {
+  /* Modern Text Wrapping */
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: anywhere !important;
+  text-wrap: wrap !important;
 
-  /* Responsive Sizing - Accessibility Compliant */
-  min-height: 44px;                      /* Accessibility minimum */
-  padding: 12px 16px;                    /* Adequate internal spacing */
+  /* Container Flexibility */
+  min-width: 0 !important;
+  max-width: 100% !important;
 
-  /* Layout Optimization */
+  /* Text Container Optimization */
   display: flex !important;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
-  flex-wrap: wrap;                       /* Allow content to wrap */
-  gap: 0.5rem;                          /* Space between wrapped elements */
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
 
-  /* Typography */
-  line-height: 1.3;                      /* Optimal readability */
-  font-size: clamp(14px, 2.5vw, 18px);  /* Responsive font scaling */
-
-  /* Container Constraints */
-  max-width: 100%;                       /* Prevent overflow */
+  /* Mobile-First Touch Targets */
+  min-height: 44px !important;
+  padding: 8px 16px !important;
 }
 
-/* Text spans within buttons - ensure they can shrink */
+/* Text Span Flexibility */
 button > span,
 .btn > span,
-.button > span,
 [role="button"] > span {
-  min-width: 0;                          /* Allow text to shrink */
-  flex: 1 1 auto;                        /* Flexible text container */
-  text-align: center;
+  min-width: 0 !important;
+  word-break: break-word !important;
+  text-align: center !important;
 }
 
-/* SVG icons - prevent shrinking */
-button svg,
-.btn svg,
-.button svg,
-[role="button"] svg {
-  flex-shrink: 0 !important;             /* Keep icons at fixed size */
+/* Icon Protection */
+button > svg,
+.btn > svg,
+[role="button"] > svg,
+button > .icon,
+.btn > .icon,
+[role="button"] > .icon {
+  flex-shrink: 0 !important;
+  min-width: auto !important;
 }
 
-/* Mobile-specific optimizations */
+/* Enhanced Mobile Support (320px - iPhone SE) */
 @media (max-width: 480px) {
-  button, 
-  .btn, 
-  .button, 
-  [role="button"],
-  input[type="submit"], 
-  input[type="button"] {
-    padding: 10px 12px;                  /* Tighter mobile padding */
-    font-size: 14px;                     /* Legible mobile size */
-    min-height: 48px;                    /* Larger touch target on mobile */
-    gap: 0.25rem;                        /* Tighter gap on mobile */
-  }
-}
-
-/* Extra small screens (iPhone SE, etc.) */
-@media (max-width: 320px) {
-  button, 
-  .btn, 
-  .button, 
+  button,
+  .btn,
   [role="button"] {
-    padding: 8px 10px;                   /* Minimal padding for tiny screens */
-    font-size: 13px;                     /* Smaller but still legible */
-    min-height: 44px;                    /* Maintain touch target */
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Button spacing */
+  button:not(:last-child),
+  .btn:not(:last-child),
+  [role="button"]:not(:last-child) {
+    margin-bottom: 8px !important;
+  }
+
+  /* Button Group Containers */
+  .button-group-hero-optimized,
+  .btn-group,
+  .button-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .button-group-hero-optimized > *,
+  .btn-group > *,
+  .button-container > * {
+    width: 100% !important;
+    max-width: 100% !important;
   }
 }
 
-/* Button groups - allow wrapping */
-.button-group-hero-optimized,
-.form-navigation,
-.flex:has(button),
-.flex:has(.btn) {
-  flex-wrap: wrap !important;            /* Allow button group wrapping */
-  gap: 0.75rem !important;               /* Consistent gap */
-}
+/* Tablet Optimization (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .button-group-hero-optimized {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 16px !important;
+  }
 
-/* Long text button handling */
-.btn.long-text, 
-.button.long-text,
-button.long-text {
-  max-width: 280px;                      /* Reasonable maximum width */
-  text-overflow: ellipsis;               /* Fallback for extreme cases */
+  .button-group-hero-optimized > * {
+    flex: 1 1 auto !important;
+    min-width: 200px !important;
+    max-width: 300px !important;
+  }
 }
 
 } /* Close @layer components */
