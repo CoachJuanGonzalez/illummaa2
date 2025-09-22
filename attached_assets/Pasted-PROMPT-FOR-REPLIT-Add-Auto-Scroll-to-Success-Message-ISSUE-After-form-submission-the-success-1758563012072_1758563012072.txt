@@ -1,0 +1,82 @@
+PROMPT FOR REPLIT: Add Auto-Scroll to Success Message
+
+  ISSUE: After form submission, the success view displays but    
+   doesn't automatically scroll to show the "Assessment
+  Complete!" message. Users may miss the completion
+  confirmation if they're scrolled down on the page.
+
+  REQUIRED FIX: Add automatic scroll to the success message      
+  when the form is successfully submitted.
+
+  SOLUTION: Update the form submission handler 
+  (client/src/components/assessment-form.tsx)
+
+  FIND the handleSubmit function around line 712 and ADD         
+  scroll behavior:
+
+  CHANGE this section (around line 712):
+        setShowSuccess(true);
+
+      } catch (error) {
+
+  TO:
+        setShowSuccess(true);
+
+        // Auto-scroll to success message after state update     
+        setTimeout(() => {
+          const formElement =
+  document.getElementById('developer-qualification');
+          if (formElement) {
+            formElement.scrollIntoView({ behavior: 'smooth',     
+  block: 'start' });
+          }
+        }, 100); // Small delay to ensure DOM update is
+  complete
+
+      } catch (error) {
+
+  ALTERNATIVE SOLUTION: Use useEffect for cleaner 
+  implementation
+
+  ADD this useEffect after the existing useEffects (around       
+  line 103):
+  // Auto-scroll to success message when form is completed       
+  useEffect(() => {
+    if (showSuccess) {
+      // Small delay to ensure the success view has rendered     
+      const timer = setTimeout(() => {
+        const formElement =
+  document.getElementById('developer-qualification');
+        if (formElement) {
+          formElement.scrollIntoView({ behavior: 'smooth',       
+  block: 'start' });
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
+
+  EXPECTED BEHAVIOR:
+
+  - ✅ User submits form on Step 5
+  - ✅ Success message displays: "Assessment Complete!"
+  - ✅ NEW: Page automatically scrolls to show the success       
+  message
+  - ✅ Works on both mobile and desktop
+  - ✅ Smooth scroll animation for better UX
+
+  VERIFICATION:
+
+  - Test form submission from bottom of Step 5
+  - Confirm page scrolls to show "Assessment Complete!"
+  header
+  - Verify smooth scrolling works on mobile devices
+  - Ensure no impact on existing functionality
+
+  This ensures users always see their successful submission      
+  confirmation regardless of their current scroll position.      
+
+  ---
+  The fix ensures users never miss their success confirmation    
+   message! 🎯

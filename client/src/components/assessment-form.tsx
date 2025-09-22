@@ -102,6 +102,20 @@ const IllummaaAssessmentForm = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [currentStep, startTime]);
 
+  // Auto-scroll to success message when form is completed
+  useEffect(() => {
+    if (showSuccess) {
+      // Small delay to ensure the success view has rendered
+      const timer = setTimeout(() => {
+        const formElement = document.getElementById('developer-qualification');
+        if (formElement) {
+          formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccess]);
 
   // Tier determination function with weighted logic for long-term planners
   // Use shared customer tier determination with analytics tracking
