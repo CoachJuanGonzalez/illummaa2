@@ -29,44 +29,43 @@ export default function Footer() {
   };
 
   return (
-    <footer id="contact" className="bg-foreground text-background py-16" data-testid="footer-main">
+    <footer id="contact" className="bg-foreground text-background py-20" data-testid="footer-main">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div className="md:col-span-2" data-testid="section-company-info">
-            <div className="mb-6" data-testid="footer-logo">
+          <div className="md:col-span-2 lg:col-span-2" data-testid="section-company-info">
+            <div className="mb-8" data-testid="footer-logo">
               <img 
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
-                className="h-48 w-auto" 
+                className="h-16 w-auto mb-4" 
                 style={{
                   filter: 'invert(1)',
-                  imageRendering: 'high-quality',
-                  imageRendering: '-webkit-optimize-contrast'
+                  imageRendering: 'high-quality'
                 }}
                 data-testid="footer-company-name"
               />
             </div>
-            <p className="text-white/80 text-lg mb-6 max-w-md" data-testid="footer-company-description">
+            <p className="text-white/70 text-base mb-8 max-w-md leading-relaxed" data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
-            <div className="flex space-x-4" data-testid="social-links">
-              <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
-                <Linkedin className="text-white" size={20} />
+            <div className="flex space-x-6" data-testid="social-links">
+              <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
+                <Linkedin className="text-white" size={22} />
               </a>
-              <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
-                <Twitter className="text-white" size={20} />
+              <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
+                <Twitter className="text-white" size={22} />
               </a>
-              <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[44px] min-h-[44px] bg-white/10 rounded-xl flex items-center justify-center hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
-                <Instagram className="text-white" size={20} />
+              <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
+                <Instagram className="text-white" size={22} />
               </a>
             </div>
           </div>
           
           {/* Quick Links */}
           <div data-testid="section-quick-links">
-            <h3 className="font-semibold text-white text-lg mb-6" data-testid="heading-quick-links">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="font-semibold text-white text-lg mb-8 tracking-wide" data-testid="heading-quick-links">Quick Links</h3>
+            <ul className="space-y-4">
               <li>
                 <button 
                   onClick={() => scrollToSection("developer-qualification", "Assessment")} 
@@ -108,8 +107,8 @@ export default function Footer() {
           
           {/* Contact */}
           <div data-testid="section-contact-info">
-            <h3 className="font-semibold text-white text-lg mb-6" data-testid="heading-contact">Contact</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold text-white text-lg mb-8 tracking-wide" data-testid="heading-contact">Contact</h3>
+            <ul className="space-y-5">
               <li className="text-white/80 flex items-center" data-testid="contact-phone">
                 <Phone className="mr-2" size={16} />
                 +1 (800) ILLUMMAA
@@ -135,10 +134,14 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-white/20 mt-12 pt-8 text-center" data-testid="footer-bottom">
-          <p className="text-white/60" data-testid="copyright">
-            &copy; 2024 ILLÜMMAA. All rights reserved. | Privacy Policy | Terms of Service
+        <div className="border-t border-white/20 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" data-testid="footer-bottom">
+          <p className="text-white/60 text-sm mb-4 md:mb-0" data-testid="copyright">
+            &copy; 2024 ILLÜMMAA. All rights reserved.
           </p>
+          <div className="flex space-x-6 text-sm">
+            <a href="#" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="text-white/60 hover:text-white transition-colors">Terms of Service</a>
+          </div>
         </div>
       </div>
     </footer>
