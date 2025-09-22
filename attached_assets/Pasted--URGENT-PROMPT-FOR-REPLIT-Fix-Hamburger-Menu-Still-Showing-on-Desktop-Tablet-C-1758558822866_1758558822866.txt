@@ -1,0 +1,102 @@
+● ---
+  URGENT PROMPT FOR REPLIT: Fix Hamburger Menu Still Showing     
+  on Desktop/Tablet
+
+  CRITICAL ISSUE IDENTIFIED: The hamburger menu is still
+  visible on desktop and tablet screens despite the recent       
+  changes. This is due to conflicting Tailwind breakpoints       
+  creating a navigation dead zone.
+
+  ROOT CAUSE: Both desktop navigation and mobile menu button     
+  are using the same sm: breakpoint (640px), causing
+  conflicts where neither element displays properly.
+
+  REQUIRED FIXES:
+
+  1. Fix Desktop Navigation Breakpoint 
+  (client/src/components/sticky-header.tsx)
+
+  CHANGE line 94 FROM:
+  <div className="hidden sm:flex items-center space-x-4
+  lg:space-x-8" data-testid="nav-desktop">
+
+  TO:
+  <div className="hidden md:flex items-center space-x-4
+  lg:space-x-8" data-testid="nav-desktop">
+
+  2. Ensure Mobile Menu Button Uses Correct Breakpoint
+
+  VERIFY line 148 remains as:
+  className="md:hidden text-foreground min-h-[44px]
+  min-w-[44px] flex items-center justify-center rounded
+  focus:outline-none focus:ring-2 focus:ring-primary
+  focus:ring-offset-2"
+
+  3. Fix Mobile Menu Container Breakpoint
+
+  CHANGE the mobile menu container FROM:
+  <div className="sm:hidden mt-4 pb-4 border-t border-border"    
+   data-testid="nav-mobile">
+
+  TO:
+  <div className="md:hidden mt-4 pb-4 border-t border-border"    
+   data-testid="nav-mobile">
+
+  CORRECT TAILWIND BREAKPOINT STRATEGY:
+
+  | Tailwind Class | Screen Size | Behavior                |     
+  |----------------|-------------|-------------------------|     
+  | md:hidden      | <768px      | Show hamburger menu     |     
+  | hidden md:flex | ≥768px      | Show desktop navigation |     
+
+  EXPECTED BEHAVIOR AFTER FIX:
+
+  | Device Type  | Screen Size | Navigation Display     |        
+  |--------------|-------------|------------------------|        
+  | Mobile Phone | ≤767px      | 🍔 Hamburger menu only |        
+  | Tablet       | ≥768px      | 📋 Desktop nav only    |        
+  | Desktop      | ≥768px      | 🖥️  Desktop nav only   |        
+
+  WHY THIS FIXES THE ISSUE:
+
+  - Below 768px: md:hidden shows hamburger, hidden md:flex       
+  hides desktop nav
+  - Above 768px: md:hidden hides hamburger, hidden md:flex       
+  shows desktop nav
+  - No dead zone: Clear transition at exactly 768px with no      
+  overlap
+
+  VERIFICATION STEPS:
+
+  1. Mobile (≤767px): Should show ONLY hamburger menu
+  2. Tablet/Desktop (≥768px): Should show ONLY desktop
+  navigation items
+  3. No hamburger visible on screens 768px and wider
+  4. All navigation links functional on all devices
+
+  CRITICAL: The current sm: breakpoint (640px) is causing        
+  conflicts. Using md: breakpoint (768px) provides the clean     
+  separation needed between mobile and tablet/desktop
+  experiences.
+
+  ---
+
+● ✅ CRITICAL FIX PROMPT READY
+
+  The issue is conflicting Tailwind breakpoints! The
+  solution:
+
+  🔧 Root Cause:
+
+  - Both desktop nav and hamburger menu use sm: (640px)
+  - This creates a dead zone where navigation conflicts occur    
+
+  🎯 Simple Fix:
+
+  - Desktop nav: hidden sm:flex → hidden md:flex
+  - Mobile button: Keep md:hidden
+  - Clean separation at 768px instead of 640px
+
+  This will ensure hamburger menu disappears completely on       
+  tablet and desktop screens while maintaining mobile
+  functionality! 🚀

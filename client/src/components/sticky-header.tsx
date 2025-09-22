@@ -91,7 +91,7 @@ export default function StickyHeader() {
           </Link>
           
           {/* Desktop Navigation */}
-          <div className="hidden sm:flex items-center space-x-4 lg:space-x-8" data-testid="nav-desktop">
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-8" data-testid="nav-desktop">
             <button 
               onClick={() => scrollToSection("developer-qualification", "Assessment")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
@@ -145,7 +145,7 @@ export default function StickyHeader() {
           
           {/* Mobile Menu Button */}
           <button 
-            className="sm:hidden text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="md:hidden text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="button-mobile-menu"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
@@ -156,7 +156,7 @@ export default function StickyHeader() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="sm:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
+          <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
             <div className="flex flex-col space-y-2 pt-4">
               <button 
                 onClick={() => scrollToSection("developer-qualification", "Assessment")} 
