@@ -1,0 +1,147 @@
+ILLÜMMAA Logo Update - Enterprise        
+  Brand Enhancement
+
+  🎯 Objective
+
+  Replace the current ILLÜMMAA logo in     
+  all locations with the provided SVG      
+  file while maintaining the existing      
+  professional UX/UI design
+  architecture and ensuring optimal        
+  visual hierarchy.
+
+  📍 Logo Locations to Update
+
+  Location 1: Header/Navigation Logo       
+
+  - File: client/src/components/sticky-    
+  header.tsx
+  - Lines: 74-80 (current SVG emblem)      
+  - Current Implementation:
+  <svg width="32" height="32"
+  viewBox="0 0 64 64"
+  aria-label="ILLÜMMAA emblem"
+  data-testid="logo-svg">
+    <circle cx="22" cy="10" r="3"
+  fill="#2C5530"/>
+    <circle cx="42" cy="10" r="3"
+  fill="#2C5530"/>
+    <path d="M16 16v16c0 12 8 20 16        
+  20s16-8 16-20V16" fill="none"
+  stroke="#2C5530" strokeWidth="6"
+  strokeLinecap="round"/>
+  </svg>
+
+  Location 2: Footer Logo
+
+  - File:
+  client/src/components/footer.tsx
+  - Lines: 38-43 (current SVG emblem)      
+  - Current Implementation:
+  <svg width="32" height="32"
+  viewBox="0 0 64 64"
+  aria-label="ILLÜMMAA emblem">
+    <circle cx="22" cy="10" r="3"
+  fill="#FFFFFF"/>
+    <circle cx="42" cy="10" r="3"
+  fill="#FFFFFF"/>
+    <path d="M16 16v16c0 12 8 20 16        
+  20s16-8 16-20V16" fill="none"
+  stroke="#FFFFFF" strokeWidth="6"
+  strokeLinecap="round"/>
+  </svg>
+
+  🎨 Design Requirements
+
+  Visual Hierarchy & Consistency
+
+  1. Maintain Current Dimensions: Keep     
+  width="32" height="32" sizing
+  2. Preserve Layout Structure: Logo +     
+  text combination must remain aligned     
+  3. Color Adaptation:
+    - Header: Use primary brand color      
+  (#2C5530) or extract dominant color      
+  from new SVG
+    - Footer: Use white (#FFFFFF) for      
+  contrast on dark background
+  4. Interactive States: Preserve
+  existing hover effects
+  (hover:opacity-80 hover:scale-105)       
+
+  Enterprise UX/UI Standards
+
+  1. Accessibility: Maintain
+  aria-label="ILLÜMMAA emblem" and
+  data-testid attributes
+  2. Responsive Design: Ensure logo        
+  scales properly on mobile/tablet
+  3. Loading Performance: Optimize SVG     
+  for fast rendering
+  4. Brand Consistency: Logo should        
+  complement the existing .logo-text       
+  typography
+
+  Technical Implementation
+
+  1. SVG Integration: Replace the
+  existing <svg> content with the
+  provided SVG
+  2. ViewBox Adjustment: Adapt viewBox     
+  attribute to match new SVG dimensions    
+  3. Color Theming: Ensure SVG colors      
+  work with both light/dark themes
+  4. Clean Code: Remove any unnecessary    
+   SVG attributes while preserving
+  functionality
+
+  🔧 Implementation Steps
+
+  1. Analyze Provided SVG: Extract
+  viewBox, dimensions, and color scheme    
+  2. Header Update: Replace SVG in
+  sticky-header.tsx with appropriate       
+  colors for light background
+  3. Footer Update: Replace SVG in
+  footer.tsx with white/light colors       
+  for dark background
+  4. Quality Check: Verify logo
+  alignment with "ILLÜMMAA" text
+  5. Responsive Test: Ensure logo looks    
+   great on all screen sizes
+  6. Accessibility Validation: Confirm     
+  all attributes and labels are
+  preserved
+
+  🎯 Expected Outcome
+
+  The new logo should:
+  - ✅ Look visually stunning and
+  professional
+  - ✅ Maintain perfect alignment with     
+  existing text
+  - ✅ Preserve all interactive
+  behaviors
+  - ✅ Work beautifully in both header     
+  and footer contexts
+  - ✅ Follow the website's enterprise     
+  design language
+  - ✅ Load quickly and scale perfectly    
+   across devices
+
+  ⚠️ Important Notes
+
+  - DO NOT change the existing
+  .logo-text styling or "ILLÜMMAA" text    
+  - PRESERVE all existing data-testid      
+  attributes for testing
+  - MAINTAIN current spacing
+  (space-x-3) between logo and text        
+  - KEEP existing click handlers and       
+  navigation functionality
+  - ENSURE the logo complements the        
+  overall website aesthetic
+
+  Please implement these changes and       
+  provide a brief summary of the visual    
+   improvements made.
