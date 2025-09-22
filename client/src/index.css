@@ -2039,10 +2039,6 @@ button > .icon,
     justify-content: center !important;
   }
   
-  [data-testid="footer-bottom"] {
-    text-align: center !important;
-    align-items: center !important;
-  }
 }
 
 /* Tablet Footer Centering */
@@ -2084,11 +2080,7 @@ button > .icon,
     justify-content: center !important;
   }
   
-  [data-testid="footer-bottom"] {
-    text-align: center !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
+
 }
 
 /* Desktop Footer Centering */
@@ -2130,11 +2122,7 @@ button > .icon,
     justify-content: center !important;
   }
   
-  [data-testid="footer-bottom"] {
-    text-align: center !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
+
   
   /* Enterprise spacing and refinement for larger screens */
   [data-testid="section-quick-links"] h3,
