@@ -654,7 +654,7 @@ const IllummaaAssessmentForm = () => {
         tags: tags.join(','),
         
         // Pipeline assignment
-        pipeline: 'ILLÜMMAA Customer Journey',
+        pipeline: 'ILLUMMAA Customer Journey',
         stage: customerTier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
         
         // Legal consent with SMS security
@@ -725,7 +725,7 @@ const IllummaaAssessmentForm = () => {
         {showSuccess ? (
           /* SUCCESS VIEW - Complete inline success display */
           <div className="max-w-4xl mx-auto">
-            {/* Success Header with ILLÜMMAA Branding */}
+            {/* Success Header with ILLUMMAA Branding */}
             <div className="text-center mb-12">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
                 <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1544,7 +1544,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-communications"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive communications from ILLÜMMAA via email, phone, and other channels regarding partnership opportunities. (Required by CASL)
+                      I consent to receive communications from ILLUMMAA via email, phone, and other channels regarding partnership opportunities. (Required by CASL)
                     </span>
                   </label>
                   {errors.consentCommunications && (
@@ -1563,7 +1563,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-sms"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive SMS text messages from ILLÜMMAA for time-sensitive updates and project coordination. (Required for SMS compliance)
+                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Required for SMS compliance)
                     </span>
                   </label>
                   {errors.consentSMS && (
@@ -1623,13 +1623,13 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-marketing-consent"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I would like to receive marketing communications about ILLÜMMAA products and industry insights. (Optional)
+                      I would like to receive marketing communications about ILLUMMAA products and industry insights. (Optional)
                     </span>
                   </label>
 
                   <div className="text-xs text-gray-600 bg-white p-4 rounded border-l-4 border-indigo-400 mt-4" data-testid="legal-disclaimer">
                     <p className="font-semibold mb-2">Your Rights & Our Commitment:</p>
-                    <p>You may withdraw consent at any time via unsubscribe links, replying STOP to texts, or contacting info@illummaa.ca. Your information is protected under Canadian privacy laws (PIPEDA/provincial equivalents). ILLÜMMAA complies with CASL requirements, maintains A2P 10DLC registration for SMS, and keeps consent records as required by law.</p>
+                    <p>You may withdraw consent at any time via unsubscribe links, replying STOP to texts, or contacting info@illummaa.ca. Your information is protected under Canadian privacy laws (PIPEDA/provincial equivalents). ILLUMMAA complies with CASL requirements, maintains A2P 10DLC registration for SMS, and keeps consent records as required by law.</p>
                   </div>
                 </div>
               </div>

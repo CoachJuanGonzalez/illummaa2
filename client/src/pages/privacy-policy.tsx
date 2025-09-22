@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
         </p>
         
         <h2 className="text-2xl font-semibold mt-8 mb-4">1. Information We Collect</h2>
-        <p>ILLÜMMAA collects personal information through our assessment form including:</p>
+        <p>ILLUMMAA collects personal information through our assessment form including:</p>
         <ul>
           <li>Contact details (name, email, phone, company)</li>
           <li>Project information (scale, budget, timeline, location)</li>

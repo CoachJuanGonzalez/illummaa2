@@ -177,7 +177,7 @@ function mapFrontendToBackend(frontendData: any): any {
     
     contactTags: frontendData.contactTags,
     consentTimestamp: frontendData.consentTimestamp,
-    source: frontendData.source || 'ILLÜMMAA Website Assessment',
+    source: frontendData.source || 'ILLUMMAA Website Assessment',
     submissionId: frontendData.submissionId,
     userAgent: frontendData.userAgent,
     

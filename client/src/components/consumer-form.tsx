@@ -188,7 +188,7 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
       email: contactData.email,
       phone: contactData.phone,
       company: contactData.company || "Personal",
-      source: "ILLÜMMAA Website - Residential",
+      source: "ILLUMMAA Website - Residential",
       project_unit_count: 0, // Pre-filled backend value (NOT visible to user)
       project_budget_range: "Under $5 Million", // Pre-filled backend value
       construction_province: residentialData.province,
@@ -363,7 +363,7 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
                   </h3>
                   <ul className="space-y-2 text-gray-600 mb-4">
                     <li className="transition-transform duration-200 group-hover:translate-x-1">• Learn about modular housing solutions</li>
-                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Direct consultation with ILLÜMMAA specialists</li>
+                    <li className="transition-transform duration-200 group-hover:translate-x-1 delay-75">• Direct consultation with ILLUMMAA specialists</li>
                     <li className="transition-transform duration-200 group-hover:translate-x-1 delay-150">• Explore design and pricing options</li>
                   </ul>
                   <Button className="w-full interactive-hover group-hover:scale-105 transition-all duration-200">

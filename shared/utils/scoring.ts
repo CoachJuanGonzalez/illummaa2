@@ -242,7 +242,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   };
 
   // Debug logging
-  console.log('🎯 ILLÜMMAA Priority Score Calculation:', {
+  console.log('🎯 ILLUMMAA Priority Score Calculation:', {
     units: unitScore,
     budget: budgetScore,
     timeline: timelineScore,
