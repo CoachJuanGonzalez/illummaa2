@@ -1922,6 +1922,21 @@ button > .icon,
   }
 }
 
+/* CRITICAL FIX: Force hamburger menu to hide on desktop/tablet */
+@media (min-width: 768px) {
+  [data-testid="button-mobile-menu"] {
+    display: none !important;
+  }
+  
+  [data-testid="nav-mobile"] {
+    display: none !important;
+  }
+  
+  [data-testid="nav-desktop"] {
+    display: flex !important;
+  }
+}
+
 /* Tablet navigation optimization */
 @media (min-width: 640px) and (max-width: 1023px) {
   .nav-desktop button {
