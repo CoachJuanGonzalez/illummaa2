@@ -72,7 +72,7 @@ export default function StickyHeader() {
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
             <div className="hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
               <div 
-                className="h-9 md:h-10 lg:h-12 w-[120px] md:w-[133px] lg:w-[160px] flex items-center"
+                className="h-9 md:h-10 lg:h-12 w-[120px] md:w-[133px] lg:w-[160px] flex items-center px-3 py-1 md:px-0 md:py-0"
                 data-testid="logo-wrapper"
               >
                 <img 
