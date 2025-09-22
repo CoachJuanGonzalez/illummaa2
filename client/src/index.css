@@ -1975,7 +1975,7 @@ button > .icon,
 }
 
 /* Mobile-only: Center overlay box and buttons only */
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   /* Center the overlay box */
   .hero-text-overlay {
     margin-left: auto !important;
@@ -1983,11 +1983,13 @@ button > .icon,
     text-align: center !important;
   }
   
-  /* Center the buttons */
+  /* Center the buttons - override existing styles */
   .button-group-hero-optimized {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
