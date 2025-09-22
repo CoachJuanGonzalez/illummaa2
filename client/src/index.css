@@ -1975,7 +1975,7 @@ button > .icon,
 }
 
 /* Mobile-only: Center overlay box and buttons only */
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   /* CENTER THE PARENT CONTAINER FIRST - This was the missing piece! */
   .hero-content-width {
     margin-left: auto !important;
