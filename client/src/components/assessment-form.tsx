@@ -674,7 +674,7 @@ const IllummaaAssessmentForm = () => {
         // Legal consent with SMS security
         consentCommunications: formData.consentCommunications ? 'true' : 'false',
         consentSMS: formData.consentSMS ? 'true' : 'false',
-        consentSMSTimestamp: formData.consentSMSTimestamp || new Date().toISOString(),
+        consentSMSTimestamp: new Date().toISOString(), // CRITICAL: Always use fresh timestamp
         privacyPolicyConsent: formData.privacyPolicy ? 'true' : 'false',
         marketingConsent: formData.marketingConsent ? 'true' : 'false',
         ageVerification: formData.ageVerification ? 'true' : 'false',
@@ -692,6 +692,25 @@ const IllummaaAssessmentForm = () => {
         smsConsentSecurityValidated: 'true'
       };
       
+      // Debug logging
+      console.log('Submitting assessment with payload:', {
+        ...payload,
+        // Mask sensitive data in logs
+        email: payload.email ? '***@***' : undefined,
+        phone: payload.phone ? '***' : undefined
+      });
+      console.log('CSRF Token present:', !!csrfToken);
+      console.log('Consent values:', {
+        consentSMS: payload.consentSMS,
+        timestamp: payload.consentSMSTimestamp,
+        allConsents: {
+          communications: payload.consentCommunications,
+          sms: payload.consentSMS,
+          privacy: payload.privacyPolicyConsent,
+          age: payload.ageVerification
+        }
+      });
+      
       const response = await fetch('/api/submit-assessment', {
         method: 'POST',
         headers: {
@@ -703,11 +722,16 @@ const IllummaaAssessmentForm = () => {
         body: JSON.stringify(payload)
       });
       
+      // Add proper response checking
       if (!response.ok) {
-        throw new Error(`Submission failed: ${response.status}`);
+        console.error('Response not OK:', response.status, response.statusText);
+        
+        // Throw the response as an error to be caught
+        throw response;
       }
       
       const result = await response.json();
+      console.log('Submission successful:', result);
       
       // Analytics tracking
       // Enhanced assessment completion tracking
@@ -726,8 +750,40 @@ const IllummaaAssessmentForm = () => {
       setShowSuccess(true);
       
     } catch (error) {
-      console.error('Submission error:', error);
-      alert('Submission error. Please try again or contact info@illummaa.ca');
+      console.error('Submission error details:', error);
+      
+      // Enhanced error handling for better debugging
+      if (error instanceof Error && error.message.includes('fetch')) {
+        alert('Network error. Please check your internet connection and try again.');
+      } else {
+        // Try to parse error response
+        try {
+          const response = error as Response;
+          if (response && response.status) {
+            if (response.status === 429) {
+              alert('You have already completed an assessment today. Please try again tomorrow or contact info@illummaa.ca for assistance.');
+            } else if (response.status === 400) {
+              const errorData = await response.json();
+              console.error('Validation error:', errorData);
+              
+              if (errorData.error === 'SMS consent validation failed') {
+                alert('Please ensure all consent checkboxes are checked and try again.');
+              } else if (errorData.error === 'SMS consent expired') {
+                alert('Your session has expired. Please refresh the page and complete the form again.');
+              } else {
+                alert(`Validation error: ${errorData.message || errorData.error || 'Please check all required fields and try again.'}`);
+              }
+            } else {
+              alert(`Server error (${response.status}). Please try again later or contact info@illummaa.ca`);
+            }
+          } else {
+            alert('Submission error. Please try again or contact info@illummaa.ca');
+          }
+        } catch (parseError) {
+          console.error('Error parsing response:', parseError);
+          alert('Submission error. Please try again or contact info@illummaa.ca');
+        }
+      }
     } finally {
       setIsSubmitting(false);
     }
