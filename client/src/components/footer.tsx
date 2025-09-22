@@ -40,7 +40,8 @@ export default function Footer() {
                 alt="ü ILLUMMAA logo" 
                 className="h-24 w-auto" 
                 style={{
-                  imageRendering: 'auto'
+                  imageRendering: 'auto',
+                  transform: 'scale(0.4)'
                 }}
                 data-testid="footer-company-name"
               />
