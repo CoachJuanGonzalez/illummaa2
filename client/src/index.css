@@ -1973,3 +1973,24 @@ button > .icon,
     background-color: rgb(255 255 255 / 0.6) !important;
   }
 }
+
+/* Mobile-only: Center hero content elements (excluding logo and hamburger menu) */
+@media (max-width: 767px) {
+  /* Center hero text content */
+  .hero-text-overlay {
+    text-align: center !important;
+  }
+  
+  /* Center hero buttons */
+  .button-group-hero-optimized {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Center the hero content container */
+  .hero-content-width {
+    text-align: center !important;
+  }
+}
