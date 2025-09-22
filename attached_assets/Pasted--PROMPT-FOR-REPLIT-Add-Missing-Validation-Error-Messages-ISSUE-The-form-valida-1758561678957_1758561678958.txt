@@ -1,0 +1,115 @@
+  ---
+  PROMPT FOR REPLIT: Add Missing Validation Error Messages       
+
+  ISSUE: The form validation logic correctly prevents
+  progression when Developer Type and Government Housing
+  Programs are not selected, but the red error messages are      
+  not displayed to users like they are for the
+  Province/Territory field.
+
+  REQUIRED FIXES: Add error styling and error message display    
+   for both missing fields in Step 4.
+
+  1. Fix Developer Type Field 
+  (client/src/components/assessment-form.tsx)
+
+  FIND the Developer Type select element (around line 
+  1334-1356) and UPDATE:
+
+  CHANGE the className FROM:
+  className="w-full px-4 py-3 rounded-lg border
+  border-gray-300 focus:border-indigo-500 focus:ring-2
+  focus:ring-indigo-100 transition-all outline-none
+  appearance-none bg-white"
+
+  TO:
+  className={`w-full px-4 py-3 rounded-lg border ${
+    errors.developerType ? 'border-red-300 bg-red-50' :
+  'border-gray-300'
+  } focus:border-indigo-500 focus:ring-2
+  focus:ring-indigo-100 transition-all outline-none
+  appearance-none bg-white`}
+
+  ADD error message display AFTER the closing </select> tag:     
+                    </select>
+                    {errors.developerType && (
+                      <p className="text-red-500 text-xs
+  mt-1" data-testid="error-developer-type">{errors.developerT    
+  ype}</p>
+                    )}
+                  </div>
+
+  2. Fix Government Housing Programs Field (around line 
+  1363-1384)
+
+  CHANGE the className FROM:
+  className="w-full px-4 py-3 rounded-lg border
+  border-gray-300 focus:border-indigo-500 focus:ring-2
+  focus:ring-indigo-100 transition-all outline-none
+  appearance-none bg-white"
+
+  TO:
+  className={`w-full px-4 py-3 rounded-lg border ${
+    errors.governmentPrograms ? 'border-red-300 bg-red-50' :     
+  'border-gray-300'
+  } focus:border-indigo-500 focus:ring-2
+  focus:ring-indigo-100 transition-all outline-none
+  appearance-none bg-white`}
+
+  ADD error message display AFTER the closing </select> tag:     
+                    </select>
+                    {errors.governmentPrograms && (
+                      <p className="text-red-500 text-xs
+  mt-1" data-testid="error-government-programs">{errors.gover    
+  nmentPrograms}</p>
+                    )}
+                  </div>
+
+  EXPECTED RESULT:
+
+  When users click "Next Step >" without selecting these
+  required fields, they will see:
+  - ✅ Province/Territory: "Province/territory is required"      
+  (already working)
+  - ✅ Developer Type: "Please select a developer type" (NEW)    
+  - ✅ Government Housing Programs: Error message for this       
+  field (NEW)
+
+  VERIFICATION:
+
+  - Both fields should show red border and background when       
+  invalid
+  - Red error text should appear below each field
+  - Form should still prevent progression until all required     
+  fields are selected
+  - No breaking changes to existing functionality
+
+  This matches the existing error pattern used for the
+  Province/Territory field and maintains consistency across      
+  the form.
+
+  ---
+
+● ✅ VALIDATION ERROR MESSAGE FIX PROMPT READY
+
+  The issue is clear - the validation logic works correctly      
+  (preventing form progression), but the visual feedback is      
+  missing for two fields. The fix:
+
+  🎯 Root Cause:
+
+  - Province/Territory: Has complete error styling + message     
+  display ✅
+  - Developer Type: Missing error styling + message display      
+  ❌
+  - Government Housing Programs: Missing error styling +
+  message display ❌
+
+  🔧 Simple Fix:
+
+  1. Add conditional error styling to both select elements       
+  2. Add error message display below both fields
+  3. Follow exact same pattern as Province/Territory field       
+
+  This will provide consistent user feedback across all
+  required fields in Step 4! 🚀

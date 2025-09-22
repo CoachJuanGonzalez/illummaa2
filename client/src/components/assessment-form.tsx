@@ -1335,7 +1335,9 @@ const IllummaaAssessmentForm = () => {
                     name="developerType"
                     value={formData.developerType || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.developerType ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                       backgroundPosition: 'right 0.5rem center',
@@ -1354,6 +1356,9 @@ const IllummaaAssessmentForm = () => {
                     <option value="Non-Profit Organization">Non-Profit Organization</option>
                     <option value="Private Developer">Private Developer</option>
                   </select>
+                  {errors.developerType && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
+                  )}
                 </div>
 
                 <div>
@@ -1364,7 +1369,9 @@ const IllummaaAssessmentForm = () => {
                     name="governmentPrograms"
                     value={formData.governmentPrograms || ''}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.governmentPrograms ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
                     style={{
                       backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
                       backgroundPosition: 'right 0.5rem center',
@@ -1382,6 +1389,9 @@ const IllummaaAssessmentForm = () => {
                     <option value="Very interested">Very interested</option>
                     <option value="Currently participating">Currently participating</option>
                   </select>
+                  {errors.governmentPrograms && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-government-programs">{errors.governmentPrograms}</p>
+                  )}
                 </div>
 
                 <div>
