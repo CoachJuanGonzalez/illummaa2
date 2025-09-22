@@ -2183,3 +2183,25 @@ footer video {
     box-sizing: border-box !important;
   }
 }
+
+/* Center footer logo ONLY on mobile devices */
+@media (max-width: 767px) {
+  .footer-logo,
+  [data-testid*="footer-logo"],
+  footer .logo-text,
+  footer h3:first-child {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  /* If logo is inside a container */
+  .footer-logo-container {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+}
