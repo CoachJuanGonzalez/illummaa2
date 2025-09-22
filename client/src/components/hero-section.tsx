@@ -53,8 +53,7 @@ export default function HeroSection() {
               data-testid="button-qualify-partnership"
             >
               <Handshake className="mr-3 flex-shrink-0" size={20} />
-              <span className="hidden sm:inline">Take Partnership & Learning Assessment</span>
-              <span className="sm:hidden">Take Assessment</span>
+              <span>Take Partnership & Learning Assessment</span>
             </Button>
             <Button 
               variant="outline"
