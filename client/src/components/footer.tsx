@@ -1,7 +1,6 @@
 import { Linkedin, Twitter, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { trackFooterNavClick, analytics } from "../lib/analytics";
 import logoUrl from "@assets/Latest ILLUMMAA_1758506338570.png";
-import BrandWord from "@/components/brand-word";
 
 export default function Footer() {
   const scrollToSection = (id: string, sectionName?: string) => {
@@ -82,7 +81,7 @@ export default function Footer() {
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-why"
                 >
-                  Why <BrandWord size="sm" className="inline-block" />
+                  Why ILLÜMMAA
                 </button>
               </li>
               <li>
@@ -137,7 +136,7 @@ export default function Footer() {
         
         <div className="border-t border-white/20 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" data-testid="footer-bottom">
           <p className="text-white/60 text-sm mb-4 md:mb-0" data-testid="copyright">
-            &copy; 2024 <BrandWord size="sm" className="inline-block" />. All rights reserved.
+            &copy; 2024 ILLÜMMAA. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>

@@ -80,7 +80,7 @@ export default function PartnershipTiers() {
       features: [
         "All Explorer benefits",
         "Personal consultation support",
-        "Direct ILLUMMAA expert access",
+        "Direct ILLÜMMAA expert access",
         "Standard modular designs",
         "Financing assistance programs",
         "72-hour on-site assembly",
@@ -256,7 +256,7 @@ Take Partnership & Learning Assessment
                 Inquiry Submitted Successfully!
               </h3>
               <p className="text-green-700 mb-4" data-testid="text-success-message">
-                Thank you for your interest in ILLUMMAA's residential services. Our team will contact you within 24-48 hours.
+                Thank you for your interest in ILLÜMMAA's residential services. Our team will contact you within 24-48 hours.
               </p>
               <p className="text-sm text-green-600" data-testid="text-success-note">
                 Ready for a new inquiry? Simply reload the page.
