@@ -66,20 +66,27 @@ export default function StickyHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border" data-testid="header-main">
-      <nav className="container mx-auto px-6 py-4">
+      <nav className="container mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
             <div className="hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
-              <img 
-                src={logoUrl} 
-                alt="ü ILLUMMAA logo" 
-                data-testid="logo-image" 
-                className="h-20 md:h-24 lg:h-28 w-auto" 
-                style={{
-                  imageRendering: 'auto'
-                }}
-              />
+              <div 
+                className="h-9 md:h-10 lg:h-12 w-[120px] md:w-[133px] lg:w-[160px] flex items-center"
+                data-testid="logo-wrapper"
+              >
+                <img 
+                  src={logoUrl} 
+                  alt="ü ILLUMMAA logo" 
+                  data-testid="logo-image" 
+                  className="h-[18px] md:h-[20px] lg:h-[24px] w-auto" 
+                  style={{
+                    transform: 'scale(2)',
+                    transformOrigin: 'left center',
+                    imageRendering: 'auto'
+                  }}
+                />
+              </div>
             </div>
           </Link>
           
