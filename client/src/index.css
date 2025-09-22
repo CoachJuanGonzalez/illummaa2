@@ -93,6 +93,18 @@
 }
 
 @layer components {
+  /* ILLÜMMAA Typography Enhancement - Proper Umlaut Alignment */
+  .brand-text, 
+  h1, h2, h3, h4, h5, h6,
+  [data-testid*="heading"],
+  [data-testid*="footer"],
+  button, 
+  .nav-text {
+    font-feature-settings: "kern" 1, "liga" 1, "ccmp" 1, "mark" 1, "mkmk" 1;
+    text-rendering: optimizeLegibility;
+    font-variant-ligatures: common-ligatures;
+  }
+
   .logo-text {
     letter-spacing: 0.18em;
     font-family: 'Montserrat', sans-serif;

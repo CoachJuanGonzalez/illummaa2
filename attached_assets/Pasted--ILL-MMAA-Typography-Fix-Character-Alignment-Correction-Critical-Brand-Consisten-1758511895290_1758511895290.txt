@@ -1,0 +1,155 @@
+ ILLÜMMAA Typography Fix - Ü Character    
+   Alignment Correction
+
+  🎯 Critical Brand Consistency Issue      
+
+  The letter "Ü" in "ILLÜMMAA"
+  currently has misaligned dots 
+  (umlauts) that don't match
+  professional typography standards.       
+  The dots must be aligned with the        
+  vertical strokes of the U letter for     
+  proper brand presentation.
+
+  📸 Visual Reference
+
+  ❌ Current Problem
+  (2dotsnotaligned.png):
+  - Dots are centered over the U letter    
+  - Creates unbalanced, amateur
+  appearance
+  - Inconsistent with professional
+  typography
+
+  ✅ Required Result
+  (2dotsaligned.png):
+  - Dots aligned with vertical strokes     
+  of U
+  - Professional, balanced typography      
+  - Proper brand presentation
+
+  🚨 IMPORTANT EXCLUSIONS
+
+  ❌ DO NOT MODIFY:
+  - Header/Navigation Logo: Leave the      
+  logo image files unchanged
+  - Footer Logo: Leave the logo image      
+  files unchanged
+  - Logo Alt Text: Keep existing alt       
+  attributes for logo images
+
+  ✅ ONLY FIX:
+  - Text content in HTML/JSX components    
+  - Typography in CSS/styling
+  - Written instances of "ILLÜMMAA"        
+  that are NOT logo images
+
+  🔍 Scope: Find and Fix TEXT Instances    
+   Only
+
+  Search for TEXT containing "ILLÜMMAA"    
+   or "Ü" in:
+
+  1. Headers and Headings (<h1>, <h2>,     
+  <h3>, etc.) - TEXT ONLY
+  2. Paragraphs (<p> tags) - TEXT ONLY     
+
+  3. Navigation menus - TEXT ONLY (not     
+  logo images)
+  4. Footer text - TEXT ONLY (not logo     
+  images)
+  5. Button text - TEXT ONLY
+  6. Body content - Any written
+  "ILLÜMMAA" references
+  7. Meta tags and titles - TEXT ONLY      
+  8. Any other text content - NOT
+  logo/image files
+
+  🔧 Implementation Strategy
+
+  Option 1: CSS Solution (Recommended)     
+
+  Use CSS to control umlaut positioning    
+   for text elements:
+
+  /* Apply to text elements ONLY, not      
+  logo images */
+  .brand-text, h1, h2, h3, p, .nav-text    
+   {
+    font-feature-settings: "dlig" 1,       
+  "liga" 1;
+    /* Or use specific font with proper    
+   Ü alignment */
+  }
+
+  Option 2: Unicode Alternative
+
+  If CSS doesn't work, replace
+  problematic "Ü" in TEXT CONTENT ONLY:    
+  - Replace Ü with properly aligned        
+  Unicode in text elements
+  - Use U + combining diaeresis with       
+  proper positioning
+  - DO NOT modify logo image files
+
+  Option 3: Font Selection
+
+  Choose fonts that have proper Ü
+  alignment for TEXT RENDERING:
+  - Test current font family for proper    
+   umlaut positioning
+  - Switch to professional fonts with      
+  correct diacritic alignment
+  - DO NOT affect logo images
+
+  📍 Key Files to Check (TEXT CONTENT      
+  ONLY)
+
+  Primary Locations:
+
+  - Text content in
+  client/src/components/*.tsx files        
+  - HTML content with "ILLÜMMAA" text      
+  (not logo images)
+  - CSS content properties containing      
+  "Ü"
+  - Page titles, meta descriptions,        
+  headings
+  - Body text, navigation text, footer     
+  text
+
+  Search Commands:
+
+  # Find TEXT content containing
+  ILLÜMMAA or Ü (exclude image files)      
+  grep -r "ILLÜMMAA\|Ü"
+  --include="*.tsx" --include="*.ts"       
+  --include="*.html" --include="*.css"     
+  . | grep -v "logo\|image\|alt="
+
+  ⚠️ CRITICAL EXCLUSIONS REMINDER
+
+  NEVER MODIFY:
+  - Logo image files (PNG, SVG, etc.)      
+  - Logo alt attributes
+  - Logo imports or references
+  - Header logo display
+  - Footer logo display
+
+  ONLY MODIFY:
+  - Text typography and rendering
+  - Written/typed instances of
+  "ILLÜMMAA"
+  - CSS affecting text display
+
+  ✅ Expected Results
+
+  After implementation:
+  - ✅ All TEXT instances of "Ü" have      
+  dots aligned with vertical strokes       
+  - ✅ Logo images remain completely       
+  unchanged
+  - ✅ Consistent typography across        
+  text content
+  - ✅ Professional brand presentation     
+  in written content
