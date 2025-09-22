@@ -41,7 +41,7 @@ export default function Footer() {
                 className="h-16 w-auto mb-4" 
                 style={{
                   filter: 'invert(1)',
-                  imageRendering: 'high-quality'
+                  imageRendering: 'crisp-edges'
                 }}
                 data-testid="footer-company-name"
               />
