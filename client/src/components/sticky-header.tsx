@@ -66,7 +66,7 @@ export default function StickyHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border" data-testid="header-main">
-      <nav className="container mx-auto px-6 py-2">
+      <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
