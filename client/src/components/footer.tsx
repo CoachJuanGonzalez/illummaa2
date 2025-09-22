@@ -1,6 +1,6 @@
 import { Linkedin, Twitter, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { trackFooterNavClick, analytics } from "../lib/analytics";
-import logoUrl from "@assets/Latest ILLUMMAA_1758506338570.png";
+import logoUrl from "@assets/logo-logotype-w_1758576763046.png";
 
 export default function Footer() {
   const scrollToSection = (id: string, sectionName?: string) => {
@@ -38,9 +38,8 @@ export default function Footer() {
               <img 
                 src={logoUrl} 
                 alt="ü ILLUMMAA logo" 
-                className="h-32 w-auto" 
+                className="h-24 w-auto" 
                 style={{
-                  filter: 'invert(1)',
                   imageRendering: 'auto'
                 }}
                 data-testid="footer-company-name"
