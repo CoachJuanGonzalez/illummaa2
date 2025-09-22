@@ -33,15 +33,32 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="md:col-span-2" data-testid="section-company-info">
-            <div className="flex items-center space-x-3 mb-6" data-testid="footer-logo">
-              <div className="w-8 h-8">
-                <svg width="32" height="32" viewBox="0 0 64 64" aria-label="ILLÜMMAA emblem">
-                  <circle cx="22" cy="10" r="3" fill="#FFFFFF"/>
-                  <circle cx="42" cy="10" r="3" fill="#FFFFFF"/>
-                  <path d="M16 16v16c0 12 8 20 16 20s16-8 16-20V16" fill="none" stroke="#FFFFFF" strokeWidth="6" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="logo-text text-2xl text-white font-bold" data-testid="footer-company-name">ILLÜMMAA</span>
+            <div className="mb-6" data-testid="footer-logo">
+              <svg viewBox="0 0 240 48" aria-label="ILLÜMMAA logo" className="h-6 w-auto text-white">
+                <title>ILLÜMMAA Logo</title>
+                <g fill="currentColor">
+                  <rect x="12" y="12" width="6" height="24" rx="1" data-testid="footer-company-name"/>
+                  <rect x="26" y="12" width="6" height="24" rx="1"/>
+                  <rect x="26" y="30" width="16" height="6" rx="1"/>
+                  <rect x="50" y="12" width="6" height="24" rx="1"/>
+                  <rect x="50" y="30" width="16" height="6" rx="1"/>
+                  <circle cx="76" cy="6" r="2"/>
+                  <circle cx="84" cy="6" r="2"/>
+                  <rect x="74" y="12" width="6" height="18" rx="1"/>
+                  <rect x="84" y="12" width="6" height="18" rx="1"/>
+                  <rect x="74" y="30" width="16" height="6" rx="3"/>
+                  <rect x="98" y="12" width="6" height="24" rx="1"/>
+                  <rect x="118" y="12" width="6" height="24" rx="1"/>
+                  <polygon points="104,12 111,26 118,12 116,12 111,22 106,12"/>
+                  <rect x="132" y="12" width="6" height="24" rx="1"/>
+                  <rect x="152" y="12" width="6" height="24" rx="1"/>
+                  <polygon points="138,12 145,26 152,12 150,12 145,22 140,12"/>
+                  <polygon points="166,36 172,12 178,12 184,36 178,36 177,30 173,30 172,36"/>
+                  <rect x="174" y="24" width="6" height="4" rx="1"/>
+                  <polygon points="192,36 198,12 204,12 210,36 204,36 203,30 199,30 198,36"/>
+                  <rect x="200" y="24" width="6" height="4" rx="1"/>
+                </g>
+              </svg>
             </div>
             <p className="text-white/80 text-lg mb-6 max-w-md" data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
