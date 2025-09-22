@@ -40,7 +40,7 @@ export default function Footer() {
                 alt="ü ILLÜMMAA logo" 
                 className="h-20 w-auto" 
                 style={{
-                  filter: 'brightness(0) saturate(100%) invert(100%)'
+                  filter: 'invert(1)'
                 }}
                 data-testid="footer-company-name"
               />
