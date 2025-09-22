@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackHeaderNavClick, analytics } from "../lib/analytics";
-// Logo now using inline SVG for maximum quality and scaling
+import logoUrl from "@assets/Latest ILLUMMAA_1758550925280.png";
 
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -75,59 +75,17 @@ export default function StickyHeader() {
                 className="h-9 md:h-10 lg:h-12 w-[120px] md:w-[133px] lg:w-[160px] flex items-center"
                 data-testid="logo-wrapper"
               >
-                <svg 
-                  viewBox="0 0 200 60" 
-                  className="h-[18px] md:h-[20px] lg:h-[24px] w-auto"
+                <img 
+                  src={logoUrl} 
+                  alt="ü ILLUMMAA logo" 
+                  data-testid="logo-image" 
+                  className="h-[18px] md:h-[20px] lg:h-[24px] w-auto" 
                   style={{
                     transform: 'scale(2)',
-                    transformOrigin: 'left center'
+                    transformOrigin: 'left center',
+                    imageRendering: 'auto'
                   }}
-                  preserveAspectRatio="xMinYMid meet"
-                  role="img"
-                  aria-label="ü ILLUMMAA logo"
-                  data-testid="logo-svg"
-                >
-                  <g fill="currentColor">
-                    {/* ü character standalone */}
-                    <g>
-                      {/* dots above u */}
-                      <circle cx="12" cy="12" r="2"/>
-                      <circle cx="22" cy="12" r="2"/>
-                      {/* u letter path */}
-                      <path d="M8 22 L8 42 Q8 48 14 48 L20 48 Q26 48 26 42 L26 22 L22 22 L22 42 Q22 44 20 44 L14 44 Q12 44 12 42 L12 22 Z"/>
-                    </g>
-                    
-                    {/* I */}
-                    <path d="M40 22 L40 48 L44 48 L44 22 Z"/>
-                    
-                    {/* L */}
-                    <path d="M52 22 L52 48 L66 48 L66 44 L56 44 L56 22 Z"/>
-                    
-                    {/* L */}
-                    <path d="M74 22 L74 48 L88 48 L88 44 L78 44 L78 22 Z"/>
-                    
-                    {/* Ü */}
-                    <g>
-                      {/* dots above U */}
-                      <circle cx="98" cy="12" r="2"/>
-                      <circle cx="108" cy="12" r="2"/>
-                      {/* U letter path */}
-                      <path d="M94 22 L94 42 Q94 48 100 48 L106 48 Q112 48 112 42 L112 22 L108 22 L108 42 Q108 44 106 44 L100 44 Q98 44 98 42 L98 22 Z"/>
-                    </g>
-                    
-                    {/* M */}
-                    <path d="M120 22 L120 48 L124 48 L124 32 L127 42 L129 42 L132 32 L132 48 L136 48 L136 22 L130 22 L128 36 L126 22 Z"/>
-                    
-                    {/* M */}
-                    <path d="M144 22 L144 48 L148 48 L148 32 L151 42 L153 42 L156 32 L156 48 L160 48 L160 22 L154 22 L152 36 L150 22 Z"/>
-                    
-                    {/* A */}
-                    <path d="M168 48 L164 48 L165 44 L171 44 L172 48 L176 48 L171 22 L165 22 Z M166 38 L170 38 L168 30 Z"/>
-                    
-                    {/* A */}
-                    <path d="M184 48 L180 48 L181 44 L187 44 L188 48 L192 48 L187 22 L181 22 Z M182 38 L186 38 L184 30 Z"/>
-                  </g>
-                </svg>
+                />
               </div>
             </div>
           </Link>
