@@ -33,12 +33,12 @@ export default function Footer() {
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div className="md:col-span-2 lg:col-span-2" data-testid="section-company-info">
-            <div className="mb-8" data-testid="footer-logo">
+          <div className="md:col-span-2 lg:col-span-2 flex flex-col items-center text-center" data-testid="section-company-info">
+            <div className="mb-4" data-testid="footer-logo">
               <img 
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
-                className="h-64 w-auto mb-6" 
+                className="h-64 w-auto" 
                 style={{
                   filter: 'invert(1)',
                   imageRendering: 'auto'
@@ -46,7 +46,7 @@ export default function Footer() {
                 data-testid="footer-company-name"
               />
             </div>
-            <p className="text-white/70 text-base mb-8 max-w-md leading-relaxed" data-testid="footer-company-description">
+            <p className="text-white/70 text-base mb-8 max-w-lg leading-relaxed" data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
             <div className="flex space-x-6" data-testid="social-links">
