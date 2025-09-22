@@ -38,7 +38,7 @@ export default function HeroSection() {
               <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000', textShadow: '2px 2px 6px rgba(255,255,255,0.8), 1px 1px 3px rgba(0,0,0,0.3)'}}>
                 The Future of Housing Is Here.
               </h1>
-              <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', textShadow: '2px 2px 4px rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.25)', fontSize: '120%'}}>
+              <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', textShadow: '2px 2px 4px rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.25)'}}>
                 Your Home, Your Lifestyle
               </p>
             </div>
