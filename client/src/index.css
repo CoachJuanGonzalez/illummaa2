@@ -1976,9 +1976,25 @@ button > .icon,
 
 /* Mobile-only: Center hero content elements (excluding logo and hamburger menu) */
 @media (max-width: 767px) {
-  /* Center hero text content */
+  /* Center hero text content container */
   .hero-text-overlay {
     text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    width: fit-content !important;
+    margin: 0 auto !important;
+    max-width: 90% !important;
+  }
+  
+  /* Center the semi-transparent background overlay */
+  .hero-text-overlay > div:first-child {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
   }
   
   /* Center hero buttons */
@@ -1987,10 +2003,22 @@ button > .icon,
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 100% !important;
+    gap: 16px !important;
+  }
+  
+  /* Center individual buttons */
+  .button-group-hero-optimized > * {
+    width: fit-content !important;
+    margin: 0 auto !important;
+    max-width: 90% !important;
   }
   
   /* Center the hero content container */
   .hero-content-width {
     text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
   }
 }
