@@ -1974,23 +1974,20 @@ button > .icon,
   }
 }
 
-/* Mobile-only: Center hero content elements (excluding logo and hamburger menu) */
+/* Mobile-only: Center overlay box and buttons only */
 @media (max-width: 767px) {
-  /* Center hero text content */
+  /* Center the overlay box */
   .hero-text-overlay {
+    margin-left: auto !important;
+    margin-right: auto !important;
     text-align: center !important;
   }
   
-  /* Center hero buttons */
+  /* Center the buttons */
   .button-group-hero-optimized {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-  }
-  
-  /* Center the hero content container */
-  .hero-content-width {
-    text-align: center !important;
   }
 }
