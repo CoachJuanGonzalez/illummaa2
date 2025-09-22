@@ -140,7 +140,7 @@
   /* Mobile-specific font size reduction for hero subtitle */
   @media (max-width: 767px) {
     [data-testid="text-hero-subtitle"] {
-      font-size: 1.99em !important;
+      font-size: 1.98em !important;
     }
   }
   
