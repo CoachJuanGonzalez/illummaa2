@@ -70,29 +70,13 @@ export default function StickyHeader() {
           {/* Logo */}
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
             <div className="hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
-              <svg viewBox="0 0 240 48" aria-label="ILLÜMMAA logo" data-testid="logo-svg" className="h-6 w-auto text-[#2C5530]">
-                <title>ILLÜMMAA Logo</title>
-                <g fill="currentColor">
-                  <rect x="12" y="12" width="6" height="24" rx="1" data-testid="logo-text"/>
-                  <rect x="26" y="12" width="6" height="24" rx="1"/>
-                  <rect x="26" y="30" width="16" height="6" rx="1"/>
-                  <rect x="50" y="12" width="6" height="24" rx="1"/>
-                  <rect x="50" y="30" width="16" height="6" rx="1"/>
-                  <circle cx="76" cy="6" r="2"/>
-                  <circle cx="84" cy="6" r="2"/>
-                  <rect x="74" y="12" width="6" height="18" rx="1"/>
-                  <rect x="84" y="12" width="6" height="18" rx="1"/>
-                  <rect x="74" y="30" width="16" height="6" rx="3"/>
-                  <rect x="98" y="12" width="6" height="24" rx="1"/>
-                  <rect x="118" y="12" width="6" height="24" rx="1"/>
-                  <polygon points="104,12 111,26 118,12 116,12 111,22 106,12"/>
-                  <rect x="132" y="12" width="6" height="24" rx="1"/>
-                  <rect x="152" y="12" width="6" height="24" rx="1"/>
-                  <polygon points="138,12 145,26 152,12 150,12 145,22 140,12"/>
-                  <polygon points="166,36 172,12 178,12 184,36 178,36 177,30 173,30 172,36"/>
-                  <rect x="174" y="24" width="6" height="4" rx="1"/>
-                  <polygon points="192,36 198,12 204,12 210,36 204,36 203,30 199,30 198,36"/>
-                  <rect x="200" y="24" width="6" height="4" rx="1"/>
+              <svg viewBox="0 0 400 60" aria-label="ü ILLÜMMAA logo" data-testid="logo-svg" className="h-6 w-auto text-[#2C5530]">
+                <title>ü ILLÜMMAA Logo</title>
+                <g fill="currentColor" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="600">
+                  <text x="20" y="42" fontSize="28" data-testid="logo-text">ü</text>
+                  <text x="60" y="42" fontSize="28" letterSpacing="1px">ILL</text>
+                  <text x="120" y="42" fontSize="28">Ü</text>
+                  <text x="138" y="42" fontSize="28" letterSpacing="1px">MMÄA</text>
                 </g>
               </svg>
             </div>
