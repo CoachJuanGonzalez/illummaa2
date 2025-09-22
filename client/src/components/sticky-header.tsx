@@ -74,12 +74,8 @@ export default function StickyHeader() {
               <img 
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
-                data-testid="logo-svg" 
-                className="h-6 w-auto" 
-                style={{
-                  filter: 'brightness(0) saturate(100%) invert(20%) sepia(41%) saturate(632%) hue-rotate(109deg) brightness(90%) contrast(102%)'
-                }}
-                data-testid="logo-text"
+                data-testid="logo-image" 
+                className="h-10 w-auto" 
               />
             </div>
           </Link>
