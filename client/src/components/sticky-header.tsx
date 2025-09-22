@@ -66,7 +66,7 @@ export default function StickyHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border" data-testid="header-main">
-      <nav className="container mx-auto px-6 py-3 md:py-4">
+      <nav className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="cursor-pointer" data-testid="logo-link" onClick={handleLogoClick}>
@@ -75,7 +75,7 @@ export default function StickyHeader() {
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
                 data-testid="logo-image" 
-                className="h-8 sm:h-9 md:h-10 lg:h-12 xl:h-14 w-auto" 
+                className="h-32 w-auto" 
               />
             </div>
           </Link>
