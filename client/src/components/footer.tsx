@@ -1,5 +1,6 @@
 import { Linkedin, Twitter, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { trackFooterNavClick, analytics } from "../lib/analytics";
+import logoUrl from "@assets/Latest ILLUMMAA_1758506338570.png";
 
 export default function Footer() {
   const scrollToSection = (id: string, sectionName?: string) => {
@@ -34,28 +35,15 @@ export default function Footer() {
           {/* Company Info */}
           <div className="md:col-span-2" data-testid="section-company-info">
             <div className="mb-6" data-testid="footer-logo">
-              <svg viewBox="0 0 400 120" className="h-6 w-auto text-white" aria-label="ü ILLÜMMAA logo">
-                <title>ü ILLÜMMAA Logo</title>
-                <g fill="currentColor">
-                  <g data-testid="footer-company-name">
-                    <circle cx="24" cy="24" r="4"/>
-                    <circle cx="44" cy="24" r="4"/>
-                    <path d="M16 44 L16 84 Q16 96 28 96 L40 96 Q52 96 52 84 L52 44 L44 44 L44 84 Q44 88 40 88 L28 88 Q24 88 24 84 L24 44 Z"/>
-                  </g>
-                  <path d="M80 44 L80 96 L88 96 L88 44 Z"/>
-                  <path d="M104 44 L104 96 L132 96 L132 88 L112 88 L112 44 Z"/>
-                  <path d="M148 44 L148 96 L176 96 L176 88 L156 88 L156 44 Z"/>
-                  <g>
-                    <circle cx="196" cy="24" r="4"/>
-                    <circle cx="216" cy="24" r="4"/>
-                    <path d="M188 44 L188 84 Q188 96 200 96 L212 96 Q224 96 224 84 L224 44 L216 44 L216 84 Q216 88 212 88 L200 88 Q196 88 196 84 L196 44 Z"/>
-                  </g>
-                  <path d="M240 44 L240 96 L248 96 L248 64 L254 84 L258 84 L264 64 L264 96 L272 96 L272 44 L260 44 L256 72 L252 44 Z"/>
-                  <path d="M288 44 L288 96 L296 96 L296 64 L302 84 L306 84 L312 64 L312 96 L320 96 L320 44 L308 44 L304 72 L300 44 Z"/>
-                  <path d="M336 96 L328 96 L330 88 L342 88 L344 96 L352 96 L342 44 L330 44 Z M332 76 L340 76 L336 60 Z"/>
-                  <path d="M368 96 L360 96 L362 88 L374 88 L376 96 L384 96 L374 44 L362 44 Z M364 76 L372 76 L368 60 Z"/>
-                </g>
-              </svg>
+              <img 
+                src={logoUrl} 
+                alt="ü ILLÜMMAA logo" 
+                className="h-6 w-auto" 
+                style={{
+                  filter: 'brightness(0) saturate(100%) invert(100%)'
+                }}
+                data-testid="footer-company-name"
+              />
             </div>
             <p className="text-white/80 text-lg mb-6 max-w-md" data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
