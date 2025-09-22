@@ -1,12 +1,14 @@
 import { Rocket, TrendingUp, Leaf } from "lucide-react";
+import BrandWord from "@/components/brand-word";
 
 export default function WhyIllummaa() {
   return (
     <section id="why" className="py-20 bg-muted" data-testid="section-why-illummaa">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-why-illummaa">
-            Why ILLÜMMAA
+          <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6 flex items-center justify-center gap-2" data-testid="heading-why-illummaa">
+            <span>Why</span>
+            <BrandWord size="4xl" />
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-why-subtitle">
             Industrial precision meets sustainable innovation for the next generation of Canadian housing.
