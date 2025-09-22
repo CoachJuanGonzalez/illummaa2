@@ -136,6 +136,13 @@
     text-shadow: 0 2px 8px rgba(26, 54, 93, 0.15);
     position: relative;
   }
+
+  /* Mobile-specific font size reduction for hero subtitle */
+  @media (max-width: 767px) {
+    [data-testid="text-hero-subtitle"] {
+      font-size: 1.99em !important;
+    }
+  }
   
   .hero-subtitle-enhanced {
     text-shadow: 0 1px 4px rgba(45, 55, 72, 0.1);
