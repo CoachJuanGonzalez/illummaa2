@@ -1976,29 +1976,25 @@ button > .icon,
 
 /* Mobile-only: Center overlay box and buttons only */
 @media (max-width: 639px) {
-  /* Center the overlay card itself */
-  .hero-text-overlay {
-    max-width: 680px;
-    width: 100%;
+  /* CENTER THE PARENT CONTAINER FIRST - This was the missing piece! */
+  .hero-content-width {
     margin-left: auto !important;
     margin-right: auto !important;
-    align-self: center !important;
-    text-align: center;
+    text-align: center !important;
+  }
+  
+  /* Center the overlay card itself */
+  .hero-text-overlay {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
   }
   
   /* Center the button group container */
   .button-group-hero-optimized {
-    width: 100%;
-    max-width: 500px;
     margin-left: auto !important;
     margin-right: auto !important;
-    align-self: center !important;
     justify-content: center !important;
     align-items: center !important;
-  }
-  
-  /* Make buttons fill line for clean stack */
-  .button-group-hero-optimized > * { 
-    width: 100%; 
   }
 }
