@@ -38,10 +38,10 @@ export default function Footer() {
               <img 
                 src={logoUrl} 
                 alt="ü ILLÜMMAA logo" 
-                className="h-16 w-auto mb-4" 
+                className="h-64 w-auto mb-6" 
                 style={{
                   filter: 'invert(1)',
-                  imageRendering: 'crisp-edges'
+                  imageRendering: 'auto'
                 }}
                 data-testid="footer-company-name"
               />
