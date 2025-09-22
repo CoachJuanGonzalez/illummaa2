@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackHeaderNavClick, analytics } from "../lib/analytics";
-import logoUrl from "@assets/Latest ILLUMMAA_1758550925280.png";
+import logoUrl from "@assets/logo-logotype_1758569347527.png";
 
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
