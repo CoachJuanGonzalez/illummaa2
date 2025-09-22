@@ -79,10 +79,8 @@ export default function StickyHeader() {
                   src={logoUrl} 
                   alt="ü ILLUMMAA logo" 
                   data-testid="logo-image" 
-                  className="h-[18px] md:h-[20px] lg:h-[24px] w-auto" 
+                  className="h-[36px] md:h-[40px] lg:h-[48px] w-auto" 
                   style={{
-                    transform: 'scale(2)',
-                    transformOrigin: 'left center',
                     imageRendering: 'auto'
                   }}
                 />
