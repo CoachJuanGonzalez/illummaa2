@@ -1967,3 +1967,10 @@ button > .icon,
 .bg-white\/20 {
   background-color: rgb(255 255 255 / 0.4) !important;
 }
+
+/* Desktop-only override for bg-white/20 */
+@media (min-width: 1024px) {
+  .bg-white\/20 {
+    background-color: rgb(255 255 255 / 0.6) !important;
+  }
+}
