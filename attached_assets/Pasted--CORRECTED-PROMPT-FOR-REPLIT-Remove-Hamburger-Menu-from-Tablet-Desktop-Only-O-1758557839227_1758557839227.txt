@@ -1,0 +1,137 @@
+---
+  CORRECTED PROMPT FOR REPLIT: Remove Hamburger Menu from        
+  Tablet/Desktop Only
+
+  OBJECTIVE: Remove the hamburger menu from tablet and
+  desktop devices while keeping it functional on mobile
+  devices (phones). Show all navigation items directly on        
+  larger screens.
+
+  CURRENT ISSUE: The hamburger menu appears on all devices       
+  including tablet and desktop where there's sufficient space    
+   to display all navigation links.
+
+  REQUIRED SOLUTION:
+  - Mobile phones (≤640px): Keep hamburger menu functionality    
+
+  - Tablet & Desktop (≥641px): Remove hamburger menu, show       
+  all nav items directly
+
+  IMPLEMENTATION:
+
+  1. Update Navigation Visibility 
+  (client/src/components/sticky-header.tsx)
+
+  CHANGE the desktop navigation classes FROM:
+  <div className="hidden md:flex items-center space-x-8"
+  data-testid="nav-desktop">
+
+  TO:
+  <div className="hidden sm:flex items-center space-x-4
+  lg:space-x-8" data-testid="nav-desktop">
+
+  2. Update Mobile Menu Button Visibility
+
+  CHANGE the mobile menu button classes FROM:
+  <button
+    className="md:hidden text-foreground min-h-[44px]
+  min-w-[44px] flex items-center justify-center rounded
+  focus:outline-none focus:ring-2 focus:ring-primary
+  focus:ring-offset-2"
+
+  TO:
+  <button
+    className="sm:hidden text-foreground min-h-[44px]
+  min-w-[44px] flex items-center justify-center rounded
+  focus:outline-none focus:ring-2 focus:ring-primary
+  focus:ring-offset-2"
+
+  3. Update Mobile Menu Container
+
+  CHANGE the mobile menu container FROM:
+  {mobileMenuOpen && (
+    <div className="md:hidden mt-4 pb-4 border-t
+  border-border" data-testid="nav-mobile">
+
+  TO:
+  {mobileMenuOpen && (
+    <div className="sm:hidden mt-4 pb-4 border-t
+  border-border" data-testid="nav-mobile">
+
+  4. Optimize Navigation for Tablet Screens
+
+  ADD responsive CSS (client/src/index.css):
+  /* Tablet navigation optimization */
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .nav-desktop button {
+      font-size: 14px;
+      padding: 8px 12px;
+      white-space: nowrap;
+    }
+  }
+
+  /* Ensure all nav items fit on tablet */
+  @media (min-width: 640px) and (max-width: 768px) {
+    .nav-desktop {
+      gap: 8px;
+    }
+
+    .nav-desktop button {
+      font-size: 13px;
+      padding: 8px 10px;
+    }
+  }
+
+  BREAKPOINT BEHAVIOR:
+
+  | Device Type  | Screen Size    | Navigation Display
+   |
+  |--------------|----------------|--------------------------    
+  -|
+  | Mobile Phone | ≤640px         | 🍔 Hamburger menu
+   |
+  | Tablet       | 641px - 1023px | 📱 All nav items visible     
+   |
+  | Desktop      | ≥1024px        | 🖥️ All nav items visible     
+  |
+
+  KEY CHANGES SUMMARY:
+
+  - Change md:hidden to sm:hidden for hamburger menu button      
+  - Change hidden md:flex to hidden sm:flex for desktop
+  navigation
+  - Change md:hidden to sm:hidden for mobile menu container      
+  - Add tablet-specific CSS for optimal spacing
+
+  RESULT:
+
+  ✅ Mobile phones: Keep hamburger menu for space
+  efficiency✅ Tablets: Show all navigation items directly       
+  (no hamburger)✅ Desktop: Show all navigation items
+  directly (no hamburger)✅ Better UX: Users on larger
+  screens get immediate access to all navigation
+
+  This provides the best of both worlds - space efficiency on    
+   phones and full navigation visibility on larger screens!      
+
+  ---
+
+● ✅ CORRECTED HAMBURGER MENU PROMPT READY
+
+  Perfect! The updated prompt above addresses your specific      
+  requirement:
+
+  🎯 Clear Requirement:
+
+  - Mobile phones (≤640px): KEEP hamburger menu 🍔
+  - Tablet & Desktop (≥641px): REMOVE hamburger menu, show       
+  all nav items directly
+
+  🔧 Simple Solution:
+
+  Just change the Tailwind breakpoints from md: to sm::
+  - md:hidden → sm:hidden (hamburger button)
+  - hidden md:flex → hidden sm:flex (desktop nav)
+
+  This gives you optimal UX - space-efficient mobile
+  navigation with full visibility on larger screens! 🚀
