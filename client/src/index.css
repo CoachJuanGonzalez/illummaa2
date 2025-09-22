@@ -38,7 +38,7 @@
   --sidebar-ring: hsl(124, 28%, 25%);
   --radius: 1rem;
   
-  /* ILLÜMMAA Specific Colors */
+  /* ILLUMMAA Specific Colors */
   --illummaa-primary: hsl(124, 28%, 25%);
   --illummaa-eco-green: hsl(142, 69%, 58%);
   --illummaa-sky-blue: hsl(196, 100%, 70%);
@@ -428,7 +428,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  /* Focus rings with ILLÜMMAA branding */
+  /* Focus rings with ILLUMMAA branding */
   .focus-ring:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.3);
@@ -444,7 +444,7 @@
     to { transform: rotate(360deg); }
   }
 
-  /* STEP 3: NEW ILLÜMMAA ASSESSMENT FORM ANIMATIONS - per attached instructions */
+  /* STEP 3: NEW ILLUMMAA ASSESSMENT FORM ANIMATIONS - per attached instructions */
   @keyframes fadeIn {
     from { 
       opacity: 0; 

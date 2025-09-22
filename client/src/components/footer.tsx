@@ -37,7 +37,7 @@ export default function Footer() {
             <div className="mb-4" data-testid="footer-logo">
               <img 
                 src={logoUrl} 
-                alt="ü ILLÜMMAA logo" 
+                alt="ü ILLUMMAA logo" 
                 className="h-32 w-auto" 
                 style={{
                   filter: 'invert(1)',
@@ -77,11 +77,11 @@ export default function Footer() {
               </li>
               <li>
                 <button 
-                  onClick={() => scrollToSection("why", "Why ILLÜMMAA")} 
+                  onClick={() => scrollToSection("why", "Why ILLUMMAA")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
                   data-testid="link-footer-why"
                 >
-                  Why ILLÜMMAA
+                  Why ILLUMMAA
                 </button>
               </li>
               <li>
@@ -136,7 +136,7 @@ export default function Footer() {
         
         <div className="border-t border-white/20 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" data-testid="footer-bottom">
           <p className="text-white/60 text-sm mb-4 md:mb-0" data-testid="copyright">
-            &copy; 2024 ILLÜMMAA. All rights reserved.
+            &copy; 2024 ILLUMMAA. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>

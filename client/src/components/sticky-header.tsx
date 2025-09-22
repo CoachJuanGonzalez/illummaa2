@@ -47,7 +47,7 @@ export default function StickyHeader() {
       category: 'Navigation',
       section_name: 'Logo',
       navigation_type: 'header',
-      label: 'ILLÜMMAA Logo',
+      label: 'ILLUMMAA Logo',
       custom_parameters: {
         current_location: location,
         action_type: location === "/" || location === "" ? 'scroll_to_top' : 'navigate_home'
@@ -73,7 +73,7 @@ export default function StickyHeader() {
             <div className="hover:opacity-80 hover:scale-105 transition-all duration-200" data-testid="logo-container">
               <img 
                 src={logoUrl} 
-                alt="ü ILLÜMMAA logo" 
+                alt="ü ILLUMMAA logo" 
                 data-testid="logo-image" 
                 className="h-40 w-auto" 
                 style={{

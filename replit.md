@@ -1,8 +1,8 @@
-# ILLÜMMAA Modular Homes Website
+# ILLUMMAA Modular Homes Website
 
 ## Overview
 
-ILLÜMMAA is a revenue-generating B2B lead generation website for modular homes targeting Canadian developers and builders. The application is designed to qualify prospects, nurture leads, and drive business growth through an assessment-based funnel system. The primary goal is to generate 15+ qualified Canadian developer inquiries per month with an 80% lead quality rate, focusing on developers managing 50-500+ units with $5M+ projects.
+ILLUMMAA is a revenue-generating B2B lead generation website for modular homes targeting Canadian developers and builders. The application is designed to qualify prospects, nurture leads, and drive business growth through an assessment-based funnel system. The primary goal is to generate 15+ qualified Canadian developer inquiries per month with an 80% lead quality rate, focusing on developers managing 50-500+ units with $5M+ projects.
 
 ## User Preferences
 
@@ -50,7 +50,7 @@ Preferred communication style: Simple, everyday language.
 - **Design tokens** with CSS custom properties for consistent theming
 - **Responsive design** with mobile-first approach
 - **shadcn/ui component library** for accessible, customizable UI components
-- **Brand-specific color palette** (ILLÜMMAA primary green, eco-green, sky-blue, sand-beige)
+- **Brand-specific color palette** (ILLUMMAA primary green, eco-green, sky-blue, sand-beige)
 - **Tesla industrial confidence × Apple sophistication** design aesthetic
 
 ## External Dependencies
@@ -75,12 +75,12 @@ Preferred communication style: Simple, everyday language.
 - **Assessment result delivery** and follow-up communications
 - **Developer-specific messaging** based on qualification tier
 
-### STEP 7: Updated GHL Workflow Triggers (ILLÜMMAA-Only Routing)
-- **Complete Remax elimination** - All residential leads now stay with ILLÜMMAA teams
-- **Unified ILLÜMMAA pathways** - No external referrals until after ILLÜMMAA consultation
+### STEP 7: Updated GHL Workflow Triggers (ILLUMMAA-Only Routing)
+- **Complete Remax elimination** - All residential leads now stay with ILLUMMAA teams
+- **Unified ILLUMMAA pathways** - No external referrals until after ILLUMMAA consultation
 
 #### Tier 0 - Explorer Leads (Researching/Education Phase)
-- **Assign to:** ILLÜMMAA Education Team
+- **Assign to:** ILLUMMAA Education Team
 - **Workflow:** Educational nurturing sequence
 - **Response SLA:** 48 hours
 - **Focus:** Learning resources, not sales
@@ -88,7 +88,7 @@ Preferred communication style: Simple, everyday language.
 - **Trigger conditions:** readiness="researching" OR projectUnitCount=0
 
 #### Tier 1 - Starter Leads (Under 50 Units)
-- **Assign to:** ILLÜMMAA Residential Specialist
+- **Assign to:** ILLUMMAA Residential Specialist
 - **Workflow:** Residential project development
 - **Response SLA:** 24 hours
 - **Focus:** Project planning and development
@@ -96,7 +96,7 @@ Preferred communication style: Simple, everyday language.
 - **Trigger conditions:** projectUnitCount < 50 AND readiness != "researching"
 
 #### Tier 2+ - Partnership Leads (50+ Units)
-- **Assign to:** ILLÜMMAA Partnership Team
+- **Assign to:** ILLUMMAA Partnership Team
 - **Workflow:** Commercial partnership development
 - **Response SLA:** 12 hours (Pioneer), 6 hours (Preferred), 2 hours (Elite)
 - **Focus:** B2B partnership and large-scale project development

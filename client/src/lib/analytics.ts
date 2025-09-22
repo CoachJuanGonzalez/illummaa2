@@ -1,4 +1,4 @@
-// Enhanced Google Analytics 4 tracking for ILLÜMMAA
+// Enhanced Google Analytics 4 tracking for ILLUMMAA
 // Comprehensive tracking for navigation, assessment forms, and business events
 
 // GA4 Event Types
