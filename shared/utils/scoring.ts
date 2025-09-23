@@ -96,13 +96,12 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
   const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
 
-  // 1. UNIT COUNT (30 points max)
-  if (units >= 1000) { unitScore = 30; score += 30; }
-  else if (units >= 500) { unitScore = 25; score += 25; }
-  else if (units >= 200) { unitScore = 20; score += 20; }
-  else if (units >= 100) { unitScore = 15; score += 15; }
-  else if (units >= 50) { unitScore = 8; score += 8; }
-  else if (units > 0) { unitScore = 3; score += 3; }
+  // 1. UNIT COUNT (30 points max) - Aligned with Elite tier maximum
+  if (units >= 300) { unitScore = 30; score += 30; }      // Elite tier (300+ units) gets maximum points
+  else if (units >= 150) { unitScore = 25; score += 25; } // Preferred tier (150-299 units)
+  else if (units >= 50) { unitScore = 15; score += 15; }  // Pioneer tier (50-149 units)  
+  else if (units >= 3) { unitScore = 8; score += 8; }     // Starter tier (3-49 units)
+  else if (units > 0) { unitScore = 3; score += 3; }      // Individual homes (1-2 units)
 
   // 2. GOVERNMENT PROGRAMS (30 points max)
   switch (govPrograms) {
