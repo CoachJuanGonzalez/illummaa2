@@ -394,6 +394,27 @@ const IllummaaAssessmentForm = () => {
     return unitMap[sanitizedInput] || '0';
   };
 
+  // SECURITY-COMPLIANT: Developer type mapping with validation (matches backend)
+  const mapDeveloperType = (developerType: string): string => {
+    // Validate input to prevent injection
+    const sanitizedInput = sanitizeInput(developerType);
+    const developerMap: { [key: string]: string } = {
+      'Individual/Family': "I don't know yet",
+      'Individual': "I don't know yet",
+      'Family': "I don't know yet",
+      'Commercial Developer': 'Commercial Developer (Large Projects)',
+      'Government/Municipal': 'Government/Municipal Developer',
+      'Non-Profit Organization': 'Non-Profit Housing Developer',
+      'Private Developer': 'Private Developer (Medium Projects)',
+      'Commercial Developer (Large Projects)': 'Commercial Developer (Large Projects)',
+      'Government/Municipal Developer': 'Government/Municipal Developer',
+      'Non-Profit Housing Developer': 'Non-Profit Housing Developer',
+      'Private Developer (Medium Projects)': 'Private Developer (Medium Projects)',
+      "I don't know yet": "I don't know yet"
+    };
+    return developerMap[sanitizedInput] || sanitizedInput;
+  };
+
   // Use shared scoring utility for 100% frontend-backend consistency
   const calculatePriorityScoreWith = (fd: typeof formData) => {
     // Map frontend form data to shared utility format
@@ -404,7 +425,7 @@ const IllummaaAssessmentForm = () => {
       budgetRange: fd.budget || fd.budgetRange || fd.projectBudgetRange || '',
       decisionTimeline: fd.timeline || fd.decisionTimeline || fd.deliveryTimeline || '',
       constructionProvince: fd.province || fd.constructionProvince || '',
-      developerType: fd.developerType || '',
+      developerType: mapDeveloperType(fd.developerType || ''),
       governmentPrograms: fd.governmentPrograms || ''
     };
 
