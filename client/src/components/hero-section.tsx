@@ -11,7 +11,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative hero-layout-proportions hero-cross-device-beauty" data-testid="section-hero">
+    <section className="relative hero-layout-proportions hero-cross-device-beauty pt-20 md:pt-0" data-testid="section-hero">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
