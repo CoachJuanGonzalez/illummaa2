@@ -1,0 +1,95 @@
+REPLIT PROMPT: OPTIMIZE CUSTOMER TIER DETERMINATION LOGIC      
+  FOR BETTER READABILITY
+
+  TASK OVERVIEW
+
+  Improve the readability of the customer tier determination     
+  function by using cleaner, more explicit range conditions.     
+  This is a cosmetic enhancement - the current logic is
+  functionally correct but can be made more maintainable.        
+
+  SINGLE FILE MODIFICATION REQUIRED:
+
+  FILE: shared/utils/scoring.ts
+
+  LOCATE THE FUNCTION (around lines 273-291):
+
+  export function determineCustomerTier(units: number,
+  readiness: string): string {
+    // Explorer tier for research phase or zero units
+    if (readiness === 'researching' || units === 0) {
+      return 'tier_0_explorer';
+    }
+
+    // Tier calculation based on units
+    if (units === 1 || units === 2) {
+      return 'tier_1_starter';
+    } else if (units > 2 && units <= 49) {
+      return 'tier_1_starter';
+    } else if (units <= 149) {
+      return 'tier_2_pioneer';
+    } else if (units <= 299) {
+      return 'tier_3_preferred';
+    } else {
+      return 'tier_4_elite';
+    }
+  }
+
+  REPLACE WITH (CLEANER VERSION):
+
+  export function determineCustomerTier(units: number,
+  readiness: string): string {
+    // Explorer tier for research phase or zero units
+    if (readiness === 'researching' || units === 0) {
+      return 'tier_0_explorer';
+    }
+
+    // Tier calculation based on units (cleaner ranges)
+    if (units >= 1 && units <= 49) {
+      return 'tier_1_starter';
+    } else if (units >= 50 && units <= 149) {
+      return 'tier_2_pioneer';
+    } else if (units >= 150 && units <= 299) {
+      return 'tier_3_preferred';
+    } else {
+      return 'tier_4_elite';
+    }
+  }
+
+  IMPROVEMENTS:
+
+  - ✅ Consolidated Starter logic - Single condition instead     
+  of two separate checks
+  - ✅ Explicit range boundaries - Each tier has clear
+  min/max values
+  - ✅ Better maintainability - Easier to verify ranges at a     
+  glance
+  - ✅ Same functionality - Zero behavioral changes
+
+  BUSINESS LOGIC VERIFICATION:
+
+  | Units   | Tier      | Range Check
+          |
+  |---------|-----------|------------------------------------    
+  --------|
+  | 0       | Explorer  | readiness === 'researching' OR
+  units === 0 |
+  | 1-49    | Starter   | units >= 1 && units <= 49
+          |
+  | 50-149  | Pioneer   | units >= 50 && units <= 149
+          |
+  | 150-299 | Preferred | units >= 150 && units <= 299
+          |
+  | 300+    | Elite     | else clause
+          |
+
+  TESTING REQUIREMENTS:
+
+  1. Verify all tier assignments remain identical
+  2. Test edge cases: 0, 1, 49, 50, 149, 150, 299, 300 units     
+  3. Confirm Explorer logic still works for readiness ===        
+  'researching'
+  4. No TypeScript compilation errors
+
+  IMPORTANT: This is purely cosmetic - all functionality and     
+  business logic remain exactly the same.

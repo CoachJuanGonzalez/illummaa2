@@ -276,14 +276,12 @@ export function determineCustomerTier(units: number, readiness: string): string 
     return 'tier_0_explorer';
   }
 
-  // Tier calculation based on units
-  if (units === 1 || units === 2) {
+  // Tier calculation based on units (cleaner ranges)
+  if (units >= 1 && units <= 49) {
     return 'tier_1_starter';
-  } else if (units > 2 && units <= 49) {
-    return 'tier_1_starter';
-  } else if (units <= 149) {
+  } else if (units >= 50 && units <= 149) {
     return 'tier_2_pioneer';
-  } else if (units <= 299) {
+  } else if (units >= 150 && units <= 299) {
     return 'tier_3_preferred';
   } else {
     return 'tier_4_elite';
