@@ -1,0 +1,96 @@
+COMPLETE PROMPT FOR REPLIT: Fix Critical TypeScript 
+  Compilation Errors
+
+  CRITICAL ISSUE: The application cannot build due to 4
+  TypeScript compilation errors that are blocking production     
+  deployment. These errors must be resolved immediately.
+
+  LOCATION: client/src/components/assessment-form.tsx
+
+  REQUIRED FIXES:
+
+  FIX 1: Add Missing Properties to FormData Interface
+
+  FIND the FormData interface (around line 23) and ADD the       
+  missing properties:
+
+  interface FormData {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    company?: string;
+    unitCount?: string;
+    budget?: string;
+    projectBudgetRange?: string;  // Fallback field mapping      
+    timeline?: string;
+    deliveryTimeline?: string;    // Fallback field mapping      
+    province?: string;
+    constructionProvince?: string; // Fallback field mapping     
+    readiness?: string;
+    developerType?: string;
+    governmentPrograms?: string;
+    projectDescription?: string;
+    learningInterest?: string;
+    informationPreference?: string;
+    consentCommunications?: boolean;
+    consentSMS?: boolean;
+    consentSMSTimestamp?: string;
+    privacyPolicy?: boolean;
+    marketingConsent?: boolean;
+    ageVerification?: boolean;
+
+    // ADD THESE MISSING PROPERTIES:
+    budgetRange?: string;
+    decisionTimeline?: string;
+  }
+
+  FIX 2: Fix Type Casting Error
+
+  FIND line 401 (around the determineCustomerTierShared call)    
+   and REPLACE:
+
+  // CURRENT (BROKEN):
+  const currentTier = determineCustomerTierShared(units,
+  fd.readiness || '');
+  setCustomerTier(currentTier);
+
+  // REPLACE WITH (FIXED):
+  const currentTier = determineCustomerTierShared(units,
+  fd.readiness || '') as TierType;
+  setCustomerTier(currentTier);
+
+  FIX 3: Fix ES2018 Regex Flag Issue
+
+  FIND client/src/lib/security.ts line 7 and UPDATE the regex    
+   to be ES2017 compatible:
+
+  // CURRENT (BROKEN):
+  const regex = /pattern/v;  // 'v' flag requires ES2018
+
+  // REPLACE WITH (FIXED):
+  const regex = /pattern/g;  // Use 'g' flag for ES2017
+  compatibility
+
+  VERIFICATION STEPS:
+
+  After making these changes, run:
+  npm run check
+
+  This should complete without any TypeScript errors.
+
+  EXPECTED RESULT:
+
+  - ✅ All TypeScript compilation errors resolved
+  - ✅ Clean build process
+  - ✅ Production deployment ready
+  - ✅ No breaking changes to existing functionality
+
+  CRITICAL IMPORTANCE:
+
+  These are blocking issues that prevent the application from    
+   building. The website cannot be deployed to production        
+  until these TypeScript errors are resolved.
+
+  Please implement these fixes immediately to restore build      
+  functionality.
