@@ -413,18 +413,24 @@ const IllummaaAssessmentForm = () => {
     // Validate input to prevent injection
     const sanitizedInput = sanitizeInput(developerType);
     const developerMap: { [key: string]: string } = {
-      'Individual/Family': "I don't know yet",
-      'Individual': "I don't know yet",
-      'Family': "I don't know yet",
-      'Commercial Developer': 'Commercial Developer (Large Projects)',
-      'Government/Municipal': 'Government/Municipal Developer',
-      'Non-Profit Organization': 'Non-Profit Housing Developer',
-      'Private Developer': 'Private Developer (Medium Projects)',
+      'Indigenous Community/Organization': 'Indigenous Community/Organization',
       'Commercial Developer (Large Projects)': 'Commercial Developer (Large Projects)',
       'Government/Municipal Developer': 'Government/Municipal Developer',
       'Non-Profit Housing Developer': 'Non-Profit Housing Developer',
       'Private Developer (Medium Projects)': 'Private Developer (Medium Projects)',
-      "I don't know yet": "I don't know yet"
+      'Individual/Family Developer': 'Individual/Family Developer',
+      'Individual/Family': 'Individual/Family Developer',
+      'Individual': 'Individual/Family Developer',
+      'Family': 'Individual/Family Developer',
+      'Commercial Developer': 'Commercial Developer (Large Projects)',
+      'Government/Municipal': 'Government/Municipal Developer',
+      'Non-Profit Organization': 'Non-Profit Housing Developer',
+      'Private Developer': 'Private Developer (Medium Projects)',
+      "I don't know yet": "I don't know yet",
+      // ENTERPRISE SECURITY: Handle edge cases
+      'undefined': "I don't know yet",
+      'null': "I don't know yet",
+      '': "I don't know yet"
     };
     return developerMap[sanitizedInput] || sanitizedInput;
   };
