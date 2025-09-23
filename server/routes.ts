@@ -532,7 +532,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             message: 'SMS consent timestamp too old - possible replay attack'
           });
         }
-        if (consentAge < 0) {
+        if (consentAge < -300000) { // Allow 5 minutes in future for clock drift
           return res.status(400).json({
             success: false,
             error: 'SMS consent timestamp in future - possible manipulation',

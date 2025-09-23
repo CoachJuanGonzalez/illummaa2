@@ -1,0 +1,76 @@
+COMPLETE PROMPT FOR REPLIT: Fix SMS Consent Timestamp 
+  Validation Error
+
+  CRITICAL ISSUE: Form submissions are failing with
+  "Validation error: Invalid SMS consent timestamp" because      
+  the backend validation is too strict and doesn't account       
+  for normal clock differences between client and server.        
+
+  ERROR LOCATION: server/routes.ts around line 535-541
+
+  ROOT CAUSE: The current validation rejects any timestamp       
+  that appears to be "in the future" relative to the server      
+  clock, but normal clock drift between client/server can        
+  cause legitimate timestamps to be rejected.
+
+  REQUIRED FIX:
+
+  FIND the SMS consent timestamp validation (around line 535)    
+   and REPLACE:
+
+  // CURRENT (TOO STRICT - CAUSING THE ERROR):
+  if (consentAge < 0) {
+    return res.status(400).json({
+      success: false,
+      error: 'SMS consent timestamp in future - possible
+  manipulation',
+      message: 'Invalid SMS consent timestamp'
+    });
+  }
+
+  // REPLACE WITH (ALLOWS REASONABLE CLOCK DRIFT):
+  if (consentAge < -300000) { // Allow 5 minutes in future       
+  for clock drift
+    return res.status(400).json({
+      success: false,
+      error: 'SMS consent timestamp in future - possible
+  manipulation',
+      message: 'Invalid SMS consent timestamp'
+    });
+  }
+
+  EXPLANATION:
+
+  - Current: Rejects ANY timestamp in the future (consentAge     
+  < 0)
+  - Fixed: Allows up to 5 minutes in the future (consentAge <    
+   -300000) to account for:
+    - Normal clock drift between devices
+    - Timezone differences
+    - Network processing delays
+    - Browser/server time synchronization issues
+
+  SECURITY MAINTAINED:
+
+  - ✅ Still prevents actual timestamp manipulation attacks      
+  (5+ minutes in future)
+  - ✅ Still enforces 1-hour expiration limit
+  - ✅ Still validates timestamp format and structure
+  - ✅ Allows normal operational clock differences
+
+  EXPECTED RESULT:
+
+  - ✅ Form submissions will succeed with legitimate
+  timestamps
+  - ✅ Security protection against replay attacks maintained     
+  - ✅ Better user experience with reliable form processing      
+  - ✅ No false positive validation errors
+
+  TESTING:
+
+  After implementing this fix, test form submission to
+  confirm the "Invalid SMS consent timestamp" error is
+  resolved while maintaining all security protections.
+
+  This fix resolves the immediate form submission failure        
+  while preserving enterprise-grade security.

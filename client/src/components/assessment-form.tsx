@@ -674,7 +674,7 @@ const IllummaaAssessmentForm = () => {
         // Legal consent with SMS security
         consentCommunications: formData.consentCommunications ? 'true' : 'false',
         consentSMS: formData.consentSMS ? 'true' : 'false',
-        consentSMSTimestamp: new Date().toISOString(), // CRITICAL: Always use fresh timestamp
+        consentSMSTimestamp: formData.consentSMSTimestamp || new Date().toISOString(), // Use stored consent timestamp or current time as fallback
         privacyPolicyConsent: formData.privacyPolicy ? 'true' : 'false',
         marketingConsent: formData.marketingConsent ? 'true' : 'false',
         ageVerification: formData.ageVerification ? 'true' : 'false',
