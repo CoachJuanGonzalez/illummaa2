@@ -384,6 +384,8 @@ const IllummaaAssessmentForm = () => {
     // Validate input to prevent injection
     const sanitizedInput = sanitizeInput(unitSelection);
     const unitMap: { [key: string]: string } = {
+      '1': '1',
+      '2': '2',
       '25': '25',   // 3-49 units range
       '75': '75',   // 50-149 units range
       '200': '200', // 150-299 units range

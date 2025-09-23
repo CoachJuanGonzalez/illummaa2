@@ -1,0 +1,78 @@
+  FINAL CRITICAL FIX: Complete ILLUMMAA Scoring System - Unit    
+   Count Resolution
+
+  ISSUE CONFIRMED: Analysis shows 4 of 5 critical scoring        
+  issues already resolved. Only unit count mapping needs
+  completion to achieve perfect 113→128 score alignment.
+
+  CURRENT STATUS:
+  - ✅ Indigenous scoring: FIXED (uses shared utility)
+  - ✅ Timeline scoring: FIXED (uses shared utility)
+  - ✅ Build Canada logic: FIXED (uses shared utility)
+  - ✅ Field name mapping: FIXED (sends budget/timeline
+  fields)
+  - ❌ Unit count mapping: INCOMPLETE (missing 1,2 unit
+  support)
+
+  SINGLE FIX REQUIRED
+
+  File: client/src/components/assessment-form.tsx
+
+  LOCATE line 386 (inside the getRepresentativeUnitValue         
+  function):
+
+  FIND this code block:
+  const unitMap: { [key: string]: string } = {
+    '25': '25',   // 3-49 units range
+    '75': '75',   // 50-149 units range
+    '200': '200', // 150-299 units range
+    '500': '500'  // 300+ units range
+  };
+
+  REPLACE with:
+  const unitMap: { [key: string]: string } = {
+    '1': '1',
+    '2': '2',
+    '25': '25',   // 3-49 units range
+    '75': '75',   // 50-149 units range
+    '200': '200', // 150-299 units range
+    '500': '500'  // 300+ units range
+  };
+
+  VERIFICATION STEPS
+
+  1. Deploy this fix to Replit
+  2. Test with original case: 500 units, "Over $50M",
+  "Immediate (0-3 months)"
+  3. Expected Result: Frontend and backend both show 128
+  points
+  4. Test Indigenous case: 75 units, Indigenous Community,       
+  Short-term timeline
+  5. Expected Result: Both systems show consistent scoring       
+
+  TECHNICAL EXPLANATION
+
+  This completes the unit count mapping by adding support for    
+   individual home selections (1,2 units) that were missing      
+  from the conversion function. All other critical scoring       
+  infrastructure is already properly implemented:
+
+  - Frontend uses shared utility (calculatePriorityScore)        
+  - Backend uses same shared utility
+  - Payload sends correct field names (budget, timeline)
+  - All security measures maintained
+
+  EXPECTED OUTCOME
+
+  - ✅ 113→128 discrepancy RESOLVED
+  - ✅ All 5 critical scoring issues FIXED
+  - ✅ Perfect frontend-backend score alignment
+  - ✅ All enterprise security measures preserved
+
+  This 2-line addition completes the comprehensive scoring       
+  system fixes and should eliminate all scoring 
+  discrepancies.
+
+  ---
+  Deploy this minimal fix and test immediately. This should      
+  finally achieve perfect scoring consistency.
