@@ -267,6 +267,17 @@ function getReadinessWithTimeframe(readiness: string): string {
   return timeframeMap[readiness] || readiness;
 }
 
+// Convert representative unit value back to accurate display range
+function getUnitRangeFromRepresentative(units: number): string {
+  if (units >= 500) return "300+ units (Elite)";
+  if (units >= 200) return "150-299 units (Preferred)";
+  if (units >= 75) return "50-149 units (Pioneer)";
+  if (units >= 25) return "3-49 units (Starter)";
+  if (units === 2) return "2 homes";
+  if (units === 1) return "1 home";
+  return "0 units";
+}
+
 // SMART APPROACH: Streamlined webhook payload (no redundancy)
 export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number, customerTier: string, priorityLevel: string, tags: string[]): Promise<void> {
   const webhookUrl = process.env.GHL_WEBHOOK_URL;
@@ -305,7 +316,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     
     // Project details
     project_unit_count: units,
-    project_unit_range: formData.projectUnitRange || "",
+    project_unit_range: formData.projectUnitRange || getUnitRangeFromRepresentative(units),
     project_budget_range: formData.budgetRange || "",
     delivery_timeline: formData.decisionTimeline || "",
     construction_province: formData.constructionProvince || "",

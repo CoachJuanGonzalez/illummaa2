@@ -1,0 +1,98 @@
+CORRECTED REPLIT PROMPT: FIX PROJECT_UNIT_RANGE WITH        
+  ACCURATE RANGE MAPPING
+
+  OBJECTIVE: Fix the missing project_unit_range field in
+  GoHighLevel webhook payload by implementing accurate range     
+  mapping that ensures sales team sees correct project scale     
+  ranges, not confusing representative numbers.
+
+  ISSUE: The field was missing due to undefined values, and a    
+   simple numeric fallback would create business confusion       
+  (e.g., "500+ units" vs actual "300+ units (Elite)" range).     
+
+  ---
+  🎯 BACKEND FIX - File: server/storage.ts
+
+  1. Add Range Mapping Function (Insert after line 268, after    
+   getReadinessWithTimeframe function):
+  // Convert representative unit value back to accurate
+  display range
+  function getUnitRangeFromRepresentative(units: number):        
+  string {
+    if (units >= 500) return "300+ units (Elite)";
+    if (units >= 200) return "150-299 units (Preferred)";        
+    if (units >= 75) return "50-149 units (Pioneer)";
+    if (units >= 25) return "3-49 units (Starter)";
+    if (units === 2) return "2 homes";
+    if (units === 1) return "1 home";
+    return "0 units";
+  }
+
+  2. Update Webhook Payload (Line 316):
+
+  FIND:
+      project_unit_range: formData.projectUnitRange ||
+  `${units}+ units`,
+
+  REPLACE WITH:
+      project_unit_range: formData.projectUnitRange ||
+  getUnitRangeFromRepresentative(units),
+
+  3. OPTIONAL: Add Debug Logging (Insert before line 303):       
+    // DEBUG: Log projectUnitRange mapping for
+  troubleshooting
+    console.log('🔍 [DEBUG] projectUnitRange mapping:', {        
+      received: formData.projectUnitRange,
+      units: units,
+      fallback: getUnitRangeFromRepresentative(units),
+      final: formData.projectUnitRange ||
+  getUnitRangeFromRepresentative(units)
+    });
+
+🔧 MINOR CORRECTION NEEDED:
+
+  Update existing debug logging (Line 300):
+  // CURRENT:
+  fallback: formData.projectUnitRange || "FALLBACK_EMPTY"        
+
+  // SHOULD BE:
+  fallback: formData.projectUnitRange ||
+  getUnitRangeFromRepresentative(units)
+
+  ---
+  📊 ACCURATE MAPPING EXAMPLES:
+
+  User Selection → Representative Value → Fallback Display       
+  - "300+ units (Elite)" → 500 → "300+ units (Elite)" ✅
+  - "150-299 units (Preferred)" → 200 → "150-299 units 
+  (Preferred)" ✅
+  - "50-149 units (Pioneer)" → 75 → "50-149 units (Pioneer)"     
+  ✅
+  - "3-49 units (Starter)" → 25 → "3-49 units (Starter)" ✅      
+  - "2 homes" → 2 → "2 homes" ✅
+  - "1 home" → 1 → "1 home" ✅
+
+  🎯 BUSINESS BENEFITS:
+
+  Sales Team Clarity:
+  - ✅ Accurate Ranges: Always shows correct project scale       
+  - ✅ No Confusion: "300+ units (Elite)" not "500+ units"       
+  - ✅ Proper Pricing: Quote appropriate to actual range
+  - ✅ Reliable Data: Field appears in every webhook payload     
+
+  Technical Benefits:
+  - ✅ Robust Fallback: Never undefined/empty values
+  - ✅ Data Consistency: Matches user selections exactly
+  - ✅ Enterprise Grade: Handles edge cases gracefully
+
+  🔍 EXPECTED WEBHOOK RESULT:
+
+  {
+    "project_unit_count": 500,
+    "project_unit_range": "300+ units (Elite)",
+    "customer_tier": "tier_4_elite"
+  }
+
+  READY FOR DEPLOYMENT ✅
+
+  Remove debug logging once confirmed working in production.
