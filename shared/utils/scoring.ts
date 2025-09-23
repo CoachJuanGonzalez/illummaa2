@@ -150,8 +150,8 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   // 6. PROVINCE/TERRITORY (10 points max)
   switch (province) {
     case "Ontario":
-    case "British Columbia": provinceScore = 10; score += 10; break;
-    case "Alberta":
+    case "British Columbia":
+    case "Alberta": provinceScore = 10; score += 10; break; // Alberta elevated to top tier
     case "Quebec": provinceScore = 8; score += 8; break;
     case "Nova Scotia":
     case "New Brunswick":

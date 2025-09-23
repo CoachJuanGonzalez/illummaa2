@@ -1,0 +1,69 @@
+REPLIT PROMPT: UPDATE ALBERTA PROVINCE SCORING TO MATCH     
+  FEDERAL HOUSING PRIORITIES
+
+  Update the province scoring system to align Alberta with       
+  Ontario and British Columbia based on recent federal
+  housing agency priorities and government announcements
+  regarding provincial housing development focus.
+
+  PROBLEM: Alberta currently receives 8 points while Ontario     
+  and British Columbia receive 10 points, but recent federal     
+  housing priorities treat these three provinces with equal      
+  importance for modular housing development.
+
+  BUSINESS JUSTIFICATION:
+  - Federal housing agency identifies Alberta as a priority      
+  province alongside ON/BC
+  - Population growth and housing demand crisis in Alberta       
+  matches ON/BC levels
+  - Government infrastructure investment priorities include      
+  Alberta as top-tier
+  - Ensures fair scoring for Alberta-based developers and        
+  projects
+
+  FILE TO MODIFY: shared/utils/scoring.ts
+
+  FIND lines 152-156 (Province scoring section):
+  ```typescript
+  // 6. PROVINCE/TERRITORY (10 points max)
+  switch (province) {
+    case "Ontario":
+    case "British Columbia": provinceScore = 10; score += 10;    
+   break;
+    case "Alberta":
+    case "Quebec": provinceScore = 8; score += 8; break;
+
+  REPLACE with:
+  // 6. PROVINCE/TERRITORY (10 points max)
+  switch (province) {
+    case "Ontario":
+    case "British Columbia":
+    case "Alberta": provinceScore = 10; score += 10; break;      
+  // Alberta elevated to top tier
+    case "Quebec": provinceScore = 8; score += 8; break;
+
+  IMPACT:
+  ✅ Alberta projects get +2 points (8→10), matching ON/BC       
+  ✅ Better alignment with federal housing agency priorities     
+  ✅ Fair scoring for Alberta developers
+  ✅ Maintains existing scoring for all other provinces
+  ✅ No impact on customer tier determination
+  ✅ No impact on other scoring categories
+
+  PROVINCES AFTER UPDATE:
+  - Ontario, British Columbia, Alberta: 10 points (Top
+  Priority)
+  - Quebec: 8 points
+  - NS, NB, MB, SK: 6 points
+  - NL, PE: 4 points
+  - NT, NU, YT: 8 points
+
+  BUSINESS ALIGNMENT: This change reflects current federal       
+  housing policy priorities and ensures Alberta-based modular    
+   housing projects receive appropriate scoring relative to      
+  their strategic importance in Canada's housing development     
+  goals.
+
+  RESULT: More accurate and fair provincial scoring that
+  aligns with government housing priorities while maintaining    
+   the existing scoring framework.
