@@ -288,6 +288,8 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     (units >= 200 && (formData.developerType === "Government/Municipal Developer" || 
                      formData.developerType?.includes("Government")));
 
+  // Transform readiness value with enhanced timeframe display
+  const readinessValue = getReadinessWithTimeframe(formData.readiness || "");
 
   // SMART PAYLOAD: Only essential fields for GoHighLevel
   const webhookPayload = {
@@ -308,7 +310,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     developer_type: formData.developerType || "",
     government_programs: formData.governmentPrograms || "",
     project_description: sanitizeInput(formData.projectDescription || formData.projectDescriptionText || ""),
-    project_readiness: getReadinessWithTimeframe(formData.readiness || ""),
+    project_readiness: readinessValue,
     
     // Core routing fields (essential for GHL workflows)
     ai_priority_score: priorityData.score,
