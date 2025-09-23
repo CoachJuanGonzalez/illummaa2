@@ -45,10 +45,6 @@ interface FormData {
   privacyPolicy?: boolean;
   marketingConsent?: boolean;
   ageVerification?: boolean;
-
-  // ADD THESE MISSING PROPERTIES:
-  budgetRange?: string;
-  decisionTimeline?: string;
 }
 
 interface FormErrors {
@@ -401,7 +397,7 @@ const IllummaaAssessmentForm = () => {
     
     // Determine tier using shared utility
     const units = parseInt(fd.unitCount || '0') || 0;
-    const currentTier = determineCustomerTierShared(units, fd.readiness || '') as TierType;
+    const currentTier = determineCustomerTierShared(units, fd.readiness || '');
     setCustomerTier(currentTier);
     
     console.log('🎯 FRONTEND Score (using shared utility):', {

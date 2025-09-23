@@ -4,7 +4,7 @@ export const SecurityModule = {
         if (!input || typeof input !== 'string') return '';
         
         // Remove HTML tags and scripts
-        let cleaned = input.replace(/<script[^>]*>.*?<\/script>/gi, '');
+        let cleaned = input.replace(/<script[^>]*>.*?<\/script>/gis, '');
         cleaned = cleaned.replace(/<[^>]+>/g, '');
         
         // Escape special characters
