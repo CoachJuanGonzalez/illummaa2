@@ -609,7 +609,44 @@ const IllummaaAssessmentForm = () => {
   };
 
   const handlePrevious = () => {
-    setCurrentStep(Math.max(currentStep - 1, 1));
+    // If going back from Step 1, safely clear journey-dependent fields
+    if (currentStep === 1) {
+      setFormData(prev => ({
+        // Preserve contact information
+        firstName: prev.firstName,
+        lastName: prev.lastName,
+        email: prev.email,
+        phone: prev.phone,
+        company: prev.company,
+        consentCommunications: prev.consentCommunications,
+        consentSMS: prev.consentSMS,
+        consentSMSTimestamp: prev.consentSMSTimestamp,
+        privacyPolicy: prev.privacyPolicy,
+        marketingConsent: prev.marketingConsent,
+        ageVerification: prev.ageVerification,
+        // Clear journey-dependent fields
+        readiness: undefined,
+        unitCount: undefined,
+        budget: undefined,
+        projectBudgetRange: undefined,
+        timeline: undefined,
+        deliveryTimeline: undefined,
+        province: undefined,
+        constructionProvince: undefined,
+        developerType: undefined,
+        governmentPrograms: undefined,
+        projectDescription: undefined,
+        learningInterest: undefined,
+        informationPreference: undefined
+      }));
+      // Reset related state
+      setPriorityScore(0);
+      setCustomerTier('tier_0_explorer');
+      setBuildCanadaEligible(false);
+    } else {
+      setCurrentStep(Math.max(currentStep - 1, 1));
+    }
+
     // Scroll to form section, not page top
     const formElement = document.getElementById('developer-qualification');
     if (formElement) {
@@ -1775,7 +1812,7 @@ const IllummaaAssessmentForm = () => {
 
             {/* Navigation */}
             <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100" data-testid="navigation">
-              {currentStep > 1 && (
+              {(currentStep > 1 || (currentStep === 1 && formData.readiness)) && (
                 <button
                   type="button"
                   onClick={handlePrevious}

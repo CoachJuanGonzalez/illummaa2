@@ -1,0 +1,98 @@
+REPLIT PROMPT: FIX MISSING PREVIOUS BUTTON IN STEP 1 
+  NAVIGATION - VERIFIED IMPLEMENTATION
+
+  OBJECTIVE: Fix the missing Previous button in Step 1 of the    
+   assessment form to allow users to modify their readiness      
+  selection while maintaining data consistency and enterprise    
+   security compliance.
+
+  TARGET FILE: client/src/components/assessment-form.tsx
+
+  REQUIRED CHANGES:
+
+  1. Update Previous Button Visibility Condition (Line 1778)     
+
+  FIND:
+  {currentStep > 1 && (
+
+  REPLACE WITH:
+  {(currentStep > 1 || (currentStep === 1 &&
+  formData.readiness)) && (
+
+  2. Enhance handlePrevious Function (Lines 611-618)
+
+  FIND:
+  const handlePrevious = () => {
+    setCurrentStep(Math.max(currentStep - 1, 1));
+    // Scroll to form section, not page top
+    const formElement =
+  document.getElementById('developer-qualification');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block:    
+   'start' });
+    }
+  };
+
+  REPLACE WITH:
+  const handlePrevious = () => {
+    // If going back from Step 1, safely clear
+  journey-dependent fields
+    if (currentStep === 1) {
+      setFormData(prev => ({
+        // Preserve contact information
+        firstName: prev.firstName,
+        lastName: prev.lastName,
+        email: prev.email,
+        phone: prev.phone,
+        company: prev.company,
+        consentCommunications: prev.consentCommunications,       
+        consentSMS: prev.consentSMS,
+        consentSMSTimestamp: prev.consentSMSTimestamp,
+        privacyPolicy: prev.privacyPolicy,
+        marketingConsent: prev.marketingConsent,
+        ageVerification: prev.ageVerification,
+        // Clear journey-dependent fields
+        readiness: undefined,
+        unitCount: undefined,
+        budget: undefined,
+        projectBudgetRange: undefined,
+        timeline: undefined,
+        deliveryTimeline: undefined,
+        province: undefined,
+        constructionProvince: undefined,
+        developerType: undefined,
+        governmentPrograms: undefined,
+        projectDescription: undefined,
+        learningInterest: undefined,
+        informationPreference: undefined
+      }));
+      // Reset related state
+      setPriorityScore(0);
+      setCustomerTier('tier_0_explorer');
+      setBuildCanadaEligible(false);
+    } else {
+      setCurrentStep(Math.max(currentStep - 1, 1));
+    }
+
+    // Scroll to form section, not page top
+    const formElement =
+  document.getElementById('developer-qualification');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block:    
+   'start' });
+    }
+  };
+
+  IMPLEMENTATION NOTES:
+  - Previous button now appears when user has selected a
+  readiness option in Step 1
+  - Clicking Previous in Step 1 safely resets journey while      
+  preserving contact data
+  - Maintains all existing validation and state management       
+  logic
+  - Enterprise security compliant - no breaking changes
+  - Follows existing React patterns and coding conventions       
+
+  VERIFICATION: This implementation has been fact-checked        
+  against the latest codebase and confirmed safe for
+  production deployment.
