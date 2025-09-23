@@ -379,11 +379,24 @@ const IllummaaAssessmentForm = () => {
     setFormData(prev => ({ ...prev, phone: value }));
   };
 
+  // SECURITY-COMPLIANT: Unit range mapping with validation
+  const getRepresentativeUnitValue = (unitSelection: string): string => {
+    // Validate input to prevent injection
+    const sanitizedInput = sanitizeInput(unitSelection);
+    const unitMap: { [key: string]: string } = {
+      '25': '25',   // 3-49 units range
+      '75': '75',   // 50-149 units range
+      '200': '200', // 150-299 units range
+      '500': '500'  // 300+ units range
+    };
+    return unitMap[sanitizedInput] || '0';
+  };
+
   // Use shared scoring utility for 100% frontend-backend consistency
   const calculatePriorityScoreWith = (fd: typeof formData) => {
     // Map frontend form data to shared utility format
     const sharedData = {
-      unitCount: fd.unitCount || '0',
+      unitCount: getRepresentativeUnitValue(fd.unitCount || '0'),
       projectDescription: fd.projectDescription || '',
       readiness: fd.readiness || '',
       budgetRange: fd.budget || fd.budgetRange || fd.projectBudgetRange || '',
@@ -393,15 +406,30 @@ const IllummaaAssessmentForm = () => {
       governmentPrograms: fd.governmentPrograms || ''
     };
 
-    // Call shared utility
+    // SECURITY-COMPLIANT: Debug without exposing sensitive data
+    if (import.meta.env.DEV) {
+      console.log('🔍 FRONTEND SCORE CALCULATION:', {
+        score: 'pending',
+        hasAllRequiredFields: !!(sharedData.unitCount && sharedData.readiness),
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const { score, breakdown } = calculatePriorityScore(sharedData);
+
+    if (import.meta.env.DEV) {
+      console.log('🎯 FRONTEND RESULT:', {
+        score,
+        timestamp: new Date().toISOString()
+      });
+    }
     
     // Update state
     setPriorityScore(score);
     
     // Determine tier using shared utility
     const units = parseInt(fd.unitCount || '0') || 0;
-    const currentTier = determineCustomerTierShared(units, fd.readiness || '');
+    const currentTier = determineCustomerTierShared(units, fd.readiness || '') as TierType;
     setCustomerTier(currentTier);
     
     console.log('🎯 FRONTEND Score (using shared utility):', {
@@ -646,10 +674,13 @@ const IllummaaAssessmentForm = () => {
         aiPriorityScore: priorityScore,
         
         // Project Details
-        projectUnitCount: sanitizeInput(formData.unitCount || '0'),
+        projectUnitCount: sanitizeInput(getRepresentativeUnitValue(formData.unitCount || '0')),
         readinessToBuy: formData.readiness,
         projectBudgetRange: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
         deliveryTimeline: formData.timeline || formData.deliveryTimeline,
+        // SECURITY-COMPLIANT: Add prioritized fields while maintaining sanitization
+        budget: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
+        timeline: sanitizeInput(formData.timeline || formData.deliveryTimeline || ''),
         constructionProvince: formData.province || formData.constructionProvince,
         developerType: sanitizeInput(formData.developerType || 'Not Specified'),
         governmentPrograms: sanitizeInput(formData.governmentPrograms || 'Not Specified'),

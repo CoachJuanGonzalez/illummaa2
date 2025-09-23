@@ -875,6 +875,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Unused endpoint removed - frontend only uses /api/submit-assessment and /api/submit-residential
 
+  // SECURITY-COMPLIANT: Test endpoint with proper validation
+  app.post('/api/test-score', async (req, res) => {
+    try {
+      // Maintain same CSRF security as main endpoint
+      const csrfToken = req.headers['x-csrf-token'];
+      const sessionToken = (req as any).session?.csrfToken;
+      
+      if (!csrfToken || csrfToken !== sessionToken) {
+        return res.status(403).json({ 
+          error: 'CSRF token validation failed',
+          support: 'info@illummaa.ca'
+        });
+      }
+
+      // Process with same security measures
+      const result = await validateFormData(req.body);
+
+      if (!result.isValid) {
+        return res.status(400).json({ errors: result.errors });
+      }
+
+      res.json({
+        backendScore: result.priorityScore,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Score validation error:', error);
+      res.status(500).json({ error: 'Score validation failed' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

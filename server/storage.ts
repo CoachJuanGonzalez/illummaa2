@@ -196,7 +196,22 @@ export async function validateFormData(rawData: any): Promise<{
       };
     }
 
+    // SECURITY-COMPLIANT: Log calculation without exposing PII
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 BACKEND CALCULATION:', {
+        hasValidData: !!validationResult.data,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const priorityScore = calculatePriorityScore(validationResult.data);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 BACKEND RESULT:', {
+        score: priorityScore,
+        timestamp: new Date().toISOString()
+      });
+    }
     const customerTier = determineCustomerTier(validationResult.data.projectUnitCount, validationResult.data.readiness);
     const priorityLevel = getPriorityLevel(priorityScore);
     const tags = generateCustomerTags(validationResult.data, customerTier, priorityLevel);
