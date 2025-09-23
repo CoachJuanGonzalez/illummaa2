@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackHeaderNavClick, analytics } from "../lib/analytics";
@@ -7,6 +7,21 @@ import logoUrl from "@assets/logo-logotype_1758569347527.png";
 export default function StickyHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location, navigate] = useLocation();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile browsers and apply appropriate positioning
+  useEffect(() => {
+    const detectMobile = () => {
+      const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent.toLowerCase());
+      const isSmallScreen = window.innerWidth < 768;
+      setIsMobile(isMobileDevice || isSmallScreen);
+    };
+
+    detectMobile();
+    window.addEventListener('resize', detectMobile);
+    return () => window.removeEventListener('resize', detectMobile);
+  }, []);
 
   const scrollToSection = (id: string, sectionName?: string) => {
     // Track navigation click
@@ -65,7 +80,21 @@ export default function StickyHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white md:bg-white/95 md:backdrop-blur-sm border-b border-border" data-testid="header-main">
+    <header 
+      className={`${isMobile ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-50 bg-white md:bg-white/95 md:backdrop-blur-sm border-b border-border`}
+      data-testid="header-main"
+      style={{
+        position: isMobile ? 'fixed' : 'sticky',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        transform: 'translateZ(0)', // Hardware acceleration
+        WebkitTransform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden'
+      }}
+    >
       <nav className="container mx-auto px-6 py-2">
         <div className="flex items-center justify-between">
           {/* Logo */}
