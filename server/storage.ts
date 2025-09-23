@@ -303,6 +303,14 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
   // Transform readiness value with enhanced timeframe display
   const readinessValue = getReadinessWithTimeframe(formData.readiness || "");
 
+  // DEBUG: Log projectUnitRange mapping for troubleshooting
+  console.log('🔍 [DEBUG] projectUnitRange data flow:', {
+    received: formData.projectUnitRange,
+    units: units,
+    fallback: getUnitRangeFromRepresentative(units),
+    final: formData.projectUnitRange || getUnitRangeFromRepresentative(units)
+  });
+
   // SMART PAYLOAD: Only essential fields for GoHighLevel
   const webhookPayload = {
     // Contact fields
@@ -392,6 +400,10 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
 
   // Add analytics to webhook payload for CRM insights
   (webhookPayload as any).tag_system_analytics = tagAnalytics;
+
+  // DEBUG: Log the complete webhook payload before sending
+  console.log('🔍 [DEBUG] Complete webhook payload:', JSON.stringify(webhookPayload, null, 2));
+  console.log('🔍 [DEBUG] project_unit_range specifically:', webhookPayload.project_unit_range);
 
   // ENTERPRISE SECURITY: Validate and enforce payload size
   const payloadSize = JSON.stringify(webhookPayload).length;

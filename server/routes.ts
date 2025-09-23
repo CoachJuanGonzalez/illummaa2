@@ -561,6 +561,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // COMPREHENSIVE FIELD MAPPING AND ENUM NORMALIZATION
       const mappedBody = mapFrontendToBackend(sanitized);
       
+      // DEBUG: Log projectUnitRange mapping for troubleshooting
+      console.log('🔍 [DEBUG] projectUnitRange route mapping:', {
+        frontendValue: sanitized.projectUnitRange,
+        mappedValue: mappedBody.projectUnitRange
+      });
+      
       // Enhanced unit count validation with tier consistency (Step 5 implementation)
       const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
       const readiness = mappedBody.readiness;
