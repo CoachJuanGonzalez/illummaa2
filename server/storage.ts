@@ -168,6 +168,7 @@ export async function validateFormData(rawData: any): Promise<{
       phone: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, ''),
       company: DOMPurify.sanitize(rawData.company || '').trim(),
       projectUnitCount,
+      projectUnitRange: DOMPurify.sanitize(rawData.projectUnitRange || '').trim(),
       budgetRange: sanitizeOptionalEnum(rawData.budgetRange),
       decisionTimeline: sanitizeOptionalEnum(rawData.decisionTimeline),
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
@@ -304,6 +305,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     
     // Project details
     project_unit_count: units,
+    project_unit_range: formData.projectUnitRange || "",
     project_budget_range: formData.budgetRange || "",
     delivery_timeline: formData.decisionTimeline || "",
     construction_province: formData.constructionProvince || "",

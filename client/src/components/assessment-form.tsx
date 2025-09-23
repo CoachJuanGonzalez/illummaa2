@@ -37,6 +37,7 @@ interface FormData {
   developerType?: string;
   governmentPrograms?: string;
   projectDescription?: string;
+  projectUnitRange?: string;
   learningInterest?: string;
   informationPreference?: string;
   consentCommunications?: boolean;
@@ -394,6 +395,19 @@ const IllummaaAssessmentForm = () => {
     return unitMap[sanitizedInput] || '0';
   };
 
+  // Helper function to get display-friendly unit text for UI and sales team
+  const getDisplayUnitText = (unitValue: string): string => {
+    const displayMap: { [key: string]: string } = {
+      '1': '1 home',
+      '2': '2 homes',
+      '25': '3-49 units (Starter)',
+      '75': '50-149 units (Pioneer)',
+      '200': '150-299 units (Preferred)',
+      '500': '300+ units (Elite)'
+    };
+    return displayMap[unitValue] || `${unitValue} units`;
+  };
+
   // SECURITY-COMPLIANT: Developer type mapping with validation (matches backend)
   const mapDeveloperType = (developerType: string): string => {
     // Validate input to prevent injection
@@ -735,6 +749,7 @@ const IllummaaAssessmentForm = () => {
         
         // Project Details
         projectUnitCount: sanitizeInput(getRepresentativeUnitValue(formData.unitCount || '0')),
+        projectUnitRange: sanitizeInput(getDisplayUnitText(formData.unitCount || '0')),
         readinessToBuy: formData.readiness,
         projectBudgetRange: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
         deliveryTimeline: formData.timeline || formData.deliveryTimeline,
@@ -1628,7 +1643,7 @@ const IllummaaAssessmentForm = () => {
                         
                         {customerTier !== 'tier_0_explorer' && (
                           <>
-                            {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{formData.unitCount} units</span></p>}
+                            {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
                             {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
                             {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
                           </>
