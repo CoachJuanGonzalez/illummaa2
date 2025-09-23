@@ -1529,12 +1529,13 @@ const IllummaaAssessmentForm = () => {
                     data-testid="select-developer-type"
                   >
                     <option value="">Select developer type...</option>
+                    <option value="Indigenous Community/Organization">Indigenous Community/Organization</option>
+                    <option value="Commercial Developer (Large Projects)">Commercial Developer (Large Projects)</option>
+                    <option value="Government/Municipal Developer">Government/Municipal Developer</option>
+                    <option value="Non-Profit Housing Developer">Non-Profit Housing Developer</option>
+                    <option value="Private Developer (Medium Projects)">Private Developer (Medium Projects)</option>
+                    <option value="Individual/Family Developer">Individual/Family Developer</option>
                     <option value="I don't know yet">I don't know yet</option>
-                    <option value="Individual/Family">Individual/Family</option>
-                    <option value="Commercial Developer">Commercial Developer</option>
-                    <option value="Government/Municipal">Government/Municipal</option>
-                    <option value="Non-Profit Organization">Non-Profit Organization</option>
-                    <option value="Private Developer">Private Developer</option>
                   </select>
                   {errors.developerType && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
