@@ -127,6 +127,7 @@ function mapFrontendToBackend(frontendData: any): any {
     
     // CRITICAL FIELD NAME MAPPING FIXES:
     projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
+    projectUnitRange: frontendData.projectUnitRange,
     budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : normalizeBudget(frontendData.projectBudgetRange || frontendData.budgetRange)),
     decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : normalizeTimeline(frontendData.deliveryTimeline || frontendData.decisionTimeline)),
     constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),

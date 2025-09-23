@@ -160,6 +160,9 @@ export async function validateFormData(rawData: any): Promise<{
     const projectUnitCount = parseInt(rawData.projectUnitCount) || 0;
     const isExplorerTier = readiness === 'researching' || projectUnitCount === 0;
     
+    // DEBUG: Check what projectUnitRange we're receiving
+    console.log('[DEBUG] Raw projectUnitRange:', rawData.projectUnitRange);
+    
     const sanitizedData = {
       readiness,
       firstName: DOMPurify.sanitize(rawData.firstName || '').trim(),
@@ -292,6 +295,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
   // Transform readiness value with enhanced timeframe display
   const readinessValue = getReadinessWithTimeframe(formData.readiness || "");
 
+  // DEBUG: Check formData before webhook creation
+  console.log('[DEBUG] FormData projectUnitRange before webhook:', formData.projectUnitRange);
+  
   // SMART PAYLOAD: Only essential fields for GoHighLevel
   const webhookPayload = {
     // Contact fields
