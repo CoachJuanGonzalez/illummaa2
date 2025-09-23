@@ -45,6 +45,10 @@ interface FormData {
   privacyPolicy?: boolean;
   marketingConsent?: boolean;
   ageVerification?: boolean;
+
+  // ADD THESE MAPPING INTERMEDIATES (NO PAYLOAD IMPACT):
+  budgetRange?: string;         // Maps budget → project_budget_range
+  decisionTimeline?: string;    // Maps timeline → delivery_timeline
 }
 
 interface FormErrors {
