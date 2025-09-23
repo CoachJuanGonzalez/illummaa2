@@ -1,0 +1,70 @@
+REPLIT PROMPT: ADD PROJECT_READINESS FIELD TO GOHIGHLEVEL      
+  WEBHOOK
+
+  TASK OVERVIEW
+
+  Add the missing project_readiness field to the GoHighLevel     
+  webhook payload with enhanced timeframe display for better     
+  sales team clarity.
+
+  SINGLE FILE MODIFICATION REQUIRED:
+
+  FILE: server/storage.ts
+
+  STEP 1: ADD HELPER FUNCTION
+
+  LOCATION: Around line 250 (near other helper functions like    
+   sanitizeInput)
+
+  ADD THIS FUNCTION:
+  function getReadinessWithTimeframe(readiness: string):
+  string {
+    const timeframeMap: { [key: string]: string } = {
+      'researching': 'researching',
+      'planning-long': 'planning-long (+12 months)',
+      'planning-medium': 'planning-medium (6-12 months)',        
+      'planning-short': 'planning-short (3-6 months)',
+      'immediate': 'immediate (0-3 months)'
+    };
+    return timeframeMap[readiness] || readiness;
+  }
+
+  STEP 2: ADD TO WEBHOOK PAYLOAD
+
+  LOCATION: Around line 299, in the webhookPayload object,       
+  after the project_description line
+
+  FIND THIS LINE:
+  project_description:
+  sanitizeInput(formData.projectDescription ||
+  formData.projectDescriptionText || ""),
+
+  ADD THIS LINE IMMEDIATELY AFTER:
+  project_readiness:
+  getReadinessWithTimeframe(formData.readiness || ""),
+
+  EXPECTED RESULT:
+
+  The GoHighLevel webhook will now include:
+  {
+    "project_readiness": "immediate (0-3 months)",
+    // ... other existing fields
+  }
+
+  POSSIBLE VALUES:
+
+  - "researching"
+  - "planning-long (+12 months)"
+  - "planning-medium (6-12 months)"
+  - "planning-short (3-6 months)"
+  - "immediate (0-3 months)"
+
+  TESTING REQUIREMENTS:
+
+  1. Submit assessment with different readiness selections       
+  2. Verify webhook payload includes project_readiness field     
+  3. Check GoHighLevel receives the enhanced timeframe values    
+  4. No changes to existing functionality
+
+  IMPORTANT: This is a single-field addition - all existing      
+  webhook functionality must remain unchanged.

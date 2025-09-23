@@ -255,6 +255,17 @@ function sanitizeInput(input: string | undefined): string {
   return DOMPurify.sanitize(input.toString()).trim();
 }
 
+function getReadinessWithTimeframe(readiness: string): string {
+  const timeframeMap: { [key: string]: string } = {
+    'researching': 'researching',
+    'planning-long': 'planning-long (+12 months)',
+    'planning-medium': 'planning-medium (6-12 months)',
+    'planning-short': 'planning-short (3-6 months)',
+    'immediate': 'immediate (0-3 months)'
+  };
+  return timeframeMap[readiness] || readiness;
+}
+
 // SMART APPROACH: Streamlined webhook payload (no redundancy)
 export async function submitToGoHighLevel(formData: AssessmentFormData, priorityScore: number, customerTier: string, priorityLevel: string, tags: string[]): Promise<void> {
   const webhookUrl = process.env.GHL_WEBHOOK_URL;
@@ -297,6 +308,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     developer_type: formData.developerType || "",
     government_programs: formData.governmentPrograms || "",
     project_description: sanitizeInput(formData.projectDescription || formData.projectDescriptionText || ""),
+    project_readiness: getReadinessWithTimeframe(formData.readiness || ""),
     
     // Core routing fields (essential for GHL workflows)
     ai_priority_score: priorityData.score,
