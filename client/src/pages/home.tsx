@@ -7,6 +7,7 @@ import WhyIllummaa from "@/components/why-illummaa";
 import LeadershipTeam from "@/components/leadership-team";
 import AssessmentForm from "@/components/assessment-form";
 import ModelsShowcase from "@/components/models-showcase";
+import CommunityTestimonials from "@/components/community-testimonials";
 import PartnershipTiers from "@/components/partnership-tiers";
 import GovernmentPrograms from "@/components/government-programs";
 import MovementSection from "@/components/movement-section";
@@ -40,6 +41,7 @@ export default function Home() {
         <LeadershipTeam />
         <AssessmentForm />
         <ModelsShowcase />
+        <CommunityTestimonials />
         <PartnershipTiers />
         <GovernmentPrograms />
         <MovementSection />

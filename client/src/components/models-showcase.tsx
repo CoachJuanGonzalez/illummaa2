@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
+import ImagePlaceholder from "./image-placeholder";
 
 export default function ModelsShowcase() {
   const getModelRoute = (index: number) => {
@@ -15,7 +16,8 @@ export default function ModelsShowcase() {
       size: "600 sq ft",
       description: "Perfect for urban density",
       price: "Starting from $129K CAD",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500",
+      image: null,
+      hasRealImage: false,
       features: [
         "Open concept living",
         "Energy efficient appliances",
@@ -27,7 +29,8 @@ export default function ModelsShowcase() {
       size: "900 sq ft",
       description: "Ideal for young families",
       price: "Starting from $169K CAD",
-      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=500",
+      image: null,
+      hasRealImage: false,
       features: [
         "Two spacious bedrooms",
         "Full kitchen & dining",
@@ -40,6 +43,7 @@ export default function ModelsShowcase() {
       description: "Premium family living",
       price: "Starting from $199K CAD",
       image: executiveModelImage,
+      hasRealImage: true,
       features: [
         "Master suite with ensuite",
         "Open concept design",
@@ -68,14 +72,23 @@ export default function ModelsShowcase() {
               data-testid={`card-model-${index + 1}`}
             >
               <div className="model-image-container">
-                <img 
-                  src={model.image} 
-                  alt={index === 2 ? `${model.title} exterior view` : `${model.title} interior`} 
-                  className="model-card-image"
-                  loading="lazy"
-                  decoding="async"
-                  data-testid={`img-model-${index + 1}`}
-                />
+                {model.hasRealImage && model.image ? (
+                  <img
+                    src={model.image}
+                    alt={`${model.title} exterior view`}
+                    className="model-card-image"
+                    loading="lazy"
+                    decoding="async"
+                    data-testid={`img-model-${index + 1}`}
+                  />
+                ) : (
+                  <ImagePlaceholder
+                    title={`${model.title} 3D Rendering`}
+                    subtitle="Professional architectural visualization coming soon"
+                    type="rendering"
+                    className="h-[200px]"
+                  />
+                )}
               </div>
               <div className="p-8">
                 <h3 className="font-display font-bold text-2xl mb-2" data-testid={`heading-model-${index + 1}-title`}>

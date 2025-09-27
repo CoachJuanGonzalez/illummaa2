@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.proximahq.io)",
+      "WebFetch(domain:www.collegiumbuilt.com)",
+      "WebFetch(domain:propra.tech)",
+      "WebFetch(domain:www.maket.ai)",
+      "WebFetch(domain:getgreenbadger.com)",
+      "WebFetch(domain:www.measurabl.com)",
+      "WebFetch(domain:www.gropyus.com)",
+      "WebFetch(domain:www.trammellcrow.com)",
+      "WebFetch(domain:quadreal.com)",
+      "WebFetch(domain:www.oxfordproperties.com)",
+      "WebFetch(domain:newcommons.ca)",
+      "WebFetch(domain:dream.ca)",
+      "WebFetch(domain:mcwhinney.com)",
+      "WebFetch(domain:www.lendlease.com)",
+      "WebFetch(domain:www.concertproperties.com)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

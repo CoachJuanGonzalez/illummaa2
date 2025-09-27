@@ -1,4 +1,5 @@
 import { AlertTriangle, Lightbulb } from "lucide-react";
+import ImagePlaceholder from "./image-placeholder";
 
 export default function ProblemSolution() {
   return (
@@ -36,11 +37,11 @@ export default function ProblemSolution() {
               </div>
             </div>
             <div>
-              <img 
-                src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-                alt="Industrial construction site with cranes and modular buildings" 
-                className="rounded-2xl shadow-2xl w-full h-auto"
-                data-testid="img-industrial-construction"
+              <ImagePlaceholder
+                title="ILLÜMMAA Modular Construction"
+                subtitle="Professional photography of our factory production and on-site installation coming soon"
+                type="photo"
+                className="rounded-2xl shadow-2xl w-full min-h-[400px]"
               />
             </div>
           </div>

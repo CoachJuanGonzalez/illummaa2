@@ -4,6 +4,7 @@ import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
+import FloorPlanViewer from "@/components/floor-plan-viewer";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
@@ -173,11 +174,11 @@ export default function Model1BRCompact() {
 
             {/* Back Navigation */}
             <div className="flex justify-center py-6">
-              <Button 
+              <Button
                 onClick={goBackToModels}
-                variant="outline" 
-                size="lg" 
-                className="min-h-[44px] px-6 mx-4" 
+                variant="outline"
+                size="lg"
+                className="min-h-[44px] px-6 mx-4"
                 data-testid="button-back"
               >
                 <ArrowLeft className="mr-2" size={20} />
@@ -187,6 +188,30 @@ export default function Model1BRCompact() {
           </div>
         </div>
       </section>
+
+      <FloorPlanViewer
+        modelName="1BR Compact"
+        squareFootage="600 sq ft"
+        bedrooms="1"
+        bathrooms="1"
+        floorPlans={[
+          {
+            id: "2d",
+            title: "2D Floor Plan",
+            type: "2d",
+          },
+          {
+            id: "3d",
+            title: "3D Isometric View",
+            type: "3d",
+          },
+          {
+            id: "dimensions",
+            title: "Dimensions & Layout",
+            type: "dimensions",
+          },
+        ]}
+      />
 
       <Footer />
     </div>

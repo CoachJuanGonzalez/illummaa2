@@ -4,6 +4,7 @@ import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
+import FloorPlanViewer from "@/components/floor-plan-viewer";
 
 export default function Model2BRFamily() {
   const [location, navigate] = useLocation();
@@ -187,6 +188,30 @@ export default function Model2BRFamily() {
           </div>
         </div>
       </section>
+
+      <FloorPlanViewer
+        modelName="2BR Family"
+        squareFootage="900 sq ft"
+        bedrooms="2"
+        bathrooms="2"
+        floorPlans={[
+          {
+            id: "2d",
+            title: "2D Floor Plan",
+            type: "2d",
+          },
+          {
+            id: "3d",
+            title: "3D Isometric View",
+            type: "3d",
+          },
+          {
+            id: "dimensions",
+            title: "Dimensions & Layout",
+            type: "dimensions",
+          },
+        ]}
+      />
 
       <Footer />
     </div>

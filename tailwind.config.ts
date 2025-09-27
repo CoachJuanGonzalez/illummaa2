@@ -67,6 +67,15 @@ export default {
           "sky-blue": "var(--illummaa-sky-blue)",
           "sand-beige": "var(--illummaa-sand-beige)",
         },
+        community: {
+          primary: "var(--community-primary)",
+          secondary: "var(--community-secondary)",
+          accent: "var(--community-accent)",
+          neutral: "var(--community-neutral)",
+          "eco-green": "var(--eco-green)",
+          warm: "var(--community-warm)",
+          trust: "var(--community-trust)",
+        },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],

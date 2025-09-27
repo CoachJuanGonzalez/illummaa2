@@ -4,6 +4,7 @@ import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
+import FloorPlanViewer from "@/components/floor-plan-viewer";
 import exteriorImage from "@assets/3bedroom-1_1757890999523.jpg";
 import interiorImage from "@assets/3bedroom-2_1757891004660.jpg";
 import floorPlanImage from "@assets/3bedroom-3_1757891009839.jpg";
@@ -282,6 +283,31 @@ export default function Model3BRExecutive() {
           </div>
         </div>
       </section>
+
+      <FloorPlanViewer
+        modelName="3BR Executive"
+        squareFootage="1200 sq ft"
+        bedrooms="3"
+        bathrooms="2"
+        floorPlans={[
+          {
+            id: "2d",
+            title: "2D Floor Plan",
+            type: "2d",
+            imageUrl: floorPlanImage,
+          },
+          {
+            id: "3d",
+            title: "3D Isometric View",
+            type: "3d",
+          },
+          {
+            id: "dimensions",
+            title: "Dimensions & Layout",
+            type: "dimensions",
+          },
+        ]}
+      />
 
       <Footer />
     </div>

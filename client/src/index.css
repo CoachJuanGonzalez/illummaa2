@@ -45,11 +45,13 @@
   --illummaa-sand-beige: hsl(39, 86%, 83%);
 
   /* Community-First Warm Colors (B2B Transformation) */
-  --community-primary: hsl(25, 75%, 55%);    /* Warm terracotta - Partnership focus */
+  --community-primary: hsl(180, 55%, 45%);   /* Teal - Community & Partnership (inspired by New Commons) */
   --community-secondary: hsl(45, 85%, 75%);  /* Soft golden - Opportunity highlight */
   --community-accent: hsl(200, 25%, 55%);    /* Muted blue - Trust & reliability */
   --community-neutral: hsl(30, 15%, 90%);    /* Warm gray - Professional background */
   --eco-green: hsl(142, 45%, 48%);           /* Softer green - Sustainability */
+  --community-warm: hsl(25, 75%, 55%);       /* Warm terracotta - Approachability */
+  --community-trust: hsl(210, 50%, 50%);     /* Professional blue - Credibility */
 
   /* B2B Enterprise Color Tokens */
   --enterprise-dark: hsl(220, 20%, 20%);     /* Professional dark text */
