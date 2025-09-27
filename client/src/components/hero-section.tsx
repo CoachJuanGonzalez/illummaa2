@@ -16,7 +16,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-0">
         <img 
           src={heroBackgroundImage} 
-          alt="Aerial view of modern modular home community with solar panels and sustainable green spaces" 
+          alt="Canadian modular housing partnership opportunities with proven development success" 
           className="w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           style={{
             opacity: 1.0,
@@ -36,10 +36,10 @@ export default function HeroSection() {
             <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-lg md:bg-transparent md:backdrop-blur-none"></div>
             <div className="relative z-10">
               <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000', textShadow: '2px 2px 6px rgba(255,255,255,0.8), 1px 1px 3px rgba(0,0,0,0.3)'}}>
-                The Future of Housing Is Here.
+                Partner with Canada's Modular Housing Leader
               </h1>
               <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', textShadow: '2px 2px 4px rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.25)', fontSize: '2em'}}>
-                Your Home, Your Lifestyle
+                Building Communities, Creating Opportunities
               </p>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function HeroSection() {
               data-testid="button-qualify-partnership"
             >
               <Handshake className="mr-3 flex-shrink-0" size={20} />
-              <span>Take Partnership & Learning Assessment</span>
+              <span>Become a Development Partner</span>
             </Button>
             <Button 
               variant="outline"
@@ -62,7 +62,7 @@ export default function HeroSection() {
               data-testid="button-watch-film"
             >
               <Play className="mr-2 flex-shrink-0" size={18} style={{color: '#1a365d'}} />
-              <span>Watch the Film</span>
+              <span>View Partnership Projects</span>
             </Button>
           </div>
         </div>

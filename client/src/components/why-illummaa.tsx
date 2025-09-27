@@ -6,10 +6,10 @@ export default function WhyIllummaa() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-why-illummaa">
-            Why ILLUMMAA
+            Why Partner with ILLÜMMAA
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-why-subtitle">
-            Industrial precision meets sustainable innovation for the next generation of Canadian housing.
+            Strategic advantages that make ILLÜMMAA your ideal partner for large-scale modular construction projects.
           </p>
         </div>
         
@@ -21,9 +21,9 @@ export default function WhyIllummaa() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-speed-scale">Speed at Scale</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-speed-description">
-              helps project to reach completion in much faster pace than regular construction
+              Factory-controlled production accelerates project timelines while weather-proofing your construction schedule. Meet aggressive delivery commitments with confidence.
             </p>
-            <div className="text-primary font-semibold" data-testid="text-speed-metric">4x Faster Construction</div>
+            <div className="text-primary font-semibold" data-testid="text-speed-metric">Accelerated Delivery</div>
           </div>
           
           {/* Proven ROI */}
@@ -33,7 +33,7 @@ export default function WhyIllummaa() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-proven-roi">Proven ROI</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-roi-description">
-              30-40% cost savings vs traditional builds. Predictable budgets and timelines.
+              Achieve 30-40% cost savings versus traditional construction. Predictable budgets eliminate overruns and maximize project profitability.
             </p>
             <div className="text-accent font-semibold" data-testid="text-roi-metric">30-40% Cost Savings</div>
           </div>
@@ -45,7 +45,7 @@ export default function WhyIllummaa() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-sustainability">Sustainability</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-sustainability-description">
-              Eco-certified, net-zero ready, future-proof designs for tomorrow's standards.
+              Meet federal green building requirements and qualify for sustainability incentives. Future-proof designs align with Canada's evolving environmental standards.
             </p>
             <div className="text-blue-600 font-semibold" data-testid="text-sustainability-metric">Net-Zero Ready</div>
           </div>

@@ -1443,8 +1443,8 @@ const IllummaaAssessmentForm = () => {
                       onChange={handleInputChange}
                       required={customerTier !== 'tier_1_starter'}
                       placeholder={
-                        customerTier === 'tier_1_starter' 
-                          ? "Company name (if applicable)" 
+                        customerTier === 'tier_1_starter'
+                          ? "Company name (if applicable)"
                           : "Company/Organization name"
                       }
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"

@@ -18,7 +18,7 @@ export default function MovementSection() {
             <div>
               <img 
                 src={buildingCanadaImage} 
-                alt="Modern modular home showcasing contemporary design and sustainable living in Canadian landscape" 
+                alt="Commercial partnership opportunities for large-scale modular development projects across Canada" 
                 className="rounded-2xl shadow-2xl w-full h-auto"
                 data-testid="img-community-aerial"
               />
@@ -57,7 +57,7 @@ export default function MovementSection() {
                 data-testid="button-learn-more"
                 title="Learn More"
               >
-                Learn More
+                Explore Partnership Opportunities
               </Button>
             </div>
           </div>

@@ -38,11 +38,23 @@
   --sidebar-ring: hsl(124, 28%, 25%);
   --radius: 1rem;
   
-  /* ILLUMMAA Specific Colors */
+  /* ILLUMMAA Specific Colors - Community-First B2B Palette */
   --illummaa-primary: hsl(124, 28%, 25%);
   --illummaa-eco-green: hsl(142, 69%, 58%);
   --illummaa-sky-blue: hsl(196, 100%, 70%);
   --illummaa-sand-beige: hsl(39, 86%, 83%);
+
+  /* Community-First Warm Colors (B2B Transformation) */
+  --community-primary: hsl(25, 75%, 55%);    /* Warm terracotta - Partnership focus */
+  --community-secondary: hsl(45, 85%, 75%);  /* Soft golden - Opportunity highlight */
+  --community-accent: hsl(200, 25%, 55%);    /* Muted blue - Trust & reliability */
+  --community-neutral: hsl(30, 15%, 90%);    /* Warm gray - Professional background */
+  --eco-green: hsl(142, 45%, 48%);           /* Softer green - Sustainability */
+
+  /* B2B Enterprise Color Tokens */
+  --enterprise-dark: hsl(220, 20%, 20%);     /* Professional dark text */
+  --enterprise-medium: hsl(220, 15%, 45%);   /* Secondary text */
+  --enterprise-light: hsl(220, 20%, 95%);    /* Subtle backgrounds */
 }
 
 .dark {

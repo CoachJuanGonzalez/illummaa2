@@ -17,8 +17,8 @@ function mapFrontendToBackend(frontendData: any): any {
   // Calculate appropriate company value based on tier
   let companyValue = '';
   
-  // Check for existing company data
-  const providedCompany = frontendData.company || frontendData.companyName || '';
+  // Check for existing company data (frontend sends 'companyName')
+  const providedCompany = frontendData.companyName || frontendData.company || '';
   
   if (providedCompany) {
     // Use provided company name if available

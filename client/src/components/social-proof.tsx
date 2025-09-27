@@ -6,10 +6,10 @@ export default function SocialProof() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-social-proof-title">
-            Why Modular Construction Leads the Future
+            Why Partner with Canada's Modular Leader
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-social-proof-subtitle">
-            Discover the educational advantages that make modular housing the preferred choice for Canadian developers.
+            Proven advantages that position ILLÜMMAA as your strategic construction partner for large-scale development.
           </p>
         </div>
         
@@ -21,7 +21,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-cost-efficiency">Cost Efficiency</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-cost-description">
-              Modular housing is generally more affordable than traditional construction methods, thanks to the ability to mass-produce modules in factories and reduce waste. 30-40% more affordable for the end user.
+              Factory-precision manufacturing delivers 30-40% cost savings versus traditional construction. Economies of scale maximize your project ROI while maintaining premium quality standards.
             </p>
             <div className="text-primary font-semibold" data-testid="text-cost-metric">30-40% More Affordable</div>
           </div>
@@ -33,7 +33,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-speed-construction">Speed of Construction</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-speed-construction-description">
-              Modular homes can be built and installed significantly faster than conventional homes. This is particularly advantageous in regions with urgent housing needs or short construction seasons due to weather conditions.
+              Factory-controlled construction enables faster project delivery regardless of weather conditions. Meet tight deadlines and accelerate revenue generation with proven industrial timelines.
             </p>
             <div className="text-accent font-semibold" data-testid="text-speed-construction-metric">Faster Build Times</div>
           </div>
@@ -45,7 +45,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-quality-control">Consistency and Quality Control</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-quality-control-description">
-              Factory-based construction ensures a consistent level of quality and minimizes errors or delays associated with on-site construction.
+              ISO-certified factory production ensures consistent quality across every unit. Minimize on-site variables and eliminate costly construction delays.
             </p>
             <div className="text-blue-600 font-semibold" data-testid="text-quality-control-metric">Factory Precision</div>
           </div>
@@ -57,7 +57,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-flexibility">Flexibility and Customization</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-flexibility-description">
-              Modular housing offers diverse designs and scalability that can cater to various consumer preferences and market demands.
+              Scalable design system adapts from 50-unit projects to 500+ unit developments. Customize specifications while maintaining production efficiency.
             </p>
             <div className="text-orange-600 font-semibold" data-testid="text-flexibility-metric">Diverse Designs</div>
           </div>
@@ -69,7 +69,7 @@ export default function SocialProof() {
             </div>
             <h3 className="font-display font-bold text-2xl mb-4 text-center md:text-left" data-testid="heading-sustainability">Sustainability</h3>
             <p className="text-muted-foreground text-lg mb-4 text-center md:text-left" data-testid="text-sustainability-description">
-              Modular homes often incorporate sustainable materials and energy-efficient designs, aligning with Canada's push for greener construction practices.
+              Meet federal sustainability requirements and qualify for green building incentives. Align with Canada's Net Zero goals while delivering market-leading efficiency.
             </p>
             <div className="text-green-600 font-semibold text-center md:text-left" data-testid="text-sustainability-metric">Eco-Friendly Design</div>
           </div>
