@@ -68,11 +68,11 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <button 
-                  onClick={() => scrollToSection("developer-qualification", "Assessment")} 
+                  onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
                   className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
-                  data-testid="link-footer-assessment"
+                  data-testid="link-footer-partnership-application"
                 >
-                  Assessment
+                  Partnership Application
                 </button>
               </li>
               <li>

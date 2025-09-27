@@ -53,21 +53,21 @@ export default function PartnershipTiers() {
   const tiers = [
     {
       name: "Explorer",
-      units: "Just learning • 0 units",
+      units: "Exploring options • 0 units",
       icon: <BookOpen className="text-gray-600" size={32} />,
       iconBg: "bg-gray-100",
       accentColor: "border-gray-200",
       badgeColor: "bg-gray-100 text-gray-700",
       features: [
-        "Free educational resources",
+        "Free partnership resources",
         "Modular home cost calculator",
         "Design gallery access",
         "Monthly market updates",
         "Community forum access",
-        "Self-paced learning journey"
+        "Self-paced exploration"
       ],
       buttonVariant: "outline" as const,
-      buttonText: "Start Free Assessment",
+      buttonText: "Start Partnership Journey",
       action: scrollToAssessment,
       freeLearning: true,
       disabled: false
@@ -108,7 +108,7 @@ export default function PartnershipTiers() {
         "Factory queue priority"
       ],
       buttonVariant: "default" as const,
-      buttonText: "Begin Assessment",
+      buttonText: "Apply for Partnership",
       popular: true,
       action: scrollToAssessment,
       disabled: false
@@ -129,7 +129,7 @@ export default function PartnershipTiers() {
         "ROI analysis tools"
       ],
       buttonVariant: "outline" as const,
-      buttonText: "Begin Assessment",
+      buttonText: "Apply for Partnership",
       action: scrollToAssessment,
       disabled: false
     },
@@ -149,7 +149,7 @@ export default function PartnershipTiers() {
         "Coordinated 3-month timeline"
       ],
       buttonVariant: "outline" as const,
-      buttonText: "Begin Assessment",
+      buttonText: "Apply for Partnership",
       action: scrollToAssessment,
       disabled: false
     }
@@ -184,9 +184,9 @@ export default function PartnershipTiers() {
                 </div>
               )}
               {tier.freeLearning && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-free-learning">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-free-partnership">
                   <span className="bg-gray-100 text-gray-700 px-4 py-1 rounded-full text-sm font-medium">
-                    FREE LEARNING
+                    FREE PARTNERSHIP RESOURCES
                   </span>
                 </div>
               )}
@@ -237,9 +237,9 @@ export default function PartnershipTiers() {
             onClick={scrollToAssessment} 
             size="lg"
             className="btn-primary text-white font-semibold text-sm xs:text-base sm:text-lg w-full max-w-xs xs:max-w-sm sm:max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal leading-tight"
-            data-testid="button-schedule-assessment"
+            data-testid="button-apply-partnership"
           >
-Take Partnership & Learning Assessment
+Apply for Partnership
           </Button>
         </div>
         

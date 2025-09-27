@@ -122,11 +122,11 @@ export default function StickyHeader() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-8" data-testid="nav-desktop">
             <button 
-              onClick={() => scrollToSection("developer-qualification", "Assessment")} 
+              onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
-              data-testid="nav-assessment"
+              data-testid="nav-partnership-application"
             >
-              Assessment
+              Partnership Application
             </button>
             <button 
               onClick={() => scrollToSection("why", "Why")} 
@@ -188,11 +188,11 @@ export default function StickyHeader() {
           <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
             <div className="flex flex-col space-y-2 pt-4">
               <button 
-                onClick={() => scrollToSection("developer-qualification", "Assessment")} 
+                onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                data-testid="nav-mobile-assessment"
+                data-testid="nav-mobile-partnership-application"
               >
-                Assessment
+                Partnership Application
               </button>
               <button 
                 onClick={() => scrollToSection("why", "Why")} 

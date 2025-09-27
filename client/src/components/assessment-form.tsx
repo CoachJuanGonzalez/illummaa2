@@ -38,7 +38,6 @@ interface FormData {
   governmentPrograms?: string;
   projectDescription?: string;
   projectUnitRange?: string;
-  learningInterest?: string;
   informationPreference?: string;
   consentCommunications?: boolean;
   consentSMS?: boolean;
@@ -141,8 +140,8 @@ const IllummaaAssessmentForm = () => {
         name: 'Explorer',
         icon: '📚',
         color: 'blue',
-        description: 'Educational resources at your pace',
-        submitText: 'Start Learning Journey'
+        description: 'Partnership resources at your pace',
+        submitText: 'Start Partnership Journey'
       },
       'tier_1_starter': {
         name: 'Starter',
@@ -156,21 +155,21 @@ const IllummaaAssessmentForm = () => {
         icon: '🚀',
         color: 'purple',
         description: 'Priority partnership attention',
-        submitText: 'Submit Assessment'
+        submitText: 'Submit Application'
       },
       'tier_3_preferred': {
         name: 'Preferred',
         icon: '⭐',
         color: 'orange',
         description: 'Expedited senior team handling',
-        submitText: 'Submit Assessment'
+        submitText: 'Submit Application'
       },
       'tier_4_elite': {
         name: 'Elite',
         icon: '👑',
         color: 'red',
         description: 'Executive VIP engagement',
-        submitText: 'Submit Assessment'
+        submitText: 'Submit Application'
       }
     };
     return tierInfo[tier] || tierInfo['tier_0_explorer'];
@@ -180,7 +179,7 @@ const IllummaaAssessmentForm = () => {
   // RESPONSE COMMITMENT FUNCTIONS - Professional Service Levels (No Numerical Scoring)
   const getResponseCommitmentLevel = (tier: TierType) => {
     const levels = {
-      'tier_0_explorer': 'Educational Support Track',
+      'tier_0_explorer': 'Partnership Support Track',
       'tier_1_starter': 'Standard Partnership Attention', 
       'tier_2_pioneer': 'Enhanced Partnership Priority',
       'tier_3_preferred': 'Executive Partnership Track',
@@ -191,7 +190,7 @@ const IllummaaAssessmentForm = () => {
 
   const getResponseDescription = (tier: TierType) => {
     const descriptions = {
-      'tier_0_explorer': 'Comprehensive educational resources and learning guidance',
+      'tier_0_explorer': 'Comprehensive partnership resources and development support',
       'tier_1_starter': 'Personal consultation support for your modular journey',
       'tier_2_pioneer': 'Priority partnership coordination with dedicated team attention',
       'tier_3_preferred': 'Expedited processing with senior team engagement',
@@ -525,9 +524,6 @@ const IllummaaAssessmentForm = () => {
         
       case 2:
         if (isExplorer) {
-          if (!formData.learningInterest) {
-            newErrors.learningInterest = 'Please select your primary interest';
-          }
           if (!formData.informationPreference) {
             newErrors.informationPreference = 'Please select your information preference';
           }
@@ -656,7 +652,6 @@ const IllummaaAssessmentForm = () => {
         developerType: undefined,
         governmentPrograms: undefined,
         projectDescription: undefined,
-        learningInterest: undefined,
         informationPreference: undefined
       }));
       // Reset related state
@@ -768,7 +763,6 @@ const IllummaaAssessmentForm = () => {
         projectDescription: sanitizeInput(formData.projectDescription || ''),
         
         // Education-specific fields for Explorer tier
-        learningInterest: sanitizeInput(formData.learningInterest || 'Not specified'),
         informationPreference: sanitizeInput(formData.informationPreference || 'Not specified'),
         
         // Flags for automation
@@ -1019,7 +1013,7 @@ const IllummaaAssessmentForm = () => {
             {/* Contact Information */}
             <div className="text-center bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                {customerTier === 'tier_0_explorer' ? 'Educational Resources Team Ready' :
+                {customerTier === 'tier_0_explorer' ? 'Partnership Team Ready' :
                  customerTier === 'tier_1_starter' ? 'Residential Specialist Standing By' :
                  'Partnership Team Assigned'}
               </h3>
@@ -1039,10 +1033,10 @@ const IllummaaAssessmentForm = () => {
               </div>
               
               <h1 className="text-4xl font-bold text-gray-900 mb-3" data-testid="title-main">
-                Partnership & Learning Assessment
+                Developer Partnership Application
               </h1>
               <p className="text-gray-600" data-testid="text-subtitle">
-                From learning to building. Find your path in Canada's modular housing revolution.
+                Start your partnership with Canada's modular housing leader. Tell us about your project.
               </p>
             </div>
 
@@ -1163,55 +1157,19 @@ const IllummaaAssessmentForm = () => {
               </div>
             )}
             
-            {/* STEP 2: Learning Preferences / Budget & Timeline */}
+            {/* STEP 2: Information Preferences / Budget & Timeline */}
             {currentStep === 2 && (
               <div className="space-y-6" data-testid="step-2">
                 {isExplorer ? (
                   // NEW EXPLORER SECTION
                   <>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
-                      Learning Preferences
+                      Information Preferences
                     </h2>
                     <p className="text-gray-600 mb-6">
-                      Help us provide the most relevant educational resources for your modular housing research.
+                      Help us provide the most relevant information and resources for your project development.
                     </p>
                     
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-learning-interest">
-                        What aspect of modular construction interests you most? <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="learningInterest"
-                        value={formData.learningInterest || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.learningInterest ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-learning-interest"
-                      >
-                        <option value="">Select your primary interest...</option>
-                        <option value="Cost comparison vs traditional construction">Cost comparison vs traditional construction</option>
-                        <option value="Construction process and timeline understanding">Construction process and timeline understanding</option>
-                        <option value="Building codes and regulatory requirements">Building codes and regulatory requirements</option>
-                        <option value="Design options and customization capabilities">Design options and customization capabilities</option>
-                        <option value="Financing and government program options">Financing and government program options</option>
-                        <option value="Sustainability and energy efficiency benefits">Sustainability and energy efficiency benefits</option>
-                        <option value="Site preparation and installation requirements">Site preparation and installation requirements</option>
-                        <option value="Long-term maintenance and durability">Long-term maintenance and durability</option>
-                        <option value="Comprehensive overview of all aspects">Comprehensive overview of all aspects</option>
-                      </select>
-                      {errors.learningInterest && (
-                        <p className="text-red-500 text-xs mt-1" data-testid="error-learning-interest">{errors.learningInterest}</p>
-                      )}
-                    </div>
 
                     <div>
                       <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-information-preference">
@@ -1570,7 +1528,7 @@ const IllummaaAssessmentForm = () => {
                     data-testid="select-government-programs"
                   >
                     <option value="">Select interest level...</option>
-                    <option value="Just learning about options">Just learning about options</option>
+                    <option value="Exploring partnership options">Exploring partnership options</option>
                     <option value="Not interested">Not interested</option>
                     <option value="Somewhat interested">Somewhat interested</option>
                     <option value="Very interested">Very interested</option>
@@ -1643,7 +1601,6 @@ const IllummaaAssessmentForm = () => {
                         
                         {customerTier === 'tier_0_explorer' && (
                           <>
-                            {formData.learningInterest && <p><span className="text-gray-600">Primary Interest:</span> <span className="font-medium">{formData.learningInterest}</span></p>}
                             {formData.informationPreference && <p><span className="text-gray-600">Information Preference:</span> <span className="font-medium">{formData.informationPreference}</span></p>}
                           </>
                         )}
