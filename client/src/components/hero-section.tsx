@@ -1,6 +1,6 @@
 import { Handshake, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBackgroundImage from "@assets/Generated Image September 14, 2025 - 12_11PM_1757866782266.png";
+import heroBackgroundImage from "@assets/hero-background-optimized.webp";
 
 export default function HeroSection() {
   const scrollToAssessment = () => {
