@@ -9,7 +9,7 @@ export default function SocialProof() {
             Why Partner with Canada's Modular Leader
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-social-proof-subtitle">
-            Proven advantages that position ILLÜMMAA as your strategic construction partner for large-scale development.
+            Proven advantages that position ILLUMMAA as your strategic construction partner for large-scale development.
           </p>
         </div>
         

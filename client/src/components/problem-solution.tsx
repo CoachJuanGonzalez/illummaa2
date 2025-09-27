@@ -38,7 +38,7 @@ export default function ProblemSolution() {
             </div>
             <div>
               <ImagePlaceholder
-                title="ILLÜMMAA Modular Construction"
+                title="ILLUMMAA Modular Construction"
                 subtitle="Professional photography of our factory production and on-site installation coming soon"
                 type="photo"
                 className="rounded-2xl shadow-2xl w-full min-h-[400px]"

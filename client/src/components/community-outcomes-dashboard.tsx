@@ -83,7 +83,7 @@ export default function CommunityOutcomesDashboard() {
             Community Impact Dashboard
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-outcomes-subtitle">
-            Real-time metrics showcasing the transformative impact of ILLÜMMAA partnerships across Canada.
+            Real-time metrics showcasing the transformative impact of ILLUMMAA partnerships across Canada.
           </p>
         </div>
 

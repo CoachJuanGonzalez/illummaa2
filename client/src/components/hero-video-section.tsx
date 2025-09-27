@@ -130,7 +130,7 @@ export default function HeroVideoSection() {
           className="btn-primary-hero text-white shadow-2xl"
           data-testid="button-partner-with-illummaa"
         >
-          Partner with ILLÜMMAA
+          Partner with ILLUMMAA
         </Button>
       </div>
 

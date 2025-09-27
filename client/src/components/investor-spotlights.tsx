@@ -27,7 +27,7 @@ export default function InvestorSpotlights() {
       title: "CEO",
       company: "Aurora Development Group",
       videoThumbnail: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      quote: "ILLÜMMAA's modular approach cut our construction timeline by 60% while delivering superior quality. This partnership transformed our business model.",
+      quote: "ILLUMMAA's modular approach cut our construction timeline by 60% while delivering superior quality. This partnership transformed our business model.",
       metrics: {
         units: 250,
         roi: "38%",
@@ -53,7 +53,7 @@ export default function InvestorSpotlights() {
       title: "Managing Partner",
       company: "Montreal Sustainable Developments",
       videoThumbnail: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      quote: "ILLÜMMAA's team understood Quebec's unique building codes and bilingual requirements. True Canadian partnership excellence.",
+      quote: "ILLUMMAA's team understood Quebec's unique building codes and bilingual requirements. True Canadian partnership excellence.",
       metrics: {
         units: 320,
         roi: "45%",
@@ -80,7 +80,7 @@ export default function InvestorSpotlights() {
             Partnership Success Stories
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-spotlights-subtitle">
-            Hear directly from development partners who've transformed their projects with ILLÜMMAA's modular construction expertise.
+            Hear directly from development partners who've transformed their projects with ILLUMMAA's modular construction expertise.
           </p>
         </div>
 

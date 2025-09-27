@@ -384,7 +384,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  /* Focus rings with ILLÜMMAA branding */
+  /* Focus rings with ILLUMMAA branding */
   .focus-ring:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(44, 85, 48, 0.3);

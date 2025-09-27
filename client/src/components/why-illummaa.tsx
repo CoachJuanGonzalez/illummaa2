@@ -6,10 +6,10 @@ export default function WhyIllummaa() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-why-illummaa">
-            Why Partner with ILLÜMMAA
+            Why Partner with ILLUMMAA
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-why-subtitle">
-            Strategic advantages that make ILLÜMMAA your ideal partner for large-scale modular construction projects.
+            Strategic advantages that make ILLUMMAA your ideal partner for large-scale modular construction projects.
           </p>
         </div>
         

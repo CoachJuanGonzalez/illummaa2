@@ -12,7 +12,7 @@ export default function PartnershipCalendar() {
     {
       title: "Exploratory Call",
       duration: "15 minutes",
-      description: "Quick introduction to ILLÜMMAA's partnership opportunities",
+      description: "Quick introduction to ILLUMMAA's partnership opportunities",
       icon: <User size={24} />,
       suitable: "Explorer & Starter Tiers"
     },

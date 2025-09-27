@@ -37,7 +37,7 @@ const testimonials: Testimonial[] = [
   {
     id: "3",
     name: "Homeowner Experiences",
-    role: "Living in ILLÜMMAA Homes",
+    role: "Living in ILLUMMAA Homes",
     quote:
       "Families are finding quality, affordable homes through our modular construction approach. Homeowner testimonials and photos coming soon.",
     impact: "Quality homes, happy families",
