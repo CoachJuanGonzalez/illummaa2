@@ -4,6 +4,23 @@
 
 ILLUMMAA is a revenue-generating B2B lead generation website for modular homes targeting Canadian developers and builders. The application is designed to qualify prospects, nurture leads, and drive business growth through an assessment-based funnel system. The primary goal is to generate 15+ qualified Canadian developer inquiries per month with an 80% lead quality rate, focusing on developers managing 50-500+ units with $5M+ projects.
 
+## Current Status
+
+**✅ Successfully imported and configured for Replit environment**
+- Application running on port 5000 with proper host configuration
+- Frontend and backend integrated with Vite development server
+- All dependencies installed and npm scripts configured
+- Deployment configuration set up for production
+
+## Recent Changes
+
+### 2025-09-27 - Replit Environment Setup
+- Fixed npm scripts to use `npx tsx` for proper TypeScript execution
+- Configured workflow to serve application on port 5000 with webview output
+- Verified Vite server configuration includes `allowedHosts: true` for Replit proxy
+- Set up autoscale deployment configuration for production builds
+- Confirmed application loads successfully with proper hero section and navigation
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
