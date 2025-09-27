@@ -1,0 +1,70 @@
+Please rename the assessment form throughout the entire website to make it a pure B2B form, removing all "Learning" references. Here     
+  are the complete changes needed:
+
+  **1. MAIN FORM TITLE AND SUBTITLE**
+  In client/src/components/assessment-form.tsx (around line 1042-1046):
+
+  CHANGE FROM:
+  - Title: "Partnership & Learning Assessment"
+  - Subtitle: "From learning to building. Find your path in Canada's modular housing revolution."
+
+  CHANGE TO:
+  - Title: "Developer Partnership Application"
+  - Subtitle: "Start your partnership with Canada's modular housing leader. Tell us about your project."
+
+  **2. REMOVE "learningInterest" FIELD**
+  Throughout client/src/components/assessment-form.tsx:
+  - Remove the "learningInterest" field from the FormData interface (if it exists)
+  - Remove any form questions asking about learning interests
+  - Remove learningInterest from form submission payloads
+
+  **3. UPDATE NAVIGATION/HEADER LINKS**
+  In client/src/components/header.tsx and client/src/components/sticky-header.tsx:
+  - Change any "Assessment" navigation link text to "Partnership Application"
+  - Change any "Get Assessed" CTA buttons to "Apply for Partnership"
+
+  **4. UPDATE HERO SECTION CTAs**
+  In client/src/components/hero-section.tsx:
+  - Update any CTA buttons that reference "assessment" to say "Apply for Partnership" or "Start Application"
+  - Update scroll targets to match (e.g., "developer-qualification" or "partnership-application")
+
+  **5. UPDATE FOOTER LINKS**
+  In client/src/components/footer.tsx:
+  - Change "Assessment" link to "Partnership Application"
+
+  **6. UPDATE ANALYTICS TRACKING**
+  In client/src/lib/analytics.ts:
+  - Keep function names the same for backend compatibility
+  - But update any user-facing text in console logs or event labels
+
+  **7. UPDATE COMPONENT ID/DATA-TESTID**
+  Throughout the form component:
+  - Keep the component name as "IllummaaAssessmentForm" (for code stability)
+  - But update the section ID from "assessment" to "partnership-application"
+  - Update data-testid attributes if they reference "assessment"
+
+  **8. UPDATE OTHER COMPONENTS**
+  Search all files in client/src/components/ and client/src/pages/ for:
+  - "Partnership & Learning"
+  - "assessment form"
+  - "Get Assessed"
+  - "Take Assessment"
+  - "learning interest"
+
+  And update to B2B language:
+  - "Developer Partnership Application"
+  - "partnership application form"
+  - "Apply for Partnership"
+  - "Start Application"
+  - Remove learning references
+
+  **9. KEEP THESE UNCHANGED (Important for backend compatibility):**
+  - API endpoint names (keep /api/assessment or similar)
+  - Database field names
+  - Analytics function names (trackAssessmentStart, etc.)
+  - Component file names (assessment-form.tsx)
+  - Form data field names in backend payload
+
+  **SUMMARY:**
+  This is a content/text change only - updating all user-facing text from "Assessment" and "Learning" language to pure B2B "Partnership    
+   Application" language. Backend compatibility maintained by keeping API endpoints, function names, and file names the same.
