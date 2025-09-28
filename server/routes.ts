@@ -81,9 +81,9 @@ function mapFrontendToBackend(frontendData: any): any {
 
   const normalizeDeveloperType = (value: string): string => {
     const developerMap: { [key: string]: string } = {
-      'Individual/Family': "I don't know yet",
-      'Individual': "I don't know yet",
-      'Family': "I don't know yet",
+      'Individual/Family': 'Individual/Family Developer',
+      'Individual': 'Individual/Family Developer',
+      'Family': 'Individual/Family Developer',
       'Commercial Developer': 'Commercial Developer (Large Projects)',
       'Government/Municipal': 'Government/Municipal Developer',
       'Non-Profit Organization': 'Non-Profit Housing Developer',
@@ -92,7 +92,8 @@ function mapFrontendToBackend(frontendData: any): any {
       'Government/Municipal Developer': 'Government/Municipal Developer',
       'Non-Profit Housing Developer': 'Non-Profit Housing Developer',
       'Private Developer (Medium Projects)': 'Private Developer (Medium Projects)',
-      "I don't know yet": "I don't know yet"
+      'Individual/Family Developer': 'Individual/Family Developer',
+      'Indigenous Community/Organization': 'Indigenous Community/Organization'
     };
     return developerMap[value] || value;
   };
