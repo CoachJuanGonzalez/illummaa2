@@ -52,53 +52,12 @@ export default function PartnershipTiers() {
 
   const tiers = [
     {
-      name: "Explorer",
-      units: "Exploring options • 0 units",
-      icon: <BookOpen className="text-gray-600" size={32} />,
-      iconBg: "bg-gray-100",
-      accentColor: "border-gray-200",
-      badgeColor: "bg-gray-100 text-gray-700",
-      features: [
-        "Free partnership resources",
-        "Modular home cost calculator",
-        "Design gallery access",
-        "Monthly market updates",
-        "Community forum access",
-        "Self-paced exploration"
-      ],
-      buttonVariant: "outline" as const,
-      buttonText: "Start Partnership Journey",
-      action: scrollToAssessment,
-      freeLearning: true,
-      disabled: false
-    },
-    {
-      name: "Starter",
-      units: "1-49 units",
-      icon: <Home className="text-green-600" size={32} />,
-      iconBg: "bg-green-100",
-      features: [
-        "All Explorer benefits",
-        "Personal consultation support",
-        "Direct ILLUMMAA expert access",
-        "Standard modular designs",
-        "Financing assistance programs",
-        "72-hour on-site assembly",
-        "Factory precision manufacturing",
-        "Competitive pricing from $99K CAD"
-      ],
-      buttonVariant: "outline" as const,
-      buttonText: "Get Started",
-      action: scrollToAssessment,
-      disabled: false
-    },
-    {
       name: "Pioneer",
-      units: "50-149 units",
+      units: "10-49 units",
       icon: <Rocket className="text-blue-600" size={32} />,
       iconBg: "bg-blue-100",
+      accentColor: "border-blue-200",
       features: [
-        "All Starter benefits",
         "Priority partnership handling",
         "Dedicated project support",
         "30-40% cost savings vs traditional",
@@ -107,17 +66,17 @@ export default function PartnershipTiers() {
         "Multi-unit coordination",
         "Factory queue priority"
       ],
-      buttonVariant: "default" as const,
+      buttonVariant: "outline" as const,
       buttonText: "Apply for Partnership",
-      popular: true,
       action: scrollToAssessment,
       disabled: false
     },
     {
       name: "Preferred",
-      units: "150-299 units",
+      units: "50-200 units",
       icon: <Star className="text-primary" size={32} />,
       iconBg: "bg-primary/10",
+      accentColor: "border-primary",
       features: [
         "All Pioneer benefits",
         "Expedited senior team attention",
@@ -128,16 +87,18 @@ export default function PartnershipTiers() {
         "Advanced partnership proposals",
         "ROI analysis tools"
       ],
-      buttonVariant: "outline" as const,
+      buttonVariant: "default" as const,
       buttonText: "Apply for Partnership",
+      popular: true,
       action: scrollToAssessment,
       disabled: false
     },
     {
       name: "Elite", 
-      units: "300+ units",
+      units: "200+ units",
       icon: <Crown className="text-yellow-600" size={32} />,
       iconBg: "bg-yellow-100",
+      accentColor: "border-yellow-200",
       features: [
         "All Preferred benefits",
         "Executive partnership team",
@@ -180,13 +141,6 @@ export default function PartnershipTiers() {
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-most-popular">
                   <span className="bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
                     Most Popular
-                  </span>
-                </div>
-              )}
-              {tier.freeLearning && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-free-partnership">
-                  <span className="bg-gray-100 text-gray-700 px-4 py-1 rounded-full text-sm font-medium">
-                    FREE PARTNERSHIP RESOURCES
                   </span>
                 </div>
               )}
