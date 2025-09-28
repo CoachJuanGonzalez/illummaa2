@@ -1137,10 +1137,6 @@ const IllummaaAssessmentForm = () => {
                     </div>
               </div>
             )}
-                  </>
-                )}
-              </div>
-            )}
 
             {/* STEP 3: Contact Information */}
             {currentStep === 3 && (
