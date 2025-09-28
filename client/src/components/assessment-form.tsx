@@ -425,13 +425,12 @@ const IllummaaAssessmentForm = () => {
       'Government/Municipal': 'Government/Municipal Developer',
       'Non-Profit Organization': 'Non-Profit Housing Developer',
       'Private Developer': 'Private Developer (Medium Projects)',
-      "I don't know yet": "I don't know yet",
-      // ENTERPRISE SECURITY: Handle edge cases
-      'undefined': "I don't know yet",
-      'null': "I don't know yet",
-      '': "I don't know yet"
+      // ENTERPRISE SECURITY: Handle edge cases - fallback to empty string for validation
+      'undefined': "",
+      'null': "",
+      '': ""
     };
-    return developerMap[sanitizedInput] || sanitizedInput;
+    return developerMap[sanitizedInput] || "";
   };
 
   // Use shared scoring utility for 100% frontend-backend consistency
