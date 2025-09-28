@@ -128,7 +128,7 @@ export default function PartnershipTiers() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8" data-testid="container-partnership-tiers">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8 max-w-6xl mx-auto" data-testid="container-partnership-tiers">
           {tiers.map((tier, index) => (
             <div 
               key={index}
