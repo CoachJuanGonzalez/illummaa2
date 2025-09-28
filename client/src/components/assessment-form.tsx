@@ -1484,7 +1484,6 @@ const IllummaaAssessmentForm = () => {
                     <option value="Non-Profit Housing Developer">Non-Profit Housing Developer</option>
                     <option value="Private Developer (Medium Projects)">Private Developer (Medium Projects)</option>
                     <option value="Individual/Family Developer">Individual/Family Developer</option>
-                    <option value="I don't know yet">I don't know yet</option>
                   </select>
                   {errors.developerType && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
