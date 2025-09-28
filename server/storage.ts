@@ -535,7 +535,7 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
       'Non-Profit Housing Developer': 'dev-nonprofit', 
       'Private Developer (Medium Projects)': 'dev-private',
       'Indigenous Community/Organization': 'dev-indigenous',
-      "I don't know yet": 'dev-unknown'
+      'Individual/Family Developer': 'dev-individual'
     }[data.developerType];
 
     if (devOptimized) {
