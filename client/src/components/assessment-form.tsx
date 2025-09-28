@@ -1353,12 +1353,8 @@ const IllummaaAssessmentForm = () => {
                       id="company"
                       value={formData.company}
                       onChange={handleInputChange}
-                      required={customerTier !== 'tier_1_starter'}
-                      placeholder={
-                        customerTier === 'tier_1_starter'
-                          ? "Company name (if applicable)"
-                          : "Company/Organization name"
-                      }
+                      required={true} // All B2B tiers require company
+                      placeholder="Company/Organization name"
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"
                       aria-label="Company or organization name"
                     />
@@ -1367,10 +1363,9 @@ const IllummaaAssessmentForm = () => {
                     )}
                     {/* Helper text based on tier */}
                     <p className="mt-1 text-xs text-gray-500">
-                      {customerTier === 'tier_1_starter' && "Optional for individuals/families. Recommended for business entities."}
-                      {customerTier === 'tier_2_pioneer' && "Required for partnership inquiries (50-149 units)"}
-                      {customerTier === 'tier_3_preferred' && "Required for preferred partnership (150-299 units)"}
-                      {customerTier === 'tier_4_elite' && "Required for elite partnership (300+ units)"}
+                      {customerTier === 'pioneer' && "Required for B2B partnership inquiries (10-49 units)"}
+                      {customerTier === 'preferred' && "Required for preferred partnership (50-199 units)"}
+                      {customerTier === 'elite' && "Required for elite partnership (200+ units)"}
                     </p>
                   </div>
                 )}
@@ -1547,24 +1542,15 @@ const IllummaaAssessmentForm = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                           </svg>
                         </div>
-                        <h4 className="font-semibold text-gray-900">{customerTier === 'tier_0_explorer' ? 'Learning Journey' : 'Project Scope'}</h4>
+                        <h4 className="font-semibold text-gray-900">Project Scope</h4>
                       </div>
                       <div className="space-y-2 text-sm">
                         {formData.readiness && <p><span className="text-gray-600">Journey Stage:</span> <span className="font-medium">{formData.readiness === 'researching' ? 'Research & Learning' : formData.readiness === 'planning-long' ? 'Planning (12+ months)' : formData.readiness === 'planning-medium' ? 'Actively Looking (6-12 months)' : formData.readiness === 'planning-short' ? 'Ready to Move Forward (3-6 months)' : formData.readiness === 'immediate' ? 'Need Solution Now (0-3 months)' : formData.readiness}</span></p>}
                         
-                        {customerTier === 'tier_0_explorer' && (
-                          <>
-                            {formData.informationPreference && <p><span className="text-gray-600">Information Preference:</span> <span className="font-medium">{formData.informationPreference}</span></p>}
-                          </>
-                        )}
-                        
-                        {customerTier !== 'tier_0_explorer' && (
-                          <>
-                            {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
-                            {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
-                            {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
-                          </>
-                        )}
+                        {/* B2B Project Information - Always Show */}
+                        {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
+                        {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
+                        {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
                       </div>
                     </div>
                   </div>
