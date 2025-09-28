@@ -55,7 +55,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-type TierType = 'tier_0_explorer' | 'tier_1_starter' | 'tier_2_pioneer' | 'tier_3_preferred' | 'tier_4_elite';
+type TierType = 'pioneer' | 'preferred' | 'elite';
 
 const IllummaaAssessmentForm = () => {
   // State management
@@ -67,7 +67,7 @@ const IllummaaAssessmentForm = () => {
   const [responseCommitment, setResponseCommitment] = useState('');
   const [buildCanadaEligible, setBuildCanadaEligible] = useState(false);
   const [priorityScore, setPriorityScore] = useState(0);
-  const [customerTier, setCustomerTier] = useState<TierType>('tier_0_explorer');
+  const [customerTier, setCustomerTier] = useState<TierType>('pioneer');
   const [isExplorer, setIsExplorer] = useState(false);
   const [csrfToken, setCsrfToken] = useState('');
   const [startTime] = useState(Date.now());
@@ -121,82 +121,53 @@ const IllummaaAssessmentForm = () => {
     }
   }, [showSuccess]);
 
-  // Tier determination function with weighted logic for long-term planners
-  // Use shared customer tier determination with analytics tracking
-  const determineCustomerTier = (units: string, readiness: string): TierType => {
-    const unitCount = parseInt(units) || 0;
-    const determinedTier = determineCustomerTierShared(unitCount, readiness) as TierType;
-    
-    // Track tier determination for analytics
-    trackCustomerTierDetermination(determinedTier, units, readiness);
-    
-    return determinedTier;
-  };
 
   // Get tier display information
   const getTierInfo = (tier: TierType) => {
     const tierInfo = {
-      'tier_0_explorer': {
-        name: 'Explorer',
-        icon: '📚',
-        color: 'blue',
-        description: 'Partnership resources at your pace',
-        submitText: 'Start Partnership Journey'
-      },
-      'tier_1_starter': {
-        name: 'Starter',
-        icon: '🏠',
-        color: 'green',
-        description: 'Personal consultation support',
-        submitText: 'Get Started'
-      },
-      'tier_2_pioneer': {
+      'pioneer': {
         name: 'Pioneer',
         icon: '🚀',
         color: 'purple',
-        description: 'Priority partnership attention',
-        submitText: 'Submit Application'
+        description: 'B2B partnership development (10-49 units)',
+        submitText: 'Submit Partnership Application'
       },
-      'tier_3_preferred': {
+      'preferred': {
         name: 'Preferred',
         icon: '⭐',
         color: 'orange',
-        description: 'Expedited senior team handling',
-        submitText: 'Submit Application'
+        description: 'Enhanced B2B partnership (50-199 units)',
+        submitText: 'Submit Partnership Application'
       },
-      'tier_4_elite': {
+      'elite': {
         name: 'Elite',
         icon: '👑',
         color: 'red',
-        description: 'Executive VIP engagement',
-        submitText: 'Submit Application'
+        description: 'Executive B2B partnership (200+ units)',
+        submitText: 'Submit Partnership Application'
       }
     };
-    return tierInfo[tier] || tierInfo['tier_0_explorer'];
+    return tierInfo[tier] || tierInfo['pioneer'];
   };
 
   // Response commitments (NO TIME PROMISES)
   // RESPONSE COMMITMENT FUNCTIONS - Professional Service Levels (No Numerical Scoring)
   const getResponseCommitmentLevel = (tier: TierType) => {
     const levels = {
-      'tier_0_explorer': 'Partnership Support Track',
-      'tier_1_starter': 'Standard Partnership Attention', 
-      'tier_2_pioneer': 'Enhanced Partnership Priority',
-      'tier_3_preferred': 'Executive Partnership Track',
-      'tier_4_elite': 'VIP Implementation Support'
+      'pioneer': 'Enhanced Partnership Priority',
+      'preferred': 'Executive Partnership Track',
+      'elite': 'VIP Implementation Support'
     };
-    return levels[tier] || 'Standard Partnership Attention';
+    return levels[tier] || 'Enhanced Partnership Priority';
   };
 
   const getResponseDescription = (tier: TierType) => {
     const descriptions = {
-      'tier_0_explorer': 'Comprehensive partnership resources and development support',
-      'tier_1_starter': 'Personal consultation support for your modular journey',
-      'tier_2_pioneer': 'Priority partnership coordination with dedicated team attention',
-      'tier_3_preferred': 'Expedited processing with senior team engagement',
-      'tier_4_elite': 'Executive-level partnership with comprehensive project support'
+      'pioneer': 'Priority partnership coordination with dedicated team attention',
+      'preferred': 'Expedited processing with senior team engagement',
+      'elite': 'Executive-level partnership with comprehensive project support'
     };
-    return descriptions[tier] || 'Personal support for your modular housing needs';
+    return descriptions[tier] || 'Priority partnership coordination with dedicated team attention';
   };
 
   // Legacy function for backward compatibility
@@ -240,7 +211,7 @@ const IllummaaAssessmentForm = () => {
           budget: 'Just exploring options',
           timeline: ''
         }));
-        setCustomerTier('tier_0_explorer');
+        setCustomerTier('pioneer');
         setPriorityScore(0);
       } else {
         // Non-explorer path - clear sentinel '0' from researching mode
@@ -255,16 +226,20 @@ const IllummaaAssessmentForm = () => {
         // CRITICAL FIX: Recalculate tier if units exist
         if (formData.unitCount) {
           const unitNum = parseInt(formData.unitCount) || 0;
-          let newTier = 'tier_0_explorer';
+          let newTier = 'pioneer';
           
-          if (unitNum > 0 && unitNum <= 49) {
-            newTier = 'tier_1_starter';
-          } else if (unitNum <= 149) {
-            newTier = 'tier_2_pioneer';
-          } else if (unitNum <= 299) {
-            newTier = 'tier_3_preferred';
-          } else if (unitNum >= 300) {
-            newTier = 'tier_4_elite';
+          // B2B Partnership Tiers (10+ units only)
+          if (unitNum < 10) {
+            // <10 units should redirect to Remax.ca
+            console.warn('Units < 10 detected, should redirect to Remax.ca');
+            window.location.href = 'https://remax.ca';
+            return;
+          } else if (unitNum >= 10 && unitNum <= 49) {
+            newTier = 'pioneer';
+          } else if (unitNum >= 50 && unitNum <= 199) {
+            newTier = 'preferred';
+          } else if (unitNum >= 200) {
+            newTier = 'elite';
           }
           
           setCustomerTier(newTier as TierType);
@@ -286,22 +261,20 @@ const IllummaaAssessmentForm = () => {
       // INLINE TIER CALCULATION - Always recalculate immediately
       if (value && currentReadiness) {
         const unitNum = parseInt(value) || 0;
-        let calculatedTier = 'tier_0_explorer';
+        let calculatedTier = 'pioneer';
         
-        // Direct tier determination
-        if (currentReadiness === 'researching' || unitNum === 0) {
-          calculatedTier = 'tier_0_explorer';
-        } else if (unitNum === 1 || unitNum === 2) {
-          // EXPLICIT: 1 or 2 homes = Starter
-          calculatedTier = 'tier_1_starter';
-        } else if (unitNum > 2 && unitNum <= 49) {
-          calculatedTier = 'tier_1_starter';
-        } else if (unitNum <= 149) {
-          calculatedTier = 'tier_2_pioneer';
-        } else if (unitNum <= 299) {
-          calculatedTier = 'tier_3_preferred';
-        } else {
-          calculatedTier = 'tier_4_elite';
+        // B2B Partnership tier determination (10+ units only)
+        if (unitNum < 10) {
+          // <10 units should redirect to Remax.ca for residential needs
+          console.warn('Units < 10 detected, redirecting to Remax.ca');
+          window.location.href = 'https://remax.ca';
+          return;
+        } else if (unitNum >= 10 && unitNum <= 49) {
+          calculatedTier = 'pioneer';
+        } else if (unitNum >= 50 && unitNum <= 199) {
+          calculatedTier = 'preferred';
+        } else if (unitNum >= 200) {
+          calculatedTier = 'elite';
         }
         
         // Force update
@@ -470,7 +443,7 @@ const IllummaaAssessmentForm = () => {
     
     // Determine tier using shared utility
     const units = parseInt(fd.unitCount || '0') || 0;
-    const currentTier = determineCustomerTierShared(units, fd.readiness || '') as TierType;
+    const currentTier = determineCustomerTierShared(units) as TierType;
     setCustomerTier(currentTier);
     
     console.log('🎯 FRONTEND Score (using shared utility):', {
@@ -550,17 +523,17 @@ const IllummaaAssessmentForm = () => {
           newErrors.phone = 'Valid Canadian phone number is required';
         }
         // Company validation - Required only for Pioneer tier and above
-        const companyRequired = customerTier !== 'tier_0_explorer' && customerTier !== 'tier_1_starter';
+        const companyRequired = true; // All B2B tiers require company
         
         if (companyRequired && !formData.company?.trim()) {
-          if (customerTier === 'tier_2_pioneer') {
-            newErrors.company = 'Company name is required for partnership inquiries (50+ units)';
-          } else if (customerTier === 'tier_3_preferred') {
-            newErrors.company = 'Company name is required for preferred partnership (150+ units)';
-          } else if (customerTier === 'tier_4_elite') {
-            newErrors.company = 'Company name is required for elite partnership (300+ units)';
+          if (customerTier === 'pioneer') {
+            newErrors.company = 'Company name is required for partnership inquiries (10-49 units)';
+          } else if (customerTier === 'preferred') {
+            newErrors.company = 'Company name is required for preferred partnership (50-199 units)';
+          } else if (customerTier === 'elite') {
+            newErrors.company = 'Company name is required for elite partnership (200+ units)';
           } else {
-            newErrors.company = 'Company name is required';
+            newErrors.company = 'Company name is required for B2B partnership';
           }
         }
         
@@ -655,7 +628,7 @@ const IllummaaAssessmentForm = () => {
       }));
       // Reset related state
       setPriorityScore(0);
-      setCustomerTier('tier_0_explorer');
+      setCustomerTier('pioneer');
       setBuildCanadaEligible(false);
     } else {
       setCurrentStep(Math.max(currentStep - 1, 1));
@@ -766,8 +739,8 @@ const IllummaaAssessmentForm = () => {
         
         // Flags for automation
         buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
-        isEducationOnly: customerTier === 'tier_0_explorer' ? 'Yes' : 'No',
-        isEducationalLead: customerTier === 'tier_0_explorer' ? 'true' : 'false',
+        isEducationOnly: 'No', // B2B partnership only
+        isEducationalLead: 'false', // B2B partnership only
         
         // Response commitment (Professional Service Levels - No Numerical Scoring)
         responseCommitment: getResponseCommitment(customerTier),
@@ -778,7 +751,7 @@ const IllummaaAssessmentForm = () => {
         
         // Pipeline assignment
         pipeline: 'ILLUMMAA Customer Journey',
-        stage: customerTier === 'tier_0_explorer' ? 'Education & Awareness' : 'Initial Interest',
+        stage: 'B2B Partnership Interest', // All tiers are B2B partnership
         
         // Legal consent with SMS security
         consentCommunications: formData.consentCommunications ? 'true' : 'false',
@@ -976,7 +949,7 @@ const IllummaaAssessmentForm = () => {
                   <div>
                     <h4 className="font-semibold text-gray-900">Personalized Consultation</h4>
                     <p className="text-gray-600 text-sm">
-                      Direct consultation with our {customerTier === 'tier_0_explorer' ? 'education' : 'partnership'} team
+                      Direct consultation with our B2B partnership team
                     </p>
                   </div>
                 </div>
@@ -997,9 +970,7 @@ const IllummaaAssessmentForm = () => {
             {/* Contact Information */}
             <div className="text-center bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                {customerTier === 'tier_0_explorer' ? 'Partnership Team Ready' :
-                 customerTier === 'tier_1_starter' ? 'Residential Specialist Standing By' :
-                 'Partnership Team Assigned'}
+                B2B Partnership Team Assigned
               </h3>
               <p className="text-gray-600 mb-6">
                 {getResponseDescription(customerTier)}
@@ -1370,12 +1341,11 @@ const IllummaaAssessmentForm = () => {
                 </div>
 
                 {/* Company Field - Smart Display Based on Tier */}
-                {(customerTier && customerTier !== 'tier_0_explorer') && (
+                {(customerTier) && ( // All B2B tiers need company
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Company/Organization 
-                      {customerTier !== 'tier_1_starter' && <span className="text-red-500 ml-1">*</span>}
-                      {customerTier === 'tier_1_starter' && <span className="text-gray-500 ml-2">(Optional)</span>}
+                      <span className="text-red-500 ml-1">*</span> {/* Required for all B2B tiers */}
                     </label>
                     <input
                       type="text"

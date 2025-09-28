@@ -1,5 +1,5 @@
-// Shared Priority Score Calculation - Frontend/Backend Alignment
-// This ensures 100% consistency between frontend preview and backend processing
+// AI Priority Score Calculation - 2025+ B2B Only (3 Tiers)
+// Minimum 10 units - redirect to Remax.ca for residential
 
 import { type AssessmentFormData } from '../schema';
 
@@ -7,13 +7,10 @@ import { type AssessmentFormData } from '../schema';
 export interface FrontendFormData {
   unitCount?: string;
   projectDescription?: string;
-  readiness?: string;
   budget?: string;
   budgetRange?: string;
-  projectBudgetRange?: string;
   timeline?: string;
   decisionTimeline?: string;
-  deliveryTimeline?: string;
   province?: string;
   constructionProvince?: string;
   developerType?: string;
@@ -25,42 +22,49 @@ function mapFrontendToBackend(frontendData: FrontendFormData): Partial<Assessmen
   return {
     projectUnitCount: frontendData.unitCount ? parseInt(frontendData.unitCount) || 0 : 0,
     projectDescription: frontendData.projectDescription || '',
-    readiness: frontendData.readiness as AssessmentFormData['readiness'],
-    budgetRange: (frontendData.budgetRange || frontendData.budget || frontendData.projectBudgetRange) as AssessmentFormData['budgetRange'],
-    decisionTimeline: (frontendData.decisionTimeline || frontendData.timeline || frontendData.deliveryTimeline) as AssessmentFormData['decisionTimeline'],
+    budgetRange: (frontendData.budgetRange || frontendData.budget) as AssessmentFormData['budgetRange'],
+    decisionTimeline: (frontendData.decisionTimeline || frontendData.timeline) as AssessmentFormData['decisionTimeline'],
     constructionProvince: (frontendData.constructionProvince || frontendData.province) as AssessmentFormData['constructionProvince'],
     developerType: frontendData.developerType as AssessmentFormData['developerType'],
     governmentPrograms: frontendData.governmentPrograms as AssessmentFormData['governmentPrograms']
   };
 }
 
-export interface ScoringBreakdown {
-  units: number;
-  budget: number;
-  timeline: number;
-  province: number;
-  government: number;
-  developer: number;
-  buildCanada: number;
-  keywords: number;
-  velocity: number;
-  penalties: number;
-  explorerCap: boolean;
-  finalScore: number;
+// NEW AI Scoring Breakdown - Simplified 5-factor model
+export interface AIScoringBreakdown {
+  unitVolume: number;      // 50 points max
+  government: number;       // 20 points max
+  indigenous: number;       // 15 points max
+  province: number;         // 10 points max
+  esgAffordability: number; // 5 points max
+  urgencyBonus: number;     // 5 points bonus
+  rawScore: number;         // Before normalization
+  normalizedScore: number;  // 0-100 scale
+  responseTime: string;     // "2 hours", "6 hours", "24 hours", "72 hours"
+  tier: string;            // "pioneer", "preferred", or "elite" ONLY
 }
 
-// Overloaded function signatures for frontend and backend compatibility
-export function calculatePriorityScore(data: AssessmentFormData): { score: number; breakdown: ScoringBreakdown };
-export function calculatePriorityScore(data: FrontendFormData): { score: number; breakdown: ScoringBreakdown };
-export function calculatePriorityScore(data: AssessmentFormData | FrontendFormData): { score: number; breakdown: ScoringBreakdown } {
+// Get response time based on normalized score
+function getResponseTime(normalizedScore: number): string {
+  if (normalizedScore >= 80) return "2 hours";
+  if (normalizedScore >= 60) return "6 hours";
+  if (normalizedScore >= 40) return "24 hours";
+  return "72 hours";
+}
+
+// Main scoring function - B2B ONLY (10+ units)
+export function calculatePriorityScore(data: AssessmentFormData | FrontendFormData): {
+  score: number;
+  breakdown: AIScoringBreakdown;
+} {
   // Map frontend data to backend format if needed
   const backendData = 'unitCount' in data ? mapFrontendToBackend(data as FrontendFormData) : data as AssessmentFormData;
-  let score = 0;
-  let unitScore = 0, govScore = 0, budgetScore = 0, timelineScore = 0, devScore = 0,
-      provinceScore = 0, buildCanadaScore = 0, keywordScore = 0, velocityScore = 0,
-      penaltyAmount = 0, wasCapApplied = false;
 
-  // Parse and validate unit count
+  let score = 0;
+  let unitVolumeScore = 0, govScore = 0, indigenousScore = 0, provinceScore = 0,
+      esgScore = 0, urgencyBonus = 0;
+
+  // Parse unit count
   let units = 0;
   const unitValue = backendData.projectUnitCount;
   if (unitValue !== undefined && unitValue !== null) {
@@ -72,242 +76,141 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
     }
   }
 
-  // Prepare string data
-  const description = String(backendData.projectDescription || "").toLowerCase().substring(0, 5000);
-  const readiness = String(backendData.readiness || "");
-  const budget = String(backendData.budgetRange || "");
+  // Determine tier (3-tier B2B system)
+  // NOTE: <10 units should be redirected to Remax on frontend
+  let tier = '';
+  if (units >= 200) {
+    tier = 'elite';
+  } else if (units >= 50 && units <= 199) {
+    tier = 'preferred';
+  } else if (units >= 10 && units <= 49) {
+    tier = 'pioneer';
+  } else {
+    // Fallback if somehow <10 units reach here
+    console.warn('⚠️ Units < 10 reached scoring. Should redirect to Remax.ca');
+    tier = 'pioneer';
+    units = 10;
+  }
+
+  // Extract data
   const timeline = String(backendData.decisionTimeline || "");
   const province = String(backendData.constructionProvince || "");
   const devType = String(backendData.developerType || "");
   const govPrograms = String(backendData.governmentPrograms || "");
 
-  // Keyword arrays for scoring
-  const indigenousKeywords = [
-    "indigenous", "first nation", "first nations", "métis", "metis",
-    "inuit", "aboriginal", "treaty", "reserve", "band council"
-  ];
-
-  const sustainabilityKeywords = [
-    "net-zero", "net zero", "passive house", "passivhaus", "leed",
-    "carbon neutral", "sustainable", "green building", "energy efficient",
-    "solar", "geothermal", "heat pump"
-  ];
-
-  const hasIndigenous = indigenousKeywords.some(keyword => description.includes(keyword));
-  const hasSustainability = sustainabilityKeywords.some(keyword => description.includes(keyword));
-
-  // 1. UNIT COUNT (30 points max) - Aligned with Elite tier maximum
-  if (units >= 300) { unitScore = 30; score += 30; }      // Elite tier (300+ units) gets maximum points
-  else if (units >= 150) { unitScore = 25; score += 25; } // Preferred tier (150-299 units)
-  else if (units >= 50) { unitScore = 15; score += 15; }  // Pioneer tier (50-149 units)  
-  else if (units >= 3) { unitScore = 8; score += 8; }     // Starter tier (3-49 units)
-  else if (units > 0) { unitScore = 3; score += 3; }      // Individual homes (1-2 units)
-
-  // 2. GOVERNMENT PROGRAMS (30 points max)
-  switch (govPrograms) {
-    case "Currently participating": govScore = 30; score += 30; break;
-    case "Very interested": govScore = 20; score += 20; break;
-    case "Somewhat interested": govScore = 10; score += 10; break;
-    case "Just learning about options": govScore = 3; score += 3; break;
-    case "Not interested": govScore = 0; break;
-    default: govScore = 0;
+  // 1. UNIT VOLUME (50 points max)
+  switch (tier) {
+    case 'pioneer':      // 10-49 units
+      unitVolumeScore = 15;
+      score += 15;
+      break;
+    case 'preferred':    // 50-199 units
+      unitVolumeScore = 30;
+      score += 30;
+      break;
+    case 'elite':        // 200+ units
+      unitVolumeScore = 50;
+      score += 50;
+      break;
   }
 
-  // 3. BUDGET (25 points max)
-  switch (budget) {
-    case "Over $50M": budgetScore = 25; score += 25; break;
-    case "$30M - $50M": budgetScore = 20; score += 20; break;
-    case "$15M - $30M": budgetScore = 15; score += 15; break;
-    case "$5M - $15M": budgetScore = 10; score += 10; break;
-    case "$2M - $5M": budgetScore = 6; score += 6; break;
-    case "$500K - $2M": budgetScore = 3; score += 3; break;
-    case "Under $500K": budgetScore = 1; score += 1; break;
-    case "Just exploring options": budgetScore = 0; break;
-    default: budgetScore = 0;
-  }
-
-  // 4. TIMELINE (20 points max)
-  switch (timeline) {
-    case "Immediate (0-3 months)": timelineScore = 20; score += 20; break;
-    case "Short-term (3-6 months)": timelineScore = 15; score += 15; break;
-    case "Medium-term (6-12 months)": timelineScore = 10; score += 10; break;
-    case "Long-term (12+ months)": timelineScore = 2; score += 2; break;
-    default: timelineScore = 0;
-  }
-
-  // 5. DEVELOPER TYPE (20 points max)
-  switch (devType) {
-    case "Indigenous Community/Organization": devScore = 20; score += 20; break;
-    case "Government/Municipal Developer": devScore = 15; score += 15; break;
-    case "Commercial Developer (Large Projects)": devScore = 12; score += 12; break;
-    case "Non-Profit Housing Developer": devScore = 10; score += 10; break;
-    case "Private Developer (Medium Projects)": devScore = 6; score += 6; break;
-    case "Individual/Family Developer": devScore = 3; score += 3; break;
-    default: devScore = 0;
-  }
-
-  // 6. PROVINCE/TERRITORY (10 points max)
-  switch (province) {
-    case "Ontario":
-    case "British Columbia":
-    case "Alberta": provinceScore = 10; score += 10; break; // Alberta elevated to top tier
-    case "Quebec": provinceScore = 8; score += 8; break;
-    case "Nova Scotia":
-    case "New Brunswick":
-    case "Manitoba":
-    case "Saskatchewan": provinceScore = 6; score += 6; break;
-    case "Newfoundland and Labrador":
-    case "Prince Edward Island": provinceScore = 4; score += 4; break;
-    case "Northwest Territories":
-    case "Nunavut":
-    case "Yukon": provinceScore = 8; score += 8; break;
-    default: provinceScore = 0;
-  }
-
-  // 7. BUILD CANADA ELIGIBILITY BONUS (10 points max)
-  const isBuildCanadaEligible = 
-    units >= 50 || 
-    devType === "Indigenous Community/Organization" ||
-    devType === "Government/Municipal Developer" || 
-    govPrograms === "Currently participating" || 
-    govPrograms === "Very interested";
-    
-  if (isBuildCanadaEligible) {
-    buildCanadaScore = 10;
-    score += 10;
-  }
-
-  // 8. KEYWORD BONUSES (5 points max)
-  if (hasIndigenous) { keywordScore += 3; score += 3; }
-  if (hasSustainability) { keywordScore += 2; score += 2; }
-
-  // 9. DEAL VELOCITY BONUS (5 points max) 
-  if (timeline === "Immediate (0-3 months)" && 
-      (budget === "Over $50M" || budget === "$30M - $50M" || budget === "$15M - $30M")) {
-    velocityScore = 5;
+  // Urgency bonus for immediate timeline + high volume (preferred or elite)
+  if (timeline === "Immediate (0-3 months)" && (tier === 'preferred' || tier === 'elite')) {
+    urgencyBonus = 5;
     score += 5;
   }
 
-  // 10. PENALTIES
-  // Long timeline + high unit penalty
-  if (timeline === "Long-term (12+ months)" && units >= 200) {
-    penaltyAmount = 8;
-    score = Math.max(0, score - 8);
-  }
-  // Large budget + low units penalty  
-  else if ((budget === "Over $50M" || budget === "$30M - $50M") && units < 50) {
-    penaltyAmount = 5;
-    score = Math.max(0, score - 5);
+  // 2. GOVERNMENT CONTRACTS (20 points)
+  if (govPrograms === "Currently participating") {
+    govScore = 20;
+    score += 20;
   }
 
-  // 11. MINIMUM GUARANTEES
-  // Indigenous communities get minimum 25 points
+  // 3. INDIGENOUS COMMUNITIES (15 points)
   if (devType === "Indigenous Community/Organization") {
-    score = Math.max(score, 25);
-  }
-  // 100+ units get minimum 20 points
-  else if (units >= 100) {
-    score = Math.max(score, 20);
-  }
-  // Government participation gets minimum 15 points
-  else if (govPrograms === "Currently participating") {
-    score = Math.max(score, 15);
+    indigenousScore = 15;
+    score += 15;
   }
 
-  // 12. EXPLORER CAP - If researching, cap at 25 points
-  if (readiness === "researching") {
-    if (score > 25) {
-      wasCapApplied = true;
-      score = 25;
-    }
+  // 4. PRIORITY PROVINCES (10 points)
+  const priorityProvinces = ["Alberta", "British Columbia", "Ontario", "Northwest Territories"];
+  if (priorityProvinces.includes(province)) {
+    provinceScore = 10;
+    score += 10;
   }
 
-  // Final cap at maximum possible score
-  const finalScore = Math.min(score, 150);
+  // 5. ESG/BUILD CANADA (5 points)
+  const isBuildCanadaEligible =
+    units >= 50 ||
+    devType === "Indigenous Community/Organization" ||
+    devType === "Government/Municipal Developer" ||
+    govPrograms === "Currently participating" ||
+    govPrograms === "Very interested";
 
-  const breakdown: ScoringBreakdown = {
-    units: unitScore,
-    budget: budgetScore,
-    timeline: timelineScore,
-    province: provinceScore,
+  if (isBuildCanadaEligible) {
+    esgScore = 5;
+    score += 5;
+  }
+
+  // Normalize score
+  const rawScore = score;
+  const normalizedScore = Math.min(100, score);
+  const responseTime = getResponseTime(normalizedScore);
+
+  const breakdown: AIScoringBreakdown = {
+    unitVolume: unitVolumeScore,
     government: govScore,
-    developer: devScore,
-    buildCanada: buildCanadaScore,
-    keywords: keywordScore,
-    velocity: velocityScore,
-    penalties: penaltyAmount,
-    explorerCap: wasCapApplied,
-    finalScore: finalScore
+    indigenous: indigenousScore,
+    province: provinceScore,
+    esgAffordability: esgScore,
+    urgencyBonus: urgencyBonus,
+    rawScore: rawScore,
+    normalizedScore: normalizedScore,
+    responseTime: responseTime,
+    tier: tier
   };
 
-  // Debug logging
-  console.log('🎯 ILLUMMAA Priority Score Calculation:', {
-    units: unitScore,
-    budget: budgetScore,
-    timeline: timelineScore,
-    province: provinceScore,
-    government: govScore,
-    developer: devScore,
-    buildCanada: buildCanadaScore,
-    keywords: keywordScore,
-    velocity: velocityScore,
-    penalties: penaltyAmount,
-    explorerCap: wasCapApplied,
-    TOTAL: finalScore,
-    inputs: {
-      unitCount: units,
-      readiness: readiness,
-      budget: budget,
-      timeline: timeline,
-      province: province,
-      devType: devType,
-      govPrograms: govPrograms
-    }
+  console.log('🎯 AI Priority Score (2025+):', {
+    tier,
+    units,
+    normalizedScore,
+    responseTime,
+    breakdown
   });
 
-  return { score: finalScore, breakdown };
+  return { score: normalizedScore, breakdown };
 }
 
-// Helper function to determine customer tier based on score and units
-export function determineCustomerTier(units: number, readiness: string): string {
-  // Explorer tier for research phase or zero units
-  if (readiness === 'researching' || units === 0) {
-    return 'tier_0_explorer';
-  }
+// Customer tier determination - 3 TIERS ONLY (B2B Partnership System)
+export function determineCustomerTier(units: number): 'pioneer' | 'preferred' | 'elite' {
+  if (units >= 200) return 'elite';
+  if (units >= 50 && units <= 199) return 'preferred';
+  if (units >= 10 && units <= 49) return 'pioneer';
 
-  // Tier calculation based on units (cleaner ranges)
-  if (units >= 1 && units <= 49) {
-    return 'tier_1_starter';
-  } else if (units >= 50 && units <= 149) {
-    return 'tier_2_pioneer';
-  } else if (units >= 150 && units <= 299) {
-    return 'tier_3_preferred';
-  } else {
-    return 'tier_4_elite';
-  }
+  // Should not reach here - redirect to Remax
+  console.warn('determineCustomerTier: Units < 10, should redirect to Remax.ca');
+  return 'pioneer';
 }
 
-// Helper function to determine Build Canada eligibility
+// Build Canada eligibility
 export function isBuildCanadaEligible(data: AssessmentFormData | FrontendFormData): boolean {
   const backendData = 'unitCount' in data ? mapFrontendToBackend(data as FrontendFormData) : data as AssessmentFormData;
-  
+
   let units = 0;
   const unitValue = backendData.projectUnitCount;
   if (unitValue !== undefined && unitValue !== null) {
-    if (typeof unitValue === 'string' && unitValue !== '') {
-      const parsed = parseInt(unitValue);
-      units = isNaN(parsed) ? 0 : Math.max(0, Math.min(parsed, 10000));
-    } else if (typeof unitValue === 'number') {
-      units = Math.max(0, Math.min(unitValue, 10000));
-    }
+    units = typeof unitValue === 'number' ? unitValue : parseInt(unitValue) || 0;
   }
 
   const devType = String(backendData.developerType || "");
   const govPrograms = String(backendData.governmentPrograms || "");
 
-  return units >= 50 || 
+  return units >= 50 ||
          devType === "Indigenous Community/Organization" ||
-         devType === "Government/Municipal Developer" || 
-         govPrograms === "Currently participating" || 
+         devType === "Government/Municipal Developer" ||
+         govPrograms === "Currently participating" ||
          govPrograms === "Very interested";
 }
+
+// REMOVE ALL OLD FUNCTIONS AND EXPORTS
+// No more: ScoringBreakdown, old calculatePriorityScore logic, Explorer/Starter logic
