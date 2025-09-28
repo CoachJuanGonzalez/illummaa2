@@ -140,7 +140,7 @@ export const assessmentSchema = z.object({
     "Non-Profit Housing Developer",
     "Private Developer (Medium Projects)",
     "Individual/Family Developer"
-  ]).optional(),
+  ]),
   
   governmentPrograms: z.enum([
     "Just learning about options",
