@@ -186,6 +186,66 @@ export default function PartnershipTiers() {
           </p>
         </div>
         
+        {/* Educational Resources Banner - New to Modular Construction */}
+        <div className="mt-12 max-w-6xl mx-auto" data-testid="container-educational-banner">
+          <div className="bg-gradient-to-r from-community-neutral/30 to-community-primary/10 rounded-2xl shadow-md border border-gray-200 p-8 md:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+              {/* Left Side - Main Content (60%) */}
+              <div className="md:col-span-3">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="bg-white rounded-full p-3 shadow-sm flex-shrink-0">
+                    <BookOpen className="text-community-primary" size={28} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      New to Modular Construction?
+                    </h3>
+                    <p className="text-gray-600 text-base leading-relaxed">
+                      Learn about modular housing benefits, construction timelines, cost savings, and Canadian success stories before starting your project.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="mt-4 border-community-primary text-community-primary hover:bg-community-primary hover:text-white transition-all"
+                  onClick={() => {
+                    // TODO: Replace with actual education section scroll or page navigation
+                    console.log('Navigate to educational resources');
+                  }}
+                >
+                  Explore Modular Resources
+                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Button>
+              </div>
+
+              {/* Right Side - Quick Links (40%) */}
+              <div className="md:col-span-2">
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <Check className="text-community-primary flex-shrink-0" size={20} />
+                    <span>Cost Savings Analysis</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <Check className="text-community-primary flex-shrink-0" size={20} />
+                    <span>Build Process Overview</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <Check className="text-community-primary flex-shrink-0" size={20} />
+                    <span>Design Options Gallery</span>
+                  </li>
+                  <li className="flex items-center gap-2 text-gray-700">
+                    <Check className="text-community-primary flex-shrink-0" size={20} />
+                    <span>Success Case Studies</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div className="text-center mt-12 px-4">
           <Button 
             onClick={scrollToAssessment} 
