@@ -143,7 +143,6 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
     case "Non-Profit Housing Developer": devScore = 10; score += 10; break;
     case "Private Developer (Medium Projects)": devScore = 6; score += 6; break;
     case "Individual/Family Developer": devScore = 3; score += 3; break;
-    case "I don't know yet": devScore = 0; break;
     default: devScore = 0;
   }
 
