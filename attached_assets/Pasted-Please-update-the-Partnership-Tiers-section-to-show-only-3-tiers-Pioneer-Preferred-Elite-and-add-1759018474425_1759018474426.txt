@@ -1,0 +1,195 @@
+Please update the Partnership Tiers section to show only 3 tiers (Pioneer, Preferred, Elite) and add an educational banner below for     
+  users new to modular construction. Here are the complete changes:
+
+  **FILE TO MODIFY:**
+  client/src/components/partnership-tiers.tsx
+
+  **COMPLETE CHANGES:**
+
+  **1. UPDATE SECTION TITLE AND SUBTITLE**
+  Around line 162-166, change:
+
+  TITLE - CHANGE FROM:
+  "Partnership Tiers for Every Development Scale"
+
+  CHANGE TO:
+  "Developer Partnership Tiers"
+
+  SUBTITLE - CHANGE FROM:
+  "From individual homes to thriving communities, choose the partnership level that matches your development scale and unlock proven       
+  modular construction advantages."
+
+  CHANGE TO:
+  "From 10-unit projects to large community developments, choose the partnership level that matches your scale and unlock proven
+  modular construction expertise."
+
+  **2. REMOVE EXPLORER AND STARTER TIERS**
+  In the tiers array (lines 53-156), completely remove:
+  - The Explorer tier object (lines 54-74)
+  - The Starter tier object (lines 75-94)
+
+  Keep only these 3 tiers with UPDATED unit ranges:
+  - Pioneer (10-49 units) - Small developers
+  - Preferred (50-200 units) - Medium developers
+  - Elite (200+ units) - Large developers
+
+  **3. UPDATE PIONEER TIER**
+  Update the units range from "50-149 units" to "10-49 units"
+
+  Remove the "Most Popular" badge from Pioneer by removing this line:
+  popular: true,
+
+  Update the features list for Pioneer - change the first feature from:
+  - "All Starter benefits"
+
+  To standalone benefits:
+  - "Priority partnership handling"
+
+  **4. UPDATE PREFERRED TIER TO BE "MOST POPULAR"**
+  Update the units range from "150-299 units" to "50-200 units"
+
+  Add the "Most Popular" badge to Preferred by adding this line:
+  popular: true,
+
+  Change the button style from outline to the green CTA style by changing:
+  buttonVariant: "outline" as const,
+  To:
+  buttonVariant: "default" as const,
+
+  **5. UPDATE ELITE TIER**
+  Update the units range from "300+ units" to "200+ units"
+
+  Keep all other Elite tier properties the same (icon, features, button style).
+
+  **6. UPDATE GRID LAYOUT**
+  Change the grid layout from 5 columns to 3 columns by updating line 170:
+
+  CHANGE FROM:
+  CHANGE TO:
+  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+
+  7. ADD EDUCATIONAL BANNER
+
+  IMPORTANT: Insert this banner AFTER the disclaimer text section (after line 233) and BEFORE the "Apply for Partnership" button
+  section (before line 235).
+
+  The new banner should be inserted between these two sections:
+          </div>  {/* End of disclaimer div at line 233 */}
+
+          {/* INSERT EDUCATIONAL BANNER HERE */}
+
+          <div className="text-center mt-12 px-4">  {/* Start of Apply button at line 235 */}
+
+  Add this complete section:
+
+          {/* Educational Resources Banner - New to Modular Construction */}
+          <div className="mt-12 max-w-6xl mx-auto" data-testid="container-educational-banner">
+            <div className="bg-gradient-to-r from-community-neutral/30 to-community-primary/10 rounded-2xl shadow-md border
+  border-gray-200 p-8 md:p-12">
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
+                {/* Left Side - Main Content (60%) */}
+                <div className="md:col-span-3">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="bg-white rounded-full p-3 shadow-sm flex-shrink-0">
+                      <BookOpen className="text-community-primary" size={28} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        New to Modular Construction?
+                      </h3>
+                      <p className="text-gray-600 text-base leading-relaxed">
+                        Learn about modular housing benefits, construction timelines, cost savings, and Canadian success stories before    
+   starting your project.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="mt-4 border-community-primary text-community-primary hover:bg-community-primary hover:text-white
+  transition-all"
+                    onClick={() => {
+                      // TODO: Replace with actual education section scroll or page navigation
+                      console.log('Navigate to educational resources');
+                    }}
+                  >
+                    Explore Modular Resources
+                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Button>
+                </div>
+
+                {/* Right Side - Quick Links (40%) */}
+                <div className="md:col-span-2">
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2 text-gray-700">
+                      <Check className="text-community-primary flex-shrink-0" size={20} />
+                      <span>Cost Savings Analysis</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-gray-700">
+                      <Check className="text-community-primary flex-shrink-0" size={20} />
+                      <span>Build Process Overview</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-gray-700">
+                      <Check className="text-community-primary flex-shrink-0" size={20} />
+                      <span>Design Options Gallery</span>
+                    </li>
+                    <li className="flex items-center gap-2 text-gray-700">
+                      <Check className="text-community-primary flex-shrink-0" size={20} />
+                      <span>Success Case Studies</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+  8. SECURITY & COMPATIBILITY NOTES:
+  ✅ All CSS variables verified (community-neutral, community-primary exist in index.css)
+  ✅ BookOpen and Check icons already imported at top of file
+  ✅ Button component supports variant="outline" and size="lg"
+  ✅ No user input handling - display-only component (no XSS risk)
+  ✅ Console.log is intentional TODO placeholder for future navigation
+  ✅ Backend tier logic (tier_0_explorer, tier_1_starter) in assessment-form.tsx is NOT affected - this only changes the visual display    
+  ✅ No breaking changes to existing functionality
+
+  9. KEEP UNCHANGED:
+  - Card design and styling for the 3 tiers
+  - All tier features and icons
+  - Tier colors (Pioneer: blue, Preferred: primary/star, Elite: yellow/crown)
+  - Button actions for tier cards (scrollToAssessment)
+  - Disclaimer text section (lines 229-233)
+  - Apply for Partnership button section (lines 235-244)
+  - Success message section (lines 246-266)
+  - ConsumerForm modal integration (lines 269-273)
+
+  VERIFIED AGAINST CODEBASE:
+  ✅ Line numbers accurate
+  ✅ No TypeScript errors
+  ✅ All dependencies exist
+  ✅ No security vulnerabilities
+  ✅ Mobile responsive (stacks to single column)
+  ✅ Maintains existing component functionality
+
+  RESULT:
+  The section will display:
+
+  Title: "Developer Partnership Tiers"
+  Subtitle: "From 10-unit projects to large community developments, choose the partnership level that matches your scale and unlock        
+  proven modular construction expertise."
+
+  3 Balanced Tiers:
+  - Pioneer (10-49 units) - Blue rocket icon, outline button, Small developers
+  - Preferred (50-200 units) - Star icon, green CTA button, "Most Popular" badge, Medium developers
+  - Elite (200+ units) - Crown icon, outline button, Large developers
+
+  Flow:
+  1. Partnership Tiers (3 cards)
+  2. Disclaimer text
+  3. Educational Banner (NEW) - "New to Modular Construction?"
+  4. Apply for Partnership button
+  5. Success message (conditional)
+
+  This maintains professional B2B focus while providing clear educational path for developers still learning about modular
+  construction. No breaking changes to backend tier logic or form functionality.

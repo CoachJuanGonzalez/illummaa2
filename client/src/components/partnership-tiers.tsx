@@ -160,10 +160,10 @@ export default function PartnershipTiers() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-partnership-title">
-            Partnership Tiers for Every Development Scale
+            Developer Partnership Tiers
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-partnership-subtitle">
-            From individual homes to thriving communities, choose the partnership level that matches your development scale and unlock proven modular construction advantages.
+            From 10-unit projects to large community developments, choose the partnership level that matches your scale and unlock proven modular construction expertise.
           </p>
         </div>
         
