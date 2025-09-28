@@ -136,7 +136,7 @@ export default function Footer() {
         
         <div className="border-t border-white/20 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" data-testid="footer-bottom">
           <p className="text-white/60 text-sm mb-4 md:mb-0" data-testid="copyright">
-            &copy; 2024 ILLUMMAA. All rights reserved.
+            &copy; 2025 ILLUMMAA. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>
