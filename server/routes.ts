@@ -29,11 +29,12 @@ function mapFrontendToBackend(frontendData: any): any {
     const unitCount = parseInt(frontendData.unitCount || frontendData.projectUnitCount || '0');
     
     // Explorer tier (researching or 0 units) - keep empty
-    if (readiness.includes('researching') || unitCount === 0) {
-      companyValue = ''; // Empty string for educational inquiries
+    // B2B-only: All projects require minimum 10 units
+    if (unitCount < 10) {
+      companyValue = ''; // Will be rejected by validation
     } 
-    // Starter tier (1-49 units) - default to Individual Investor
-    else if (unitCount >= 1 && unitCount <= 49) {
+    // Pioneer tier (10-49 units) - default company handling
+    else if (unitCount >= 10 && unitCount <= 49) {
       companyValue = 'Individual Investor';
     } 
     // Pioneer+ tiers (50+ units) - generic organization fallback
@@ -45,7 +46,7 @@ function mapFrontendToBackend(frontendData: any): any {
   // Enum value mapping functions
   const normalizeReadiness = (value: string): string => {
     const readinessMap: { [key: string]: string } = {
-      'Just researching - want to learn more': 'researching',
+      'Just researching - want to learn more': 'planning-long', // B2B-only: Map old Explorer to long-term planning
       'Planning future project (6+ months)': 'planning-long',
       'Planning active project (3-6 months)': 'planning-medium',
       'Planning active project (0-3 months)': 'planning-short',
@@ -150,8 +151,7 @@ function mapFrontendToBackend(frontendData: any): any {
     // Optional fields that may not be present (convert empty strings to undefined)
     developerType: emptyToUndefined(frontendData.developerType ? normalizeDeveloperType(frontendData.developerType) : frontendData.developerType),
     governmentPrograms: emptyToUndefined(frontendData.governmentPrograms ? normalizeGovernmentPrograms(frontendData.governmentPrograms) : frontendData.governmentPrograms),
-    learningInterest: emptyToUndefined(frontendData.learningInterest),
-    informationPreference: emptyToUndefined(frontendData.informationPreference),
+    // B2B-only: Explorer fields removed
     agentSupport: emptyToUndefined(frontendData.agentSupport),
     
     // Additional form metadata (keep as-is)
@@ -572,15 +572,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
       const readiness = mappedBody.readiness;
       
-      // Security: Explorer tier can have 0 units
-      if (readiness === 'researching' && unitCount === 0) {
-        // This is valid - Explorer tier research
-      } else if (readiness !== 'researching' && unitCount <= 0) {
-        // Security: Commitment-level tiers must have > 0 units
+      // B2B-ONLY: Minimum 10 units required for partnerships
+      if (unitCount < 10) {
         return res.status(400).json({
           success: false,
-          message: 'Commitment-level inquiries must specify actual unit count',
-          securityViolation: true
+          message: 'B2B partnerships require minimum 10 units. Projects under 10 units should use Remax.ca',
+          securityViolation: true,
+          redirectUrl: 'https://remax.ca'
         });
       }
       

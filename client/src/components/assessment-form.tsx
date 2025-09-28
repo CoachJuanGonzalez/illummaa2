@@ -38,7 +38,7 @@ interface FormData {
   governmentPrograms?: string;
   projectDescription?: string;
   projectUnitRange?: string;
-  informationPreference?: string;
+  // B2B-only: Explorer fields removed
   consentCommunications?: boolean;
   consentSMS?: boolean;
   consentSMSTimestamp?: string;
@@ -68,7 +68,6 @@ const IllummaaAssessmentForm = () => {
   const [buildCanadaEligible, setBuildCanadaEligible] = useState(false);
   const [priorityScore, setPriorityScore] = useState(0);
   const [customerTier, setCustomerTier] = useState<TierType>('pioneer');
-  const [isExplorer, setIsExplorer] = useState(false);
   const [csrfToken, setCsrfToken] = useState('');
   const [startTime] = useState(Date.now());
   
@@ -197,54 +196,12 @@ const IllummaaAssessmentForm = () => {
     const rawValue = type === 'checkbox' ? checked : value;
     const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
     
-    // Handle readiness field changes
+    // Handle readiness field changes - B2B only (no researching)
     if (name === 'readiness') {
-      const isResearching = value === 'researching';
-      setIsExplorer(isResearching);
-      
-      if (isResearching) {
-        // Explorer path
-        setFormData(prev => ({
-          ...prev,
-          readiness: value,
-          unitCount: '0',
-          budget: 'Just exploring options',
-          timeline: ''
-        }));
-        setCustomerTier('pioneer');
-        setPriorityScore(0);
-      } else {
-        // Non-explorer path - clear sentinel '0' from researching mode
-        setFormData(prev => ({
-          ...prev,
-          readiness: value,
-          unitCount: (prev.unitCount && prev.unitCount !== '0') ? prev.unitCount : '',
-          budget: '',
-          timeline: ''
-        }));
-        
-        // CRITICAL FIX: Recalculate tier if units exist
-        if (formData.unitCount) {
-          const unitNum = parseInt(formData.unitCount) || 0;
-          let newTier = 'pioneer';
-          
-          // B2B Partnership Tiers (10+ units only)
-          if (unitNum < 10) {
-            // <10 units should redirect to Remax.ca
-            console.warn('Units < 10 detected, should redirect to Remax.ca');
-            window.location.href = 'https://remax.ca';
-            return;
-          } else if (unitNum >= 10 && unitNum <= 49) {
-            newTier = 'pioneer';
-          } else if (unitNum >= 50 && unitNum <= 199) {
-            newTier = 'preferred';
-          } else if (unitNum >= 200) {
-            newTier = 'elite';
-          }
-          
-          setCustomerTier(newTier as TierType);
-        }
-      }
+      setFormData(prev => ({
+        ...prev,
+        readiness: value
+      }));
     } 
     // Handle unit count changes
     else if (name === 'unitCount') {
@@ -480,32 +437,25 @@ const IllummaaAssessmentForm = () => {
           newErrors.readiness = 'Please select your journey stage';
         }
         
-        // Enhanced validation: Only validate units if NOT "Just researching"
-        if (formData.readiness !== 'researching') {
-          if (!formData.unitCount || formData.unitCount === '') {
-            newErrors.unitCount = 'Please select number of units';
-          }
+        // B2B validation: ALL users must select units
+        if (!formData.unitCount || formData.unitCount === '') {
+          newErrors.unitCount = 'Please select number of units';
+        }
           
-          // Security validation: Ensure commitment-level users have meaningful unit counts
-          const unitCount = parseInt(formData.unitCount || '0') || 0;
-          if (unitCount <= 0) {
-            newErrors.unitCount = 'Please select a valid number of units for your project';
-          }
+        // Security validation: Ensure commitment-level users have meaningful unit counts
+        const unitCount = parseInt(formData.unitCount || '0') || 0;
+        if (unitCount <= 0) {
+          newErrors.unitCount = 'Please select a valid number of units for your project';
         }
         break;
         
       case 2:
-        if (isExplorer) {
-          if (!formData.informationPreference) {
-            newErrors.informationPreference = 'Please select your information preference';
-          }
-        } else {
-          if (!formData.budget && !formData.projectBudgetRange) {
-            newErrors.budget = 'Budget range is required';
-          }
-          if (!formData.timeline && !formData.deliveryTimeline) {
-            newErrors.timeline = 'Timeline is required';
-          }
+        // B2B validation: All users need budget and timeline
+        if (!formData.budget && !formData.projectBudgetRange) {
+          newErrors.budget = 'Budget range is required';
+        }
+        if (!formData.timeline && !formData.deliveryTimeline) {
+          newErrors.timeline = 'Timeline is required';
         }
         break;
         
@@ -624,7 +574,7 @@ const IllummaaAssessmentForm = () => {
         developerType: undefined,
         governmentPrograms: undefined,
         projectDescription: undefined,
-        informationPreference: undefined
+        // B2B-only: Explorer fields removed
       }));
       // Reset related state
       setPriorityScore(0);
@@ -735,7 +685,7 @@ const IllummaaAssessmentForm = () => {
         projectDescription: sanitizeInput(formData.projectDescription || ''),
         
         // Education-specific fields for Explorer tier
-        informationPreference: sanitizeInput(formData.informationPreference || 'Not specified'),
+        // B2B-only: Explorer fields removed
         
         // Flags for automation
         buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
@@ -1045,7 +995,6 @@ const IllummaaAssessmentForm = () => {
                     data-testid="select-readiness"
                   >
                     <option value="">Please select...</option>
-                    <option value="researching">Just researching - want to learn more</option>
                     <option value="planning-long">Planning to buy in 12+ months</option>
                     <option value="planning-medium">Actively looking (6-12 months)</option>
                     <option value="planning-short">Ready to move forward (3-6 months)</option>
@@ -1115,66 +1064,7 @@ const IllummaaAssessmentForm = () => {
             {/* STEP 2: Information Preferences / Budget & Timeline */}
             {currentStep === 2 && (
               <div className="space-y-6" data-testid="step-2">
-                {isExplorer ? (
-                  // NEW EXPLORER SECTION
-                  <>
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
-                      Information Preferences
-                    </h2>
-                    <p className="text-gray-600 mb-6">
-                      Help us provide the most relevant information and resources for your project development.
-                    </p>
-                    
-
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-information-preference">
-                        How would you prefer to receive information? <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="informationPreference"
-                        value={formData.informationPreference || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.informationPreference ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-information-preference"
-                      >
-                        <option value="">Select information preference...</option>
-                        <option value="Email guides and case studies">Email guides and case studies</option>
-                        <option value="One-on-one educational consultation">One-on-one educational consultation</option>
-                        <option value="Video walkthroughs and virtual tours">Video walkthroughs and virtual tours</option>
-                        <option value="Downloadable planning resources">Downloadable planning resources</option>
-                        <option value="Industry webinar invitations">Industry webinar invitations</option>
-                        <option value="Mixed approach - email and consultation">Mixed approach - email and consultation</option>
-                      </select>
-                      {errors.informationPreference && (
-                        <p className="text-red-500 text-xs mt-1" data-testid="error-information-preference">{errors.informationPreference}</p>
-                      )}
-                    </div>
-
-                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">📚</span>
-                        <div>
-                          <h4 className="font-semibold text-blue-800">Educational Journey</h4>
-                          <p className="text-sm text-blue-700">
-                            We'll provide personalized resources based on your interests and preferred learning style.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  // EXISTING BUDGET + TIMELINE FOR NON-EXPLORERS
-                  <>
+                {/* B2B Budget & Timeline Section - Always Show */}
                     <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
                       Budget & Timeline
                     </h2>
@@ -1216,7 +1106,7 @@ const IllummaaAssessmentForm = () => {
 
                     <div>
                       <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
-                        Delivery Timeline <span className="text-red-500">*</span>
+                        Project Timeline <span className="text-red-500">*</span>
                       </label>
                       <select
                         name="timeline"
@@ -1245,6 +1135,8 @@ const IllummaaAssessmentForm = () => {
                         <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
                       )}
                     </div>
+              </div>
+            )}
                   </>
                 )}
               </div>
@@ -1545,7 +1437,7 @@ const IllummaaAssessmentForm = () => {
                         <h4 className="font-semibold text-gray-900">Project Scope</h4>
                       </div>
                       <div className="space-y-2 text-sm">
-                        {formData.readiness && <p><span className="text-gray-600">Journey Stage:</span> <span className="font-medium">{formData.readiness === 'researching' ? 'Research & Learning' : formData.readiness === 'planning-long' ? 'Planning (12+ months)' : formData.readiness === 'planning-medium' ? 'Actively Looking (6-12 months)' : formData.readiness === 'planning-short' ? 'Ready to Move Forward (3-6 months)' : formData.readiness === 'immediate' ? 'Need Solution Now (0-3 months)' : formData.readiness}</span></p>}
+                        {formData.readiness && <p><span className="text-gray-600">Project Timeline:</span> <span className="font-medium">{formData.readiness === 'planning-long' ? 'Long-term (12+ months)' : formData.readiness === 'planning-medium' ? 'Medium-term (6-12 months)' : formData.readiness === 'planning-short' ? 'Short-term (3-6 months)' : formData.readiness === 'immediate' ? 'Immediate (0-3 months)' : formData.readiness}</span></p>}
                         
                         {/* B2B Project Information - Always Show */}
                         {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}

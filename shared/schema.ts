@@ -17,8 +17,7 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   constructionProvince: text("construction_province"),
   developerType: text("developer_type"),
   governmentPrograms: text("government_programs"),
-  learningInterest: text("learning_interest"),
-  informationPreference: text("information_preference"),
+  // B2B-only: Removed Explorer fields (learningInterest, informationPreference)
   agentSupport: text("agent_support"),
   consentMarketing: boolean("consent_marketing").default(false),
   ageVerification: boolean("age_verification").default(false),
@@ -33,12 +32,11 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
 // Assessment form schema with v13.1 exact validation
 export const assessmentSchema = z.object({
   readiness: z.enum([
-    "researching",
-    "planning-long", 
-    "planning-medium",
-    "planning-short",
-    "immediate"
-  ], { required_error: "Please select where you are in your modular home journey" }),
+    "planning-long",     // 12+ months  
+    "planning-medium",   // 6-12 months
+    "planning-short",    // 3-6 months
+    "immediate"          // 0-3 months
+  ], { required_error: "Please select your project timeline" }),
   
   firstName: z.string()
     .min(2, "First name must be at least 2 characters")
@@ -95,7 +93,7 @@ export const assessmentSchema = z.object({
     .optional(),
   
   projectUnitCount: z.number()
-    .min(0, "Please select the number of units for your project")
+    .min(10, "B2B partnerships require minimum 10 units - residential projects under 10 units should use Remax.ca")
     .max(10000, "Number of units must be 10,000 or less"),
   projectUnitRange: z.string().optional(),
   
@@ -150,26 +148,7 @@ export const assessmentSchema = z.object({
     "Currently participating"
   ]).optional(),
   
-  learningInterest: z.enum([
-    "Cost comparison vs traditional construction",
-    "Construction process and timeline understanding",
-    "Building codes and regulatory requirements",
-    "Design options and customization capabilities",
-    "Financing and government program options",
-    "Sustainability and energy efficiency benefits",
-    "Site preparation and installation requirements",
-    "Long-term maintenance and durability",
-    "Comprehensive overview of all aspects"
-  ]).optional(),
-  
-  informationPreference: z.enum([
-    "Email guides and case studies",
-    "One-on-one educational consultation",
-    "Video walkthroughs and virtual tours",
-    "Downloadable planning resources",
-    "Industry webinar invitations",
-    "Mixed approach - email and consultation"
-  ]).optional(),
+  // B2B-only: Explorer education fields removed for pure B2B focus
   
   agentSupport: z.enum([
     "no-direct",
@@ -201,31 +180,8 @@ export const assessmentSchema = z.object({
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
 }).superRefine((data, ctx) => {
-  // Determine if this is Explorer or Starter tier based on Customer Journey logic
-  const isExplorerTier = data.readiness === 'researching' || data.projectUnitCount === 0;
-  const isStarterTier = !isExplorerTier && data.projectUnitCount <= 49;
-  
-  // For Explorer tier, require education fields
-  if (isExplorerTier) {
-    if (!data.learningInterest) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['learningInterest'],
-        message: 'Please select your primary learning interest'
-      });
-    }
-    
-    if (!data.informationPreference) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['informationPreference'],
-        message: 'Please select your information preference'
-      });
-    }
-  }
-  
-  // For ALL non-Explorer tiers (Starter, Pioneer, Preferred, Elite), require these fields  
-  if (!isExplorerTier) {
+  // B2B-ONLY: All users must provide business-related fields (no Explorer tier)
+  // Minimum 10 units required for B2B partnership track
     if (!data.budgetRange) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -265,7 +221,6 @@ export const assessmentSchema = z.object({
         message: 'Please select government program participation'
       });
     }
-  }
 });
 
 export type AssessmentFormData = z.infer<typeof assessmentSchema>;

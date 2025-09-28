@@ -305,23 +305,18 @@ class IllummaaAnalytics {
 
   // Helper methods
   private determinLeadType(formData: any): string {
-    if (!formData.readiness) return 'unknown';
-    
-    if (formData.readiness === 'researching') return 'explorer';
-    
-    const unitCount = parseInt(formData.unitCount) || 0;
-    if (unitCount < 50) return 'residential';
+    // B2B-only: All leads are partnership leads (minimum 10 units)
     return 'partnership';
   }
 
   private determinePartnershipTier(formData: any): string {
     const unitCount = parseInt(formData.unitCount) || 0;
     
-    if (unitCount >= 300) return 'Elite';
-    if (unitCount >= 150) return 'Preferred';
-    if (unitCount >= 50) return 'Pioneer';
-    if (unitCount >= 3) return 'Starter';
-    return 'Individual';
+    // B2B-only: 3-tier system (minimum 10 units for all tiers)
+    if (unitCount < 10) return 'Invalid-Residential'; // Flag for monitoring
+    if (unitCount >= 200) return 'Elite';
+    if (unitCount >= 50) return 'Preferred';
+    return 'Pioneer'; // 10-49 units
   }
 
   // Public helper methods for external use

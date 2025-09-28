@@ -58,8 +58,7 @@ export class MemStorage implements IStorage {
       constructionProvince: insertAssessment.constructionProvince || null,
       developerType: insertAssessment.developerType || null,
       governmentPrograms: insertAssessment.governmentPrograms || null,
-      learningInterest: insertAssessment.learningInterest || null,
-      informationPreference: insertAssessment.informationPreference || null,
+      // B2B-only: Explorer fields removed
       priorityScore: insertAssessment.priorityScore ?? null,
     };
     
@@ -158,7 +157,6 @@ export async function validateFormData(rawData: any): Promise<{
 
     const readiness = DOMPurify.sanitize(rawData.readiness || '');
     const projectUnitCount = parseInt(rawData.projectUnitCount) || 0;
-    const isExplorerTier = readiness === 'researching' || projectUnitCount === 0;
     
     const sanitizedData = {
       readiness,
@@ -174,8 +172,7 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
       developerType: sanitizeOptionalEnum(rawData.developerType),
       governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
-      learningInterest: isExplorerTier ? sanitizeOptionalEnum(rawData.learningInterest) : undefined,
-      informationPreference: isExplorerTier ? sanitizeOptionalEnum(rawData.informationPreference) : undefined,
+      // B2B-only: Remove explorer-specific fields for pure B2B focus
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
       marketingConsent: Boolean(rawData.marketingConsent), // ENTERPRISE SECURITY: Add optional marketing consent to validation
@@ -213,7 +210,7 @@ export async function validateFormData(rawData: any): Promise<{
         timestamp: new Date().toISOString()
       });
     }
-    const customerTier = determineCustomerTier(validationResult.data.projectUnitCount, validationResult.data.readiness);
+    const customerTier = determineCustomerTier(validationResult.data.projectUnitCount);
     const priorityLevel = getPriorityLevel(priorityScore);
     const tags = generateCustomerTags(validationResult.data, customerTier, priorityLevel);
 
@@ -364,8 +361,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     
     // Explorer-specific fields (minimal)
     ...(customerTier === 'tier_0_explorer' && {
-      learning_interest: formData.learningInterest || "",
-      information_preference: formData.informationPreference || "",
+      // B2B-only: Explorer fields removed
       is_educational_lead: true
     })
     
@@ -502,7 +498,8 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
 
   // PROJECT SCALE - Clean naming
   const units = Math.max(0, data.projectUnitCount || 0);
-  if (units === 0) tags.push('scale-pre');
+  // B2B-only: No 0-unit tagging (minimum 10 units required)
+  if (units < 10) tags.push('invalid-submission'); // Flag for monitoring
   else if (units <= 2) tags.push('scale-micro');
   else if (units < 50) tags.push('scale-small');
   else if (units < 150) tags.push('scale-medium');
