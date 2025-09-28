@@ -1,0 +1,206 @@
+# COMPLETE REMAINING B2B TRANSFORMATION TASKS
+
+## CRITICAL: Remove "Just researching" Option & Complete Schema Updates
+
+The scoring algorithm is working great! Now we need to complete the schema and backend cleanup to finish the B2B-only transformation.
+
+## 🚨 PRIORITY ISSUE TO FIX:
+
+**"Just researching - want to learn more" is STILL SHOWING in the form!**
+This MUST be removed completely from:
+1. The dropdown in assessment-form.tsx
+2. The schema validation
+3. All backend references
+
+## REMAINING TASKS TO COMPLETE:
+
+### TASK 1: REMOVE "researching" FROM FRONTEND (client/src/components/assessment-form.tsx)
+
+**CRITICAL CHANGES NEEDED:**
+
+1. **DELETE Line 1048 completely:**
+```jsx
+<option value="researching">Just researching - want to learn more</option>
+```
+
+2. **REMOVE isExplorer state (Line 71):**
+```jsx
+const [isExplorer, setIsExplorer] = useState(false);
+```
+
+3. **SIMPLIFY readiness handler (Lines 201-247):**
+Remove the entire block that handles 'researching'. The readiness handler should NOT have any special logic for researching.
+
+4. **FIX validation (Line 254):**
+Change from:
+```jsx
+if (currentReadiness && currentReadiness !== 'researching' && (value === '0' || value === '')) {
+```
+To:
+```jsx
+if (currentReadiness && (value === '0' || value === '')) {
+```
+
+5. **FIX Step 1 validation (Lines 483-484):**
+Remove the researching check - ALL users must select units.
+
+6. **REMOVE Explorer section in Step 2 (Lines 498 & 1118):**
+Remove all `isExplorer` conditional logic. Only show budget/timeline fields.
+
+7. **FIX display text (Line 1060):**
+Change from:
+```jsx
+{formData.readiness && formData.readiness !== 'researching' && (
+```
+To:
+```jsx
+{formData.readiness && (
+```
+
+8. **CLEAN UP display mapping (Line 1553):**
+Remove the 'Research & Learning' option from the display text.
+
+### TASK 2: UPDATE SCHEMA (shared/schema.ts)
+
+**CHANGE 1: Remove "researching" from readiness enum (line ~36)**
+
+FIND:
+```typescript
+readiness: z.enum([
+  "researching",
+  "planning-long",
+  "planning-medium",
+  "planning-short",
+  "immediate"
+])
+```
+
+REPLACE WITH:
+```typescript
+readiness: z.enum([
+  "planning-long",      // 12+ months
+  "planning-medium",    // 6-12 months
+  "planning-short",     // 3-6 months
+  "immediate"           // 0-3 months
+])
+```
+
+**CHANGE 2: Remove projectUnitRange (line ~100)**
+DELETE this entire line:
+```typescript
+projectUnitRange: z.string().optional(),
+```
+
+**CHANGE 3: Remove priorityLevel from database schema (line ~28)**
+DELETE this entire line:
+```typescript
+priorityLevel: text("priority_level").notNull(),
+```
+
+**⚠️ DATABASE NOTE**: If you have existing data in the database, you may need to handle this field removal carefully. Consider making it nullable first or providing a default value during migration.
+
+**CHANGE 4: Update minimum units to 10 (line ~97-99)**
+FIND:
+```typescript
+projectUnitCount: z.number()
+  .min(0, "Please select the number of units for your project")
+  .max(10000, "Number of units must be 10,000 or less"),
+```
+
+REPLACE WITH:
+```typescript
+projectUnitCount: z.number()
+  .min(10, "Minimum 10 units required. For residential projects, visit Remax.ca")
+  .max(10000, "Number of units must be 10,000 or less"),
+```
+
+**CHANGE 5: Remove Explorer tier logic (lines ~204-225)**
+FIND the entire superRefine section that mentions `isExplorerTier` and REMOVE:
+- All references to `isExplorerTier`
+- All references to 'researching'
+- The learningInterest required checks
+- The informationPreference required checks
+
+The superRefine should ONLY validate fields for B2B submissions (10+ units).
+
+### TASK 3: UPDATE BUILD CANADA ELIGIBILITY (server/storage.ts)
+
+**FIND (line ~299):**
+```typescript
+const buildCanadaEligible = units >= 300 ||
+```
+
+**REPLACE WITH:**
+```typescript
+const buildCanadaEligible = units >= 50 ||
+```
+
+### TASK 4: CLEAN UP BACKEND WEBHOOK (server/routes.ts)
+
+**REMOVE these field mappings if they exist:**
+- `project_unit_range`
+- `priority_level`
+- `assigned_to`
+- `customer_tags`
+
+**ENSURE these fields ARE present:**
+- `ai_priority_score` or `aiPriorityScore`
+- `response_time` or `responseTime`
+
+### TASK 5: REMOVE ALL EXPLORER/STARTER REFERENCES
+
+Search the ENTIRE codebase and remove ANY remaining references to:
+- `tier_0_explorer`
+- `tier_1_starter`
+- `tier_1`
+- `tier_0`
+- "researching"
+- "Explorer"
+- "Starter"
+- `isExplorer`
+- `is_educational_lead`
+- `learningInterest` (for B2B - keep only if consumer form needs it)
+- `informationPreference` (for B2B - keep only if consumer form needs it)
+
+Only keep:
+- `tier_2_pioneer` / `pioneer` (10-49 units)
+- `tier_3_preferred` / `preferred` (50-199 units)
+- `tier_4_elite` / `elite` (200+ units)
+
+## VERIFICATION CHECKLIST:
+
+After completing these tasks, verify:
+
+1. [ ] "Just researching" option is GONE from the dropdown
+2. [ ] Form ONLY shows these readiness options:
+   - Planning to buy in 12+ months
+   - Actively looking (6-12 months)
+   - Ready to move forward (3-6 months)
+   - I need a solution now (0-3 months)
+3. [ ] Minimum 10 units validation works
+4. [ ] No TypeScript errors
+5. [ ] No references to Explorer/Starter tiers
+6. [ ] Build Canada eligibility at 50+ units
+7. [ ] Webhook sends ai_priority_score and response_time
+
+## IMPORTANT NOTES:
+
+- This is a B2B-ONLY platform now (10+ units minimum)
+- Projects <10 units redirect to Remax.ca (already implemented)
+- NO educational/research pathway in the B2B form
+- Keep the consumer form separate if it exists
+
+## FINAL STATE AFTER CHANGES:
+
+The dropdown should ONLY show these 4 options:
+```html
+<option value="">Please select...</option>
+<option value="planning-long">Planning to buy in 12+ months</option>
+<option value="planning-medium">Actively looking (6-12 months)</option>
+<option value="planning-short">Ready to move forward (3-6 months)</option>
+<option value="immediate">I need a solution now (0-3 months)</option>
+```
+
+NO "Just researching" option should exist anywhere!
+
+Please complete ALL these tasks to finish the B2B transformation. The "Just researching" option MUST be completely removed!
