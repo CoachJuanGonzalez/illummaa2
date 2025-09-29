@@ -7,8 +7,6 @@ import { type AssessmentFormData } from '../schema';
 export interface FrontendFormData {
   unitCount?: string;
   projectDescription?: string;
-  budget?: string;
-  budgetRange?: string;
   timeline?: string;
   decisionTimeline?: string;
   province?: string;
@@ -23,7 +21,6 @@ function mapFrontendToBackend(frontendData: FrontendFormData): Partial<Assessmen
   return {
     projectUnitCount: frontendData.unitCount ? parseInt(frontendData.unitCount) || 0 : 0,
     projectDescription: frontendData.projectDescription || '',
-    budgetRange: (frontendData.budgetRange || frontendData.budget) as AssessmentFormData['budgetRange'],
     decisionTimeline: (frontendData.decisionTimeline || frontendData.timeline) as AssessmentFormData['decisionTimeline'],
     constructionProvince: (frontendData.constructionProvince || frontendData.province) as AssessmentFormData['constructionProvince'],
     developerType: frontendData.developerType as AssessmentFormData['developerType'],
