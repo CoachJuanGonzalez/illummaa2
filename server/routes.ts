@@ -55,20 +55,6 @@ function mapFrontendToBackend(frontendData: any): any {
     return readinessMap[value] || value;
   };
 
-  const normalizeBudget = (value: string): string => {
-    const budgetMap: { [key: string]: string } = {
-      'Under $500K': 'Under $500K',
-      '$500K - $2M': '$500K - $2M',
-      '$2M - $5M': '$2M - $5M',
-      '$5M - $15M': '$5M - $15M',
-      '$15M - $30M': '$15M - $30M',
-      '$30M - $50M': '$30M - $50M',
-      'Over $50M': 'Over $50M',
-      'Just exploring options': 'Just exploring options'
-    };
-    return budgetMap[value] || value;
-  };
-
   const normalizeTimeline = (value: string): string => {
     // Timeline values appear to match already, but normalize just in case
     const timelineMap: { [key: string]: string } = {
@@ -130,7 +116,6 @@ function mapFrontendToBackend(frontendData: any): any {
     // CRITICAL FIELD NAME MAPPING FIXES:
     projectUnitCount: frontendData.unitCount || frontendData.projectUnitCount || 0,
     projectUnitRange: frontendData.projectUnitRange,
-    budgetRange: emptyToUndefined(frontendData.budget ? normalizeBudget(frontendData.budget) : normalizeBudget(frontendData.projectBudgetRange || frontendData.budgetRange)),
     decisionTimeline: emptyToUndefined(frontendData.timeline ? normalizeTimeline(frontendData.timeline) : normalizeTimeline(frontendData.deliveryTimeline || frontendData.decisionTimeline)),
     constructionProvince: emptyToUndefined(frontendData.province || frontendData.constructionProvince),
     projectDescription: emptyToUndefined(frontendData.projectDescription || frontendData.projectDescriptionText),
