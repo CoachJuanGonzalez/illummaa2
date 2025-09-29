@@ -185,6 +185,7 @@ const IllummaaAssessmentForm = () => {
       .trim()
       .replace(/[<>]/g, '') // Remove potential HTML tags
       .replace(/javascript:/gi, '') // Remove javascript: protocols
+      .replace(/on\w+\s*=/gi, '') // Remove event handlers (onclick, onerror, etc.)
       .substring(0, 1000); // Limit length to prevent DoS
   };
 
@@ -293,8 +294,6 @@ const IllummaaAssessmentForm = () => {
     }
     // Handle company name - preserve spaces while maintaining security
     else if (name === 'company') {
-      console.log('🏢 COMPANY INPUT:', { raw: value, hasSpace: value.includes(' ') });
-      
       // Custom sanitization that preserves ALL spaces (including trailing)
       const companyValue = value
         .replace(/[<>]/g, '') // Remove potential HTML tags
@@ -302,8 +301,6 @@ const IllummaaAssessmentForm = () => {
         .replace(/on\w+\s*=/gi, '') // Remove event handlers
         .substring(0, 100); // Limit to 100 characters
         // NO .trim() here - preserve spaces during typing!
-
-      console.log('🏢 COMPANY SANITIZED:', { value: companyValue, hasSpace: companyValue.includes(' ') });
 
       setFormData(prev => ({
         ...prev,
