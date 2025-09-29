@@ -199,8 +199,14 @@ const IllummaaAssessmentForm = () => {
     const rawValue = type === 'checkbox' ? checked : value;
     const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
     
-    // Handle readiness field changes - B2B only (no researching)
+    // Handle readiness field changes
     if (name === 'readiness') {
+      // Immediate redirect for market researchers - NO confirmation dialog
+      if (value === 'researching') {
+        console.log('Market researcher detected - redirecting to Remax.ca');
+        window.location.href = 'https://www.remax.ca/';
+        return; // Stop processing
+      }
       setFormData(prev => ({
         ...prev,
         readiness: value
@@ -464,12 +470,16 @@ const IllummaaAssessmentForm = () => {
         if (!formData.readiness) {
           newErrors.readiness = 'Please select your journey stage';
         }
+        // Skip all validation if researching - they'll be redirected
+        if (formData.readiness === 'researching') {
+          return true;
+        }
         if (!formData.unitCount || formData.unitCount === '') {
           newErrors.unitCount = 'Please enter the number of units needed';
         } else {
           const unitCount = parseInt(formData.unitCount || '0', 10);
-          if (isNaN(unitCount) || unitCount < 0) {
-            newErrors.unitCount = 'Please enter a valid number (0 or greater)';
+          if (isNaN(unitCount) || unitCount < 1) {
+            newErrors.unitCount = 'Please enter a valid number (minimum 1 unit)';
           } else if (!Number.isInteger(Number(formData.unitCount))) {
             newErrors.unitCount = 'Please enter a whole number (no decimals)';
           } else if (unitCount > 0 && unitCount < 10) {
@@ -1032,6 +1042,7 @@ const IllummaaAssessmentForm = () => {
                     data-testid="select-readiness"
                   >
                     <option value="">Please select...</option>
+                    <option value="researching">Just researching the market</option>
                     <option value="planning-long">Planning to buy in 12+ months</option>
                     <option value="planning-medium">Actively looking (6-12 months)</option>
                     <option value="planning-short">Ready to move forward (3-6 months)</option>
@@ -1053,7 +1064,7 @@ const IllummaaAssessmentForm = () => {
                         name="unitCount"
                         value={formData.unitCount || ''}
                         onChange={handleInputChange}
-                        min="0"
+                        min="1"
                         step="1"
                         placeholder="Enter number of units (e.g., 10, 50, 200)"
                         className={`w-full px-4 py-3 rounded-lg border ${
