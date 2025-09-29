@@ -1,0 +1,105 @@
+  CORRECTED PROMPT: Add Market Research Filter + Set Minimum Units to 1
+
+  OBJECTIVE
+
+  1. Add "Just researching the market" option that redirects to Remax.ca WITHOUT confirmation
+  2. Change minimum units from 0 to 1
+  3. IMPORTANT: Keep changes frontend-only to avoid backend validation errors
+
+  IMPLEMENTATION CHANGES
+
+  FILE: client/src/components/assessment-form.tsx
+
+  CHANGE 1: Add Redirect Logic in handleInputChange (Line ~203)
+
+  Find this section (around line 203):
+  // Handle readiness field changes - B2B only (no researching)
+  if (name === 'readiness') {
+    setFormData(prev => ({
+      ...prev,
+      readiness: value
+    }));
+  }
+
+  Replace with:
+  // Handle readiness field changes
+  if (name === 'readiness') {
+    // Immediate redirect for market researchers - NO confirmation dialog
+    if (value === 'researching') {
+      console.log('Market researcher detected - redirecting to Remax.ca');
+      window.location.href = 'https://www.remax.ca/';
+      return; // Stop processing
+    }
+    setFormData(prev => ({
+      ...prev,
+      readiness: value
+    }));
+  }
+
+  CHANGE 2: Add Research Option to Dropdown (Line ~1034-1039)
+
+  Current Code:
+  <option value="">Please select...</option>
+  <option value="planning-long">Planning to buy in 12+ months</option>
+  <option value="planning-medium">Actively looking (6-12 months)</option>
+  <option value="planning-short">Ready to move forward (3-6 months)</option>
+  <option value="immediate">I need a solution now (0-3 months)</option>
+
+  Replace with:
+  <option value="">Please select...</option>
+  <option value="researching">Just researching the market</option>
+  <option value="planning-long">Planning to buy in 12+ months</option>
+  <option value="planning-medium">Actively looking (6-12 months)</option>
+  <option value="planning-short">Ready to move forward (3-6 months)</option>
+  <option value="immediate">I need a solution now (0-3 months)</option>
+
+  CHANGE 3: Update Unit Input Minimum (Line ~1056)
+
+  Current:
+  min="0"
+
+  Change to:
+  min="1"
+
+  CHANGE 4: Update Validation Error Message (Line ~471-472)
+
+  Current:
+  if (isNaN(unitCount) || unitCount < 0) {
+    newErrors.unitCount = 'Please enter a valid number (0 or greater)';
+  }
+
+  Replace with:
+  if (isNaN(unitCount) || unitCount < 1) {
+    newErrors.unitCount = 'Please enter a valid number (minimum 1 unit)';
+  }
+
+  CHANGE 5: Skip Validation for Researchers (Line ~464-467)
+
+  After the readiness check:
+  case 1: // Partnership Intent
+    if (!formData.readiness) {
+      newErrors.readiness = 'Please select your journey stage';
+    }
+    // Skip all validation if researching - they'll be redirected
+    if (formData.readiness === 'researching') {
+      return true;
+    }
+
+  WHY THIS APPROACH IS SAFE
+
+  1. Frontend-only redirect - No backend changes needed
+  2. Immediate redirect - User never submits form with "researching" value
+  3. Preserves security - All sanitization remains intact
+  4. No schema changes - Backend never sees "researching" value
+  5. Minimum 1 unit - Prevents illogical 0-unit submissions
+
+  TESTING CHECKLIST
+
+  ✅ "Just researching" → Instant redirect (no backend call)
+  ✅ 0 units → HTML5 prevents entry
+  ✅ 1-9 units → Confirmation dialog
+  ✅ 10+ units → Normal B2B flow
+  ✅ Security measures preserved
+  ✅ No console errors
+
+  This implementation safely adds the research filter without breaking backend compatibility.
