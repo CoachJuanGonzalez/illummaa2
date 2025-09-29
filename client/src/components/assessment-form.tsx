@@ -13,6 +13,12 @@ import {
   isBuildCanadaEligible 
 } from "../../../shared/utils/scoring";
 
+// TODO: Future Update - Field Name Standardization
+// - Rename frontend field from 'timeline' to 'deliveryTimeline'
+// - Update backend schema from 'decisionTimeline' to 'deliveryTimeline'
+// - Ensure webhook mappings are updated accordingly
+// This will provide consistency across the entire system
+
 // TypeScript interfaces
 declare global {
   interface Window {
@@ -383,6 +389,9 @@ const IllummaaAssessmentForm = () => {
       projectDescription: fd.projectDescription || '',
       readiness: fd.readiness || '',
       budgetRange: fd.budget || fd.budgetRange || fd.projectBudgetRange || '',
+      // TODO: Future Update - Unify timeline field name
+      // Currently maps: frontend 'timeline' -> backend 'decisionTimeline'
+      // Future: unified 'deliveryTimeline' throughout system
       decisionTimeline: fd.timeline || fd.decisionTimeline || fd.deliveryTimeline || '',
       constructionProvince: fd.province || fd.constructionProvince || '',
       developerType: mapDeveloperType(fd.developerType || ''),
@@ -460,8 +469,20 @@ const IllummaaAssessmentForm = () => {
           } else if (!Number.isInteger(Number(formData.unitCount))) {
             newErrors.unitCount = 'Please enter a whole number (no decimals)';
           } else if (unitCount > 0 && unitCount < 10) {
-            // Show warning but don't block submission (no error set)
-            console.log('Warning: Units < 10 detected, will proceed as residential inquiry');
+            // User-friendly redirect with confirmation dialog
+            const confirmRedirect = window.confirm(
+              "Projects with fewer than 10 units are better suited for residential services. " +
+              "Would you like to be redirected to Remax.ca for residential options?"
+            );
+
+            if (confirmRedirect) {
+              window.location.href = 'https://www.remax.ca/';
+              return false; // Prevent form progression
+            } else {
+              // Log but allow continuation if user chooses
+              console.log('User declined redirect for <10 units, continuing with form');
+              // Note: Form will proceed as B2B inquiry with <10 units
+            }
           }
         }
         break;
@@ -545,6 +566,23 @@ const IllummaaAssessmentForm = () => {
   // Navigation
   const handleNext = () => {
     if (validateStep(currentStep)) {
+      // Check for low unit count and offer redirect option
+      if (currentStep === 1 && formData.unitCount) {
+        const units = parseInt(formData.unitCount);
+        if (units > 0 && units < 10) {
+          const confirmRedirect = window.confirm(
+            "Projects with fewer than 10 units are better suited for residential services. " +
+            "Would you like to be redirected to Remax.ca for residential options?"
+          );
+
+          if (confirmRedirect) {
+            window.location.href = 'https://www.remax.ca/';
+            return; // Stop form progression
+          }
+          // If declined, proceed with next step
+        }
+      }
+      
       const newStep = Math.min(currentStep + 1, TOTAL_STEPS);
       const stepNames = ['', 'readiness_units', 'project_details', 'contact_info', 'consent_review', 'complete'];
       
@@ -1122,7 +1160,7 @@ const IllummaaAssessmentForm = () => {
 
                     <div>
                       <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
-                        Project Timeline <span className="text-red-500">*</span>
+                        Delivery Timeline <span className="text-red-500">*</span>
                       </label>
                       <select
                         name="timeline"
@@ -1358,6 +1396,11 @@ const IllummaaAssessmentForm = () => {
                   )}
                 </div>
 
+                {/* TODO: Future Update - Simplify Government Programs
+                // - Reduce from 5 options to 2: "Currently participating", "Not participating"
+                // - Update scoring.ts line 214 to remove "Very interested" check
+                // - Update storage.ts tags generation (lines 555-569)
+                // - Coordinate with CRM automation updates */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
                     Interest in Government Housing Programs <span className="text-red-500">*</span>
@@ -1396,6 +1439,12 @@ const IllummaaAssessmentForm = () => {
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
                     Are you Build Canada eligible? <span className="text-red-500">*</span>
                   </label>
+                  {/* Prominent help text positioned before dropdown for better visibility */}
+                  <p className="text-sm font-bold text-gray-700 mb-2">
+                    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
+                    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
+                    Select 'I don't know' if unsure.
+                  </p>
                   <select
                     name="buildCanadaEligible"
                     value={formData.buildCanadaEligible || ''}
@@ -1418,10 +1467,6 @@ const IllummaaAssessmentForm = () => {
                     <option value="No">No - Does not meet criteria</option>
                     <option value="I don't know">I don't know - Need more information</option>
                   </select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
-                    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
-                  </p>
                   {errors.buildCanadaEligible && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
                       {errors.buildCanadaEligible}
@@ -1492,7 +1537,7 @@ const IllummaaAssessmentForm = () => {
                         {/* B2B Project Information - Always Show */}
                         {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
                         {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
-                        {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
+                        {formData.timeline && <p><span className="text-gray-600">Delivery Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
                       </div>
                     </div>
                   </div>
@@ -1579,7 +1624,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-communications"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive communications from ILLUMMAA via email, phone, and other channels regarding partnership opportunities. (Required by CASL)
+                      I consent to CASL compliance (Required for SMS) <span className="text-red-500">*</span>
                     </span>
                   </label>
                   {errors.consentCommunications && (
@@ -1658,7 +1703,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-marketing-consent"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I would like to receive marketing communications about ILLUMMAA products and industry insights. (Optional)
+                      I consent to receive marketing communications (Optional)
                     </span>
                   </label>
 

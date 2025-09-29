@@ -1,0 +1,249 @@
+Final Verified Replit Prompt - Display Label Updates Only
+
+  Overview
+
+  This prompt implements safe, non-breaking updates to the Developer Partnership Application form that enhance user experience while       
+  preserving all backend functionality and preparing for future comprehensive updates.
+
+  Part A: Frontend Display Updates (client/src/components/assessment-form.tsx)
+
+  1. Update Display Label Only (Line 1125)
+
+  Purpose: Improve user clarity without breaking backend compatibility.
+
+  Replace:
+  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
+    Project Timeline <span className="text-red-500">*</span>
+  </label>
+
+  With:
+  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
+    Delivery Timeline <span className="text-red-500">*</span>
+  </label>
+
+  Note: Keep the field name as timeline - DO NOT change the name attribute of the select element.
+
+  2. Fix CASL Compliance Label (Lines 1581-1583)
+
+  Replace:
+  <span className="text-sm text-gray-700 leading-relaxed">
+    I consent to receive communications from ILLUMMAA via email, phone, and other channels regarding partnership opportunities.
+  (Required by CASL)
+  </span>
+
+  With:
+  <span className="text-sm text-gray-700 leading-relaxed">
+    I consent to CASL compliance (Required for SMS) <span className="text-red-500">*</span>
+  </span>
+
+  3. Fix Marketing Consent Label (Lines 1660-1662)
+
+  Replace:
+  <span className="text-sm text-gray-700 leading-relaxed">
+    I would like to receive marketing communications about ILLUMMAA products and industry insights. (Optional)
+  </span>
+
+  With:
+  <span className="text-sm text-gray-700 leading-relaxed">
+    I consent to receive marketing communications (Optional)
+  </span>
+
+  4. Reposition and Enhance Build Canada Help Text (Lines 1421-1424)
+
+  Current Location: After the select element
+  New Location: Before the select element with enhanced styling
+
+  Delete current help text (lines 1421-1424):
+  <p className="text-xs text-gray-500 mt-1">
+    Select 'Yes' only if your project meets net-zero emissions (<20% baseline)
+    and <$300K/unit standards for low/median-income households (<80% area median income).
+  </p>
+
+  Add new prominent help text BEFORE the select element (insert after line 1398):
+  {/* Prominent help text positioned before dropdown for better visibility */}
+  <p className="text-sm font-bold text-gray-700 mb-2">
+    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
+    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
+    Select 'I don't know' if unsure.
+  </p>
+
+  5. Add Redirect Confirmation for Units < 10
+
+  In validateStep function (Insert after line 464):
+
+  } else if (unitCount > 0 && unitCount < 10) {
+    // User-friendly redirect with confirmation dialog
+    const confirmRedirect = window.confirm(
+      "Projects with fewer than 10 units are better suited for residential services. " +
+      "Would you like to be redirected to Remax.ca for residential options?"
+    );
+
+    if (confirmRedirect) {
+      window.location.href = 'https://www.remax.ca/';
+      return false; // Prevent form progression
+    } else {
+      // Log but allow continuation if user chooses
+      console.log('User declined redirect for <10 units, continuing with form');
+      // Note: Form will proceed as B2B inquiry with <10 units
+    }
+  }
+
+  In handleNext function (Insert after line 547, inside the if statement):
+
+  // Add after: if (validateStep(currentStep)) {
+  // Check for low unit count and offer redirect option
+  if (currentStep === 1 && formData.unitCount) {
+    const units = parseInt(formData.unitCount);
+    if (units > 0 && units < 10) {
+      const confirmRedirect = window.confirm(
+        "Projects with fewer than 10 units are better suited for residential services. " +
+        "Would you like to be redirected to Remax.ca for residential options?"
+      );
+
+      if (confirmRedirect) {
+        window.location.href = 'https://www.remax.ca/';
+        return; // Stop form progression
+      }
+      // If declined, proceed with next step
+    }
+  }
+
+  6. Update Timeline Display Text in Summary (Line 1495)
+
+  Replace:
+  {formData.timeline && <p><span className="text-gray-600">Timeline:</span> <span
+  className="font-medium">{formData.timeline}</span></p>}
+
+  With:
+  {formData.timeline && <p><span className="text-gray-600">Delivery Timeline:</span> <span
+  className="font-medium">{formData.timeline}</span></p>}
+
+  7. Add TODO Comments for Future Updates
+
+  At top of file (after imports, around line 15):
+
+  // TODO: Future Update - Field Name Standardization
+  // - Rename frontend field from 'timeline' to 'deliveryTimeline'
+  // - Update backend schema from 'decisionTimeline' to 'deliveryTimeline'
+  // - Ensure webhook mappings are updated accordingly
+  // This will provide consistency across the entire system
+
+  Near government programs select (before line 1362):
+
+  // TODO: Future Update - Simplify Government Programs
+  // - Reduce from 5 options to 2: "Currently participating", "Not participating"
+  // - Update scoring.ts line 214 to remove "Very interested" check
+  // - Update storage.ts tags generation (lines 555-569)
+  // - Coordinate with CRM automation updates
+
+  Near timeline field mapping (around line 386):
+
+  // TODO: Future Update - Unify timeline field name
+  // Currently maps: frontend 'timeline' -> backend 'decisionTimeline'
+  // Future: unified 'deliveryTimeline' throughout system
+  decisionTimeline: fd.timeline || fd.decisionTimeline || fd.deliveryTimeline || '',
+
+  Security Verification Checklist
+
+  ✅ All security measures remain intact:
+  - sanitizeInput() function active on all user inputs
+  - CSRF token validation maintained
+  - DOMPurify sanitization preserved
+  - Age verification requirement enforced
+  - CASL/PIPEDA compliance active
+  - SMS consent timestamp tracking operational
+  - A2P 10DLC compliance maintained
+
+  Testing Checklist
+
+  Display Updates
+
+  - "Delivery Timeline" label displays (NOT "Project Timeline")
+  - Field name remains timeline in the HTML select element
+  - Timeline values submit correctly to backend as decisionTimeline
+
+  Government Programs
+
+  - All 5 options remain functional
+  - "Currently participating" awards +20 points
+  - "Very interested" still triggers Build Canada eligibility
+  - Tags generate correctly for all options
+
+  Build Canada
+
+  - Bold help text appears ABOVE the dropdown
+  - Help text includes net-zero and affordability criteria
+  - Dropdown functions with 3 options: Yes/No/I don't know
+
+  Consent Labels
+
+  - CASL checkbox shows "I consent to CASL compliance (Required for SMS)" with red asterisk
+  - Marketing checkbox shows "I consent to receive marketing communications (Optional)"
+  - Both checkboxes function correctly
+
+  Redirect Logic
+
+  - Confirmation dialog appears when units < 10
+  - User can choose to redirect to Remax.ca
+  - User can decline and continue with form
+  - Redirect triggers on both Step 1 validation and Next button click
+
+  Scoring Integrity
+
+  - +5 urgency bonus triggers for "Immediate (0-3 months)" with Preferred/Elite tiers
+  - +20 points awarded for "Currently participating" in government programs
+  - Build Canada eligibility calculation remains accurate
+
+  Backend Compatibility
+
+  - Form submissions pass backend validation
+  - Data saves correctly to database
+  - Webhook payload includes all 16 fields
+  - No validation errors on submission
+
+  Security
+
+  - All input sanitization active
+  - CSRF token present and validated
+  - Age verification enforced
+  - SMS consent properly tracked
+
+  Implementation Notes
+
+  1. Field Name Mapping: The frontend continues to use timeline which maps to backend decisionTimeline through existing logic
+  2. No Backend Changes: This implementation requires NO changes to schema.ts, scoring.ts, routes.ts, or storage.ts
+  3. Future-Ready: TODO comments document the path for future comprehensive updates
+  4. Backward Compatible: All existing integrations continue to work without modification
+
+  Files to Save in Replit
+
+  Only one file needs updating:
+  - client/src/components/assessment-form.tsx - Frontend form component with display updates
+
+  Development Commands
+
+  # Run development server to test changes
+  npm run dev
+
+  # Verify no TypeScript errors
+  npm run typecheck
+
+  # Test form submission
+  # 1. Fill form with test data
+  # 2. Verify labels display correctly
+  # 3. Test <10 units redirect dialog
+  # 4. Submit and check console for successful payload
+
+  Summary of Changes
+
+  1. ✅ Display label: "Project Timeline" → "Delivery Timeline" (visual only)
+  2. ✅ CASL consent: Clearer label with required indicator
+  3. ✅ Marketing consent: Simplified optional label
+  4. ✅ Build Canada help: Repositioned and bolded for prominence
+  5. ✅ Redirect logic: User-friendly confirmation for <10 units
+  6. ✅ TODO comments: Clear path for future updates
+  7. ✅ Summary display: "Delivery Timeline" label in review section
+
+  All changes are non-breaking and enhance user experience while maintaining complete backend compatibility.
+
+  END OF FINAL VERIFIED PROMPT
