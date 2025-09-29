@@ -1,0 +1,244 @@
+FINAL VERIFIED REPLIT PROMPT - AI Priority Scoring Fixes + Build Canada Dropdown
+
+  Overview
+
+  This prompt fixes 3 critical AI scoring discrepancies and implements Build Canada eligibility as a user-selectable dropdown field per    
+   the Final AI Priority Scoring Matrix (2025+ Optimized).
+
+  IMPORTANT: Current State
+
+  - Build Canada is currently a boolean calculated automatically
+  - We're replacing it with a user dropdown for self-certification
+  - All changes maintain enterprise security (sanitization)
+
+  ---
+  FILE 1: shared/utils/scoring.ts
+
+  Fix 1: Correct Preferred Tier Scoring (Lines 107-109)
+
+  // FIND AND REPLACE:
+  case 'preferred':    // 50-199 units
+    unitVolumeScore = 30;
+    score += 30;
+    break;
+
+  // REPLACE WITH:
+  case 'preferred':    // 50-200 units (FIXED: range corrected)
+    unitVolumeScore = 40;  // FIXED: Changed from 30 to 40 per matrix
+    score += 40;           // FIXED: Changed from 30 to 40 per matrix
+    break;
+
+  Fix 2: Correct Preferred Tier Range (Lines 84-85 and 187)
+
+  // LINE 84-85 - FIND AND REPLACE:
+  } else if (units >= 50 && units <= 199) {
+    tier = 'preferred';
+
+  // REPLACE WITH:
+  } else if (units >= 50 && units <= 200) {  // FIXED: Upper bound 199 → 200
+    tier = 'preferred';
+
+  // LINE 187 - FIND AND REPLACE:
+  if (units >= 50 && units <= 199) return 'preferred';
+
+  // REPLACE WITH:
+  if (units >= 50 && units <= 200) return 'preferred';  // FIXED: Upper bound 199 → 200
+
+  Fix 3: Implement Proper ESG/Build Canada Logic (Lines 143-153)
+
+  // FIND AND REPLACE ENTIRE SECTION:
+    // 5. ESG/BUILD CANADA (5 points)
+    const isBuildCanadaEligible =
+      units >= 50 ||
+      devType === "Indigenous Community/Organization" ||
+      devType === "Government/Municipal Developer" ||
+      govPrograms === "Currently participating" ||
+      govPrograms === "Very interested";
+
+    if (isBuildCanadaEligible) {
+      esgScore = 5;
+      score += 5;
+    }
+
+  // REPLACE WITH:
+    // 5. ESG/BUILD CANADA (5 points) - User self-certification per matrix
+    const buildCanadaValue = backendData.buildCanadaEligible ||
+                             backendData.build_canada_eligible;  // Handle both field names
+
+    // Award points ONLY for explicit "Yes" self-certification
+    if (buildCanadaValue === "Yes" || buildCanadaValue === true) {
+      esgScore = 5;
+      score += 5;
+      console.log('✅ Build Canada Eligible: +5 ESG points awarded');
+    } else {
+      esgScore = 0;  // No points for "No", "I don't know", or undefined
+      console.log(`ℹ️ Build Canada: ${buildCanadaValue || 'Not specified'} - No ESG points`);
+    }
+
+  ---
+  FILE 2: client/src/components/assessment-form.tsx
+
+  Step 1: Remove Boolean State (Line 68)
+
+  // DELETE THIS LINE:
+  const [buildCanadaEligible, setBuildCanadaEligible] = useState(false);
+
+  Step 2: Add to FormData Interface (Around line 45, in the interface)
+
+  // ADD this field to the FormData interface:
+  buildCanadaEligible?: string;
+
+  Step 3: Remove Auto-Calculation (Line 599)
+
+  // DELETE THIS LINE:
+  setBuildCanadaEligible(false);
+
+  Step 4: Add Build Canada Dropdown (After Government Programs field, around line 1240)
+
+  // ADD this complete dropdown field:
+  {/* Build Canada Eligibility - User Self-Certification */}
+  <div>
+    <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
+      Are you Build Canada eligible? <span className="text-red-500">*</span>
+    </label>
+    <select
+      name="buildCanadaEligible"
+      value={formData.buildCanadaEligible || ''}
+      onChange={handleInputChange}
+      className={`w-full px-4 py-3 rounded-lg border ${
+        errors.buildCanadaEligible ? 'border-red-300 bg-red-50' : 'border-gray-300'
+      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+      style={{
+        backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath      
+  stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+        backgroundPosition: 'right 0.5rem center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '1.5em 1.5em',
+        paddingRight: '2.5rem'
+      }}
+      required
+      data-testid="select-buildcanada"
+    >
+      <option value="">Select eligibility...</option>
+      <option value="Yes">Yes - Meets net-zero and affordability criteria</option>
+      <option value="No">No - Does not meet criteria</option>
+      <option value="I don't know">I don't know - Need more information</option>
+    </select>
+    <p className="text-xs text-gray-500 mt-1">
+      Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
+      and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
+    </p>
+    {errors.buildCanadaEligible && (
+      <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
+        {errors.buildCanadaEligible}
+      </p>
+    )}
+  </div>
+
+  Step 5: Update Payload (Line 708)
+
+  // FIND:
+  buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
+
+  // REPLACE WITH:
+  buildCanadaEligible: sanitizeInput(formData.buildCanadaEligible || "I don't know"),
+
+  Step 6: Add Validation (In validateStep function, case 2, around line 467)
+
+  // ADD this validation after governmentPrograms check:
+  if (!formData.buildCanadaEligible || formData.buildCanadaEligible === '') {
+    newErrors.buildCanadaEligible = 'Please select Build Canada eligibility status';
+  }
+
+  Step 7: Fix Display Conditionals (Lines 925 and 1513)
+
+  // LINE 925 - FIND:
+  {buildCanadaEligible && (
+
+  // REPLACE WITH:
+  {formData.buildCanadaEligible === "Yes" && (
+
+  // LINE 1513 - FIND:
+  {buildCanadaEligible && (
+
+  // REPLACE WITH:
+  {formData.buildCanadaEligible === "Yes" && (
+
+  Step 8: Update trackAssessmentComplete call (Line 796)
+
+  // FIND:
+  buildCanadaEligible
+
+  // REPLACE WITH:
+  buildCanadaEligible: formData.buildCanadaEligible === "Yes"
+
+  ---
+  FILE 3: shared/schema.ts
+
+  Add Build Canada Field (After governmentPrograms, around line 149)
+
+  // ADD this field:
+  buildCanadaEligible: z.enum([
+    "Yes",
+    "No",
+    "I don't know"
+  ]).optional().describe("User self-certification of Build Canada eligibility"),
+
+  ---
+  FILE 4: server/storage.ts
+
+  Update Tags Generation (After CASL compliance section, around line 588)
+
+  // ADD this after the CASL compliance tags:
+    // BUILD CANADA/ESG ELIGIBILITY - Based on user self-certification
+    const bcValue = data.buildCanadaEligible || data.build_canada_eligible;
+
+    if (bcValue === "Yes" || bcValue === true) {
+      tags.push('esg-eligible');
+      console.log('✅ ESG-Eligible tag added for Build Canada = Yes');
+    } else if (bcValue === "I don't know") {
+      tags.push('review-required');
+      console.log('⚠️ Review-Required tag added for uncertain Build Canada status');
+    }
+    // "No" gets no special tag
+
+  ---
+  FILE 5: server/routes.ts
+
+  Ensure Field Mapping (Around line 187)
+
+  // VERIFY this field exists in the mapping, or ADD it:
+  buildCanadaEligible: frontendData.buildCanadaEligible || "I don't know",
+
+  ---
+  TESTING CHECKLIST
+
+  After implementing these changes, test:
+
+  1. ✅ Dropdown Display: Form shows 3 options (Yes/No/I don't know)
+  2. ✅ Validation: Cannot submit without selecting an option
+  3. ✅ Scoring Tests:
+    - "Yes" → Adds 5 ESG points to score
+    - "No" → Adds 0 points
+    - "I don't know" → Adds 0 points
+  4. ✅ Tags Tests:
+    - "Yes" → Includes "esg-eligible" tag
+    - "No" → No special tag
+    - "I don't know" → Includes "review-required" tag
+  5. ✅ Tier Tests:
+    - 200-unit project → Preferred tier (40 base points, not 30)
+    - 201-unit project → Elite tier (50 base points)
+  6. ✅ Security: All inputs properly sanitized
+  7. ✅ Webhook: Payload includes buildCanadaEligible field
+
+  ---
+  SUMMARY OF CHANGES
+
+  - Scoring Fixed: Preferred tier now 40 points (was 30), range 50-200 (was 50-199)
+  - Build Canada: Changed from auto-calculation to user dropdown
+  - ESG Points: Only awarded for explicit "Yes" selection
+  - Tags: Proper generation based on user selection
+  - Security: All inputs sanitized with existing sanitizeInput() function
+
+  This implementation maintains all 16 webhook fields, uses existing security measures, and aligns 100% with the Final AI Priority
+  Scoring Matrix (2025+ Optimized).
