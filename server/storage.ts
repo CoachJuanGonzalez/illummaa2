@@ -53,7 +53,6 @@ export class MemStorage implements IStorage {
       consentMarketing: insertAssessment.consentMarketing ?? false,
       ageVerification: insertAssessment.ageVerification ?? false,
       tags: insertAssessment.tags ?? null,
-      budgetRange: insertAssessment.budgetRange || null,
       decisionTimeline: insertAssessment.decisionTimeline || null,
       constructionProvince: insertAssessment.constructionProvince || null,
       developerType: insertAssessment.developerType || null,
@@ -167,7 +166,6 @@ export async function validateFormData(rawData: any): Promise<{
       company: DOMPurify.sanitize(rawData.company || '').trim(),
       projectUnitCount,
       projectUnitRange: DOMPurify.sanitize(rawData.projectUnitRange || '').trim(),
-      budgetRange: sanitizeOptionalEnum(rawData.budgetRange),
       decisionTimeline: sanitizeOptionalEnum(rawData.decisionTimeline),
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
       developerType: sanitizeOptionalEnum(rawData.developerType),
@@ -322,7 +320,6 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // Project details
     project_unit_count: units,
     project_unit_range: formData.projectUnitRange || getUnitRangeFromRepresentative(units),
-    project_budget_range: formData.budgetRange || "",
     delivery_timeline: formData.decisionTimeline || "",
     construction_province: formData.constructionProvince || "",
     developer_type: formData.developerType || "",
@@ -506,24 +503,6 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
   else if (units < 300) tags.push('scale-large');
   else tags.push('scale-enterprise');
 
-  // BUDGET - Clean classification (FIXED enum matching)
-  if (data.budgetRange) {
-    const budgetOptimized = {
-      'Under $500K': 'budget-micro',
-      '$500K - $2M': 'budget-starter',
-      '$2M - $5M': 'budget-mid', 
-      '$5M - $15M': 'budget-high',
-      '$15M - $30M': 'budget-enterprise',
-      '$30M - $50M': 'budget-enterprise',
-      'Over $50M': 'budget-premium',
-      'Just exploring options': 'budget-exploring'
-    }[data.budgetRange];
-
-    if (budgetOptimized) {
-      tags.push(budgetOptimized);
-    }
-  }
-
   // DEVELOPER TYPE - Clean format (FIXED enum matching)
   if (data.developerType) {
     const devOptimized = {
@@ -643,7 +622,6 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
     company: data.company,
     source: data.source,
     project_unit_count: data.project_unit_count,
-    project_budget_range: data.project_budget_range || '',
     construction_province: data.construction_province,
     housing_interest: data.housing_interest || '',
     questions_interests: data.questions_interests || '',
