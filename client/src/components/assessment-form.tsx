@@ -208,7 +208,8 @@ const IllummaaAssessmentForm = () => {
     const checked = (e.target as HTMLInputElement).checked;
     
     const rawValue = type === 'checkbox' ? checked : value;
-    const sanitizedValue = type === 'checkbox' ? rawValue : sanitizeInput(value);
+    // Don't sanitize company field here - it has its own handler that preserves spaces
+    const sanitizedValue = type === 'checkbox' ? rawValue : (name === 'company' ? value : sanitizeInput(value));
     
     // Handle readiness field changes
     if (name === 'readiness') {
