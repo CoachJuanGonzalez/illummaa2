@@ -33,8 +33,6 @@ interface FormData {
   phone?: string;
   company?: string;
   unitCount?: string;
-  budget?: string;
-  projectBudgetRange?: string;  // Fallback field mapping
   timeline?: string;
   deliveryTimeline?: string;    // Fallback field mapping
   province?: string;
@@ -54,7 +52,6 @@ interface FormData {
   ageVerification?: boolean;
 
   // ADD THESE MAPPING INTERMEDIATES (NO PAYLOAD IMPACT):
-  budgetRange?: string;         // Maps budget → project_budget_range
   decisionTimeline?: string;    // Maps timeline → delivery_timeline
 }
 
@@ -301,7 +298,7 @@ const IllummaaAssessmentForm = () => {
     setErrors(prev => ({ ...prev, [name]: '' }));
     
     // Trigger score recalculation for relevant fields using current values
-    if (['unitCount', 'budget', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
+    if (['unitCount', 'timeline', 'province', 'developerType', 'governmentPrograms'].includes(name)) {
       const nextFormData = { ...formData, [name]: type === 'checkbox' ? checked : sanitizedValue } as typeof formData;
       calculatePriorityScoreWith(nextFormData);
     }
@@ -399,7 +396,6 @@ const IllummaaAssessmentForm = () => {
       unitCount: getRepresentativeUnitValue(fd.unitCount || '0'),
       projectDescription: fd.projectDescription || '',
       readiness: fd.readiness || '',
-      budgetRange: fd.budget || fd.budgetRange || fd.projectBudgetRange || '',
       // TODO: Future Update - Unify timeline field name
       // Currently maps: frontend 'timeline' -> backend 'decisionTimeline'
       // Future: unified 'deliveryTimeline' throughout system
@@ -635,8 +631,6 @@ const IllummaaAssessmentForm = () => {
         // Clear journey-dependent fields
         readiness: undefined,
         unitCount: undefined,
-        budget: undefined,
-        projectBudgetRange: undefined,
         timeline: undefined,
         deliveryTimeline: undefined,
         province: undefined,
@@ -743,10 +737,8 @@ const IllummaaAssessmentForm = () => {
         projectUnitCount: sanitizeInput(getRepresentativeUnitValue(formData.unitCount || '0')),
         projectUnitRange: sanitizeInput(getDisplayUnitText(formData.unitCount || '0')),
         readinessToBuy: formData.readiness,
-        projectBudgetRange: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
         deliveryTimeline: formData.timeline || formData.deliveryTimeline,
         // SECURITY-COMPLIANT: Add prioritized fields while maintaining sanitization
-        budget: sanitizeInput(formData.budget || formData.projectBudgetRange || 'Just exploring options'),
         timeline: sanitizeInput(formData.timeline || formData.deliveryTimeline || ''),
         constructionProvince: formData.province || formData.constructionProvince,
         developerType: sanitizeInput(formData.developerType || 'Not Specified'),
@@ -1548,7 +1540,6 @@ const IllummaaAssessmentForm = () => {
                         
                         {/* B2B Project Information - Always Show */}
                         {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
-                        {formData.budget && <p><span className="text-gray-600">Budget Range:</span> <span className="font-medium">{formData.budget}</span></p>}
                         {formData.timeline && <p><span className="text-gray-600">Delivery Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
                       </div>
                     </div>
