@@ -188,7 +188,7 @@ const IllummaaAssessmentForm = () => {
       .substring(0, 1000); // Limit length to prevent DoS
   };
 
-  // Company-specific sanitization that preserves spaces
+  // Company-specific sanitization that preserves internal spaces, trims edges on submission
   const sanitizeCompany = (value: string): string => {
     if (typeof value !== 'string') return '';
     return value
@@ -196,7 +196,7 @@ const IllummaaAssessmentForm = () => {
       .replace(/javascript:/gi, '') // Remove javascript: protocols
       .replace(/on\w+\s*=/gi, '') // Remove event handlers
       .substring(0, 100) // Company name limit
-      .trim(); // Only trim edges, preserve internal spaces
+      .trim(); // Trim only on form submission, preserves internal spaces
   };
 
   // ============ COMPLETE TIER CALCULATION FIX - v2.0 ============
@@ -295,13 +295,13 @@ const IllummaaAssessmentForm = () => {
     else if (name === 'company') {
       console.log('🏢 COMPANY INPUT:', { raw: value, hasSpace: value.includes(' ') });
       
-      // Custom sanitization that preserves spaces
+      // Custom sanitization that preserves ALL spaces (including trailing)
       const companyValue = value
         .replace(/[<>]/g, '') // Remove potential HTML tags
         .replace(/javascript:/gi, '') // Remove javascript: protocols
         .replace(/on\w+\s*=/gi, '') // Remove event handlers
-        .substring(0, 100) // Limit to 100 characters
-        .trim(); // Only trim leading/trailing spaces
+        .substring(0, 100); // Limit to 100 characters
+        // NO .trim() here - preserve spaces during typing!
 
       console.log('🏢 COMPANY SANITIZED:', { value: companyValue, hasSpace: companyValue.includes(' ') });
 
