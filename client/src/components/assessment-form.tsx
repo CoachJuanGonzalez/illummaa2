@@ -213,48 +213,59 @@ const IllummaaAssessmentForm = () => {
     else if (name === 'unitCount') {
       const currentReadiness = formData.readiness;
       
-      // Allow all integers ≥0 including 0 (Option B requirement)
-      // Only block empty/invalid entries, not valid 0 values
-      if (currentReadiness && currentReadiness !== 'researching' && (value === '' || isNaN(parseInt(value)))) {
-        setErrors(prev => ({ ...prev, unitCount: 'Please enter a valid number of units' }));
+      // Allow empty string for complete deletion
+      if (value === '') {
+        setFormData(prev => ({ ...prev, unitCount: '' }));
+        setCustomerTier('pioneer'); // Default tier when empty
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.unitCount;
+          return newErrors;
+        });
         return;
       }
       
-      setFormData(prev => ({ ...prev, unitCount: value }));
+      // Only allow numeric input
+      if (!/^\d+$/.test(value)) {
+        return; // Silently reject non-numeric input
+      }
       
-      // INLINE TIER CALCULATION - Always recalculate immediately
-      if (value && currentReadiness) {
-        const unitNum = parseInt(value) || 0;
-        let calculatedTier = 'pioneer';
+      // Apply sanitization
+      const sanitized = sanitizeInput(value);
+      setFormData(prev => ({ ...prev, unitCount: sanitized }));
+      
+      // INLINE TIER CALCULATION
+      if (currentReadiness) {
+        const unitNum = parseInt(sanitized) || 0;
+        let calculatedTier: TierType = 'pioneer'; // Proper type
         
-        // B2B Partnership tier determination (now accepts all units ≥0)
-        if (unitNum < 10) {
-          // <10 units tagged as residential inquiry but allowed to continue
-          console.log('Units < 10 detected, will be tagged as residential inquiry');
-          calculatedTier = 'residential'; // New tier for <10 units
-        } else if (unitNum >= 10 && unitNum <= 49) {
-          calculatedTier = 'pioneer';
+        // B2B Partnership tier determination
+        if (unitNum >= 200) {
+          calculatedTier = 'elite';
         } else if (unitNum >= 50 && unitNum <= 199) {
           calculatedTier = 'preferred';
-        } else if (unitNum >= 200) {
-          calculatedTier = 'elite';
+        } else if (unitNum >= 10 && unitNum <= 49) {
+          calculatedTier = 'pioneer';
+        } else {
+          // For <10 units, default to pioneer (will be redirected on validation)
+          calculatedTier = 'pioneer';
+          console.log('Units < 10 detected, will offer redirect to Remax.ca');
         }
         
-        // Force update
-        setCustomerTier(calculatedTier as TierType);
+        // Force update with proper type
+        setCustomerTier(calculatedTier);
         
         // Debug logging
         console.log('Tier Calculation:', {
           readiness: currentReadiness,
-          unitInput: value,
+          unitInput: sanitized,
           unitNumber: unitNum,
           result: calculatedTier,
           timestamp: new Date().toISOString()
         });
         
         // Recalculate score with current values immediately
-        calculatePriorityScoreWith({ ...formData, unitCount: value });
-        console.log('Unit change recalc', { readiness: currentReadiness, unitCount: value, tier: calculatedTier });
+        calculatePriorityScoreWith({ ...formData, unitCount: sanitized });
       }
     }
     // Handle SMS consent
@@ -481,6 +492,7 @@ const IllummaaAssessmentForm = () => {
             } else {
               // Log but allow continuation if user chooses
               console.log('User declined redirect for <10 units, continuing with form');
+              newErrors.unitCount = 'Minimum 10 units required for B2B partnerships';
               // Note: Form will proceed as B2B inquiry with <10 units
             }
           }
@@ -1097,7 +1109,7 @@ const IllummaaAssessmentForm = () => {
                 )}
 
                 {/* Tier Preview - Only show when meaningful data entered */}
-                {(formData.readiness && formData.unitCount !== undefined && formData.unitCount !== '') && (
+                {(formData.readiness && formData.unitCount && parseInt(formData.unitCount) >= 10) && (
                   <div className="bg-gray-50 rounded-xl p-4" data-testid="tier-preview">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl" data-testid="tier-icon">{getTierInfo(customerTier).icon}</span>
