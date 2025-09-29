@@ -12,7 +12,6 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   phone: text("phone").notNull(),
   company: text("company").notNull(),
   projectUnitCount: integer("project_unit_count").notNull(),
-  budgetRange: text("budget_range"),
   decisionTimeline: text("decision_timeline"),
   constructionProvince: text("construction_province"),
   developerType: text("developer_type"),
@@ -97,17 +96,6 @@ export const assessmentSchema = z.object({
     .max(10000, "Number of units must be 10,000 or less"),
   projectUnitRange: z.string().optional(),
   
-  budgetRange: z.enum([
-    "Under $500K",
-    "$500K - $2M",
-    "$2M - $5M",
-    "$5M - $15M",
-    "$15M - $30M",
-    "$30M - $50M",
-    "Over $50M",
-    "Just exploring options"
-  ]).optional(),
-  
   decisionTimeline: z.enum([
     "Immediate (0-3 months)",
     "Short-term (3-6 months)",
@@ -188,14 +176,6 @@ export const assessmentSchema = z.object({
 }).superRefine((data, ctx) => {
   // B2B-ONLY: All users must provide business-related fields (no Explorer tier)
   // Minimum 10 units required for B2B partnership track
-    if (!data.budgetRange) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['budgetRange'],
-        message: 'Please select a project budget range'
-      });
-    }
-    
     if (!data.decisionTimeline) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
