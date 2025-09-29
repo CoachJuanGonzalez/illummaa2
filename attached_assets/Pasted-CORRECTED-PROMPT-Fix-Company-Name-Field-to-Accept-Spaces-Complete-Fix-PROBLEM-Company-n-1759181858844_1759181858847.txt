@@ -1,0 +1,99 @@
+CORRECTED PROMPT: Fix Company Name Field to Accept Spaces (Complete Fix)
+
+  PROBLEM
+
+  Company names with spaces like "PVRPOSE AI" are being entered as "PVRPOSEAI". The issue occurs in TWO places:
+  1. During input handling
+  2. During form submission
+
+  IMPLEMENTATION
+
+  FILE: client/src/components/assessment-form.tsx
+
+  CHANGE 1: Add Company Field Handler (After line 281)
+
+  Find this section (around line 281):
+      }
+      // Special handling for project description - allow spaces
+      else if (name === 'projectDescription' || name === 'projectDescriptionText') {
+
+  Add BEFORE it:
+      }
+      // Handle company name - preserve spaces while maintaining security
+      else if (name === 'company') {
+        // Custom sanitization that preserves spaces
+        const companyValue = value
+          .replace(/[<>]/g, '') // Remove potential HTML tags
+          .replace(/javascript:/gi, '') // Remove javascript: protocols
+          .replace(/on\w+\s*=/gi, '') // Remove event handlers
+          .substring(0, 100) // Limit to 100 characters
+          .trim(); // Only trim leading/trailing spaces
+
+        setFormData(prev => ({
+          ...prev,
+          company: companyValue
+        }));
+
+        // Clear any existing error
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors.company;
+          return newErrors;
+        });
+        return; // Exit early
+      }
+      // Special handling for project description - allow spaces
+
+  CHANGE 2: Create Sanitize Company Function (After sanitizeInput function, around line 189)
+
+  Add this new function:
+    // Company-specific sanitization that preserves spaces
+    const sanitizeCompany = (value: string): string => {
+      if (typeof value !== 'string') return '';
+      return value
+        .replace(/[<>]/g, '') // Remove potential HTML tags
+        .replace(/javascript:/gi, '') // Remove javascript: protocols
+        .replace(/on\w+\s*=/gi, '') // Remove event handlers
+        .substring(0, 100) // Company name limit
+        .trim(); // Only trim edges, preserve internal spaces
+    };
+
+  CHANGE 3: Fix Form Submission (Line 715)
+
+  Current:
+  companyName: sanitizeInput(formData.company || ''),
+
+  Change to:
+  companyName: sanitizeCompany(formData.company || ''),
+
+  CHANGE 4: Update Placeholder (Line 1126)
+
+  Current:
+  placeholder="Enter your company or organization name"
+
+  Change to:
+  placeholder="e.g., PVRPOSE AI, ABC Corporation"
+
+  WHY THIS COMPLETE FIX WORKS
+
+  1. Input handling - Special handler preserves spaces during typing
+  2. Submission handling - sanitizeCompany preserves spaces during submission
+  3. Security maintained - All XSS/injection protections in place
+  4. Backend compatible - Server already accepts spaces in company names
+
+  TEST CASES
+
+  ✅ "PVRPOSE AI" saves correctly with space
+  ✅ "Smith & Jones Ltd." preserves all characters
+  ✅ "  Trimmed Co  " becomes "Trimmed Co"
+  ✅ Security: "" removed
+  ✅ Length: >100 chars truncated
+
+  SECURITY VERIFICATION
+
+  - XSS Protection: ✅ (strips < >)
+  - JS Injection: ✅ (removes javascript:)
+  - Event Handlers: ✅ (removes onclick=)
+  - DoS Protection: ✅ (100 char limit)
+
+  This complete fix ensures spaces are preserved both during input AND submission.

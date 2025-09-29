@@ -188,6 +188,17 @@ const IllummaaAssessmentForm = () => {
       .substring(0, 1000); // Limit length to prevent DoS
   };
 
+  // Company-specific sanitization that preserves spaces
+  const sanitizeCompany = (value: string): string => {
+    if (typeof value !== 'string') return '';
+    return value
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .replace(/javascript:/gi, '') // Remove javascript: protocols
+      .replace(/on\w+\s*=/gi, '') // Remove event handlers
+      .substring(0, 100) // Company name limit
+      .trim(); // Only trim edges, preserve internal spaces
+  };
+
   // ============ COMPLETE TIER CALCULATION FIX - v2.0 ============
   // This replaces the entire handleInputChange function and adds proper tier calculation
 
@@ -278,6 +289,29 @@ const IllummaaAssessmentForm = () => {
         consentSMS: true,
         consentSMSTimestamp: new Date().toISOString()
       }));
+    }
+    // Handle company name - preserve spaces while maintaining security
+    else if (name === 'company') {
+      // Custom sanitization that preserves spaces
+      const companyValue = value
+        .replace(/[<>]/g, '') // Remove potential HTML tags
+        .replace(/javascript:/gi, '') // Remove javascript: protocols
+        .replace(/on\w+\s*=/gi, '') // Remove event handlers
+        .substring(0, 100) // Limit to 100 characters
+        .trim(); // Only trim leading/trailing spaces
+
+      setFormData(prev => ({
+        ...prev,
+        company: companyValue
+      }));
+
+      // Clear any existing error
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.company;
+        return newErrors;
+      });
+      return; // Exit early
     }
     // Special handling for project description - allow spaces
     else if (name === 'projectDescription' || name === 'projectDescriptionText') {
@@ -712,7 +746,7 @@ const IllummaaAssessmentForm = () => {
         lastName: sanitizeInput(formData.lastName || ''),
         email: sanitizeInput(formData.email || ''),
         phone: sanitizeInput(formData.phone || ''),
-        companyName: sanitizeInput(formData.company || ''),
+        companyName: sanitizeCompany(formData.company || ''),
         
         // Classification (for single pipeline routing)
         customerTier: customerTier,
@@ -1123,7 +1157,7 @@ const IllummaaAssessmentForm = () => {
                     name="company"
                     value={formData.company || ''}
                     onChange={handleInputChange}
-                    placeholder="Enter your company or organization name"
+                    placeholder="e.g., PVRPOSE AI, ABC Corporation"
                     className={`w-full px-4 py-3 rounded-lg border ${
                       errors.company ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
