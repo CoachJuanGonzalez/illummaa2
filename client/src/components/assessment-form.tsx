@@ -36,6 +36,7 @@ interface FormData {
   readiness?: string;
   developerType?: string;
   governmentPrograms?: string;
+  buildCanadaEligible?: string;
   projectDescription?: string;
   projectUnitRange?: string;
   // B2B-only: Explorer fields removed
@@ -65,7 +66,6 @@ const IllummaaAssessmentForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [responseCommitment, setResponseCommitment] = useState('');
-  const [buildCanadaEligible, setBuildCanadaEligible] = useState(false);
   const [priorityScore, setPriorityScore] = useState(0);
   const [customerTier, setCustomerTier] = useState<TierType>('pioneer');
   const [csrfToken, setCsrfToken] = useState('');
@@ -517,6 +517,9 @@ const IllummaaAssessmentForm = () => {
         if (!formData.governmentPrograms) {
           newErrors.governmentPrograms = 'Please select your interest level';
         }
+        if (!formData.buildCanadaEligible || formData.buildCanadaEligible === '') {
+          newErrors.buildCanadaEligible = 'Please select Build Canada eligibility status';
+        }
         break;
         
       case 5: // Review + Legal Consent
@@ -596,7 +599,6 @@ const IllummaaAssessmentForm = () => {
       // Reset related state
       setPriorityScore(0);
       setCustomerTier('pioneer');
-      setBuildCanadaEligible(false);
     } else {
       setCurrentStep(Math.max(currentStep - 1, 1));
     }
@@ -705,7 +707,7 @@ const IllummaaAssessmentForm = () => {
         // B2B-only: Explorer fields removed
         
         // Flags for automation
-        buildCanadaEligible: buildCanadaEligible ? 'Yes' : 'No',
+        buildCanadaEligible: sanitizeInput(formData.buildCanadaEligible || "I don't know"),
         isEducationOnly: 'No', // B2B partnership only
         isEducationalLead: 'false', // B2B partnership only
         
@@ -793,7 +795,7 @@ const IllummaaAssessmentForm = () => {
         unitCount: formData.unitCount,
         province: formData.province,
         readiness: formData.readiness,
-        buildCanadaEligible
+        buildCanadaEligible: formData.buildCanadaEligible === "Yes"
       });
       
       setShowSuccess(true);
@@ -922,7 +924,7 @@ const IllummaaAssessmentForm = () => {
                 </div>
 
                 {/* Build Canada Eligibility Notice */}
-                {buildCanadaEligible && (
+                {formData.buildCanadaEligible === "Yes" && (
                   <div className="flex items-start space-x-4 bg-green-50 p-4 rounded-lg border border-green-200">
                     <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">★</div>
                     <div>
@@ -1389,6 +1391,44 @@ const IllummaaAssessmentForm = () => {
                   )}
                 </div>
 
+                {/* Build Canada Eligibility - User Self-Certification */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
+                    Are you Build Canada eligible? <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="buildCanadaEligible"
+                    value={formData.buildCanadaEligible || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.buildCanadaEligible ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-buildcanada"
+                  >
+                    <option value="">Select eligibility...</option>
+                    <option value="Yes">Yes - Meets net-zero and affordability criteria</option>
+                    <option value="No">No - Does not meet criteria</option>
+                    <option value="I don't know">I don't know - Need more information</option>
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
+                    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
+                  </p>
+                  {errors.buildCanadaEligible && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
+                      {errors.buildCanadaEligible}
+                    </p>
+                  )}
+                </div>
+
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-project-description">
                     Project Description (Optional)
@@ -1510,7 +1550,7 @@ const IllummaaAssessmentForm = () => {
                     </div>
                   </div>
 
-                  {buildCanadaEligible && (
+                  {formData.buildCanadaEligible === "Yes" && (
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-300 rounded-xl p-4">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🍁</span>

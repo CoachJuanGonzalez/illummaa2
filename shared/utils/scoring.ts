@@ -15,6 +15,7 @@ export interface FrontendFormData {
   constructionProvince?: string;
   developerType?: string;
   governmentPrograms?: string;
+  buildCanadaEligible?: string;
 }
 
 // Map frontend field names to backend field names
@@ -26,7 +27,8 @@ function mapFrontendToBackend(frontendData: FrontendFormData): Partial<Assessmen
     decisionTimeline: (frontendData.decisionTimeline || frontendData.timeline) as AssessmentFormData['decisionTimeline'],
     constructionProvince: (frontendData.constructionProvince || frontendData.province) as AssessmentFormData['constructionProvince'],
     developerType: frontendData.developerType as AssessmentFormData['developerType'],
-    governmentPrograms: frontendData.governmentPrograms as AssessmentFormData['governmentPrograms']
+    governmentPrograms: frontendData.governmentPrograms as AssessmentFormData['governmentPrograms'],
+    buildCanadaEligible: frontendData.buildCanadaEligible as AssessmentFormData['buildCanadaEligible']
   };
 }
 
@@ -81,7 +83,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   let tier = '';
   if (units >= 200) {
     tier = 'elite';
-  } else if (units >= 50 && units <= 199) {
+  } else if (units >= 50 && units <= 200) {  // FIXED: Upper bound 199 → 200
     tier = 'preferred';
   } else if (units >= 10 && units <= 49) {
     tier = 'pioneer';
@@ -104,9 +106,9 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
       unitVolumeScore = 15;
       score += 15;
       break;
-    case 'preferred':    // 50-199 units
-      unitVolumeScore = 30;
-      score += 30;
+    case 'preferred':    // 50-200 units (FIXED: range corrected)
+      unitVolumeScore = 40;  // FIXED: Changed from 30 to 40 per matrix
+      score += 40;           // FIXED: Changed from 30 to 40 per matrix
       break;
     case 'elite':        // 200+ units
       unitVolumeScore = 50;
@@ -139,17 +141,17 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
     score += 10;
   }
 
-  // 5. ESG/BUILD CANADA (5 points)
-  const isBuildCanadaEligible =
-    units >= 50 ||
-    devType === "Indigenous Community/Organization" ||
-    devType === "Government/Municipal Developer" ||
-    govPrograms === "Currently participating" ||
-    govPrograms === "Very interested";
+  // 5. ESG/BUILD CANADA (5 points) - User self-certification per matrix
+  const buildCanadaValue = backendData.buildCanadaEligible;
 
-  if (isBuildCanadaEligible) {
+  // Award points ONLY for explicit "Yes" self-certification
+  if (buildCanadaValue === "Yes") {
     esgScore = 5;
     score += 5;
+    console.log('✅ Build Canada Eligible: +5 ESG points awarded');
+  } else {
+    esgScore = 0;  // No points for "No", "I don't know", or undefined
+    console.log(`ℹ️ Build Canada: ${buildCanadaValue || 'Not specified'} - No ESG points`);
   }
 
   // Normalize score
@@ -184,7 +186,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
 // Customer tier determination - 3 TIERS ONLY (B2B Partnership System)
 export function determineCustomerTier(units: number): 'pioneer' | 'preferred' | 'elite' {
   if (units >= 200) return 'elite';
-  if (units >= 50 && units <= 199) return 'preferred';
+  if (units >= 50 && units <= 200) return 'preferred';  // FIXED: Upper bound 199 → 200
   if (units >= 10 && units <= 49) return 'pioneer';
 
   // Should not reach here - redirect to Remax

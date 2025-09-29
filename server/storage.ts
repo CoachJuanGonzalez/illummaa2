@@ -587,6 +587,18 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
     tags.push('casl-compliant');
   }
 
+  // BUILD CANADA/ESG ELIGIBILITY - Based on user self-certification
+  const bcValue = data.buildCanadaEligible;
+
+  if (bcValue === "Yes") {
+    tags.push('esg-eligible');
+    console.log('✅ ESG-Eligible tag added for Build Canada = Yes');
+  } else if (bcValue === "I don't know") {
+    tags.push('review-required');
+    console.log('⚠️ Review-Required tag added for uncertain Build Canada status');
+  }
+  // "No" gets no special tag
+
   // PRIORITY - Clean format
   tags.push(`priority-${priorityLevel.toLowerCase()}`);
 

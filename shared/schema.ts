@@ -148,6 +148,12 @@ export const assessmentSchema = z.object({
     "Currently participating"
   ]).optional(),
   
+  buildCanadaEligible: z.enum([
+    "Yes",
+    "No",
+    "I don't know"
+  ]).optional().describe("User self-certification of Build Canada eligibility"),
+  
   // B2B-only: Explorer education fields removed for pure B2B focus
   
   agentSupport: z.enum([

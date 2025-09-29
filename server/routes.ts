@@ -184,7 +184,7 @@ function mapFrontendToBackend(frontendData: any): any {
     userAgent: frontendData.userAgent,
     
     // Additional new fields from Partnership & Learning Assessment
-    buildCanadaEligible: frontendData.buildCanadaEligible,
+    buildCanadaEligible: frontendData.buildCanadaEligible || "I don't know",
     isEducationOnly: frontendData.isEducationOnly,
     isEducationalLead: frontendData.isEducationalLead,
     responseCommitment: frontendData.responseCommitment,
