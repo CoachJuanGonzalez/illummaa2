@@ -572,14 +572,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
       const readiness = mappedBody.readiness;
       
-      // B2B-ONLY: Minimum 10 units required for partnerships
+      // Intelligent routing for <10 units - capture but flag appropriately
       if (unitCount < 10) {
-        return res.status(400).json({
-          success: false,
-          message: 'B2B partnerships require minimum 10 units. Projects under 10 units should use Remax.ca',
-          securityViolation: true,
-          redirectUrl: 'https://remax.ca'
-        });
+        // Still capture the lead but flag it for residential handling
+        mappedBody.tags = [...(mappedBody.tags || []), 'residential-inquiry', 'under-10-units'];
+        mappedBody.projectDescription = `[Residential Inquiry: ${unitCount} units] ${mappedBody.projectDescription || ''}`;
+        
+        // Log for tracking
+        console.log(`📊 Residential inquiry received: ${unitCount} units`);
+        
+        // Optional: Could implement special autoresponder or notification here
       }
       
       // Range validation

@@ -93,7 +93,7 @@ export const assessmentSchema = z.object({
     .optional(),
   
   projectUnitCount: z.number()
-    .min(10, "B2B partnerships require minimum 10 units - residential projects under 10 units should use Remax.ca")
+    .min(0, "Please enter a valid number of units")
     .max(10000, "Number of units must be 10,000 or less"),
   projectUnitRange: z.string().optional(),
   

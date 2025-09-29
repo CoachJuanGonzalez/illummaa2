@@ -207,9 +207,10 @@ const IllummaaAssessmentForm = () => {
     else if (name === 'unitCount') {
       const currentReadiness = formData.readiness;
       
-      // Validation for non-explorers
-      if (currentReadiness && currentReadiness !== 'researching' && (value === '0' || value === '')) {
-        setErrors(prev => ({ ...prev, unitCount: 'Please select actual number of units needed' }));
+      // Allow all integers ≥0 including 0 (Option B requirement)
+      // Only block empty/invalid entries, not valid 0 values
+      if (currentReadiness && currentReadiness !== 'researching' && (value === '' || isNaN(parseInt(value)))) {
+        setErrors(prev => ({ ...prev, unitCount: 'Please enter a valid number of units' }));
         return;
       }
       
@@ -220,12 +221,11 @@ const IllummaaAssessmentForm = () => {
         const unitNum = parseInt(value) || 0;
         let calculatedTier = 'pioneer';
         
-        // B2B Partnership tier determination (10+ units only)
+        // B2B Partnership tier determination (now accepts all units ≥0)
         if (unitNum < 10) {
-          // <10 units should redirect to Remax.ca for residential needs
-          console.warn('Units < 10 detected, redirecting to Remax.ca');
-          window.location.href = 'https://remax.ca';
-          return;
+          // <10 units tagged as residential inquiry but allowed to continue
+          console.log('Units < 10 detected, will be tagged as residential inquiry');
+          calculatedTier = 'residential'; // New tier for <10 units
         } else if (unitNum >= 10 && unitNum <= 49) {
           calculatedTier = 'pioneer';
         } else if (unitNum >= 50 && unitNum <= 199) {
@@ -310,31 +310,43 @@ const IllummaaAssessmentForm = () => {
   };
 
   // SECURITY-COMPLIANT: Unit range mapping with validation
+  // SECURITY-COMPLIANT: Unit value validation - accepts any integer >= 0
   const getRepresentativeUnitValue = (unitSelection: string): string => {
-    // Validate input to prevent injection
+    // Validate input to prevent injection and ensure it's a valid number
     const sanitizedInput = sanitizeInput(unitSelection);
-    const unitMap: { [key: string]: string } = {
-      '1': '1',
-      '2': '2',
-      '25': '25',   // 3-49 units range
-      '75': '75',   // 50-149 units range
-      '200': '200', // 150-299 units range
-      '500': '500'  // 300+ units range
-    };
-    return unitMap[sanitizedInput] || '0';
+    const numValue = parseInt(sanitizedInput, 10);
+
+    // Return the actual number if it's valid, otherwise return '0'
+    if (!isNaN(numValue) && numValue >= 0) {
+      return numValue.toString();
+    }
+    return '0';
   };
 
   // Helper function to get display-friendly unit text for UI and sales team
   const getDisplayUnitText = (unitValue: string): string => {
-    const displayMap: { [key: string]: string } = {
-      '1': '1 home',
-      '2': '2 homes',
-      '25': '3-49 units (Starter)',
-      '75': '50-149 units (Pioneer)',
-      '200': '150-299 units (Preferred)',
-      '500': '300+ units (Elite)'
-    };
-    return displayMap[unitValue] || `${unitValue} units`;
+    const numValue = parseInt(unitValue, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+      return '0 units';
+    }
+
+    // Special handling for values under 10 (B2B minimum)
+    if (numValue >= 1 && numValue < 10) {
+      return `${numValue} units (Note: B2B partnerships require minimum 10 units)`;
+    }
+
+    // Return appropriate text based on the number
+    if (numValue === 0) return '0 units';
+    if (numValue === 1) return '1 home';
+    if (numValue === 2) return '2 homes';
+
+    // For larger numbers, include tier information if applicable
+    if (numValue >= 10 && numValue <= 49) return `${numValue} units (Pioneer Tier Range)`;
+    if (numValue >= 50 && numValue <= 199) return `${numValue} units (Preferred Tier Range)`;
+    if (numValue >= 200) return `${numValue} units (Elite Tier Range)`;
+
+    return `${numValue} units`;
   };
 
   // SECURITY-COMPLIANT: Developer type mapping with validation (matches backend)
@@ -437,15 +449,20 @@ const IllummaaAssessmentForm = () => {
           newErrors.readiness = 'Please select your journey stage';
         }
         
-        // B2B validation: ALL users must select units
+        // B2B validation: ALL users must enter units
         if (!formData.unitCount || formData.unitCount === '') {
-          newErrors.unitCount = 'Please select number of units';
-        }
-          
-        // Security validation: Ensure commitment-level users have meaningful unit counts
-        const unitCount = parseInt(formData.unitCount || '0') || 0;
-        if (unitCount <= 0) {
-          newErrors.unitCount = 'Please select a valid number of units for your project';
+          newErrors.unitCount = 'Please enter the number of units needed';
+        } else {
+          // Security validation: Ensure the value is a valid integer >= 0
+          const unitCount = parseInt(formData.unitCount || '0', 10);
+          if (isNaN(unitCount) || unitCount < 0) {
+            newErrors.unitCount = 'Please enter a valid number (0 or greater)';
+          } else if (!Number.isInteger(Number(formData.unitCount))) {
+            newErrors.unitCount = 'Please enter a whole number (no decimals)';
+          } else if (unitCount > 0 && unitCount < 10) {
+            // Show warning but don't block submission (no error set)
+            console.log('Warning: Units < 10 detected, will proceed as residential inquiry');
+          }
         }
         break;
         
@@ -1011,33 +1028,30 @@ const IllummaaAssessmentForm = () => {
                       <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-units">
                         Number of units needed <span className="text-red-500">*</span>
                       </label>
-                      <select
+                      <input
+                        type="number"
                         name="unitCount"
                         value={formData.unitCount || ''}
                         onChange={handleInputChange}
+                        min="0"
+                        step="1"
+                        placeholder="Enter number of units (e.g., 10, 50, 200)"
                         className={`w-full px-4 py-3 rounded-lg border ${
                           errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white`}
                         required
-                        data-testid="select-units"
-                      >
-                        <option value="">Select number of units...</option>
-                        <option value="1">1 home</option>
-                        <option value="2">2 homes</option>
-                        <option value="25">3-49 units (Starter)</option>
-                        <option value="75">50-149 units (Pioneer)</option>
-                        <option value="200">150-299 units (Preferred)</option>
-                        <option value="500">300+ units (Elite)</option>
-                      </select>
+                        data-testid="input-units"
+                      />
                       {errors.unitCount && (
                         <p className="text-red-500 text-xs mt-1" data-testid="error-units">{errors.unitCount}</p>
+                      )}
+                      {formData.unitCount && parseInt(formData.unitCount) > 0 && parseInt(formData.unitCount) < 10 && (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+                          <p className="text-sm text-yellow-800">
+                            <strong>Note:</strong> B2B partnerships typically start at 10 units. For residential projects under 10 units,
+                            you may want to visit <a href="https://remax.ca" className="underline">Remax.ca</a> for better assistance.
+                          </p>
+                        </div>
                       )}
                     </div>
                 )}

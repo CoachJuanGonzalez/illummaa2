@@ -498,8 +498,8 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
 
   // PROJECT SCALE - Clean naming
   const units = Math.max(0, data.projectUnitCount || 0);
-  // B2B-only: No 0-unit tagging (minimum 10 units required)
-  if (units < 10) tags.push('invalid-submission'); // Flag for monitoring
+  // Intelligent routing: Flag residential vs B2B inquiries
+  if (units < 10) tags.push('residential-inquiry', 'under-10-units'); // Flag for appropriate handling
   else if (units <= 2) tags.push('scale-micro');
   else if (units < 50) tags.push('scale-small');
   else if (units < 150) tags.push('scale-medium');
