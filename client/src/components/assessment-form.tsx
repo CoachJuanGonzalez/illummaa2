@@ -45,7 +45,6 @@ interface FormData {
   buildCanadaEligible?: string;
   projectDescription?: string;
   projectUnitRange?: string;
-  tier?: TierType;
   // B2B-only: Explorer fields removed
   consentCommunications?: boolean;
   consentSMS?: boolean;
@@ -63,7 +62,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-type TierType = 'pioneer' | 'preferred' | 'elite' | 'residential';
+type TierType = 'pioneer' | 'preferred' | 'elite';
 
 const IllummaaAssessmentForm = () => {
   // State management
@@ -151,13 +150,6 @@ const IllummaaAssessmentForm = () => {
         color: 'red',
         description: 'Executive B2B partnership (200+ units)',
         submitText: 'Submit Partnership Application'
-      },
-      'residential': {
-        name: 'Residential',
-        icon: '🏠',
-        color: 'gray',
-        description: 'Residential inquiry (under 10 units)',
-        submitText: 'Submit Inquiry'
       }
     };
     return tierInfo[tier] || tierInfo['pioneer'];
@@ -169,8 +161,7 @@ const IllummaaAssessmentForm = () => {
     const levels = {
       'pioneer': 'Enhanced Partnership Priority',
       'preferred': 'Executive Partnership Track',
-      'elite': 'VIP Implementation Support',
-      'residential': 'Standard Inquiry Processing'
+      'elite': 'VIP Implementation Support'
     };
     return levels[tier] || 'Enhanced Partnership Priority';
   };
@@ -179,8 +170,7 @@ const IllummaaAssessmentForm = () => {
     const descriptions = {
       'pioneer': 'Priority partnership coordination with dedicated team attention',
       'preferred': 'Expedited processing with senior team engagement',
-      'elite': 'Executive-level partnership with comprehensive project support',
-      'residential': 'Standard residential inquiry processing and referral support'
+      'elite': 'Executive-level partnership with comprehensive project support'
     };
     return descriptions[tier] || 'Priority partnership coordination with dedicated team attention';
   };
@@ -479,20 +469,20 @@ const IllummaaAssessmentForm = () => {
           } else if (!Number.isInteger(Number(formData.unitCount))) {
             newErrors.unitCount = 'Please enter a whole number (no decimals)';
           } else if (unitCount > 0 && unitCount < 10) {
-            // Clear messaging for residential redirect
-            const shouldRedirect = window.confirm(
-              "This form is designed for projects with 10+ units.\n\n" +
-              "For residential projects (1-9 units), we recommend Remax.ca for better service.\n\n" +
-              "Would you like to be redirected to Remax.ca?"
+            // User-friendly redirect with confirmation dialog
+            const confirmRedirect = window.confirm(
+              "Projects with fewer than 10 units are better suited for residential services. " +
+              "Would you like to be redirected to Remax.ca for residential options?"
             );
 
-            if (shouldRedirect) {
+            if (confirmRedirect) {
               window.location.href = 'https://www.remax.ca/';
-              return false;
+              return false; // Prevent form progression
+            } else {
+              // Log but allow continuation if user chooses
+              console.log('User declined redirect for <10 units, continuing with form');
+              // Note: Form will proceed as B2B inquiry with <10 units
             }
-
-            // If user declines, show error and prevent progression
-            newErrors.unitCount = 'Minimum 10 units required for B2B partnerships';
           }
         }
         break;
@@ -1082,47 +1072,7 @@ const IllummaaAssessmentForm = () => {
                         type="number"
                         name="unitCount"
                         value={formData.unitCount || ''}
-                        onChange={(e) => {
-                          const rawValue = e.target.value;
-
-                          // Allow empty string (complete deletion)
-                          if (rawValue === '') {
-                            handleInputChange(e);
-                            setFormData(prev => ({
-                              ...prev,
-                              tier: 'residential' // Default tier when empty
-                            }));
-                            return;
-                          }
-
-                          // Only allow numeric input
-                          if (!/^\d+$/.test(rawValue)) {
-                            return;
-                          }
-
-                          // Allow any numeric value during input
-                          // Validation happens on form submission
-                          const sanitized = sanitizeInput(rawValue);
-                          handleInputChange({ ...e, target: { ...e.target, value: sanitized } } as React.ChangeEvent<HTMLInputElement>);
-
-                          // Update calculated tier based on unit count
-                          const numValue = parseInt(sanitized) || 0;
-                          let calculatedTier: TierType;
-                          if (numValue >= 200) {
-                            calculatedTier = 'elite';
-                          } else if (numValue >= 50) {
-                            calculatedTier = 'preferred';
-                          } else if (numValue >= 10) {
-                            calculatedTier = 'pioneer';
-                          } else {
-                            calculatedTier = 'residential'; // For <10 units or invalid
-                          }
-
-                          setFormData(prev => ({
-                            ...prev,
-                            tier: calculatedTier
-                          }));
-                        }}
+                        onChange={handleInputChange}
                         min="0"
                         step="1"
                         placeholder="Enter number of units (e.g., 10, 50, 200)"
@@ -1146,17 +1096,19 @@ const IllummaaAssessmentForm = () => {
                     </div>
                 )}
 
-                {/* Tier preview - only show for B2B projects (10+ units) */}
-                {formData.unitCount && parseInt(formData.unitCount) >= 10 && (
-                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 border border-purple-200">
-                    <div className="flex items-center justify-between">
+                {/* Tier Preview - Only show when meaningful data entered */}
+                {(formData.readiness && formData.unitCount !== undefined && formData.unitCount !== '') && (
+                  <div className="bg-gray-50 rounded-xl p-4" data-testid="tier-preview">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl" data-testid="tier-icon">{getTierInfo(customerTier).icon}</span>
                       <div>
-                        <p className="text-sm font-medium text-gray-700">Your Partnership Tier</p>
-                        <p className="text-lg font-bold text-purple-600 capitalize">
-                          {formData.tier && formData.tier !== 'residential' ? formData.tier : 'pioneer'} Partner
+                        <p className="font-semibold text-gray-900" data-testid="tier-name">
+                          {getTierInfo(customerTier).name} Tier
+                        </p>
+                        <p className="text-sm text-gray-600" data-testid="tier-description">
+                          {getTierInfo(customerTier).description}
                         </p>
                       </div>
-                      <span className="text-3xl">{formData.tier && formData.tier !== 'residential' ? getTierInfo(formData.tier).icon : getTierInfo('pioneer').icon}</span>
                     </div>
                   </div>
                 )}
