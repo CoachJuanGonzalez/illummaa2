@@ -1095,87 +1095,231 @@ const IllummaaAssessmentForm = () => {
               </div>
             )}
             
-            {/* STEP 2: Information Preferences / Budget & Timeline */}
+            {/* STEP 2: Company Profile */}
             {currentStep === 2 && (
               <div className="space-y-6" data-testid="step-2">
-                {/* B2B Budget & Timeline Section - Always Show */}
-                    <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
-                      Budget & Timeline
-                    </h2>
-                    
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-budget">
-                        Project Budget Range (CAD) <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="budget"
-                        value={formData.budget || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.budget ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-budget"
-                      >
-                        <option value="">Select budget range...</option>
-                        <option value="Under $500K">Under $500K</option>
-                        <option value="$500K - $2M">$500K - $2M</option>
-                        <option value="$2M - $5M">$2M - $5M</option>
-                        <option value="$5M - $15M">$5M - $15M</option>
-                        <option value="$15M - $30M">$15M - $30M</option>
-                        <option value="$30M - $50M">$30M - $50M</option>
-                        <option value="Over $50M">Over $50M</option>
-                      </select>
-                      {errors.budget && (
-                        <p className="text-red-500 text-xs mt-1" data-testid="error-budget">{errors.budget}</p>
-                      )}
-                    </div>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
+                  Company Profile
+                </h2>
 
-                    <div>
-                      <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
-                        Delivery Timeline <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="timeline"
-                        value={formData.timeline || ''}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.timeline ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.5rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1.5em 1.5em',
-                          paddingRight: '2.5rem'
-                        }}
-                        required
-                        data-testid="select-timeline"
-                      >
-                        <option value="">Select timeline...</option>
-                        <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
-                        <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
-                        <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
-                        <option value="Long-term (12+ months)">Long-term (12+ months)</option>
-                      </select>
-                      {errors.timeline && (
-                        <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
-                      )}
-                    </div>
+                {/* Company with SECURITY */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-company">
+                    Company/Organization Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company || ''}
+                    onChange={handleInputChange}
+                    placeholder="Enter your company or organization name"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.company ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
+                    required
+                    data-testid="input-company"
+                  />
+                  {errors.company && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-company">{errors.company}</p>
+                  )}
+                </div>
+
+                {/* Developer Type */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-developer-type">
+                    Developer Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="developerType"
+                    value={formData.developerType || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.developerType ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-developer-type"
+                  >
+                    <option value="">Select developer type...</option>
+                    <option value="Indigenous Community/Organization">Indigenous Community/Organization</option>
+                    <option value="Commercial Developer (Large Projects)">Commercial Developer (Large Projects)</option>
+                    <option value="Government/Municipal Developer">Government/Municipal Developer</option>
+                    <option value="Non-Profit Housing Developer">Non-Profit Housing Developer</option>
+                    <option value="Private Developer (Medium Projects)">Private Developer (Medium Projects)</option>
+                    <option value="Individual/Family Developer">Individual/Family Developer</option>
+                  </select>
+                  {errors.developerType && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
+                  )}
+                </div>
+
+                {/* Province */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-province">
+                    Construction Province/Territory <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="province"
+                    value={formData.province || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.province ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-province"
+                  >
+                    <option value="">Select province/territory...</option>
+                    <option value="Alberta">Alberta</option>
+                    <option value="British Columbia">British Columbia</option>
+                    <option value="Manitoba">Manitoba</option>
+                    <option value="New Brunswick">New Brunswick</option>
+                    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                    <option value="Northwest Territories">Northwest Territories</option>
+                    <option value="Nova Scotia">Nova Scotia</option>
+                    <option value="Nunavut">Nunavut</option>
+                    <option value="Ontario">Ontario</option>
+                    <option value="Prince Edward Island">Prince Edward Island</option>
+                    <option value="Quebec">Quebec</option>
+                    <option value="Saskatchewan">Saskatchewan</option>
+                    <option value="Yukon">Yukon</option>
+                  </select>
+                  {errors.province && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-province">{errors.province}</p>
+                  )}
+                </div>
+
+                {/* Timeline */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
+                    Delivery Timeline <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="timeline"
+                    value={formData.timeline || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.timeline ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-timeline"
+                  >
+                    <option value="">Select timeline...</option>
+                    <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
+                    <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
+                    <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
+                    <option value="Long-term (12+ months)">Long-term (12+ months)</option>
+                  </select>
+                  {errors.timeline && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
+                  )}
+                </div>
               </div>
             )}
 
-            {/* STEP 3: Contact Information */}
+            {/* STEP 3: Partnership Opportunities */}
             {currentStep === 3 && (
               <div className="space-y-6" data-testid="step-3">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-3">
+                  Partnership Opportunities
+                </h2>
+
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
+                    Interest in Government Housing Programs <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="governmentPrograms"
+                    value={formData.governmentPrograms || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.governmentPrograms ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-government-programs"
+                  >
+                    <option value="">Select interest level...</option>
+                    <option value="Just learning about options">Just learning about options</option>
+                    <option value="Not interested">Not interested</option>
+                    <option value="Somewhat interested">Somewhat interested</option>
+                    <option value="Very interested">Very interested</option>
+                    <option value="Currently participating">Currently participating</option>
+                  </select>
+                  {errors.governmentPrograms && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-government-programs">{errors.governmentPrograms}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
+                    Are you Build Canada eligible? <span className="text-red-500">*</span>
+                  </label>
+                  <p className="text-sm font-bold text-gray-700 mb-2">
+                    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
+                    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
+                    Select 'I don't know' if unsure.
+                  </p>
+                  <select
+                    name="buildCanadaEligible"
+                    value={formData.buildCanadaEligible || ''}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.buildCanadaEligible ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
+                      backgroundPosition: 'right 0.5rem center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: '1.5em 1.5em',
+                      paddingRight: '2.5rem'
+                    }}
+                    required
+                    data-testid="select-buildcanada"
+                  >
+                    <option value="">Select eligibility...</option>
+                    <option value="Yes">Yes - Meets net-zero and affordability criteria</option>
+                    <option value="No">No - Does not meet criteria</option>
+                    <option value="I don't know">I don't know - Need more information</option>
+                  </select>
+                  {errors.buildCanadaEligible && (
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
+                      {errors.buildCanadaEligible}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 4: Contact Information */}
+            {currentStep === 4 && (
+              <div className="space-y-6" data-testid="step-4">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-4">
                   Contact Information
                 </h2>
 
@@ -1260,213 +1404,6 @@ const IllummaaAssessmentForm = () => {
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-phone">{errors.phone}</p>
                   )}
-                </div>
-
-                {/* Company Field - Smart Display Based on Tier */}
-                {(customerTier) && ( // All B2B tiers need company
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Company/Organization 
-                      <span className="text-red-500 ml-1">*</span> {/* Required for all B2B tiers */}
-                    </label>
-                    <input
-                      type="text"
-                      name="company"
-                      id="company"
-                      value={formData.company}
-                      onChange={handleInputChange}
-                      required={true} // All B2B tiers require company
-                      placeholder="Company/Organization name"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"
-                      aria-label="Company or organization name"
-                    />
-                    {errors.company && (
-                      <p className="mt-1 text-xs text-red-600" role="alert">{errors.company}</p>
-                    )}
-                    {/* Helper text based on tier */}
-                    <p className="mt-1 text-xs text-gray-500">
-                      {customerTier === 'pioneer' && "Required for B2B partnership inquiries (10-49 units)"}
-                      {customerTier === 'preferred' && "Required for preferred partnership (50-199 units)"}
-                      {customerTier === 'elite' && "Required for elite partnership (200+ units)"}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* STEP 4: Location + Developer Type */}
-            {currentStep === 4 && (
-              <div className="space-y-6" data-testid="step-4">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-4">
-                  Project Location & Details
-                </h2>
-
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-province">
-                    Province/Territory <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="province"
-                    value={formData.province || ''}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.province ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.5rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                    required
-                    data-testid="select-province"
-                  >
-                    <option value="">Select province/territory...</option>
-                    <option value="Alberta">Alberta</option>
-                    <option value="British Columbia">British Columbia</option>
-                    <option value="Manitoba">Manitoba</option>
-                    <option value="New Brunswick">New Brunswick</option>
-                    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                    <option value="Northwest Territories">Northwest Territories</option>
-                    <option value="Nova Scotia">Nova Scotia</option>
-                    <option value="Nunavut">Nunavut</option>
-                    <option value="Ontario">Ontario</option>
-                    <option value="Prince Edward Island">Prince Edward Island</option>
-                    <option value="Quebec">Quebec</option>
-                    <option value="Saskatchewan">Saskatchewan</option>
-                    <option value="Yukon">Yukon</option>
-                  </select>
-                  {errors.province && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-province">{errors.province}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-developer-type">
-                    Developer Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="developerType"
-                    value={formData.developerType || ''}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.developerType ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.5rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                    required
-                    data-testid="select-developer-type"
-                  >
-                    <option value="">Select developer type...</option>
-                    <option value="Indigenous Community/Organization">Indigenous Community/Organization</option>
-                    <option value="Commercial Developer (Large Projects)">Commercial Developer (Large Projects)</option>
-                    <option value="Government/Municipal Developer">Government/Municipal Developer</option>
-                    <option value="Non-Profit Housing Developer">Non-Profit Housing Developer</option>
-                    <option value="Private Developer (Medium Projects)">Private Developer (Medium Projects)</option>
-                    <option value="Individual/Family Developer">Individual/Family Developer</option>
-                  </select>
-                  {errors.developerType && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
-                  )}
-                </div>
-
-                {/* TODO: Future Update - Simplify Government Programs
-                // - Reduce from 5 options to 2: "Currently participating", "Not participating"
-                // - Update scoring.ts line 214 to remove "Very interested" check
-                // - Update storage.ts tags generation (lines 555-569)
-                // - Coordinate with CRM automation updates */}
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
-                    Interest in Government Housing Programs <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    name="governmentPrograms"
-                    value={formData.governmentPrograms || ''}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.governmentPrograms ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.5rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                    required
-                    data-testid="select-government-programs"
-                  >
-                    <option value="">Select interest level...</option>
-                    <option value="Exploring partnership options">Exploring partnership options</option>
-                    <option value="Not interested">Not interested</option>
-                    <option value="Somewhat interested">Somewhat interested</option>
-                    <option value="Very interested">Very interested</option>
-                    <option value="Currently participating">Currently participating</option>
-                  </select>
-                  {errors.governmentPrograms && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-government-programs">{errors.governmentPrograms}</p>
-                  )}
-                </div>
-
-                {/* Build Canada Eligibility - User Self-Certification */}
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
-                    Are you Build Canada eligible? <span className="text-red-500">*</span>
-                  </label>
-                  {/* Prominent help text positioned before dropdown for better visibility */}
-                  <p className="text-sm font-bold text-gray-700 mb-2">
-                    Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
-                    and &lt;$300K/unit standards for low/median-income households (&lt;80% area median income).
-                    Select 'I don't know' if unsure.
-                  </p>
-                  <select
-                    name="buildCanadaEligible"
-                    value={formData.buildCanadaEligible || ''}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.buildCanadaEligible ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none appearance-none bg-white`}
-                    style={{
-                      backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                      backgroundPosition: 'right 0.5rem center',
-                      backgroundRepeat: 'no-repeat',
-                      backgroundSize: '1.5em 1.5em',
-                      paddingRight: '2.5rem'
-                    }}
-                    required
-                    data-testid="select-buildcanada"
-                  >
-                    <option value="">Select eligibility...</option>
-                    <option value="Yes">Yes - Meets net-zero and affordability criteria</option>
-                    <option value="No">No - Does not meet criteria</option>
-                    <option value="I don't know">I don't know - Need more information</option>
-                  </select>
-                  {errors.buildCanadaEligible && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
-                      {errors.buildCanadaEligible}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-project-description">
-                    Project Description (Optional)
-                  </label>
-                  <textarea
-                    name="projectDescription"
-                    value={formData.projectDescription || ''}
-                    onChange={handleInputChange}
-                    placeholder="Tell us about your project goals, timeline, or any specific requirements..."
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none resize-vertical"
-                    data-testid="textarea-project-description"
-                  />
                 </div>
               </div>
             )}
