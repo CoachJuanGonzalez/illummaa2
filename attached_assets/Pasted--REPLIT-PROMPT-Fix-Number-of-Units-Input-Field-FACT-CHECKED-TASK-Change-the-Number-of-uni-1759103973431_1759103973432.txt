@@ -1,0 +1,120 @@
+  REPLIT PROMPT: Fix Number of Units Input Field (FACT-CHECKED)
+
+  TASK: Change the "Number of units needed" dropdown to accept ANY integer number >= 0 as a number input field.
+
+  FILE TO EDIT: client/src/components/assessment-form.tsx
+
+  IMPORTANT CONSTRAINTS:
+  - Backend schema (shared/schema.ts) validates minimum 10 units for B2B partnerships
+  - Values 0-9 should show a warning but still be accepted (they get treated as 10 in scoring)
+  - Must maintain all existing security sanitization
+
+  REQUIRED CHANGES:
+
+  1. Replace the dropdown field (lines 1023-1036)
+
+  Find and replace the entire <select> element with:
+  <input
+    type="number"
+    name="unitCount"
+    value={formData.unitCount || ''}
+    onChange={handleInputChange}
+    min="0"
+    step="1"
+    placeholder="Enter number of units (e.g., 10, 50, 200)"
+    className={`w-full px-4 py-3 rounded-lg border ${
+      errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
+    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white`}
+    required
+    data-testid="input-units"
+  />
+
+  2. Update getRepresentativeUnitValue function (lines ~313-325)
+
+  Replace entire function:
+  // SECURITY-COMPLIANT: Unit value validation - accepts any integer >= 0
+  const getRepresentativeUnitValue = (unitSelection: string): string => {
+    // Validate input to prevent injection and ensure it's a valid number
+    const sanitizedInput = sanitizeInput(unitSelection);
+    const numValue = parseInt(sanitizedInput, 10);
+
+    // Return the actual number if it's valid, otherwise return '0'
+    if (!isNaN(numValue) && numValue >= 0) {
+      return numValue.toString();
+    }
+    return '0';
+  };
+
+  3. Update getDisplayUnitText function (lines ~328-338)
+
+  Replace entire function:
+  // Helper function to get display-friendly unit text for UI and sales team
+  const getDisplayUnitText = (unitValue: string): string => {
+    const numValue = parseInt(unitValue, 10);
+
+    if (isNaN(numValue) || numValue < 0) {
+      return '0 units';
+    }
+
+    // Special handling for values under 10 (B2B minimum)
+    if (numValue >= 1 && numValue < 10) {
+      return `${numValue} units (Note: B2B partnerships require minimum 10 units)`;
+    }
+
+    // Return appropriate text based on the number
+    if (numValue === 0) return '0 units';
+    if (numValue === 1) return '1 home';
+    if (numValue === 2) return '2 homes';
+
+    // For larger numbers, include tier information if applicable
+    if (numValue >= 10 && numValue <= 49) return `${numValue} units (Pioneer Tier Range)`;
+    if (numValue >= 50 && numValue <= 199) return `${numValue} units (Preferred Tier Range)`;
+    if (numValue >= 200) return `${numValue} units (Elite Tier Range)`;
+
+    return `${numValue} units`;
+  };
+
+  4. Update validation in validateStep function (lines ~447-458)
+
+  Replace unit validation section:
+  // B2B validation: ALL users must enter units
+  if (!formData.unitCount || formData.unitCount === '') {
+    newErrors.unitCount = 'Please enter the number of units needed';
+  } else {
+    // Security validation: Ensure the value is a valid integer >= 0
+    const unitCount = parseInt(formData.unitCount || '0', 10);
+    if (isNaN(unitCount) || unitCount < 0) {
+      newErrors.unitCount = 'Please enter a valid number (0 or greater)';
+    } else if (!Number.isInteger(Number(formData.unitCount))) {
+      newErrors.unitCount = 'Please enter a whole number (no decimals)';
+    } else if (unitCount > 0 && unitCount < 10) {
+      // Warning for B2B minimum, but don't block submission
+      newErrors.unitCount = 'Note: B2B partnerships typically require 10+ units. For <10 units, consider Remax.ca';
+    }
+  }
+
+  5. Add info message after the input field (optional but recommended)
+
+  After the closing </div> of the unitCount field (around line 1041), add:
+  {formData.unitCount && parseInt(formData.unitCount) > 0 && parseInt(formData.unitCount) < 10 && (
+    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
+      <p className="text-sm text-yellow-800">
+        <strong>Note:</strong> B2B partnerships typically start at 10 units. For residential projects under 10 units,
+        you may want to visit <a href="https://remax.ca" className="underline">Remax.ca</a> for better assistance.
+      </p>
+    </div>
+  )}
+
+  SECURITY NOTES:
+  - The sanitizeInput() function is already called in getRepresentativeUnitValue() - maintain this
+  - The backend automatically treats values <10 as 10 for scoring purposes
+  - All input is sanitized before being sent to the backend (line 683)
+
+  TEST SCENARIOS:
+  1. Enter: 0, 1, 5, 9 (should work but show B2B minimum notice)
+  2. Enter: 10, 50, 200, 1000 (should work normally)
+  3. Enter: -5, 3.5, text (should show validation errors)
+  4. Submit form and verify projectUnitCount is sent correctly
+
+  ---
+  This fact-checked prompt ensures compatibility with the existing codebase and maintains all security measures.
