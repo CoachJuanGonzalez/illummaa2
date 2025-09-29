@@ -460,52 +460,59 @@ const IllummaaAssessmentForm = () => {
     const newErrors: FormErrors = {};
     
     switch(step) {
-      case 1:
+      case 1: // Partnership Intent
         if (!formData.readiness) {
           newErrors.readiness = 'Please select your journey stage';
         }
-        
-        // B2B validation: ALL users must enter units
         if (!formData.unitCount || formData.unitCount === '') {
           newErrors.unitCount = 'Please enter the number of units needed';
         } else {
-          // Security validation: Ensure the value is a valid integer >= 0
           const unitCount = parseInt(formData.unitCount || '0', 10);
           if (isNaN(unitCount) || unitCount < 0) {
             newErrors.unitCount = 'Please enter a valid number (0 or greater)';
           } else if (!Number.isInteger(Number(formData.unitCount))) {
             newErrors.unitCount = 'Please enter a whole number (no decimals)';
           } else if (unitCount > 0 && unitCount < 10) {
-            // User-friendly redirect with confirmation dialog
             const confirmRedirect = window.confirm(
               "Projects with fewer than 10 units are better suited for residential services. " +
               "Would you like to be redirected to Remax.ca for residential options?"
             );
-
             if (confirmRedirect) {
               window.location.href = 'https://www.remax.ca/';
-              return false; // Prevent form progression
+              return false;
             } else {
-              // Log but allow continuation if user chooses
               console.log('User declined redirect for <10 units, continuing with form');
               newErrors.unitCount = 'Minimum 10 units required for B2B partnerships';
-              // Note: Form will proceed as B2B inquiry with <10 units
             }
           }
         }
         break;
-        
-      case 2:
-        // B2B validation: All users need budget and timeline
-        if (!formData.budget && !formData.projectBudgetRange) {
-          newErrors.budget = 'Budget range is required';
+
+      case 2: // Company Profile
+        if (!formData.company?.trim()) {
+          newErrors.company = 'Company name is required for B2B partnership';
+        }
+        if (!formData.developerType) {
+          newErrors.developerType = 'Please select a developer type';
+        }
+        if (!formData.province && !formData.constructionProvince) {
+          newErrors.province = 'Province/territory is required';
         }
         if (!formData.timeline && !formData.deliveryTimeline) {
           newErrors.timeline = 'Timeline is required';
         }
         break;
-        
-      case 3: // Contact Information
+
+      case 3: // Partnership Opportunities
+        if (!formData.governmentPrograms) {
+          newErrors.governmentPrograms = 'Please select your interest level';
+        }
+        if (!formData.buildCanadaEligible || formData.buildCanadaEligible === '') {
+          newErrors.buildCanadaEligible = 'Please select Build Canada eligibility status';
+        }
+        break;
+
+      case 4: // Contact Information
         if (!formData.firstName?.trim() || formData.firstName.length < 2) {
           newErrors.firstName = 'First name is required (2+ characters)';
         }
@@ -518,40 +525,9 @@ const IllummaaAssessmentForm = () => {
         if (!formData.phone?.trim() || formData.phone.length < 12) {
           newErrors.phone = 'Valid Canadian phone number is required';
         }
-        // Company validation - Required only for Pioneer tier and above
-        const companyRequired = true; // All B2B tiers require company
-        
-        if (companyRequired && !formData.company?.trim()) {
-          if (customerTier === 'pioneer') {
-            newErrors.company = 'Company name is required for partnership inquiries (10-49 units)';
-          } else if (customerTier === 'preferred') {
-            newErrors.company = 'Company name is required for preferred partnership (50-199 units)';
-          } else if (customerTier === 'elite') {
-            newErrors.company = 'Company name is required for elite partnership (200+ units)';
-          } else {
-            newErrors.company = 'Company name is required for B2B partnership';
-          }
-        }
-        
-        // No validation error for Starter tier - company is optional
         break;
-        
-      case 4: // Validate required fields for ALL tiers
-        if (!formData.province && !formData.constructionProvince) {
-          newErrors.province = 'Province/territory is required';
-        }
-        if (!formData.developerType) {
-          newErrors.developerType = 'Please select a developer type';
-        }
-        if (!formData.governmentPrograms) {
-          newErrors.governmentPrograms = 'Please select your interest level';
-        }
-        if (!formData.buildCanadaEligible || formData.buildCanadaEligible === '') {
-          newErrors.buildCanadaEligible = 'Please select Build Canada eligibility status';
-        }
-        break;
-        
-      case 5: // Review + Legal Consent
+
+      case 5: // Legal Consent
         if (!formData.consentCommunications) {
           newErrors.consentCommunications = 'Communication consent is required by CASL';
         }
