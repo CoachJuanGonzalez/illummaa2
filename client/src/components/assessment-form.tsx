@@ -196,7 +196,7 @@ const IllummaaAssessmentForm = () => {
       .replace(/[<>]/g, '') // Remove potential HTML tags
       .replace(/javascript:/gi, '') // Remove javascript: protocols
       .replace(/on\w+\s*=/gi, '') // Remove event handlers
-      .substring(0, 100) // Company name limit
+      .substring(0, 250) // Company name limit (increased for long B2B names)
       .trim(); // Trim only on form submission, preserves internal spaces
   };
 
@@ -299,7 +299,7 @@ const IllummaaAssessmentForm = () => {
         .replace(/[<>]/g, '') // Remove potential HTML tags
         .replace(/javascript:/gi, '') // Remove javascript: protocols
         .replace(/on\w+\s*=/gi, '') // Remove event handlers
-        .substring(0, 100); // Limit to 100 characters
+        .substring(0, 250); // Limit to 250 characters (increased for long B2B names)
         // NO .trim() here - preserve spaces during typing!
 
       setFormData(prev => ({
