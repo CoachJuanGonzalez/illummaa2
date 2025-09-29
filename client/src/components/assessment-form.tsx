@@ -1360,6 +1360,28 @@ const IllummaaAssessmentForm = () => {
                     </p>
                   )}
                 </div>
+
+                {/* Project Description - Optional field */}
+                <div>
+                  <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-project-description">
+                    Project Description <span className="text-gray-500 font-normal">(Optional)</span>
+                  </label>
+                  <textarea
+                    name="projectDescription"
+                    value={formData.projectDescription || ''}
+                    onChange={handleInputChange}
+                    rows={4}
+                    placeholder="Describe your modular housing project, timeline, special requirements, or any other details..."
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.projectDescription ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none resize-none bg-white`}      
+                    maxLength={1000}
+                    data-testid="textarea-project-description"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    {formData.projectDescription ? formData.projectDescription.length : 0}/1000 characters
+                  </div>
+                </div>
               </div>
             )}
 

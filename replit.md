@@ -14,6 +14,12 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-09-29 - Security & UX Enhancements
+- **Security Audit Complete**: Enhanced XSS protection across all form fields with event handler removal
+- **Company Name Field**: Increased limit to 250 characters for long B2B names while preserving space handling
+- **Project Description Restored**: Added missing textarea field to Step 3 with 1000-char limit and character counter
+- **Form Security**: All fields now have equal protection (HTML tag removal, JS injection blocking, event handler stripping)
+
 ### 2025-09-27 - Replit Environment Setup
 - Fixed npm scripts to use `npx tsx` for proper TypeScript execution
 - Configured workflow to serve application on port 5000 with webview output
