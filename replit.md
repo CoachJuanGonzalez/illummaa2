@@ -14,6 +14,18 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-09-30 - 1BR Compact PDF Floor Plan Integration
+- **PDF Display Implementation**: Successfully integrated "1 BEDROOM 1.5 BATH.pdf" into 1BR Compact model page
+  - Added Technical Floor Plan section with dedicated iframe display (600px height)
+  - Integrated PDF into Floor Plans & Specifications section via FloorPlanViewer component
+  - Updated bathroom count from "1" to "1.5" to match PDF specifications
+- **Security Configuration**: Fixed Content Security Policy to allow PDF display
+  - Changed `frameguard` from 'deny' to 'sameorigin' to permit same-origin iframes
+  - Updated CSP `frameSrc` directive to allow 'self' for PDF embedding
+  - Added static file serving for `/attached_assets` directory
+  - Fixed PDF file permissions (644) for proper web server access
+- **Component Enhancement**: FloorPlanViewer now automatically detects and renders PDF files in iframes
+
 ### 2025-09-30 - Binary Government Programs Implementation
 - **Government Programs Simplified**: Transformed 5-option dropdown to strategic binary choice
   - "Participating in government programs" (+20 points)

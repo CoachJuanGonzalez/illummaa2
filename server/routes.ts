@@ -235,7 +235,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       preload: true
     },
     noSniff: true,
-    frameguard: { action: 'deny' },
+    frameguard: { action: 'sameorigin' },
     xssFilter: true
   }));
   
