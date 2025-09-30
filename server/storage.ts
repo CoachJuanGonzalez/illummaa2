@@ -457,150 +457,57 @@ function getPriorityLevel(score: number): string {
   return "LOW";
 }
 
-// ENTERPRISE TAG OPTIMIZATION: Clean, efficient tags (50% reduction achieved)
+// ENTERPRISE TAG OPTIMIZATION: Simplified, efficient tags (max 12)
 function generateCustomerTags(data: AssessmentFormData, customerTier: string, priorityLevel: string): string[] {
   const tags: string[] = [];
+  const units = parseInt(data.projectUnitCount.toString());
 
-  // ENTERPRISE SECURITY: Input sanitization
-  const sanitizeTagValue = (value: string): string => {
-    if (!value || typeof value !== 'string') return '';
-    return value.toLowerCase().replace(/[^a-z0-9-_]/g, '-').replace(/-+/g, '-').replace(/^-+|-+$/g, '');
-  };
+  // 1. Tier tag
+  if (units >= 200) tags.push('Elite');
+  else if (units >= 50) tags.push('Preferred');
+  else if (units >= 10) tags.push('Pioneer');
 
-  // TIER CLASSIFICATION - Clean format (no redundant prefix)
-  const tierOptimized = {
-    'tier_0_explorer': 'explorer',
-    'tier_1_starter': 'starter', 
-    'tier_2_pioneer': 'pioneer',
-    'tier_3_preferred': 'preferred',
-    'tier_4_elite': 'elite'
-  }[customerTier];
-  
-  if (tierOptimized) {
-    tags.push(tierOptimized);
+  // 2. Priority tag (using existing priorityLevel parameter)
+  if (priorityLevel === 'HIGH') tags.push('Priority-High');
+  else if (priorityLevel === 'MEDIUM') tags.push('Priority-Medium');
+  else tags.push('Priority-Low');
+
+  // 3. Conditional tags
+  if (data.developerType?.includes('Indigenous')) {
+    tags.push('Dev-Indigenous');
   }
 
-  // READINESS & STAGE - Optimized (removes timeline redundancy)
-  if (data.readiness) {
-    const stageMap = {
-      'researching': 'stage-research',
-      'planning-long': 'stage-planning', 
-      'planning-medium': 'stage-active',
-      'planning-short': 'stage-ready',
-      'immediate': 'stage-urgent'
-    };
-
-    const optimizedStage = stageMap[data.readiness];
-    if (optimizedStage) {
-      tags.push(optimizedStage);
-    }
+  if (['Participating in government programs', 'Currently participating']
+      .includes(data.governmentPrograms || '')) {
+    tags.push('Government-Participating');
   }
 
-  // PROJECT SCALE - Clean naming
-  const units = Math.max(0, data.projectUnitCount || 0);
-  // Intelligent routing: Flag residential vs B2B inquiries
-  if (units < 10) tags.push('residential-inquiry', 'under-10-units'); // Flag for appropriate handling
-  else if (units <= 2) tags.push('scale-micro');
-  else if (units < 50) tags.push('scale-small');
-  else if (units < 150) tags.push('scale-medium');
-  else if (units < 300) tags.push('scale-large');
-  else tags.push('scale-enterprise');
-
-  // DEVELOPER TYPE - Clean format (FIXED enum matching)
-  if (data.developerType) {
-    const devOptimized = {
-      'Commercial Developer (Large Projects)': 'dev-commercial',
-      'Government/Municipal Developer': 'dev-government',
-      'Non-Profit Housing Developer': 'dev-nonprofit', 
-      'Private Developer (Medium Projects)': 'dev-private',
-      'Indigenous Community/Organization': 'dev-indigenous',
-      'Individual/Family Developer': 'dev-individual'
-    }[data.developerType];
-
-    if (devOptimized) {
-      tags.push(devOptimized);
-    }
+  const priorityProvinces = ['Alberta', 'British Columbia', 'Ontario', 'Northwest Territories'];
+  if (priorityProvinces.includes(data.constructionProvince || '')) {
+    tags.push('Priority-Province');
   }
 
-  // LOCATION - Optimized
-  if (data.constructionProvince) {
-    const provinceTag = sanitizeTagValue(data.constructionProvince);
-    tags.push(`province-${provinceTag}`);
-    
-    if (['ontario', 'british-columbia', 'alberta'].includes(provinceTag)) {
-      tags.push('priority-province');
-    }
+  if (data.buildCanadaEligible === 'Yes') {
+    tags.push('ESG-Eligible');
   }
 
-  // GOVERNMENT PROGRAMS - Binary system
-  if (data.governmentPrograms) {
-    if (data.governmentPrograms === "Participating in government programs") {
-      tags.push("government-participating");
-      tags.push("government-active");
-      tags.push("government-priority");
-    } else if (data.governmentPrograms === "Not participating") {
-      tags.push("government-not-participating");
-      tags.push("private-only");
-    }
+  if (data.decisionTimeline === 'Immediate (0-3 months)' && units >= 50) {
+    tags.push('Urgent');
   }
 
-  // AGENT SUPPORT - Clean format
-  if (data.agentSupport) {
-    const agentTag = sanitizeTagValue(data.agentSupport);
-    tags.push(`agent-${agentTag}`);
-  }
+  // 4. Consent tags
+  if (data.consentMarketing === true) tags.push('CASL-Compliant');
+  if (data.consentSMS === true) tags.push('SMS-Opted-In');
+  if (data.marketingConsent === true) tags.push('Marketing-Opted-In');
 
-  // MARKETING CONSENT - Enterprise compliance
-  if (data.marketingConsent === true) {
-    tags.push('marketing-opted-in');
-  } else {
-    tags.push('marketing-opted-out');
-  }
-  
-  // CASL compliance (always present for Canadian law)
-  if (data.consentMarketing === true) {
-    tags.push('casl-compliant');
-  }
+  // Remove legacy tags
+  const legacyTags = new Set([
+    'optimized-tags', 'agent-yes', 'no-agent', 'no-direct',
+    'government-active', 'government-priority'
+  ]);
 
-  // BUILD CANADA/ESG ELIGIBILITY - Based on user self-certification
-  const bcValue = data.buildCanadaEligible;
-
-  if (bcValue === "Yes") {
-    tags.push('esg-eligible');
-    console.log('✅ ESG-Eligible tag added for Build Canada = Yes');
-  } else if (bcValue === "I don't know") {
-    tags.push('review-required');
-    console.log('⚠️ Review-Required tag added for uncertain Build Canada status');
-  }
-  // "No" gets no special tag
-
-  // PRIORITY - Clean format
-  tags.push(`priority-${priorityLevel.toLowerCase()}`);
-
-  // OPTIMIZATION METADATA
-  tags.push('optimized-tags');
-
-  // ENTERPRISE SECURITY: Final validation and deduplication
-  const validTags = tags.filter(tag => 
-    tag && 
-    typeof tag === 'string' && 
-    tag.trim().length > 0 && 
-    tag.length <= 50 && 
-    /^[a-z0-9-_]+$/.test(tag)
-  );
-
-  // DEDUPLICATION: Remove duplicate tags
-  const deduplicatedTags = Array.from(new Set(validTags));
-
-  // AUDIT LOGGING
-  console.log(`[TAG-OPTIMIZATION] Generated ${deduplicatedTags.length} clean tags for ${customerTier}:`, {
-    totalTags: deduplicatedTags.length,
-    duplicatesRemoved: validTags.length - deduplicatedTags.length,
-    reductionAchieved: Math.round(((40 - deduplicatedTags.length) / 40) * 100) + '%',
-    timestamp: new Date().toISOString()
-  });
-
-  return deduplicatedTags;
+  const cleanedTags = tags.filter(tag => !legacyTags.has(tag));
+  return Array.from(new Set(cleanedTags)).slice(0, 12);
 }
 
 export async function submitToGoHighLevelResidential(data: any): Promise<any> {
