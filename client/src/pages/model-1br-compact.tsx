@@ -99,12 +99,20 @@ export default function Model1BRCompact() {
               Technical Floor Plan
             </h2>
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
-              <iframe
-                src="/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf"
-                className="w-full h-[600px] mx-auto border-0"
-                title="1BR Compact Technical Floor Plan"
-                data-testid="pdf-floor-plan"
-              />
+              <a 
+                href="/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-12 hover:shadow-xl transition-all cursor-pointer border-2 border-green-200 hover:border-green-300 text-center"
+                data-testid="link-floor-plan-pdf"
+              >
+                <div className="text-6xl mb-4">📐</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">View Technical Floor Plan</h3>
+                <p className="text-gray-600 mb-4">Click to open detailed PDF floor plan in a new tab</p>
+                <span className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+                  Open Floor Plan PDF
+                </span>
+              </a>
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
               600 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
@@ -221,7 +229,7 @@ export default function Model1BRCompact() {
             id: "2d",
             title: "2D Floor Plan",
             type: "2d",
-            imageUrl: "/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf",
+            pdfUrl: "/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf",
           },
           {
             id: "3d",

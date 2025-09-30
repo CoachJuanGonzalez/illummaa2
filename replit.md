@@ -14,17 +14,21 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
-### 2025-09-30 - 1BR Compact PDF Floor Plan Integration
+### 2025-09-30 - 1BR Compact PDF Floor Plan Integration (Browser-Safe Implementation)
 - **PDF Display Implementation**: Successfully integrated "1 BEDROOM 1.5 BATH.pdf" into 1BR Compact model page
-  - Added Technical Floor Plan section with dedicated iframe display (600px height)
+  - Added Technical Floor Plan section with clickable card that opens PDF in new tab
   - Integrated PDF into Floor Plans & Specifications section via FloorPlanViewer component
   - Updated bathroom count from "1" to "1.5" to match PDF specifications
-- **Security Configuration**: Fixed Content Security Policy to allow PDF display
-  - Changed `frameguard` from 'deny' to 'sameorigin' to permit same-origin iframes
-  - Updated CSP `frameSrc` directive to allow 'self' for PDF embedding
-  - Added static file serving for `/attached_assets` directory
+- **Browser Compatibility Fix**: Replaced iframe approach with clickable link to prevent browser blocking
+  - Removed all iframe implementations that were causing Chrome/Safari security blocks
+  - Implemented elegant clickable card UI with gradient background and hover effects
+  - PDF opens in new tab when clicked, ensuring compatibility with all browsers
+  - No iframe security restrictions or Content Security Policy issues
+- **Server Configuration**: Fixed static file serving
+  - Added Express static file serving for `/attached_assets` directory
   - Fixed PDF file permissions (644) for proper web server access
-- **Component Enhancement**: FloorPlanViewer now automatically detects and renders PDF files in iframes
+  - Updated route imports to include express module
+- **Component Enhancement**: FloorPlanViewer now supports both image files and PDF links with appropriate UI for each type
 
 ### 2025-09-30 - Binary Government Programs Implementation
 - **Government Programs Simplified**: Transformed 5-option dropdown to strategic binary choice
