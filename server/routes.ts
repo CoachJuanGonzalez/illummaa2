@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import express, { type Express } from "express";
 import { createServer, type Server } from "http";
 import rateLimit from "express-rate-limit";
 import slowDown from "express-slow-down";
@@ -204,6 +204,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enterprise Security Configuration v13.2  
   // Note: Trust proxy already configured in index.ts
   
+  // Serve attached assets (PDFs, images, etc.) as static files
+  app.use('/attached_assets', express.static('attached_assets'));
+  
   // Enhanced Helmet security headers with development-friendly CSP
   app.use(helmet({
     contentSecurityPolicy: {
@@ -218,7 +221,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         connectSrc: process.env.NODE_ENV === 'development'
           ? ["'self'", "ws:", "http:", "https:", "https://services.leadconnectorhq.com"]
           : ["'self'", "https://services.leadconnectorhq.com"],
-        frameSrc: ["'none'"],
+        frameSrc: ["'self'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],

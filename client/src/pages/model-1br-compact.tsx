@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
-import floorPlanImage from "@assets/1 BEDROOM 1.5 BATH_1759194580708.pdf";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
@@ -100,10 +99,10 @@ export default function Model1BRCompact() {
               Technical Floor Plan
             </h2>
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
-              <embed
-                src={floorPlanImage}
-                type="application/pdf"
-                className="w-full h-[600px] mx-auto"
+              <iframe
+                src="/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf"
+                className="w-full h-[600px] mx-auto border-0"
+                title="1BR Compact Technical Floor Plan"
                 data-testid="pdf-floor-plan"
               />
             </div>
@@ -222,7 +221,7 @@ export default function Model1BRCompact() {
             id: "2d",
             title: "2D Floor Plan",
             type: "2d",
-            imageUrl: floorPlanImage,
+            imageUrl: "/attached_assets/1 BEDROOM 1.5 BATH_1759194580708.pdf",
           },
           {
             id: "3d",

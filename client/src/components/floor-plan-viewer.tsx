@@ -140,23 +140,35 @@ export default function FloorPlanViewer({
                   <TabsContent key={plan.id} value={plan.id} className="mt-0">
                     <div className="flex justify-center items-center min-h-[400px] bg-gray-50 rounded-lg overflow-auto">
                       {plan.imageUrl ? (
-                        <div
-                          className="transition-transform duration-300"
-                          style={{
-                            transform: `scale(${zoomLevel / 100})`,
-                            transformOrigin: "center center",
-                          }}
-                        >
-                          <img
+                        plan.imageUrl.toLowerCase().endsWith('.pdf') ? (
+                          <iframe
                             src={plan.imageUrl}
-                            alt={`${modelName} - ${plan.title}`}
-                            className="max-w-full h-auto rounded-lg shadow-md"
+                            className="w-full h-[600px] rounded-lg shadow-md border-0"
+                            title={`${modelName} - ${plan.title}`}
                             style={{
-                              maxWidth: plan.width || "800px",
-                              maxHeight: plan.height || "600px",
+                              transform: `scale(${zoomLevel / 100})`,
+                              transformOrigin: "center center",
                             }}
                           />
-                        </div>
+                        ) : (
+                          <div
+                            className="transition-transform duration-300"
+                            style={{
+                              transform: `scale(${zoomLevel / 100})`,
+                              transformOrigin: "center center",
+                            }}
+                          >
+                            <img
+                              src={plan.imageUrl}
+                              alt={`${modelName} - ${plan.title}`}
+                              className="max-w-full h-auto rounded-lg shadow-md"
+                              style={{
+                                maxWidth: plan.width || "800px",
+                                maxHeight: plan.height || "600px",
+                              }}
+                            />
+                          </div>
+                        )
                       ) : (
                         <ImagePlaceholder
                           title={`${plan.title} Coming Soon`}
