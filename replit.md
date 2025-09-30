@@ -14,6 +14,25 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-09-30 - Phase 1 Backend Optimization (GHL Webhook Enhancement)
+- **Database Schema Expansion**: Added three critical fields for enhanced lead processing
+  - `buildCanadaEligible` (text): Tracks Build Canada funding program eligibility
+  - `consentSMS` (boolean, default false): CASL-compliant SMS consent tracking
+  - `marketingConsent` (boolean, default false): Additional marketing consent layer
+- **Tag Generation Optimization**: Streamlined from 40+ tags to maximum 12 high-value tags
+  - Preserved function signature (3 parameters) for backward compatibility
+  - Removed legacy tags: optimized-tags, agent-yes, no-agent, over-budget tags
+  - Added new consent tags: CASL-Compliant, SMS-Opted-In, Marketing-Opted-In
+  - Enhanced government program tagging: government-active, government-priority
+- **Webhook Payload Cleanup**: Reduced redundancy while maintaining all essential routing data
+  - Removed: customer_tags (kept tags_array only), assigned_to, submission_timestamp
+  - Added: a2p_campaign_id for 10DLC compliance
+  - Kept: priority_level (retained for Phase 1, will be removed in Phase 2)
+  - Enhanced consent tracking: Separate timestamps for CASL, SMS, and marketing consent
+- **Security Posture**: All existing security measures preserved (sanitization, rate limiting, payload size validation)
+- **Non-Breaking Implementation**: All changes architect-verified with no observed regressions
+- **Next Actions**: Populate A2P_CAMPAIGN_ID environment variable; monitor consent flags and tag counts post-deployment
+
 ### 2025-09-30 - 2BR Family Floor Plan Integration
 - **High-Quality Floor Plan Added**: Successfully integrated "2 BEDROOM PLAN.pdf" into 2BR Family model page
   - Converted PDF to high-quality JPG image at 300 DPI (1400x1812 pixels)
