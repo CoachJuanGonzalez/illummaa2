@@ -19,8 +19,8 @@ export default function LeadershipTeam() {
     },
     {
       name: "Juan Grey",
-      title: "Sales Account Manager",
-      category: "Business Development"
+      title: "Chief Vision & Expansion Officer",
+      category: "Brand & Creative Direction"
     },
     {
       name: "Ian Lajoie",
@@ -39,7 +39,7 @@ export default function LeadershipTeam() {
     },
     {
       name: "Coach Juan Gonzalez",
-      title: "CTO & AI Strategist Consultant, PVRPOSE AI",
+      title: "Chief Technology Officer, Enterprise Systems & AI Solutions",
       category: "Innovation"
     }
   ];
