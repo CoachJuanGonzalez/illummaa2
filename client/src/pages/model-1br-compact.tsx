@@ -5,8 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
-
-const floorPlanImage = "/attached_assets/1br-compact-floorplan.jpg?v=4";
+import floorPlanImage from "@assets/1br-compact-floorplan.jpg";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
