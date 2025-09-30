@@ -6,7 +6,7 @@ import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
 
-const floorPlanImage = "/attached_assets/1br-compact-floorplan.jpg?v=3";
+const floorPlanImage = "/attached_assets/1br-compact-floorplan.jpg?v=4";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
