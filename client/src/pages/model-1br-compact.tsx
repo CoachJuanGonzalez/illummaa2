@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import floorPlanImage from "@assets/1 BEDROOM 1.5 BATH_1759194580708.pdf";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
@@ -87,6 +88,28 @@ export default function Model1BRCompact() {
                 Starting from $129K CAD
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Floor Plan Section */}
+      <section className="py-16 bg-background" data-testid="section-floor-plan">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-floor-plan">
+              Technical Floor Plan
+            </h2>
+            <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
+              <embed
+                src={floorPlanImage}
+                type="application/pdf"
+                className="w-full h-[600px] mx-auto"
+                data-testid="pdf-floor-plan"
+              />
+            </div>
+            <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
+              600 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
+            </p>
           </div>
         </div>
       </section>
@@ -193,12 +216,13 @@ export default function Model1BRCompact() {
         modelName="1BR Compact"
         squareFootage="600 sq ft"
         bedrooms="1"
-        bathrooms="1"
+        bathrooms="1.5"
         floorPlans={[
           {
             id: "2d",
             title: "2D Floor Plan",
             type: "2d",
+            imageUrl: floorPlanImage,
           },
           {
             id: "3d",
