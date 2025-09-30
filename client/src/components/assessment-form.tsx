@@ -551,7 +551,7 @@ const IllummaaAssessmentForm = () => {
 
       case 3: // Partnership Opportunities
         if (!formData.governmentPrograms) {
-          newErrors.governmentPrograms = 'Please select your interest level';
+          newErrors.governmentPrograms = 'Please select your government program participation status';
         }
         if (!formData.buildCanadaEligible || formData.buildCanadaEligible === '') {
           newErrors.buildCanadaEligible = 'Please select Build Canada eligibility status';
@@ -1292,7 +1292,7 @@ const IllummaaAssessmentForm = () => {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
-                    Interest in Government Housing Programs <span className="text-red-500">*</span>
+                    Government Housing Program Participation <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="governmentPrograms"
@@ -1311,12 +1311,9 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-government-programs"
                   >
-                    <option value="">Select interest level...</option>
-                    <option value="Just learning about options">Just learning about options</option>
-                    <option value="Not interested">Not interested</option>
-                    <option value="Somewhat interested">Somewhat interested</option>
-                    <option value="Very interested">Very interested</option>
-                    <option value="Currently participating">Currently participating</option>
+                    <option value="">Select participation status...</option>
+                    <option value="Currently participating">Currently participating in government programs</option>
+                    <option value="Not participating">Not participating</option>
                   </select>
                   {errors.governmentPrograms && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-government-programs">{errors.governmentPrograms}</p>

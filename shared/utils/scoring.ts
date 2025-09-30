@@ -123,6 +123,10 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   if (govPrograms === "Currently participating") {
     govScore = 20;
     score += 20;
+    console.log('✅ Government Programs: Currently participating (+20 points)');
+  } else if (govPrograms === "Not participating") {
+    govScore = 0;
+    console.log('ℹ️ Government Programs: Not participating (0 points)');
   }
 
   // 3. INDIGENOUS COMMUNITIES (15 points)
@@ -207,8 +211,7 @@ export function isBuildCanadaEligible(data: AssessmentFormData | FrontendFormDat
   return units >= 50 ||
          devType === "Indigenous Community/Organization" ||
          devType === "Government/Municipal Developer" ||
-         govPrograms === "Currently participating" ||
-         govPrograms === "Very interested";
+         govPrograms === "Currently participating";
 }
 
 // REMOVE ALL OLD FUNCTIONS AND EXPORTS

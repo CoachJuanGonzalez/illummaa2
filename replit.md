@@ -14,6 +14,14 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-09-30 - Binary Government Programs Implementation
+- **Government Programs Simplified**: Transformed 5-option dropdown to strategic binary choice
+  - "Currently participating in government programs" (+20 points)
+  - "Not participating" (0 points)
+- **Backward Compatibility**: Legacy values auto-convert to "Not participating" via normalization
+- **Enhanced Tagging**: Binary system adds "government-active", "government-priority" tags for participants
+- **Scoring Unchanged**: Same +20 points for participation, improved logging for transparency
+
 ### 2025-09-29 - Security & UX Enhancements
 - **Security Audit Complete**: Enhanced XSS protection across all form fields with event handler removal
 - **Company Name Field**: Increased limit to 250 characters for long B2B names while preserving space handling

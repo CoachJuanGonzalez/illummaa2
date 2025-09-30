@@ -529,22 +529,15 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
     }
   }
 
-  // GOVERNMENT PROGRAMS - FIXED enum matching
+  // GOVERNMENT PROGRAMS - Binary system
   if (data.governmentPrograms) {
-    switch (data.governmentPrograms) {
-      case 'Currently participating':
-        tags.push('government-participating');
-        break;
-      case 'Very interested':
-      case 'Somewhat interested': 
-        tags.push('government-interested');
-        break;
-      case 'Not interested':
-        tags.push('private-only');
-        break;
-      case 'Just learning about options':
-        tags.push('government-exploring');
-        break;
+    if (data.governmentPrograms === "Currently participating") {
+      tags.push("government-participating");
+      tags.push("government-active");
+      tags.push("government-priority");
+    } else if (data.governmentPrograms === "Not participating") {
+      tags.push("government-not-participating");
+      tags.push("private-only");
     }
   }
 

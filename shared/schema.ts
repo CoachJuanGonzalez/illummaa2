@@ -129,12 +129,9 @@ export const assessmentSchema = z.object({
   ]),
   
   governmentPrograms: z.enum([
-    "Just learning about options",
-    "Not interested",
-    "Somewhat interested", 
-    "Very interested",
-    "Currently participating"
-  ]).optional(),
+    "Currently participating",
+    "Not participating"
+  ]).optional().describe("Government housing program participation status"),
   
   buildCanadaEligible: z.enum([
     "Yes",
