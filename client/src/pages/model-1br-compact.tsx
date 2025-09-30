@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import floorPlanImage from "@assets/1br-compact-floorplan.jpg";
 
 const floorPlanPDF = "/attached_assets/1 BEDROOM 1.5 BATH_1759197665520.pdf";
 
@@ -101,21 +102,18 @@ export default function Model1BRCompact() {
               Technical Floor Plan
             </h2>
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
-              <div 
-                className="cursor-pointer hover:opacity-90 transition-opacity"
+              <img 
+                src={floorPlanImage} 
+                alt="1BR Compact floor plan - 600 sq ft technical drawing" 
+                className="model-floorplan-image max-w-4xl mx-auto cursor-pointer"
+                loading="lazy"
+                decoding="async"
+                data-testid="img-floor-plan"
                 onClick={() => window.open(floorPlanPDF, '_blank')}
-                data-testid="div-floor-plan-viewer"
-              >
-                <iframe
-                  src={floorPlanPDF}
-                  className="w-full h-[800px] border-0"
-                  title="1BR Compact floor plan - 600 sq ft technical drawing"
-                  data-testid="iframe-floor-plan"
-                />
-                <p className="text-sm text-muted-foreground mt-4 text-center">
-                  Click to view full-size floor plan in new tab
-                </p>
-              </div>
+              />
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Click to view full-size PDF in new tab
+              </p>
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
               600 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
@@ -232,7 +230,7 @@ export default function Model1BRCompact() {
             id: "2d",
             title: "2D Floor Plan",
             type: "2d",
-            imageUrl: floorPlanPDF,
+            imageUrl: floorPlanImage,
           },
           {
             id: "3d",
