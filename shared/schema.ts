@@ -16,9 +16,12 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   constructionProvince: text("construction_province"),
   developerType: text("developer_type"),
   governmentPrograms: text("government_programs"),
+  buildCanadaEligible: text("build_canada_eligible"),
   // B2B-only: Removed Explorer fields (learningInterest, informationPreference)
   agentSupport: text("agent_support"),
   consentMarketing: boolean("consent_marketing").default(false),
+  consentSMS: boolean("consent_sms").default(false),
+  marketingConsent: boolean("marketing_consent").default(false),
   ageVerification: boolean("age_verification").default(false),
   projectDescription: text("project_description"),
   priorityScore: integer("priority_score"),
@@ -155,6 +158,11 @@ export const assessmentSchema = z.object({
   
   // Add optional marketing consent field
   marketingConsent: z.boolean()
+    .optional()
+    .default(false),
+  
+  // Add optional SMS consent field
+  consentSMS: z.boolean()
     .optional()
     .default(false),
   

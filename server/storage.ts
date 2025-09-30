@@ -51,12 +51,15 @@ export class MemStorage implements IStorage {
       projectDescription: insertAssessment.projectDescription || null,
       agentSupport: insertAssessment.agentSupport || null,
       consentMarketing: insertAssessment.consentMarketing ?? false,
+      consentSMS: insertAssessment.consentSMS ?? false,
+      marketingConsent: insertAssessment.marketingConsent ?? false,
       ageVerification: insertAssessment.ageVerification ?? false,
       tags: insertAssessment.tags ?? null,
       decisionTimeline: insertAssessment.decisionTimeline || null,
       constructionProvince: insertAssessment.constructionProvince || null,
       developerType: insertAssessment.developerType || null,
       governmentPrograms: insertAssessment.governmentPrograms || null,
+      buildCanadaEligible: insertAssessment.buildCanadaEligible || null,
       // B2B-only: Explorer fields removed
       priorityScore: insertAssessment.priorityScore ?? null,
     };
