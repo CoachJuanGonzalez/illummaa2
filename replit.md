@@ -14,6 +14,16 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-09-30 - 2BR Family Floor Plan Integration
+- **High-Quality Floor Plan Added**: Successfully integrated "2 BEDROOM PLAN.pdf" into 2BR Family model page
+  - Converted PDF to high-quality JPG image at 300 DPI (1400x1812 pixels)
+  - Added Technical Floor Plan section matching 3BR Executive layout pattern
+  - Image displays crisp lines without bold appearance or conversion artifacts
+  - Clickable floor plan opens original PDF in new tab for detailed viewing
+  - Integrated floor plan into FloorPlanViewer component for Floor Plans & Specifications section
+- **Browser Compatibility**: Image-based approach avoids Chrome Content Security Policy blocking
+- **Consistent Implementation**: Follows same pattern as 1BR Compact and 3BR Executive pages
+
 ### 2025-09-30 - 1BR Compact PDF Floor Plan Integration (Browser-Safe Implementation)
 - **PDF Display Implementation**: Successfully integrated "1 BEDROOM 1.5 BATH.pdf" into 1BR Compact model page
   - Added Technical Floor Plan section with clickable card that opens PDF in new tab

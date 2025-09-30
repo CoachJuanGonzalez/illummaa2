@@ -5,6 +5,9 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import floorPlanImage from "@assets/2br-family-floorplan.jpg";
+
+const floorPlanPDF = "/attached_assets/2 BEDROOM PLAN_1759198774311.pdf";
 
 export default function Model2BRFamily() {
   const [location, navigate] = useLocation();
@@ -171,7 +174,41 @@ export default function Model2BRFamily() {
                 </li>
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Floor Plan Section */}
+      <section className="py-16 bg-background" data-testid="section-floor-plan">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-floor-plan">
+              Technical Floor Plan
+            </h2>
+            <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
+              <img 
+                src={floorPlanImage} 
+                alt="2BR Family floor plan - 900 sq ft technical drawing" 
+                className="model-floorplan-image max-w-4xl mx-auto cursor-pointer"
+                loading="lazy"
+                decoding="async"
+                data-testid="img-floor-plan"
+                onClick={() => window.open(floorPlanPDF, '_blank')}
+              />
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Click to view full-size PDF in new tab
+              </p>
+            </div>
+            <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
+              900 sq ft • 2 bedrooms • 2 bathrooms • Ideal for young families
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20" data-testid="section-model-content">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
             {/* Back Navigation */}
             <div className="flex justify-center py-6">
               <Button 
@@ -199,6 +236,7 @@ export default function Model2BRFamily() {
             id: "2d",
             title: "2D Floor Plan",
             type: "2d",
+            imageUrl: floorPlanImage,
           },
           {
             id: "3d",
