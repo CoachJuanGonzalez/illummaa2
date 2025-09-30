@@ -309,93 +309,51 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     final: formData.projectUnitRange || getUnitRangeFromRepresentative(units)
   });
 
-  // SMART PAYLOAD: Only essential fields for GoHighLevel
+  // OPTIMIZED PAYLOAD: Essential fields only (Phase 1)
   const webhookPayload = {
-    // Contact fields
+    // Core Contact Fields (5)
     first_name: sanitizeInput(formData.firstName),
     last_name: sanitizeInput(formData.lastName),
     email: sanitizeInput(formData.email),
     phone: formatCanadianPhone(formData.phone),
-    // Company field - use what was already calculated in routes.ts
-    company: sanitizeInput(formData.company) || '',
-    source: "ILLUMMAA Website",
-    
-    // Project details
+    company: sanitizeInput(formData.company) ||
+             (customerTier === 'pioneer' ? 'Individual Investor' : ''),
+
+    // Core Project Fields (6)
     project_unit_count: units,
-    project_unit_range: formData.projectUnitRange || getUnitRangeFromRepresentative(units),
     delivery_timeline: formData.decisionTimeline || "",
     construction_province: formData.constructionProvince || "",
     developer_type: formData.developerType || "",
     government_programs: formData.governmentPrograms || "",
-    project_description: sanitizeInput(formData.projectDescription || formData.projectDescriptionText || ""),
-    project_readiness: readinessValue,
-    
-    // Core routing fields (essential for GHL workflows)
+    project_description: sanitizeInput(formData.projectDescription || ""),
+
+    // Scoring & Routing Fields (5 including priority_level)
     ai_priority_score: priorityData.score,
     customer_tier: customerTier,
-    priority_level: priorityData.priorityLevel,
-    
-    // Assignment
-    assigned_to: priorityData.assignedTo,
-    response_time: priorityData.responseTime,
-    submission_timestamp: new Date().toISOString(),
-    
-    // Tags for automation
-    customer_tags: tags.join(', '),
+    priority_level: priorityData.priorityLevel, // KEPT FOR PHASE 1
+    build_canada_eligible: buildCanadaEligible ? "Yes" : "No",
     tags_array: tags,
-    
-    // ENTERPRISE SECURITY: Required CASL consent fields (always present)
-    casl_consent: true, // Always true for form submissions
-    consent_timestamp: new Date().toISOString(),
-    
-    // Conditional fields only when relevant
-    ...(buildCanadaEligible && {
-      build_canada_eligible: "Yes"
+
+    // SLA Field (1)
+    response_time: priorityData.responseTime,
+
+    // A2P 10DLC
+    a2p_campaign_id: process.env.A2P_CAMPAIGN_ID || 'PLACEHOLDER_CAMPAIGN_ID',
+
+    // Consent fields
+    ...(formData.consentMarketing && {
+      casl_consent: true,
+      consent_timestamp: new Date().toISOString()
     }),
-    
-    // ENTERPRISE SECURITY: Conditional marketing consent - only add if explicitly granted
-    ...(formData.marketingConsent === true && {
+    ...(formData.consentSMS && {
+      sms_consent: true,
+      sms_timestamp: new Date().toISOString()
+    }),
+    ...(formData.marketingConsent && {
       marketing_consent: true,
-      marketing_consent_timestamp: new Date().toISOString()
-    }),
-    
-    // Explorer-specific fields (minimal)
-    ...(customerTier === 'tier_0_explorer' && {
-      // B2B-only: Explorer fields removed
-      is_educational_lead: true
+      marketing_timestamp: new Date().toISOString()
     })
-    
-    // REMOVED FROM WEBHOOK (but kept in internal code):
-    // - customer_priority_level (redundant with priority_level)
-    // - lead_source_details (redundant with source)
   };
-
-    // REMOVED FROM WEBHOOK (but kept in internal code):
-    // - journey_stage (use customer_tier)
-    // - lead_stage (use customer_tier)
-    // - is_education_only (use is_educational_lead)
-    // - response_commitment (use response_time)
-    // - response_commitment_level (use priority_level)
-
-  // STEP 6: Force correct company values by tier (as requested)
-  if (customerTier === 'tier_0_explorer') {
-    webhookPayload.company = '';
-  } else if (!webhookPayload.company && customerTier === 'tier_1_starter') {
-    webhookPayload.company = 'Individual Investor';
-  }
-
-  // ENTERPRISE TAG ANALYTICS: Add optimization metrics to webhook
-  const tagAnalytics = {
-    total_tags: tags.length,
-    optimized_system: tags.includes('optimized-tags'),
-    clean_implementation: true,
-    tag_efficiency: Math.round((tags.length / 40) * 100), // Percentage of original tag count
-    generation_timestamp: new Date().toISOString(),
-    reduction_achieved: Math.round(((40 - tags.length) / 40) * 100) + '%'
-  };
-
-  // Add analytics to webhook payload for CRM insights
-  (webhookPayload as any).tag_system_analytics = tagAnalytics;
 
   // ENTERPRISE SECURITY: Validate and enforce payload size
   const payloadSize = JSON.stringify(webhookPayload).length;
@@ -404,7 +362,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     throw new Error(`Webhook payload too large: ${Math.round(payloadSize/1024)}KB (max 100KB)`);
   }
 
-  console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} clean tags (${tagAnalytics.reduction_achieved} reduction)`);
+  console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} tags`);
 
   // Webhook delivery with enterprise-grade retry logic
   const maxRetries = 3;
