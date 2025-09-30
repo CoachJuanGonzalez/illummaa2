@@ -531,7 +531,7 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
 
   // GOVERNMENT PROGRAMS - Binary system
   if (data.governmentPrograms) {
-    if (data.governmentPrograms === "Currently participating") {
+    if (data.governmentPrograms === "Participating in government programs") {
       tags.push("government-participating");
       tags.push("government-active");
       tags.push("government-priority");

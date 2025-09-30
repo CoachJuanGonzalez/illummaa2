@@ -87,9 +87,10 @@ function mapFrontendToBackend(frontendData: any): any {
 
   const normalizeGovernmentPrograms = (value: string): string => {
     const programsMap: { [key: string]: string } = {
-      "Currently participating": "Currently participating",
+      "Participating in government programs": "Participating in government programs",
       "Not participating": "Not participating",
       // Legacy mappings for backward compatibility during migration
+      "Currently participating": "Participating in government programs",
       "Just learning about options": "Not participating",
       "Not interested": "Not participating",
       "Somewhat interested": "Not participating",

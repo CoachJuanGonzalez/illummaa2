@@ -129,7 +129,7 @@ export const assessmentSchema = z.object({
   ]),
   
   governmentPrograms: z.enum([
-    "Currently participating",
+    "Participating in government programs",
     "Not participating"
   ]).optional().describe("Government housing program participation status"),
   

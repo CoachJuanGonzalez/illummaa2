@@ -1312,7 +1312,7 @@ const IllummaaAssessmentForm = () => {
                     data-testid="select-government-programs"
                   >
                     <option value="">Select participation status...</option>
-                    <option value="Currently participating">Currently participating in government programs</option>
+                    <option value="Participating in government programs">Participating in government programs</option>
                     <option value="Not participating">Not participating</option>
                   </select>
                   {errors.governmentPrograms && (

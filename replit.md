@@ -16,7 +16,7 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ### 2025-09-30 - Binary Government Programs Implementation
 - **Government Programs Simplified**: Transformed 5-option dropdown to strategic binary choice
-  - "Currently participating in government programs" (+20 points)
+  - "Participating in government programs" (+20 points)
   - "Not participating" (0 points)
 - **Backward Compatibility**: Legacy values auto-convert to "Not participating" via normalization
 - **Enhanced Tagging**: Binary system adds "government-active", "government-priority" tags for participants
