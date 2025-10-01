@@ -374,25 +374,32 @@ const IllummaaAssessmentForm = () => {
   // Handle phone number formatting as user types
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setPhoneInput(input);
-
+    
     try {
-      // Auto-format using selected country
+      // Auto-format using selected country for display
       const formatter = new AsYouType(selectedCountry as any);
       const formatted = formatter.input(input);
-
+      
       // Update display input with formatted version
       setPhoneInput(formatted);
-
-      // Get the E.164 international format for form value (using getNumberValue())
-      const phoneNumber = formatter.getNumberValue();
-      if (phoneNumber) {
-        setFormData(prev => ({ ...prev, phone: phoneNumber }));
-      } else {
+      
+      // Parse to E.164 format for form storage
+      try {
+        const parsed = parsePhoneNumber(input, selectedCountry as any);
+        if (parsed && parsed.isValid()) {
+          // Store E.164 format (e.g., +14165551234)
+          setFormData(prev => ({ ...prev, phone: parsed.number }));
+        } else {
+          // If not yet valid, store the input for validation
+          setFormData(prev => ({ ...prev, phone: input }));
+        }
+      } catch {
+        // If parsing fails, store the input for validation
         setFormData(prev => ({ ...prev, phone: input }));
       }
     } catch {
-      // If parsing fails, just use raw input
+      // If formatting fails, just use raw input
+      setPhoneInput(input);
       setFormData(prev => ({ ...prev, phone: input }));
     }
   };
@@ -405,18 +412,23 @@ const IllummaaAssessmentForm = () => {
       try {
         // Extract only digits from current input
         const digitsOnly = phoneInput.replace(/\D/g, '');
-
-        // Reformat with new country's formatter
+        
+        // Reformat with new country's formatter for display
         const formatter = new AsYouType(countryCode as any);
         const formatted = formatter.input(digitsOnly);
-
+        
         // Update display input
         setPhoneInput(formatted);
-
-        // Update form value with E.164 format
-        const phoneNumber = formatter.getNumberValue();
-        if (phoneNumber) {
-          setFormData(prev => ({ ...prev, phone: phoneNumber }));
+        
+        // Parse to E.164 format for form storage
+        try {
+          const parsed = parsePhoneNumber(digitsOnly, countryCode as any);
+          if (parsed && parsed.isValid()) {
+            // Store E.164 format
+            setFormData(prev => ({ ...prev, phone: parsed.number }));
+          }
+        } catch {
+          // Keep existing input if parsing fails
         }
       } catch {
         // Keep existing input if re-parsing fails

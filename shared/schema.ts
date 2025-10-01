@@ -57,32 +57,40 @@ export const assessmentSchema = z.object({
   phone: z.string()
     .min(1, "Phone number is required")
     .transform((val) => {
-      // Remove whitespace for validation
+      // Remove whitespace
       const trimmed = val.trim();
       
-      // If already in international format, return as-is
-      if (trimmed.startsWith('+')) {
+      // Try to parse as international number
+      try {
+        // If already in E.164 format (e.g., +14165551234), parse and return normalized
+        if (trimmed.startsWith('+')) {
+          const parsed = parsePhoneNumber(trimmed);
+          return parsed.number; // Returns E.164 format
+        }
+        
+        // Legacy Canadian format: 10-digit number without country code
+        const cleaned = trimmed.replace(/\D/g, '');
+        if (cleaned.length === 10 && !cleaned.startsWith('1')) {
+          const parsed = parsePhoneNumber(cleaned, 'CA');
+          return parsed.number; // Returns E.164 format like +14165551234
+        }
+        
+        // Legacy Canadian format: 11-digit number starting with 1
+        if (cleaned.length === 11 && cleaned.startsWith('1')) {
+          const parsed = parsePhoneNumber(cleaned, 'CA');
+          return parsed.number; // Returns E.164 format
+        }
+        
+        // Try parsing with default country detection
+        const parsed = parsePhoneNumber(trimmed);
+        return parsed.number;
+      } catch {
+        // If parsing fails, return as-is for validation error
         return trimmed;
       }
-      
-      // Remove all non-digit characters for legacy support
-      const cleaned = trimmed.replace(/\D/g, '');
-      
-      // Legacy Canadian format: If it's exactly 10 digits AND doesn't start with 1, add +1 prefix
-      if (cleaned.length === 10 && !cleaned.startsWith('1')) {
-        return `+1${cleaned}`;
-      }
-      
-      // Legacy Canadian format: If it's exactly 11 digits starting with 1, add + prefix
-      if (cleaned.length === 11 && cleaned.startsWith('1')) {
-        return `+${cleaned}`;
-      }
-      
-      // Return original for international validation
-      return trimmed;
     })
     .refine((val) => {
-      // Use libphonenumber-js for international validation
+      // Validate the normalized E.164 number
       try {
         return isValidPhoneNumber(val);
       } catch {
