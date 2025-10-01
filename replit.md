@@ -14,14 +14,19 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
-### 2025-10-01 - International Phone Number Support
-- **libphonenumber-js Integration**: Added comprehensive international phone validation and formatting
-  - Installed libphonenumber-js (^1.12.23) for phone number parsing and validation
-  - Supports 200+ countries with proper E.164 format normalization
-- **Country Code Selector**: Added dropdown with 12 popular countries for international leads
-  - Canada 🇨🇦, United States 🇺🇸, Aruba 🇦🇼, Mexico 🇲🇽, United Kingdom 🇬🇧, Australia 🇦🇺
-  - Brazil 🇧🇷, China 🇨🇳, India 🇮🇳, France 🇫🇷, Germany 🇩🇪, Japan 🇯🇵
-  - Default country: Canada (aligns with Canadian developer target market)
+### 2025-10-01 - Enhanced International Phone Validation (249+ Countries)
+- **Global Country Expansion**: Upgraded from 12 to 249+ countries/territories
+  - Complete ISO 3166-1 alpha-2 coverage (Afghanistan to Zimbabwe)
+  - All ITU E.164 calling codes included (October 2025 standard)
+  - Includes territories: Kosovo 🇽🇰, Curaçao 🇨🇼, Sint Maarten 🇸🇽, etc.
+- **Country-Specific Error Hints**: Enhanced validation with intelligent error messages
+  - Dynamic errors show selected country: "Please enter a valid phone number for Aruba"
+  - Removed hard-coded Canadian-only messages
+  - Uses isValidPhoneNumber() for accurate country-specific validation
+- **Auto Re-Validation on Country Switch**: Enhanced editability and UX
+  - Automatically clears errors when switching to a country where number is valid
+  - Example: 7-digit number invalid for Canada → Switch to Aruba → Error clears
+  - Triggers validateStep() after country change for immediate feedback
 - **E.164 Normalization**: All phone numbers stored in E.164 international format
   - Frontend: parsePhoneNumber(input, country).number ensures E.164 storage
   - Backend: Schema transform normalizes all inputs to E.164 (+14165551234, +29712345678)
@@ -34,10 +39,11 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
   - Input: 4165551234 → Normalized: +14165551234 (E.164)
   - Input: 14165551234 → Normalized: +14165551234 (E.164)
   - All existing Canadian leads continue to work seamlessly
-- **Architect Verified**: Pass rating on E.164 normalization implementation
+- **Architect Verified**: Pass rating on complete implementation
+  - All 5 enhancement steps verified and working correctly
   - No breaking changes to existing form functionality
   - All security measures preserved (sanitization, rate limiting, validation)
-  - Consistent phone format across database, API, and webhook payloads
+  - Zero LSP errors, application running successfully
 
 ### 2025-10-01 - Health Score 100/100 Optimization
 - **TypeScript Compilation Fix**: Added `"target": "ES2020"` to tsconfig.json
