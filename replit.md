@@ -14,6 +14,31 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes
 
+### 2025-10-01 - International Phone Number Support
+- **libphonenumber-js Integration**: Added comprehensive international phone validation and formatting
+  - Installed libphonenumber-js (^1.12.23) for phone number parsing and validation
+  - Supports 200+ countries with proper E.164 format normalization
+- **Country Code Selector**: Added dropdown with 12 popular countries for international leads
+  - Canada 🇨🇦, United States 🇺🇸, Aruba 🇦🇼, Mexico 🇲🇽, United Kingdom 🇬🇧, Australia 🇦🇺
+  - Brazil 🇧🇷, China 🇨🇳, India 🇮🇳, France 🇫🇷, Germany 🇩🇪, Japan 🇯🇵
+  - Default country: Canada (aligns with Canadian developer target market)
+- **E.164 Normalization**: All phone numbers stored in E.164 international format
+  - Frontend: parsePhoneNumber(input, country).number ensures E.164 storage
+  - Backend: Schema transform normalizes all inputs to E.164 (+14165551234, +29712345678)
+  - Webhook payloads: Consistent E.164 format for GoHighLevel CRM integration
+- **Real-Time Formatting**: AsYouType formatter for user-friendly display
+  - Canada: (416) 555-1234 display → +14165551234 storage
+  - Aruba: 597 123 4567 display → +29712345678 storage
+  - Maintains excellent UX while ensuring data consistency
+- **Backward Compatibility**: Legacy Canadian 10-digit numbers automatically normalized
+  - Input: 4165551234 → Normalized: +14165551234 (E.164)
+  - Input: 14165551234 → Normalized: +14165551234 (E.164)
+  - All existing Canadian leads continue to work seamlessly
+- **Architect Verified**: Pass rating on E.164 normalization implementation
+  - No breaking changes to existing form functionality
+  - All security measures preserved (sanitization, rate limiting, validation)
+  - Consistent phone format across database, API, and webhook payloads
+
 ### 2025-10-01 - Health Score 100/100 Optimization
 - **TypeScript Compilation Fix**: Added `"target": "ES2020"` to tsconfig.json
   - Resolved TS1501 error for regex `/gis` flag in security.ts
