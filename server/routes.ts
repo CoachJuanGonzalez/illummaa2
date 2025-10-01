@@ -451,17 +451,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // IMMEDIATE IP-based duplicate submission prevention (before any validation)
     const clientIP = normalizeClientIP(req);
-    console.log(`[IP-DEBUG] Normalized client IP: ${clientIP} (length: ${clientIP?.length})`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[IP-DEBUG] Normalized client IP: ${clientIP} (length: ${clientIP?.length})`);
+    }
     
     // SECURITY HARDENING: Skip IP blocking if IP is unknown to prevent over-blocking multiple users
     if (clientIP && clientIP !== 'unknown') {
       const canSubmit = storage.canSubmitFromIP(clientIP);
-      console.log(`[IP-DEBUG] Can submit from IP ${clientIP.substring(0, 8)}***: ${canSubmit}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[IP-DEBUG] Can submit from IP ${clientIP.substring(0, 8)}***: ${canSubmit}`);
+      }
       
       if (!canSubmit) {
         const existingSubmission = storage.getIPSubmissionDetails(clientIP);
 
-        console.log(`[SECURITY] Duplicate submission blocked from IP: ${clientIP.substring(0, 8)}***`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[SECURITY] Duplicate submission blocked from IP: ${clientIP.substring(0, 8)}***`);
+        }
 
         return res.status(429).json({
           success: false,
@@ -474,7 +480,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
     } else {
-      console.log(`[IP-DEBUG] Unknown IP detected, bypassing duplicate protection for security`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[IP-DEBUG] Unknown IP detected, bypassing duplicate protection for security`);
+      }
     }
 
     try {
@@ -554,10 +562,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const mappedBody = mapFrontendToBackend(sanitized);
       
       // DEBUG: Log projectUnitRange mapping for troubleshooting
-      console.log('🔍 [DEBUG] projectUnitRange route mapping:', {
-        frontendValue: sanitized.projectUnitRange,
-        mappedValue: mappedBody.projectUnitRange
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 [DEBUG] projectUnitRange route mapping:', {
+          frontendValue: sanitized.projectUnitRange,
+          mappedValue: mappedBody.projectUnitRange
+        });
+      }
       
       // Enhanced unit count validation with tier consistency (Step 5 implementation)
       const unitCount = parseInt(mappedBody.projectUnitCount) || 0;
@@ -570,7 +580,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         mappedBody.projectDescription = `[Residential Inquiry: ${unitCount} units] ${mappedBody.projectDescription || ''}`;
         
         // Log for tracking
-        console.log(`📊 Residential inquiry received: ${unitCount} units`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`📊 Residential inquiry received: ${unitCount} units`);
+        }
         
         // Optional: Could implement special autoresponder or notification here
       }
@@ -633,13 +645,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           invalidTags: tags!.filter(tag => !/^[a-z0-9-_]+$/.test(tag))
         };
 
-        console.log('[TAG-VALIDATION] Clean Optimization Results:', {
-          validation: tagValidation,
-          customerTier,
-          priorityLevel,
-          reductionPercentage: Math.round(((40 - tags!.length) / 40) * 100),
-          isCleanImplementation: tagValidation.optimizedPresent && tagValidation.hasCleanFormat
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[TAG-VALIDATION] Clean Optimization Results:', {
+            validation: tagValidation,
+            customerTier,
+            priorityLevel,
+            reductionPercentage: Math.round(((40 - tags!.length) / 40) * 100),
+            isCleanImplementation: tagValidation.optimizedPresent && tagValidation.hasCleanFormat
+          });
+        }
 
         // Alert on validation issues
         if (tagValidation.hasDuplicates) {
@@ -679,7 +693,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Record IP submission for duplicate prevention
-      console.log(`[IP-DEBUG] Recording IP submission: ${clientIP.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[IP-DEBUG] Recording IP submission: ${clientIP.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
+      }
       storage.recordIPSubmission(clientIP, submission.id, customerTier!);
 
       // Submit to GoHighLevel webhook with proper journey stage mapping
@@ -691,15 +707,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // ENTERPRISE SECURITY: Audit logging for marketing consent processing
-      console.log('[AUDIT] Marketing Consent Processing:', {
-        ip: req.ip,
-        timestamp: new Date().toISOString(),
-        requiredCASLConsent: mappedBody.consentMarketing, // Should always be true for CASL compliance
-        optionalMarketingConsent: mappedBody.marketingConsent || false, // Should match user selection
-        userAgent: req.headers['user-agent']?.substring(0, 100),
-        sessionId: (req as any).sessionID || 'no-session',
-        submissionId: submission.id
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUDIT] Marketing Consent Processing:', {
+          ip: req.ip,
+          timestamp: new Date().toISOString(),
+          requiredCASLConsent: mappedBody.consentMarketing, // Should always be true for CASL compliance
+          optionalMarketingConsent: mappedBody.marketingConsent || false, // Should match user selection
+          userAgent: req.headers['user-agent']?.substring(0, 100),
+          sessionId: (req as any).sessionID || 'no-session',
+          submissionId: submission.id
+        });
+      }
 
       // Success response with SMS compliance confirmation
       res.status(200).json({
@@ -734,7 +752,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const requestStart = Date.now();
     
     // Enhanced security logging matching B2B assessment pattern
-    console.log(`[SECURITY] Residential submission attempt from IP: ${req.ip}, User-Agent: ${req.get('User-Agent')?.substring(0, 100)}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[SECURITY] Residential submission attempt from IP: ${req.ip}, User-Agent: ${req.get('User-Agent')?.substring(0, 100)}`);
+    }
     
     try {
       // Enhanced validation and sanitization
@@ -795,7 +815,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data = validationResult.data;
       
       // Enhanced security logging for successful submissions
-      console.log(`[SECURITY] Residential submission validated for IP: ${req.ip}, Session: ${data.session_id}, Attempt: ${data.submission_attempt}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[SECURITY] Residential submission validated for IP: ${req.ip}, Session: ${data.session_id}, Attempt: ${data.submission_attempt}`);
+      }
       
       // Store in database (using same pattern as B2B)
       const submission = await storage.createResidentialAssessment(data);

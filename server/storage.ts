@@ -111,7 +111,9 @@ export class MemStorage implements IStorage {
     this.ipSubmissions.set(ipAddress, record);
     
     // Log for monitoring (with partial IP masking for privacy)
-    console.log(`[IP-SECURITY] Recorded submission from IP: ${ipAddress.substring(0, 8)}*** - Tier: ${customerTier}`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[IP-SECURITY] Recorded submission from IP: ${ipAddress.substring(0, 8)}*** - Tier: ${customerTier}`);
+    }
   }
 
   getIPSubmissionDetails(ipAddress: string): IPSubmissionRecord | undefined {
@@ -132,7 +134,9 @@ export class MemStorage implements IStorage {
     });
 
     if (cleanedCount > 0) {
-      console.log(`[IP-SECURITY] Cleaned up ${cleanedCount} expired IP records`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[IP-SECURITY] Cleaned up ${cleanedCount} expired IP records`);
+      }
     }
   }
 }
@@ -302,12 +306,14 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
   const readinessValue = getReadinessWithTimeframe(formData.readiness || "");
 
   // DEBUG: Log projectUnitRange mapping for troubleshooting
-  console.log('🔍 [DEBUG] projectUnitRange data flow:', {
-    received: formData.projectUnitRange,
-    units: units,
-    fallback: getUnitRangeFromRepresentative(units),
-    final: formData.projectUnitRange || getUnitRangeFromRepresentative(units)
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [DEBUG] projectUnitRange data flow:', {
+      received: formData.projectUnitRange,
+      units: units,
+      fallback: getUnitRangeFromRepresentative(units),
+      final: formData.projectUnitRange || getUnitRangeFromRepresentative(units)
+    });
+  }
 
   // OPTIMIZED PAYLOAD: Essential fields only (Phase 1)
   const webhookPayload = {
@@ -362,7 +368,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     throw new Error(`Webhook payload too large: ${Math.round(payloadSize/1024)}KB (max 100KB)`);
   }
 
-  console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} tags`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} tags`);
+  }
 
   // Webhook delivery with enterprise-grade retry logic
   const maxRetries = 3;
@@ -380,7 +388,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
       });
 
       if (response.ok) {
-        console.log("Successfully delivered to GoHighLevel with streamlined payload");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Successfully delivered to GoHighLevel with streamlined payload");
+        }
         return;
       }
       

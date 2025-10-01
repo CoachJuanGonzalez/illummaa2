@@ -216,7 +216,9 @@ const IllummaaAssessmentForm = () => {
     if (name === 'readiness') {
       // Immediate redirect for market researchers - NO confirmation dialog
       if (value === 'researching') {
-        console.log('Market researcher detected - redirecting to Remax.ca');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Market researcher detected - redirecting to Remax.ca');
+        }
         window.location.href = 'https://www.remax.ca/';
         return; // Stop processing
       }
@@ -265,20 +267,24 @@ const IllummaaAssessmentForm = () => {
         } else {
           // For <10 units, default to pioneer (will be redirected on validation)
           calculatedTier = 'pioneer';
-          console.log('Units < 10 detected, will offer redirect to Remax.ca');
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Units < 10 detected, will offer redirect to Remax.ca');
+          }
         }
         
         // Force update with proper type
         setCustomerTier(calculatedTier);
         
         // Debug logging
-        console.log('Tier Calculation:', {
-          readiness: currentReadiness,
-          unitInput: sanitized,
-          unitNumber: unitNum,
-          result: calculatedTier,
-          timestamp: new Date().toISOString()
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Tier Calculation:', {
+            readiness: currentReadiness,
+            unitInput: sanitized,
+            unitNumber: unitNum,
+            result: calculatedTier,
+            timestamp: new Date().toISOString()
+          });
+        }
         
         // Recalculate score with current values immediately
         calculatePriorityScoreWith({ ...formData, unitCount: sanitized });
@@ -449,20 +455,24 @@ const IllummaaAssessmentForm = () => {
 
     // SECURITY-COMPLIANT: Debug without exposing sensitive data
     if (import.meta.env.DEV) {
-      console.log('🔍 FRONTEND SCORE CALCULATION:', {
-        score: 'pending',
-        hasAllRequiredFields: !!(sharedData.unitCount && sharedData.readiness),
-        timestamp: new Date().toISOString()
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 FRONTEND SCORE CALCULATION:', {
+          score: 'pending',
+          hasAllRequiredFields: !!(sharedData.unitCount && sharedData.readiness),
+          timestamp: new Date().toISOString()
+        });
+      }
     }
 
     const { score, breakdown } = calculatePriorityScore(sharedData);
 
     if (import.meta.env.DEV) {
-      console.log('🎯 FRONTEND RESULT:', {
-        score,
-        timestamp: new Date().toISOString()
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎯 FRONTEND RESULT:', {
+          score,
+          timestamp: new Date().toISOString()
+        });
+      }
     }
     
     // Update state
@@ -473,12 +483,14 @@ const IllummaaAssessmentForm = () => {
     const currentTier = determineCustomerTierShared(units) as TierType;
     setCustomerTier(currentTier);
     
-    console.log('🎯 FRONTEND Score (using shared utility):', {
-      score,
-      breakdown,
-      tier: currentTier,
-      inputs: sharedData
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 FRONTEND Score (using shared utility):', {
+        score,
+        breakdown,
+        tier: currentTier,
+        inputs: sharedData
+      });
+    }
 
     // Enhanced analytics with tier information
     if (typeof (window as any).gtag !== 'undefined') {
@@ -527,7 +539,9 @@ const IllummaaAssessmentForm = () => {
               window.location.href = 'https://www.remax.ca/';
               return false;
             } else {
-              console.log('User declined redirect for <10 units, continuing with form');
+              if (process.env.NODE_ENV === 'development') {
+                console.log('User declined redirect for <10 units, continuing with form');
+              }
               newErrors.unitCount = 'Minimum 10 units required for B2B partnerships';
             }
           }
@@ -808,23 +822,29 @@ const IllummaaAssessmentForm = () => {
       };
       
       // Debug logging
-      console.log('Submitting assessment with payload:', {
-        ...payload,
-        // Mask sensitive data in logs
-        email: payload.email ? '***@***' : undefined,
-        phone: payload.phone ? '***' : undefined
-      });
-      console.log('CSRF Token present:', !!csrfToken);
-      console.log('Consent values:', {
-        consentSMS: payload.consentSMS,
-        timestamp: payload.consentSMSTimestamp,
-        allConsents: {
-          communications: payload.consentCommunications,
-          sms: payload.consentSMS,
-          privacy: payload.privacyPolicyConsent,
-          age: payload.ageVerification
-        }
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Submitting assessment with payload:', {
+          ...payload,
+          // Mask sensitive data in logs
+          email: payload.email ? '***@***' : undefined,
+          phone: payload.phone ? '***' : undefined
+        });
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('CSRF Token present:', !!csrfToken);
+      }
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Consent values:', {
+          consentSMS: payload.consentSMS,
+          timestamp: payload.consentSMSTimestamp,
+          allConsents: {
+            communications: payload.consentCommunications,
+            sms: payload.consentSMS,
+            privacy: payload.privacyPolicyConsent,
+            age: payload.ageVerification
+          }
+        });
+      }
       
       const response = await fetch('/api/submit-assessment', {
         method: 'POST',
@@ -846,7 +866,9 @@ const IllummaaAssessmentForm = () => {
       }
       
       const result = await response.json();
-      console.log('Submission successful:', result);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Submission successful:', result);
+      }
       
       // Analytics tracking
       // Enhanced assessment completion tracking
