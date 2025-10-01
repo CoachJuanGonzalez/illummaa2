@@ -9,6 +9,7 @@ import validator from "validator";
 import { z } from "zod";
 import crypto from "crypto";
 import DOMPurify from "isomorphic-dompurify";
+import { isValidPhoneNumber } from "libphonenumber-js";
 import { validateFormData, submitToGoHighLevel, submitToGoHighLevelResidential } from "./storage";
 import { storage } from "./storage";
 
@@ -779,7 +780,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         first_name: z.string().min(1, "First name required"),
         last_name: z.string().min(1, "Last name required"), 
         email: z.string().email("Valid email required"),
-        phone: z.string().min(10, "Valid phone number required"),
+        phone: z.string()
+          .min(1, "Phone number required")
+          .refine((val) => {
+            try {
+              return isValidPhoneNumber(val);
+            } catch {
+              return false;
+            }
+          }, { message: "Valid international phone number required" }),
         company: z.string().min(1, "Company name required"),
         source: z.string(),
         project_unit_count: z.number().min(0).max(49), // Allow 0 for consumer inquiries
