@@ -1,6 +1,7 @@
 import { pgTable, text, integer, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js";
 
 // Assessment submission table
 export const assessmentSubmissions = pgTable("assessment_submissions", {
@@ -56,38 +57,39 @@ export const assessmentSchema = z.object({
   phone: z.string()
     .min(1, "Phone number is required")
     .transform((val) => {
-      // Remove all non-digit characters
-      const cleaned = val.replace(/\D/g, '');
+      // Remove whitespace for validation
+      const trimmed = val.trim();
       
-      // If it's exactly 10 digits AND doesn't start with 1, add +1 prefix
+      // If already in international format, return as-is
+      if (trimmed.startsWith('+')) {
+        return trimmed;
+      }
+      
+      // Remove all non-digit characters for legacy support
+      const cleaned = trimmed.replace(/\D/g, '');
+      
+      // Legacy Canadian format: If it's exactly 10 digits AND doesn't start with 1, add +1 prefix
       if (cleaned.length === 10 && !cleaned.startsWith('1')) {
         return `+1${cleaned}`;
       }
       
-      // If it's exactly 11 digits starting with 1, add + prefix
+      // Legacy Canadian format: If it's exactly 11 digits starting with 1, add + prefix
       if (cleaned.length === 11 && cleaned.startsWith('1')) {
         return `+${cleaned}`;
       }
       
-      // For invalid cases, return original to trigger refine error
-      return val;
+      // Return original for international validation
+      return trimmed;
     })
     .refine((val) => {
-      const cleaned = val.replace(/\D/g, '');
-      
-      // Must result in +1 followed by exactly 10 digits
-      if (!/^\+1\d{10}$/.test(val)) {
+      // Use libphonenumber-js for international validation
+      try {
+        return isValidPhoneNumber(val);
+      } catch {
         return false;
       }
-      
-      // Additional check: reject 10-digit numbers starting with 1 (incomplete 11-digit)
-      if (cleaned.length === 10 && cleaned.startsWith('1')) {
-        return false;
-      }
-      
-      return true;
     }, {
-      message: "Please enter a valid Canadian phone number (10 digits: area code + 7 digits, or 11 digits starting with 1)"
+      message: "Please enter a valid phone number with country code (e.g., +1 for Canada/US, +297 for Aruba)"
     }),
   
   company: z.string()
