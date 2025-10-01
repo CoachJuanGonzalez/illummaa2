@@ -12,6 +12,7 @@ import {
   determineCustomerTier as determineCustomerTierShared,
   isBuildCanadaEligible 
 } from "../../../shared/utils/scoring";
+import { parsePhoneNumber, AsYouType } from "libphonenumber-js";
 
 // TODO: Future Update - Field Name Standardization
 // - Rename frontend field from 'timeline' to 'deliveryTimeline'
@@ -61,6 +62,22 @@ interface FormErrors {
 
 type TierType = 'pioneer' | 'preferred' | 'elite';
 
+// Popular countries for phone number selection (prioritized list)
+const POPULAR_COUNTRIES = [
+  { code: 'CA', name: 'Canada', flag: '🇨🇦', callingCode: '+1' },
+  { code: 'US', name: 'United States', flag: '🇺🇸', callingCode: '+1' },
+  { code: 'AW', name: 'Aruba', flag: '🇦🇼', callingCode: '+297' },
+  { code: 'MX', name: 'Mexico', flag: '🇲🇽', callingCode: '+52' },
+  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', callingCode: '+44' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺', callingCode: '+61' },
+  { code: 'BR', name: 'Brazil', flag: '🇧🇷', callingCode: '+55' },
+  { code: 'CN', name: 'China', flag: '🇨🇳', callingCode: '+86' },
+  { code: 'IN', name: 'India', flag: '🇮🇳', callingCode: '+91' },
+  { code: 'FR', name: 'France', flag: '🇫🇷', callingCode: '+33' },
+  { code: 'DE', name: 'Germany', flag: '🇩🇪', callingCode: '+49' },
+  { code: 'JP', name: 'Japan', flag: '🇯🇵', callingCode: '+81' },
+];
+
 const IllummaaAssessmentForm = () => {
   // State management
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,6 +90,8 @@ const IllummaaAssessmentForm = () => {
   const [customerTier, setCustomerTier] = useState<TierType>('pioneer');
   const [csrfToken, setCsrfToken] = useState('');
   const [startTime] = useState(Date.now());
+  const [selectedCountry, setSelectedCountry] = useState<string>('CA'); // Default to Canada
+  const [phoneInput, setPhoneInput] = useState<string>('');
   
   // Debounce timer reference for real-time scoring
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -352,23 +371,57 @@ const IllummaaAssessmentForm = () => {
     }
   };
 
-  // Phone formatting
+  // Handle phone number formatting as user types
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value.replace(/[^\d+]/g, '');
-    
-    if (value.length > 0 && !value.startsWith('+')) {
-      value = '+' + value;
+    const input = e.target.value;
+    setPhoneInput(input);
+
+    try {
+      // Auto-format using selected country
+      const formatter = new AsYouType(selectedCountry as any);
+      const formatted = formatter.input(input);
+
+      // Update display input with formatted version
+      setPhoneInput(formatted);
+
+      // Get the E.164 international format for form value (using getNumberValue())
+      const phoneNumber = formatter.getNumberValue();
+      if (phoneNumber) {
+        setFormData(prev => ({ ...prev, phone: phoneNumber }));
+      } else {
+        setFormData(prev => ({ ...prev, phone: input }));
+      }
+    } catch {
+      // If parsing fails, just use raw input
+      setFormData(prev => ({ ...prev, phone: input }));
     }
-    
-    if (!value.startsWith('+1') && value.length > 1) {
-      value = '+1' + value.substring(1);
+  };
+
+  // Handle country change
+  const handleCountryChange = (countryCode: string) => {
+    setSelectedCountry(countryCode);
+    // Re-format existing phone input with new country code
+    if (phoneInput) {
+      try {
+        // Extract only digits from current input
+        const digitsOnly = phoneInput.replace(/\D/g, '');
+
+        // Reformat with new country's formatter
+        const formatter = new AsYouType(countryCode as any);
+        const formatted = formatter.input(digitsOnly);
+
+        // Update display input
+        setPhoneInput(formatted);
+
+        // Update form value with E.164 format
+        const phoneNumber = formatter.getNumberValue();
+        if (phoneNumber) {
+          setFormData(prev => ({ ...prev, phone: phoneNumber }));
+        }
+      } catch {
+        // Keep existing input if re-parsing fails
+      }
     }
-    
-    if (value.length > 12) {
-      value = value.substring(0, 12);
-    }
-    
-    setFormData(prev => ({ ...prev, phone: value }));
   };
 
   // SECURITY-COMPLIANT: Unit range mapping with validation
@@ -1477,21 +1530,45 @@ const IllummaaAssessmentForm = () => {
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-phone">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone || ''}
-                    onChange={handlePhoneChange}
-                    placeholder="+1 (555) 123-4567"
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                    } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
-                    required
-                    data-testid="input-phone"
-                  />
+                  <div className="flex gap-2">
+                    {/* Country Code Selector */}
+                    <select
+                      value={selectedCountry}
+                      onChange={(e) => handleCountryChange(e.target.value)}
+                      className="px-3 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white"
+                      style={{ minWidth: '180px' }}
+                    >
+                      {POPULAR_COUNTRIES.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.flag} {country.name} ({country.callingCode})
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Phone Number Input */}
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={phoneInput}
+                      onChange={handlePhoneChange}
+                      placeholder={
+                        selectedCountry === 'CA' ? "(416) 555-1234" :
+                        selectedCountry === 'AW' ? "597 123 4567" :
+                        "Enter phone number"
+                      }
+                      className={`flex-1 px-4 py-3 rounded-lg border ${
+                        errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
+                      required
+                      data-testid="input-phone"
+                    />
+                  </div>
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-phone">{errors.phone}</p>
                   )}
+                  <p className="text-gray-500 text-xs mt-1">
+                    Select your country code and enter your phone number
+                  </p>
                 </div>
               </div>
             )}
