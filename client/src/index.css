@@ -2017,6 +2017,11 @@ button > .icon,
     justify-content: center !important;
     align-items: center !important;
   }
+  
+  /* Move hero content up by 1.33rem */
+  .hero-content-spacing {
+    margin-top: -1.33rem !important;
+  }
 }
 
 /* Enterprise Footer Centering - All Devices */
