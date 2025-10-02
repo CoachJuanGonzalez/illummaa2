@@ -605,75 +605,113 @@ const IllummaaAssessmentForm = () => {
     }
   };
 
-  // Handle phone number formatting as user types
+  // Handle phone number formatting as user types - FIXED for delete/backspace
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    
+
+    // Extract only digits from user input (allows proper deletion)
+    const digitsOnly = input.replace(/\D/g, '');
+
     try {
-      // Auto-format using selected country for display
+      if (digitsOnly.length === 0) {
+        // If all deleted, clear everything
+        setPhoneInput('');
+        setFormData(prev => ({ ...prev, phone: '' }));
+        return;
+      }
+
+      // Format for display using digits only
       const formatter = new AsYouType(selectedCountry as any);
-      const formatted = formatter.input(input);
-      
-      // Update display input with formatted version
+      const formatted = formatter.input(digitsOnly);
+
+      // Update display with formatted version
       setPhoneInput(formatted);
-      
-      // Parse to E.164 format for form storage
+
+      // Try to parse to E.164 format for form storage
       try {
-        const parsed = parsePhoneNumber(input, selectedCountry as any);
+        const parsed = parsePhoneNumber(digitsOnly, selectedCountry as any);
         if (parsed && parsed.isValid()) {
-          // Store E.164 format (e.g., +14165551234)
+          // Store valid E.164 format
           setFormData(prev => ({ ...prev, phone: parsed.number }));
         } else {
-          // If not yet valid, store the input for validation
-          setFormData(prev => ({ ...prev, phone: input }));
+          // Store digits with country code prefix for validation
+          const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
+          setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
         }
       } catch {
-        // If parsing fails, store the input for validation
-        setFormData(prev => ({ ...prev, phone: input }));
+        // On error, store digits with country code
+        const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
+        setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
       }
     } catch {
-      // If formatting fails, just use raw input
-      setPhoneInput(input);
-      setFormData(prev => ({ ...prev, phone: input }));
+      // Fallback: just use raw input
+      setPhoneInput(digitsOnly);
+      const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
+      setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
     }
   };
 
-  // Handle country change with enhanced editability
+  // Handle country change with smart digit preservation - HYBRID APPROACH
   const handleCountryChange = (countryCode: string) => {
+    const oldCountry = selectedCountry;
     setSelectedCountry(countryCode);
-    // Re-format existing phone input with new country code
-    if (phoneInput) {
+    
+    // Check if there's existing phone input
+    if (phoneInput && formData.phone) {
       try {
-        // Extract only digits from current input
-        const digitsOnly = phoneInput.replace(/\D/g, '');
+        // Check if current phone is valid for the OLD country
+        const isCurrentValid = isValidPhoneNumber(formData.phone, oldCountry as any);
         
-        // Reformat with new country's formatter for display
-        const formatter = new AsYouType(countryCode as any);
-        const formatted = formatter.input(digitsOnly);
-        
-        // Update display input
-        setPhoneInput(formatted);
-        
-        // Parse to E.164 format for form storage
-        try {
-          const parsed = parsePhoneNumber(digitsOnly, countryCode as any);
-          if (parsed && parsed.isValid()) {
-            // Store E.164 format
-            setFormData(prev => ({ ...prev, phone: parsed.number }));
-          } else {
-            // Clear form phone if invalid after country change (triggers re-validation)
+        if (isCurrentValid) {
+          // PRESERVE DIGITS: Current number is valid, preserve digits when switching
+          const digitsOnly = phoneInput.replace(/\D/g, '');
+          
+          if (digitsOnly.length === 0) {
+            // If no digits, clear everything
+            setPhoneInput('');
             setFormData(prev => ({ ...prev, phone: '' }));
+            validateStep(currentStep);
+            return;
           }
-        } catch {
-          // On error, clear to allow fresh input
+
+          // Reformat with new country's formatter for display
+          const formatter = new AsYouType(countryCode as any);
+          const formatted = formatter.input(digitsOnly);
+          
+          // Update display input
+          setPhoneInput(formatted);
+
+          // Parse to E.164 format for form storage
+          try {
+            const parsed = parsePhoneNumber(digitsOnly, countryCode as any);
+            if (parsed && parsed.isValid()) {
+              // Store valid E.164 format
+              setFormData(prev => ({ ...prev, phone: parsed.number }));
+            } else {
+              // Store digits with new country code for validation
+              const newCountryCode = ALL_COUNTRIES.find(c => c.code === countryCode)?.callingCode || '+1';
+              setFormData(prev => ({ ...prev, phone: `${newCountryCode}${digitsOnly}` }));
+            }
+          } catch {
+            // On error, store digits with country code
+            const newCountryCode = ALL_COUNTRIES.find(c => c.code === countryCode)?.callingCode || '+1';
+            setFormData(prev => ({ ...prev, phone: `${newCountryCode}${digitsOnly}` }));
+          }
+        } else {
+          // CLEAR INVALID: Current number is invalid, clear to allow fresh input (yesterday's behavior)
+          setPhoneInput('');
           setFormData(prev => ({ ...prev, phone: '' }));
+          setErrors(prev => ({ ...prev, phone: '' }));
         }
       } catch {
-        // On error, clear to allow fresh input
+        // On validation error, clear to allow fresh input
+        setPhoneInput('');
         setFormData(prev => ({ ...prev, phone: '' }));
+        setErrors(prev => ({ ...prev, phone: '' }));
       }
     }
-    // Trigger re-validation to clear old errors if user switches country
+    
+    // Trigger re-validation to update errors based on new country
     validateStep(currentStep);
   };
 
@@ -888,20 +926,41 @@ const IllummaaAssessmentForm = () => {
         if (!formData.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           newErrors.email = 'Valid email address is required';
         }
-        // Enhanced validation with country-specific hints
+        // Enhanced validation with country-specific hints - FIXED for all countries
         if (!formData.phone?.trim()) {
           newErrors.phone = 'Phone number is required';
         } else {
           try {
-            // Use isValidPhoneNumber from libphonenumber-js (imported in Step 1)
-            if (!isValidPhoneNumber(formData.phone)) {
-              // Get country-specific hint
-              const countryName = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.name || 'selected country';
-              newErrors.phone = `Please enter a valid phone number for ${countryName}`;
+            // Clean the phone number for validation
+            const phoneToValidate = formData.phone.trim();
+
+            // Validate with country context
+            const isValid = isValidPhoneNumber(phoneToValidate, selectedCountry as any);
+
+            if (!isValid) {
+              // Get country-specific hint with example
+              const country = ALL_COUNTRIES.find(c => c.code === selectedCountry);
+              const countryName = country?.name || 'selected country';
+              const callingCode = country?.callingCode || '';
+
+              // Provide helpful examples for common countries
+              let example = '';
+              switch (selectedCountry) {
+                case 'CA': example = ' (e.g., 416 555 1234)'; break;
+                case 'AW': example = ' (e.g., 597 1234)'; break;
+                case 'CM': example = ' (e.g., 6 12 34 56 78)'; break;
+                case 'GB': example = ' (e.g., 7400 123456)'; break;
+                case 'US': example = ' (e.g., 555 123 4567)'; break;
+                default: example = '';
+              }
+
+              newErrors.phone = `Please enter a valid ${countryName} phone number${example}`;
             }
-          } catch {
+          } catch (error) {
             // Fallback validation if isValidPhoneNumber fails
-            newErrors.phone = 'Please enter a valid phone number';
+            const country = ALL_COUNTRIES.find(c => c.code === selectedCountry);
+            const countryName = country?.name || 'selected country';
+            newErrors.phone = `Please enter a valid ${countryName} phone number`;
           }
         }
         break;
@@ -1796,13 +1855,16 @@ const IllummaaAssessmentForm = () => {
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-phone">
                     Phone Number <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex gap-2">
-                    {/* Country Code Selector */}
+
+                  {/* Mobile-optimized layout: stacked on mobile, side-by-side on desktop */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    {/* Country Code Selector - Full width on mobile */}
                     <select
                       value={selectedCountry}
                       onChange={(e) => handleCountryChange(e.target.value)}
-                      className="px-3 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white"
-                      style={{ minWidth: '180px' }}
+                      className="w-full sm:w-auto px-3 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white"
+                      style={{ minWidth: '0', maxWidth: '100%' }}
+                      data-testid="select-country"
                     >
                       {ALL_COUNTRIES.map((country) => (
                         <option key={country.code} value={country.code}>
@@ -1811,29 +1873,37 @@ const IllummaaAssessmentForm = () => {
                       ))}
                     </select>
 
-                    {/* Phone Number Input */}
+                    {/* Phone Number Input - Full width on mobile, flex-1 on desktop */}
                     <input
                       type="tel"
                       name="phone"
+                      inputMode="numeric"
                       value={phoneInput}
                       onChange={handlePhoneChange}
                       placeholder={
                         selectedCountry === 'CA' ? "(416) 555-1234" :
-                        selectedCountry === 'AW' ? "597 123 4567" :
+                        selectedCountry === 'AW' ? "597 1234" :
+                        selectedCountry === 'CM' ? "6 12 34 56 78" :
                         "Enter phone number"
                       }
-                      className={`flex-1 px-4 py-3 rounded-lg border ${
+                      className={`w-full sm:flex-1 px-4 py-3 rounded-lg border ${
                         errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
                       } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
                       required
                       data-testid="input-phone"
                     />
                   </div>
+
+                  {/* Mobile-optimized error message */}
                   {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1" data-testid="error-phone">{errors.phone}</p>
+                    <p className="text-red-500 text-xs mt-1 break-words" data-testid="error-phone">
+                      {errors.phone}
+                    </p>
                   )}
-                  <p className="text-gray-500 text-xs mt-1">
-                    Select your country code and enter your phone number
+
+                  {/* Mobile-optimized helper text */}
+                  <p className="text-gray-500 text-xs mt-1 break-words">
+                    Select your country and enter your phone number
                   </p>
                 </div>
               </div>
