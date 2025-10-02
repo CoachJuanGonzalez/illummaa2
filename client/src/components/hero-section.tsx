@@ -1,4 +1,4 @@
-import { Handshake, Play } from "lucide-react";
+import { Handshake, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroDesktopImage from "../assets/hero-desktop.png";
 import heroMobileImage from "../assets/hero-mobile.png";
@@ -6,6 +6,13 @@ import heroMobileImage from "../assets/hero-mobile.png";
 export default function HeroSection() {
   const scrollToAssessment = () => {
     const element = document.getElementById("developer-qualification");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const scrollToModels = () => {
+    const element = document.getElementById("models");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
@@ -65,13 +72,14 @@ export default function HeroSection() {
               <span>Join Our Housing Community</span>
             </Button>
             <Button 
+              onClick={scrollToModels}
               variant="outline"
               size="lg"
               className="hero-secondary-btn-optimized hero-cta-secondary" 
-              data-testid="button-watch-film"
+              data-testid="button-view-models"
             >
-              <Play className="mr-2 flex-shrink-0" size={18} style={{color: '#1a365d'}} />
-              <span>See Our Community Impact</span>
+              <Home className="mr-2 flex-shrink-0" size={18} style={{color: '#1a365d'}} />
+              <span>View Our Models</span>
             </Button>
           </div>
         </div>

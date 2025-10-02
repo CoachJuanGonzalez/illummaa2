@@ -6,6 +6,21 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
+### Hero Section "View Our Models" Button Implementation (October 2, 2025)
+- **Change**: Secondary hero button converted from non-functional to active scroll navigation
+- **Files Updated**: `client/src/components/hero-section.tsx`
+  - Import: Changed from `Play` icon to `Home` icon (line 1)
+  - Added `scrollToModels()` function for smooth scroll navigation (lines 14-19)
+  - Updated button onClick handler to trigger scroll (line 75)
+  - Changed icon from Play (▶️) to Home (🏠) - navy blue (#1a365d), 18px (line 81)
+  - Updated button text: "See Our Community Impact" → "View Our Models" (line 82)
+  - Updated test ID: `button-watch-film` → `button-view-models` (line 79)
+- **Functionality**: Button now smoothly scrolls to "Our Model Collection" section (`id="models"`)
+- **UX Rationale**: Home icon clearly represents housing models, aligns with B2B developer audience
+- **Impact**: Enhanced user navigation, improved conversion path to model exploration
+- **Security**: Zero impact - frontend-only visual/navigation change
+- **Compatibility**: Preserved all existing functionality, mobile spacing (mr-2) consistent
+
 ### Duplicate Webhook Submissions Fixed - FINAL (October 2, 2025)
 - **Issue**: Multiple webhook submissions to GoHighLevel (3 duplicate contacts per form submission)
 - **Root Cause**: GoHighLevel **ignores Idempotency-Key header** + retry loop sends 3 attempts
