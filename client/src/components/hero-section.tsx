@@ -1,6 +1,7 @@
 import { Handshake, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBackgroundImage from "@assets/hero-background-optimized.webp";
+import heroDesktopImage from "../assets/hero-desktop.png";
+import heroMobileImage from "../assets/hero-mobile.png";
 
 export default function HeroSection() {
   const scrollToAssessment = () => {
@@ -12,17 +13,29 @@ export default function HeroSection() {
 
   return (
     <section className="relative hero-layout-proportions hero-cross-device-beauty" data-testid="section-hero">
-      {/* Background Image with Overlay */}
+      {/* Responsive Background Images with Overlay */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src={heroBackgroundImage} 
-          alt="Canadian modular housing partnership opportunities with proven development success" 
-          className="w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
+        {/* Desktop Image - Hidden on Mobile */}
+        <img
+          src={heroDesktopImage}
+          alt="Canadian modular housing partnership opportunities with proven development success"
+          className="hidden md:block w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           style={{
             opacity: 1.0,
             filter: 'brightness(1.1) contrast(1.2) saturate(1.05)'
           }}
-          data-testid="img-hero-background"
+          data-testid="img-hero-background-desktop"
+        />
+        {/* Mobile Image - Hidden on Desktop */}
+        <img
+          src={heroMobileImage}
+          alt="Canadian modular housing partnership opportunities with proven development success"
+          className="block md:hidden w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
+          style={{
+            opacity: 1.0,
+            filter: 'brightness(1.1) contrast(1.2) saturate(1.05)'
+          }}
+          data-testid="img-hero-background-mobile"
         />
         {/* Text overlay protection with gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent"></div>
