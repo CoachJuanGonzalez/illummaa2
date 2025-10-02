@@ -242,14 +242,23 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
   return score;
 }
 
-function formatCanadianPhone(phone: string): string {
+function formatPhoneNumber(phone: string): string {
   if (!phone) return '';
+
+  // If phone already has + prefix (E.164 format), it's already formatted
+  if (phone.startsWith('+')) {
+    return phone;
+  }
+
+  // Only apply +1 logic if phone is exactly 10 digits (legacy North American format)
   const cleaned = phone.replace(/\D/g, '');
   if (cleaned.length === 10) {
-    return `+1${cleaned}`;
+    return `+1${cleaned}`;  // North American number without country code
   } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
-    return `+${cleaned}`;
+    return `+${cleaned}`;  // North American number with 1 prefix
   }
+
+  // For all other formats, return as-is (already has country code)
   return phone;
 }
 
@@ -321,7 +330,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     first_name: sanitizeInput(formData.firstName),
     last_name: sanitizeInput(formData.lastName),
     email: sanitizeInput(formData.email),
-    phone: formatCanadianPhone(formData.phone),
+    phone: formatPhoneNumber(formData.phone),
     company: sanitizeInput(formData.company) ||
              (customerTier === 'pioneer' ? 'Individual Investor' : ''),
 

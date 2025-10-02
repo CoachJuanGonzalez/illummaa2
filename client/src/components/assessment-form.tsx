@@ -312,6 +312,13 @@ const ALL_COUNTRIES = [
   { code: 'ZW', name: 'Zimbabwe', flag: '🇿🇼', callingCode: '+263' },
 ];
 
+// UI Display: Show only primary markets (Aruba & Canada)
+// Note: ALL_COUNTRIES is still used for validation logic throughout the codebase
+const DISPLAY_COUNTRIES = [
+  { code: 'AW', name: 'Aruba', flag: '🇦🇼', callingCode: '+297' },
+  { code: 'CA', name: 'Canada', flag: '🇨🇦', callingCode: '+1' },
+];
+
 const IllummaaAssessmentForm = () => {
   // State management
   const [currentStep, setCurrentStep] = useState(1);
@@ -1856,53 +1863,55 @@ const IllummaaAssessmentForm = () => {
                     Phone Number <span className="text-red-500">*</span>
                   </label>
 
-                  {/* Mobile-optimized layout: stacked on mobile, side-by-side on desktop */}
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    {/* Country Code Selector - Full width on mobile */}
-                    <select
-                      value={selectedCountry}
-                      onChange={(e) => handleCountryChange(e.target.value)}
-                      className="w-full sm:w-auto px-3 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white"
-                      style={{ minWidth: '0', maxWidth: '100%' }}
-                      data-testid="select-country"
-                    >
-                      {ALL_COUNTRIES.map((country) => (
-                        <option key={country.code} value={country.code}>
-                          {country.flag} {country.name} ({country.callingCode})
-                        </option>
-                      ))}
-                    </select>
+                  {/* Match First Name/Last Name grid layout for equal-width "bubbles" */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Country Code Selector - Equal width on desktop */}
+                    <div>
+                      <select
+                        value={selectedCountry}
+                        onChange={(e) => handleCountryChange(e.target.value)}
+                        className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white"
+                        data-testid="select-country"
+                      >
+                        {DISPLAY_COUNTRIES.map((country) => (
+                          <option key={country.code} value={country.code}>
+                            {country.flag} {country.name} ({country.callingCode})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                    {/* Phone Number Input - Full width on mobile, flex-1 on desktop */}
-                    <input
-                      type="tel"
-                      name="phone"
-                      inputMode="numeric"
-                      value={phoneInput}
-                      onChange={handlePhoneChange}
-                      placeholder={
-                        selectedCountry === 'CA' ? "(416) 555-1234" :
-                        selectedCountry === 'AW' ? "597 1234" :
-                        selectedCountry === 'CM' ? "6 12 34 56 78" :
-                        "Enter phone number"
-                      }
-                      className={`w-full sm:flex-1 px-4 py-3 rounded-lg border ${
-                        errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                      } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
-                      required
-                      data-testid="input-phone"
-                    />
+                    {/* Phone Number Input - Equal width on desktop */}
+                    <div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        inputMode="numeric"
+                        value={phoneInput}
+                        onChange={handlePhoneChange}
+                        placeholder={
+                          selectedCountry === 'CA' ? "(416) 555-1234" :
+                          selectedCountry === 'AW' ? "597 1234" :
+                          "Enter phone number"
+                        }
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                        } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
+                        required
+                        data-testid="input-phone"
+                      />
+                    </div>
                   </div>
 
-                  {/* Mobile-optimized error message */}
+                  {/* Error message */}
                   {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1 break-words" data-testid="error-phone">
+                    <p className="text-red-500 text-xs mt-1" data-testid="error-phone">
                       {errors.phone}
                     </p>
                   )}
 
-                  {/* Mobile-optimized helper text */}
-                  <p className="text-gray-500 text-xs mt-1 break-words">
+                  {/* Helper text */}
+                  <p className="text-gray-500 text-xs mt-1">
                     Select your country and enter your phone number
                   </p>
                 </div>
