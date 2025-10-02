@@ -48,7 +48,7 @@ export default function HeroSection() {
             <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000'}}>
               Building Homes, Strengthening Communities
             </h1>
-            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', fontSize: '0.67em'}}>
+            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000'}}>
               Your Partner in Community-First Housing Solutions
             </p>
           </div>

@@ -1004,7 +1004,7 @@
       font-size: 3.5rem; /* 56px */
     }
     .hero-subtitle-responsive {
-      font-size: 1rem; /* 16px */
+      font-size: 2rem; /* 32px */
     }
   }
   
@@ -1014,7 +1014,7 @@
       font-size: 3.75rem; /* 60px */
     }
     .hero-subtitle-responsive {
-      font-size: 1.084rem; /* ~17.3px */
+      font-size: 2.168rem; /* ~34.7px */
     }
   }
   
@@ -1024,7 +1024,7 @@
       font-size: 4rem; /* 64px */
     }
     .hero-subtitle-responsive {
-      font-size: 1.166rem; /* ~18.7px */
+      font-size: 2.332rem; /* ~37.3px */
     }
   }
   
@@ -1034,7 +1034,7 @@
       font-size: 4.25rem; /* 68px */
     }
     .hero-subtitle-responsive {
-      font-size: 1.25rem; /* 20px */
+      font-size: 2.5rem; /* 40px */
     }
   }
 
