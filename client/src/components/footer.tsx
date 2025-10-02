@@ -1,6 +1,6 @@
 import { Linkedin, Twitter, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import { trackFooterNavClick, analytics } from "../lib/analytics";
-import logoUrl from "@assets/logo-logotype-w_1758576763046.png";
+import logoUrl from "@assets/logo-logotype_1759439104156.png";
 
 export default function Footer() {
   const scrollToSection = (id: string, sectionName?: string) => {
