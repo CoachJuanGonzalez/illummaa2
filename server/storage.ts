@@ -441,6 +441,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
   }
 
   // Webhook delivery with enterprise-grade retry logic
+  // Generate unique idempotency key for deduplication
+  const idempotencyKey = `illummaa-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  
   const maxRetries = 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -450,14 +453,15 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
         headers: {
           'Content-Type': 'application/json',
           'User-Agent': 'ILLUMMAA-Assessment/1.0',
-          'X-Source': 'ILLUMMAA-Website'
+          'X-Source': 'ILLUMMAA-Website',
+          'Idempotency-Key': idempotencyKey
         },
         body: JSON.stringify(webhookPayload),
       });
 
       if (response.ok) {
         if (process.env.NODE_ENV === 'development') {
-          console.log("Successfully delivered to GoHighLevel with streamlined payload");
+          console.log(`Successfully delivered to GoHighLevel (Idempotency-Key: ${idempotencyKey})`);
         }
         return;
       }
@@ -569,6 +573,9 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
     submission_timestamp: data.submission_timestamp
   };
   
+  // Generate unique idempotency key for deduplication
+  const idempotencyKey = `illummaa-residential-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  
   const maxRetries = 3;
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -578,13 +585,18 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
         headers: {
           'Content-Type': 'application/json',
           'User-Agent': 'ILLUMMAA-Residential/1.0',
-          'X-Source': 'ILLUMMAA-Website-Residential'
+          'X-Source': 'ILLUMMAA-Website-Residential',
+          'Idempotency-Key': idempotencyKey
         },
         body: JSON.stringify(webhookPayload)
       });
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Successfully delivered residential lead to GoHighLevel (Idempotency-Key: ${idempotencyKey})`);
       }
       
       return await response.json();

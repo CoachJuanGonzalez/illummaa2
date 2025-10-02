@@ -6,6 +6,21 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
+### Duplicate Webhook Submissions Fixed (October 2, 2025)
+- **Issue**: Multiple webhook submissions to GoHighLevel (2-4 payloads per form submission)
+- **Root Cause**: Retry logic lacked idempotency protection in webhook delivery functions
+- **Files Updated**:
+  - `server/storage.ts`: Added Idempotency-Key headers to both B2B and residential webhooks
+  - B2B webhook (lines 447-460): Added unique key generation and header
+  - Residential webhook (lines 579-592): Added unique key generation and header
+- **Solution**: Each webhook request now includes unique `Idempotency-Key` header
+  - Format: `illummaa-{timestamp}-{random13chars}` for B2B
+  - Format: `illummaa-residential-{timestamp}-{random13chars}` for residential
+  - Retry attempts use same key (prevents duplicates)
+  - GoHighLevel automatically deduplicates requests with same key
+- **Result**: 1 form submission = 1 contact created (previously 2-4 duplicates)
+- **Impact**: Accurate lead counts, correct API quota usage, no manual cleanup needed
+
 ### CSP Security Headers Fixed (October 2, 2025)
 - **Issue**: Content Security Policy blocking Google Analytics and Replit dev banner scripts
 - **Root Cause**: CSP `scriptSrc`, `imgSrc`, and `connectSrc` directives too restrictive
