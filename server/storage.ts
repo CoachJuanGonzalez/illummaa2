@@ -170,6 +170,16 @@ export async function validateFormData(rawData: any): Promise<{
       lastName: DOMPurify.sanitize(rawData.lastName || '').trim(),
       email: DOMPurify.sanitize(rawData.email || '').trim().toLowerCase(),
       phone: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, ''),
+      
+      // DEBUG: Log phone processing
+      ...(process.env.NODE_ENV === 'development' && (() => {
+        console.log('🔍 [BACKEND DEBUG] Phone in validateFormData:', {
+          raw: rawData.phone,
+          sanitized: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, '')
+        });
+        return {};
+      })()),
+      
       company: DOMPurify.sanitize(rawData.company || '').trim(),
       projectUnitCount,
       projectUnitRange: DOMPurify.sanitize(rawData.projectUnitRange || '').trim(),
@@ -243,22 +253,60 @@ export function calculatePriorityScore(data: AssessmentFormData): number {
 }
 
 function formatPhoneNumber(phone: string): string {
+  // DEBUG: Log input to this function
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [FORMAT PHONE] Input:', phone);
+  }
+
   if (!phone) return '';
 
-  // If phone already has + prefix (E.164 format), it's already formatted
+  // CRITICAL: If phone already has + prefix (E.164 format), return unchanged
   if (phone.startsWith('+')) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ [FORMAT PHONE] Has + prefix, returning unchanged:', phone);
+    }
     return phone;
   }
 
-  // Only apply +1 logic if phone is exactly 10 digits (legacy North American format)
-  const cleaned = phone.replace(/\D/g, '');
-  if (cleaned.length === 10) {
-    return `+1${cleaned}`;  // North American number without country code
-  } else if (cleaned.length === 11 && cleaned.startsWith('1')) {
-    return `+${cleaned}`;  // North American number with 1 prefix
+  // Log when phone is missing + prefix
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ [FORMAT PHONE] Phone missing + prefix, attempting to fix...');
   }
 
-  // For all other formats, return as-is (already has country code)
+  // Strip non-digit characters for processing
+  const cleaned = phone.replace(/\D/g, '');
+
+  // Handle 10-digit numbers (assume North American if no country code)
+  if (cleaned.length === 10) {
+    const result = `+1${cleaned}`;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 [FORMAT PHONE] 10 digits, added +1:', result);
+    }
+    return result;
+  }
+
+  // Handle 11-digit numbers starting with 1 (North American with country code but no +)
+  if (cleaned.length === 11 && cleaned.startsWith('1')) {
+    const result = `+${cleaned}`;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 [FORMAT PHONE] 11 digits starting with 1, added +:', result);
+    }
+    return result;
+  }
+
+  // For international numbers (>11 digits), add + prefix
+  if (cleaned.length > 11) {
+    const result = `+${cleaned}`;
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔧 [FORMAT PHONE] International number, added +:', result);
+    }
+    return result;
+  }
+
+  // Fallback: return original
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('⚠️ [FORMAT PHONE] Fallback, returning original:', phone);
+  }
   return phone;
 }
 
@@ -321,6 +369,14 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
       units: units,
       fallback: getUnitRangeFromRepresentative(units),
       final: formData.projectUnitRange || getUnitRangeFromRepresentative(units)
+    });
+  }
+
+  // DEBUG: Log complete phone processing chain
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [WEBHOOK PAYLOAD] Final phone value:', {
+      input: formData.phone,
+      output: formatPhoneNumber(formData.phone)
     });
   }
 

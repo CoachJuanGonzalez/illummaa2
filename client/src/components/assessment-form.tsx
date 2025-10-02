@@ -1146,7 +1146,55 @@ const IllummaaAssessmentForm = () => {
         firstName: sanitizeInput(formData.firstName || ''),
         lastName: sanitizeInput(formData.lastName || ''),
         email: sanitizeInput(formData.email || ''),
-        phone: sanitizeInput(formData.phone || ''),
+        
+        // DEBUG: Log what we're sending to backend
+        ...(import.meta.env.DEV && (() => {
+          console.log('🔍 [FRONTEND DEBUG] Phone being sent to backend:', {
+            raw: formData.phone,
+            sanitized: sanitizeInput(formData.phone || ''),
+            selectedCountry: selectedCountry
+          });
+          return {};
+        })()),
+        
+        phone: (() => {
+          const phoneValue = sanitizeInput(formData.phone || '');
+          
+          // Defensive: Ensure phone has + prefix (E.164 format)
+          if (phoneValue && !phoneValue.startsWith('+')) {
+            // Phone is missing + prefix - reconstruct it
+            const countryData = ALL_COUNTRIES.find(c => c.code === selectedCountry);
+            const countryCode = countryData?.callingCode || '+1';
+            const countryDigits = countryCode.substring(1); // Remove + to get just digits (e.g., "297" from "+297")
+            const digitsOnly = phoneValue.replace(/\D/g, '');
+            
+            // Guard: If no digits remain after sanitization, return original (validation will catch it)
+            if (!digitsOnly || digitsOnly.length === 0) {
+              if (import.meta.env.DEV) {
+                console.warn('⚠️ [PHONE FIX] No digits found in phone value, returning original:', phoneValue);
+              }
+              return phoneValue;
+            }
+            
+            // Smart reconstruction: check if digits already start with country code
+            const reconstructed = digitsOnly.startsWith(countryDigits) 
+              ? `+${digitsOnly}`  // Already has country code, just add +
+              : `${countryCode}${digitsOnly}`;  // Missing country code, add full code
+            
+            if (import.meta.env.DEV) {
+              console.warn('⚠️ [PHONE FIX] Phone was missing + prefix, reconstructed:', {
+                original: phoneValue,
+                digitsOnly: digitsOnly,
+                countryDigits: countryDigits,
+                reconstructed: reconstructed
+              });
+            }
+            
+            return reconstructed;
+          }
+          
+          return phoneValue;
+        })(),
         companyName: sanitizeCompany(formData.company || ''),
         
         // Classification (for single pipeline routing)
