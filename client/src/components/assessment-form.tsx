@@ -1362,7 +1362,7 @@ const IllummaaAssessmentForm = () => {
   };
 
   return (
-    <div id="developer-qualification" className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-12 pb-12 md:pb-8" data-testid="assessment-form-container">
+    <div id="developer-qualification" className="min-h-screen bg-gradient-to-br from-gray-50 to-white pt-12 pb-12 md:pb-2" data-testid="assessment-form-container">
       <div className="container mx-auto px-4 max-w-3xl">
         {showSuccess ? (
           /* SUCCESS VIEW - Complete inline success display */
