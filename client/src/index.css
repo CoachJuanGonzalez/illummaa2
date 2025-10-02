@@ -166,14 +166,14 @@
   
   @media (min-width: 768px) {
     .hero-content-spacing {
-      padding-top: 80px;
+      padding-top: 40px;
       padding-bottom: 80px;
     }
   }
   
   @media (min-width: 1024px) {
     .hero-content-spacing {
-      padding-top: 120px;
+      padding-top: 60px;
       padding-bottom: 120px;
     }
   }
@@ -1084,6 +1084,13 @@
     align-items: center;
     min-height: 100vh;
     position: relative;
+  }
+  
+  /* Desktop: Move content to top (sky area) */
+  @media (min-width: 768px) {
+    .hero-layout-proportions {
+      align-items: flex-start;
+    }
   }
   
   .hero-content-width {
