@@ -11,6 +11,7 @@ import PartnershipTiers from "@/components/partnership-tiers";
 import GovernmentPrograms from "@/components/government-programs";
 import MovementSection from "@/components/movement-section";
 import Footer from "@/components/footer";
+import StickyApplyButton from "@/components/sticky-apply-button";
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
@@ -32,17 +33,18 @@ export default function Home() {
   return (
     <div className="bg-background text-foreground">
       <StickyHeader />
+      <StickyApplyButton />
       <div className={isMobile ? 'pt-20' : ''}>
         <HeroSection />
-        <SocialProof />
         <ProblemSolution />
-        <LeadershipTeam />
-        <AssessmentForm />
+        <SocialProof />
         <ModelsShowcase />
         <CommunityTestimonials />
-        <PartnershipTiers />
+        <LeadershipTeam />
         <GovernmentPrograms />
+        <PartnershipTiers />
         <MovementSection />
+        <AssessmentForm />
         <Footer />
       </div>
     </div>
