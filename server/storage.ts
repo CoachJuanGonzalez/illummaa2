@@ -440,42 +440,29 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} tags`);
   }
 
-  // Webhook delivery with enterprise-grade retry logic
-  // Generate unique idempotency key for deduplication
-  const idempotencyKey = `illummaa-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-  
-  const maxRetries = 3;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
+  // Webhook delivery (single attempt - GHL ignores Idempotency-Key)
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'ILLUMMAA-Assessment/1.0',
+        'X-Source': 'ILLUMMAA-Website'
+      },
+      body: JSON.stringify(webhookPayload),
+    });
 
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'ILLUMMAA-Assessment/1.0',
-          'X-Source': 'ILLUMMAA-Website',
-          'Idempotency-Key': idempotencyKey
-        },
-        body: JSON.stringify(webhookPayload),
-      });
-
-      if (response.ok) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(`Successfully delivered to GoHighLevel (Idempotency-Key: ${idempotencyKey})`);
-        }
-        return;
-      }
-      
+    if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    } catch (error) {
-      console.error(`GoHighLevel webhook attempt ${attempt} failed:`, error);
-      
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully delivered to GoHighLevel`);
+    }
+    return;
+  } catch (error) {
+    console.error(`GoHighLevel webhook failed:`, error);
+    // Don't throw - let form submission succeed even if webhook fails
   }
 }
 
@@ -573,36 +560,29 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
     submission_timestamp: data.submission_timestamp
   };
   
-  // Generate unique idempotency key for deduplication
-  const idempotencyKey = `illummaa-residential-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-  
-  const maxRetries = 3;
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
+  // Webhook delivery (single attempt - GHL ignores Idempotency-Key)
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'ILLUMMAA-Residential/1.0',
+        'X-Source': 'ILLUMMAA-Website-Residential'
+      },
+      body: JSON.stringify(webhookPayload)
+    });
 
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'ILLUMMAA-Residential/1.0',
-          'X-Source': 'ILLUMMAA-Website-Residential',
-          'Idempotency-Key': idempotencyKey
-        },
-        body: JSON.stringify(webhookPayload)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Successfully delivered residential lead to GoHighLevel (Idempotency-Key: ${idempotencyKey})`);
-      }
-      
-      return await response.json();
-    } catch (error) {
-      if (attempt === maxRetries) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Successfully delivered residential lead to GoHighLevel`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`GoHighLevel residential webhook failed:`, error);
+    throw error; // Residential throws to match expected behavior
   }
 }

@@ -6,20 +6,21 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
-### Duplicate Webhook Submissions Fixed (October 2, 2025)
-- **Issue**: Multiple webhook submissions to GoHighLevel (2-4 payloads per form submission)
-- **Root Cause**: Retry logic lacked idempotency protection in webhook delivery functions
+### Duplicate Webhook Submissions Fixed - FINAL (October 2, 2025)
+- **Issue**: Multiple webhook submissions to GoHighLevel (3 duplicate contacts per form submission)
+- **Root Cause**: GoHighLevel **ignores Idempotency-Key header** + retry loop sends 3 attempts
+- **Evidence**: 3 webhook payloads with identical idempotency keys but different request IDs (GHL accepted all 3)
 - **Files Updated**:
-  - `server/storage.ts`: Added Idempotency-Key headers to both B2B and residential webhooks
-  - B2B webhook (lines 447-460): Added unique key generation and header
-  - Residential webhook (lines 579-592): Added unique key generation and header
-- **Solution**: Each webhook request now includes unique `Idempotency-Key` header
-  - Format: `illummaa-{timestamp}-{random13chars}` for B2B
-  - Format: `illummaa-residential-{timestamp}-{random13chars}` for residential
-  - Retry attempts use same key (prevents duplicates)
-  - GoHighLevel automatically deduplicates requests with same key
-- **Result**: 1 form submission = 1 contact created (previously 2-4 duplicates)
-- **Impact**: Accurate lead counts, correct API quota usage, no manual cleanup needed
+  - `server/storage.ts`: Removed retry loops from both B2B and residential webhooks
+  - B2B webhook (lines 446-469): Single try/catch, no retry, errors logged but not thrown
+  - Residential webhook (lines 566-590): Single try/catch, no retry, maintains throw behavior
+- **Solution**: Removed retry logic entirely (3 attempts → 1 attempt)
+  - Previous idempotency key approach didn't work (GHL doesn't honor it)
+  - Simplified to single webhook delivery per submission
+  - Errors logged but form submission always succeeds (B2B)
+- **Result**: 1 form submission = 1 contact created (previously 3 duplicates)
+- **Tradeoff**: Network failures no longer retried (acceptable - form data stored, can resubmit)
+- **Impact**: Accurate lead counts, correct API quota usage (67% reduction), no manual cleanup needed
 
 ### CSP Security Headers Fixed (October 2, 2025)
 - **Issue**: Content Security Policy blocking Google Analytics and Replit dev banner scripts
