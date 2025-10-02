@@ -4,6 +4,14 @@
 
 ILLUMMAA is a revenue-generating B2B lead generation website for modular homes targeting Canadian developers and builders. Its purpose is to qualify prospects, nurture leads, and drive business growth through an assessment-based funnel system. The project aims to generate 15+ qualified Canadian developer inquiries per month with an 80% lead quality rate, focusing on developers managing 50-500+ units with $5M+ projects.
 
+## Recent Changes (October 2, 2025)
+
+### Phone Input & International Support
+- **Desktop Layout Fix**: Changed phone input from flex to grid layout (`grid-cols-1 md:grid-cols-2`) to match First Name/Last Name equal-width pattern on desktop while maintaining mobile-first stacking
+- **Backend E.164 Fix**: Renamed `formatCanadianPhone()` to `formatPhoneNumber()` with E.164 guard to prevent +1 injection on international numbers already in E.164 format (fixes Aruba +297 corruption bug)
+- **UI Display Limit**: Added `DISPLAY_COUNTRIES` constant limiting dropdown to Aruba and Canada while preserving global validation logic for all 249+ countries in `ALL_COUNTRIES`
+- **Validation Preserved**: Phone validation still supports all 249+ countries via `isValidPhoneNumber()` with country-specific error messages and auto re-validation on country switch
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
