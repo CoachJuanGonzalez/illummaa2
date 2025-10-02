@@ -146,10 +146,6 @@
   }
 
   /* Enhanced contrast and accessibility */
-  .hero-title-enhanced {
-    text-shadow: 0 2px 8px rgba(26, 54, 93, 0.15);
-    position: relative;
-  }
 
   /* Mobile-specific font size reduction for hero subtitle */
   @media (max-width: 767px) {
