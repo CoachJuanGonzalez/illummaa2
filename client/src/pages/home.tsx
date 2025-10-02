@@ -3,7 +3,6 @@ import StickyHeader from "@/components/sticky-header";
 import HeroSection from "@/components/hero-section";
 import SocialProof from "@/components/social-proof";
 import ProblemSolution from "@/components/problem-solution";
-import WhyIllummaa from "@/components/why-illummaa";
 import LeadershipTeam from "@/components/leadership-team";
 import AssessmentForm from "@/components/assessment-form";
 import ModelsShowcase from "@/components/models-showcase";
@@ -37,7 +36,6 @@ export default function Home() {
         <HeroSection />
         <SocialProof />
         <ProblemSolution />
-        <WhyIllummaa />
         <LeadershipTeam />
         <AssessmentForm />
         <ModelsShowcase />
