@@ -12,6 +12,19 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 - **UI Display Limit**: Added `DISPLAY_COUNTRIES` constant limiting dropdown to Aruba and Canada while preserving global validation logic for all 249+ countries in `ALL_COUNTRIES`
 - **Validation Preserved**: Phone validation still supports all 249+ countries via `isValidPhoneNumber()` with country-specific error messages and auto re-validation on country switch
 
+### Phone Number Diagnostic Logging & Defensive Programming (October 2, 2025)
+- **Frontend Diagnostic Logging**: Added development-only logging to track phone values before sanitization, showing raw input, sanitized output, and selected country
+- **Frontend Defensive Code**: Implemented smart reconstruction for phones missing '+' prefix:
+  - Guards against empty digit strings (returns original for validation layer)
+  - Checks if digits already contain country code to prevent double-prefix bug
+  - Only reconstructs when truly needed, preserving valid E.164 numbers
+- **Backend Enhanced Logging**: Added comprehensive logging throughout phone processing pipeline:
+  - `validateFormData`: Logs raw and sanitized phone values
+  - `formatPhoneNumber`: Logs at every decision point (has +, missing +, 10 digits, 11 digits, international)
+  - Webhook payload: Logs final phone value before GHL submission
+- **International Number Support**: Enhanced `formatPhoneNumber()` to handle >11 digit international numbers (adds '+' prefix)
+- **Security**: All logging is development-only (`process.env.NODE_ENV === 'development'` and `import.meta.env.DEV`), no PII exposed in production
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
