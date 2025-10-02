@@ -68,7 +68,7 @@ export default function HeroSection() {
               className="btn-primary-hero text-white hero-cta-primary shadow-lg"
               data-testid="button-qualify-partnership"
             >
-              <Handshake className="mr-2 flex-shrink-0" size={20} />
+              <Handshake className="mr-3 flex-shrink-0" size={20} />
               <span>Join Our Housing Community</span>
             </Button>
             <Button 

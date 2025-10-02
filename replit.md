@@ -6,6 +6,18 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
+### Hero Button Icon Spacing Optimization (October 2, 2025)
+- **Change**: Optimized primary button icon spacing for better optical balance across all devices
+- **Files Updated**: `client/src/components/hero-section.tsx`
+  - Primary button (line 74): Changed Handshake icon from `mr-2` to `mr-3` (8px → 12px margin)
+  - Secondary button (line 81): Kept Home icon at `mr-2` (8px margin) - already optimal
+- **Design Rationale**: Larger icons (20px) need proportionally more whitespace than smaller icons (18px) for visual balance
+- **Spacing Comparison**:
+  - Primary (20px icon): Now uses 12px margin (mr-3) - prevents cramped appearance ✅
+  - Secondary (18px icon): Uses 8px margin (mr-2) - already balanced ✅
+- **Impact**: Improved mobile UX, better visual rhythm, enhanced professional polish
+- **Compatibility**: Zero breaking changes, all functionality preserved
+
 ### Hero Section "View Our Models" Button Implementation (October 2, 2025)
 - **Change**: Secondary hero button converted from non-functional to active scroll navigation
 - **Files Updated**: `client/src/components/hero-section.tsx`
@@ -19,7 +31,7 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 - **UX Rationale**: Home icon clearly represents housing models, aligns with B2B developer audience
 - **Impact**: Enhanced user navigation, improved conversion path to model exploration
 - **Security**: Zero impact - frontend-only visual/navigation change
-- **Compatibility**: Preserved all existing functionality, mobile spacing (mr-2) consistent
+- **Compatibility**: Preserved all existing functionality
 
 ### Duplicate Webhook Submissions Fixed - FINAL (October 2, 2025)
 - **Issue**: Multiple webhook submissions to GoHighLevel (3 duplicate contacts per form submission)
