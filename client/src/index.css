@@ -161,6 +161,7 @@
 
   /* Better negative space distribution */
   .hero-content-spacing {
+    padding-top: 80px;
     padding-bottom: 40px;
   }
   
@@ -2016,11 +2017,6 @@ button > .icon,
     margin-right: auto !important;
     justify-content: center !important;
     align-items: center !important;
-  }
-  
-  /* Move hero content up by 1.33rem */
-  .hero-content-spacing {
-    margin-top: -1.33rem !important;
   }
 }
 
