@@ -211,8 +211,7 @@ export default function PartnershipTiers() {
                   className="mt-4 border-community-primary text-community-primary hover:bg-community-primary hover:text-white transition-all"
                   data-testid="button-explore-modular-resources"
                   onClick={() => {
-                    // TODO: Replace with actual education section scroll or page navigation
-                    console.log('Navigate to educational resources');
+                    window.open('https://www.remax.ca', '_blank', 'noopener,noreferrer');
                   }}
                 >
                   Explore Modular Resources
