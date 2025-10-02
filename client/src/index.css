@@ -934,7 +934,7 @@
   /* Ultra-small screens (320px) */
   @media (max-width: 320px) {
     .hero-title-responsive {
-      font-size: 1.75rem; /* 28px */
+      font-size: 2.25rem; /* 36px - Increased from 28px */
       line-height: 1.1;
       letter-spacing: -0.02em;
     }
@@ -947,7 +947,7 @@
   /* Small mobile (321px - 374px) */
   @media (min-width: 321px) and (max-width: 374px) {
     .hero-title-responsive {
-      font-size: 2rem; /* 32px */
+      font-size: 2.5rem; /* 40px - Increased from 32px */
       line-height: 1.1;
     }
     .hero-subtitle-responsive {
@@ -959,7 +959,7 @@
   /* Standard mobile (375px - 389px) */
   @media (min-width: 375px) and (max-width: 389px) {
     .hero-title-responsive {
-      font-size: 2.25rem; /* 36px */
+      font-size: 2.75rem; /* 44px - Increased from 36px */
     }
     .hero-subtitle-responsive {
       font-size: 0.417rem; /* ~6.7px */
@@ -969,14 +969,14 @@
   /* Large mobile (390px - 427px) */
   @media (min-width: 390px) and (max-width: 427px) {
     .hero-title-responsive {
-      font-size: 2.375rem; /* 38px */
+      font-size: 3rem; /* 48px - Increased from 38px */
     }
   }
   
   /* Extra large mobile (428px - 639px) */
   @media (min-width: 428px) and (max-width: 639px) {
     .hero-title-responsive {
-      font-size: 2.5rem; /* 40px */
+      font-size: 3.25rem; /* 52px - Increased from 40px */
     }
   }
   
