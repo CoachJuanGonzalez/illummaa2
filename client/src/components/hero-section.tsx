@@ -44,17 +44,13 @@ export default function HeroSection() {
       
       <div className="container mx-auto px-6 relative z-10">
         <div className="hero-content-width hero-content-spacing">
-          <div className="hero-text-overlay md:bg-transparent md:backdrop-filter-none">
-            {/* Semi-transparent background for text readability */}
-            <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-lg md:bg-transparent md:backdrop-blur-none"></div>
-            <div className="relative z-10">
-              <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000', textShadow: '2px 2px 6px rgba(255,255,255,0.8), 1px 1px 3px rgba(0,0,0,0.3)'}}>
-                Building Homes, Strengthening Communities
-              </h1>
-              <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', textShadow: '2px 2px 4px rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.25)', fontSize: '2em'}}>
-                Your Partner in Community-First Housing Solutions
-              </p>
-            </div>
+          <div>
+            <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000', textShadow: '2px 2px 6px rgba(255,255,255,0.8), 1px 1px 3px rgba(0,0,0,0.3)'}}>
+              Building Homes, Strengthening Communities
+            </h1>
+            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000', textShadow: '2px 2px 4px rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.25)', fontSize: '2em'}}>
+              Your Partner in Community-First Housing Solutions
+            </p>
           </div>
           
           {/* Enhanced CTAs with improved hierarchy */}
