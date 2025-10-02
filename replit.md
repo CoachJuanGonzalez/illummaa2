@@ -12,18 +12,19 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 - **UI Display Limit**: Added `DISPLAY_COUNTRIES` constant limiting dropdown to Aruba and Canada while preserving global validation logic for all 249+ countries in `ALL_COUNTRIES`
 - **Validation Preserved**: Phone validation still supports all 249+ countries via `isValidPhoneNumber()` with country-specific error messages and auto re-validation on country switch
 
-### Phone Number Diagnostic Logging & Defensive Programming (October 2, 2025)
-- **Frontend Diagnostic Logging**: Added development-only logging to track phone values before sanitization, showing raw input, sanitized output, and selected country
-- **Frontend Defensive Code**: Implemented smart reconstruction for phones missing '+' prefix:
-  - Guards against empty digit strings (returns original for validation layer)
-  - Checks if digits already contain country code to prevent double-prefix bug
-  - Only reconstructs when truly needed, preserving valid E.164 numbers
-- **Backend Enhanced Logging**: Added comprehensive logging throughout phone processing pipeline:
-  - `validateFormData`: Logs raw and sanitized phone values
-  - `formatPhoneNumber`: Logs at every decision point (has +, missing +, 10 digits, 11 digits, international)
+### Phone Number E.164 Validation Fix (October 2, 2025) - CRITICAL BUG FIX
+- **Root Cause Identified**: Zod schema `phone` transform was re-parsing already-valid E.164 numbers using `parsePhoneNumber(trimmed)` without country specification, causing international numbers to be corrupted (e.g., Aruba "+2975971234" became "+12975971234")
+- **Critical Fix Applied**: Modified `shared/schema.ts` phone transform to:
+  - Check if phone already in E.164 format (starts with '+')
+  - If valid E.164, return unchanged without re-parsing ✅
+  - Only parse/transform if phone is NOT in E.164 format or is invalid
+- **Diagnostic Logging Added**: Development-only logging at critical points:
+  - Frontend: Tracks phone values before submission
+  - Backend `validateFormData`: Logs raw and sanitized phone values with '+' prefix check
+  - Backend `formatPhoneNumber`: Logs transformation decisions
   - Webhook payload: Logs final phone value before GHL submission
-- **International Number Support**: Enhanced `formatPhoneNumber()` to handle >11 digit international numbers (adds '+' prefix)
-- **Security**: All logging is development-only (`process.env.NODE_ENV === 'development'` and `import.meta.env.DEV`), no PII exposed in production
+- **Frontend Defensive Code**: Smart reconstruction for phones missing '+' prefix with guards against empty digits and double country code injection
+- **Result**: Aruba (+297), Canada (+1), and all 249+ country codes now correctly preserved in E.164 format throughout entire pipeline
 
 ## User Preferences
 

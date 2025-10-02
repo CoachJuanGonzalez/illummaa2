@@ -62,10 +62,16 @@ export const assessmentSchema = z.object({
       
       // Try to parse as international number
       try {
-        // If already in E.164 format (e.g., +14165551234), parse and return normalized
+        // CRITICAL FIX: If already in E.164 format, validate and return AS-IS
+        // Do NOT re-parse, as it can corrupt international numbers (e.g., Aruba +297 → +1297)
         if (trimmed.startsWith('+')) {
+          // Validate it's a valid E.164 number
+          if (isValidPhoneNumber(trimmed)) {
+            return trimmed; // Return unchanged - already in correct format
+          }
+          // If invalid, try to parse it (might have wrong format)
           const parsed = parsePhoneNumber(trimmed);
-          return parsed.number; // Returns E.164 format
+          return parsed.number;
         }
         
         // Legacy Canadian format: 10-digit number without country code

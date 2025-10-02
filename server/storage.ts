@@ -164,21 +164,24 @@ export async function validateFormData(rawData: any): Promise<{
     const readiness = DOMPurify.sanitize(rawData.readiness || '');
     const projectUnitCount = parseInt(rawData.projectUnitCount) || 0;
     
+    // DEBUG: Log phone processing BEFORE sanitization
+    const rawPhone = rawData.phone;
+    const sanitizedPhone = DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, '');
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 [BACKEND DEBUG] Phone in validateFormData:', {
+        raw: rawPhone,
+        sanitized: sanitizedPhone,
+        hasPlus: sanitizedPhone.startsWith('+')
+      });
+    }
+    
     const sanitizedData = {
       readiness,
       firstName: DOMPurify.sanitize(rawData.firstName || '').trim(),
       lastName: DOMPurify.sanitize(rawData.lastName || '').trim(),
       email: DOMPurify.sanitize(rawData.email || '').trim().toLowerCase(),
-      phone: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, ''),
-      
-      // DEBUG: Log phone processing
-      ...(process.env.NODE_ENV === 'development' && (() => {
-        console.log('🔍 [BACKEND DEBUG] Phone in validateFormData:', {
-          raw: rawData.phone,
-          sanitized: DOMPurify.sanitize(rawData.phone || '').replace(/\s/g, '')
-        });
-        return {};
-      })()),
+      phone: sanitizedPhone,
       
       company: DOMPurify.sanitize(rawData.company || '').trim(),
       projectUnitCount,
