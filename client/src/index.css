@@ -146,13 +146,6 @@
   }
 
   /* Enhanced contrast and accessibility */
-
-  /* Mobile-specific font size reduction for hero subtitle */
-  @media (max-width: 767px) {
-    [data-testid="text-hero-subtitle"] {
-      font-size: 0.66em !important;
-    }
-  }
   
   .hero-subtitle-enhanced {
     text-shadow: 0 1px 4px rgba(45, 55, 72, 0.1);
@@ -1058,7 +1051,6 @@
   }
   
   .hero-subtitle-spacing {
-    line-height: 1.35;
     letter-spacing: 0.01em;
   }
 
