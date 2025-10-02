@@ -115,7 +115,7 @@ export default function Footer() {
             <ul className="space-y-5">
               <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-phone">
                 <Phone className="mr-2" size={16} style={{color: '#000000'}} />
-                +1 (800) ILLUMMAA
+                (514) 532-1733
               </li>
               <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-email">
                 <Mail className="mr-2" size={16} style={{color: '#000000'}} />
