@@ -6,6 +6,17 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
+### CSP Security Headers Fixed (October 2, 2025)
+- **Issue**: Content Security Policy blocking Google Analytics and Replit dev banner scripts
+- **Root Cause**: CSP `scriptSrc`, `imgSrc`, and `connectSrc` directives too restrictive
+- **Files Updated**:
+  - `server/routes.ts`: Updated helmet CSP configuration (lines 219-227)
+  - Added `https://www.googletagmanager.com` to scriptSrc and imgSrc
+  - Added `https://replit.com` to scriptSrc (development only)
+  - Added `https://www.google-analytics.com` and `https://analytics.google.com` to connectSrc
+- **Result**: Google Analytics tracking fully functional, no CSP violations
+- **Security**: Maintained strict CSP while allowing necessary external resources
+
 ### Unit Count Limit Removal (October 2, 2025) - CRITICAL BUG FIX
 - **Issue Identified**: System had hardcoded 10,000 unit cap in 5 locations causing large projects (10K+ units) to fail
 - **Root Cause**: 10K limit in frontend validation, backend validation, schema, AND scoring system (discovered during audit)

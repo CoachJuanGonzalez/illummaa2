@@ -214,14 +214,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: process.env.NODE_ENV === 'development' 
-          ? ["'self'", "'unsafe-inline'", "'unsafe-eval'"] 
-          : ["'self'"],
+          ? ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://www.googletagmanager.com", "https://replit.com"] 
+          : ["'self'", "https://www.googletagmanager.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
-        imgSrc: ["'self'", "https://images.unsplash.com", "data:", "blob:"],
+        imgSrc: ["'self'", "https://images.unsplash.com", "https://www.googletagmanager.com", "data:", "blob:"],
         connectSrc: process.env.NODE_ENV === 'development'
-          ? ["'self'", "ws:", "http:", "https:", "https://services.leadconnectorhq.com"]
-          : ["'self'", "https://services.leadconnectorhq.com"],
+          ? ["'self'", "ws:", "http:", "https:", "https://services.leadconnectorhq.com", "https://www.google-analytics.com", "https://analytics.google.com"]
+          : ["'self'", "https://services.leadconnectorhq.com", "https://www.google-analytics.com", "https://analytics.google.com"],
         frameSrc: ["'self'"],
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
