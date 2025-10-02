@@ -41,6 +41,11 @@ export default function LeadershipTeam() {
       name: "Coach Juan Gonzalez",
       title: "Chief Technology Officer, AI Transformation & System Architecture",
       category: "Innovation"
+    },
+    {
+      name: "Dan Hatahet",
+      title: "Business Development",
+      category: "Business Development"
     }
   ];
 
