@@ -29,7 +29,7 @@ export default function Footer() {
   };
 
   return (
-    <footer id="contact" className="bg-foreground text-background py-20" data-testid="footer-main">
+    <footer id="contact" className="py-20" style={{backgroundColor: '#f1f5f9'}} data-testid="footer-main">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-12">
           {/* Company Info */}
@@ -46,30 +46,31 @@ export default function Footer() {
                 data-testid="footer-company-name"
               />
             </div>
-            <p className="text-white/70 text-base mb-8 max-w-lg leading-relaxed" data-testid="footer-company-description">
+            <p className="text-base mb-8 max-w-lg leading-relaxed" style={{color: '#000000'}} data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
             <div className="flex space-x-6" data-testid="social-links">
-              <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-linkedin" aria-label="LinkedIn">
-                <Linkedin className="text-white" size={22} />
+              <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-linkedin" aria-label="LinkedIn" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
+                <Linkedin style={{color: '#000000'}} size={22} />
               </a>
-              <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-twitter" aria-label="Twitter">
-                <Twitter className="text-white" size={22} />
+              <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-twitter" aria-label="Twitter" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
+                <Twitter style={{color: '#000000'}} size={22} />
               </a>
-              <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground" data-testid="link-instagram" aria-label="Instagram">
-                <Instagram className="text-white" size={22} />
+              <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-instagram" aria-label="Instagram" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
+                <Instagram style={{color: '#000000'}} size={22} />
               </a>
             </div>
           </div>
           
           {/* Quick Links */}
           <div data-testid="section-quick-links">
-            <h3 className="font-semibold text-white text-lg mb-8 tracking-wide" data-testid="heading-quick-links">Quick Links</h3>
+            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#000000'}} data-testid="heading-quick-links">Quick Links</h3>
             <ul className="space-y-4">
               <li>
                 <button 
                   onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  style={{color: '#000000'}}
                   data-testid="link-footer-partnership-application"
                 >
                   Partnership Application
@@ -78,7 +79,8 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("why", "Why ILLUMMAA")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  style={{color: '#000000'}}
                   data-testid="link-footer-why"
                 >
                   Why ILLUMMAA
@@ -87,7 +89,8 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("models", "Models")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  style={{color: '#000000'}}
                   data-testid="link-footer-models"
                 >
                   Models
@@ -96,7 +99,8 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
-                  className="text-white/80 hover:text-white transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-foreground"
+                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
+                  style={{color: '#000000'}}
                   data-testid="link-footer-partnership"
                 >
                   Partnership
@@ -107,25 +111,26 @@ export default function Footer() {
           
           {/* Contact */}
           <div data-testid="section-contact-info">
-            <h3 className="font-semibold text-white text-lg mb-8 tracking-wide" data-testid="heading-contact">Contact</h3>
+            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#000000'}} data-testid="heading-contact">Contact</h3>
             <ul className="space-y-5">
-              <li className="text-white/80 flex items-center" data-testid="contact-phone">
-                <Phone className="mr-2" size={16} />
+              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-phone">
+                <Phone className="mr-2" size={16} style={{color: '#000000'}} />
                 +1 (800) ILLUMMAA
               </li>
-              <li className="text-white/80 flex items-center" data-testid="contact-email">
-                <Mail className="mr-2" size={16} />
-                <a href="mailto:info@illummaa.com" className="hover:text-white transition-colors">
+              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-email">
+                <Mail className="mr-2" size={16} style={{color: '#000000'}} />
+                <a href="mailto:info@illummaa.com" className="transition-colors" style={{color: '#000000'}}>
                   info@illummaa.com
                 </a>
               </li>
-              <li className="text-white/80 flex items-center" data-testid="contact-location">
-                <MapPin className="mr-2" size={16} />
+              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-location">
+                <MapPin className="mr-2" size={16} style={{color: '#000000'}} />
                 <a 
                   href="https://maps.google.com/?q=17550+2nd+Floor+Trans-Canada+Hwy,+Kirkland,+Quebec,+H9J+3A3" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors"
+                  className="transition-colors"
+                  style={{color: '#000000'}}
                 >
                   17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
                 </a>
@@ -134,13 +139,13 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-white/20 mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" data-testid="footer-bottom">
-          <p className="text-white/60 text-sm mb-4 md:mb-0" data-testid="copyright">
+        <div className="border-t mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" style={{borderColor: 'rgba(0,0,0,0.2)'}} data-testid="footer-bottom">
+          <p className="text-sm mb-4 md:mb-0" style={{color: '#000000'}} data-testid="copyright">
             &copy; 2025 ILLUMMAA. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-white/60 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="text-white/60 hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="transition-colors" style={{color: '#000000'}}>Privacy Policy</a>
+            <a href="#" className="transition-colors" style={{color: '#000000'}}>Terms of Service</a>
           </div>
         </div>
       </div>
