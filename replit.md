@@ -6,6 +6,19 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
+### Unit Count Limit Removal (October 2, 2025) - CRITICAL BUG FIX
+- **Issue Identified**: System had hardcoded 10,000 unit cap in 5 locations causing large projects (10K+ units) to fail
+- **Root Cause**: 10K limit in frontend validation, backend validation, schema, AND scoring system (discovered during audit)
+- **Critical Scoring Bug Fixed**: Scoring system was capping units at 10K, causing 50K projects to be scored as 10K (broke tier calculation)
+- **Files Updated (5 total)**:
+  - `assessment-form.tsx`: Updated placeholder to "50, 500, 5000+", added 1M sanity check
+  - `server/routes.ts`: Removed 10K upper limit, kept negative check, added 1M sanity check with helpful message
+  - `shared/schema.ts`: Increased max from 10,000 to 1,000,000 with enterprise team message
+  - `shared/utils/scoring.ts`: **CRITICAL** - Removed `Math.min(10000)` caps on lines 72, 74 (fixes scoring)
+- **New Limits**: Accept 1-1,000,000 units (1M+ shows enterprise contact message)
+- **Security Maintained**: All sanitization, rate limiting, and validation preserved
+- **Result**: Large projects (10K-1M units) now correctly accepted, validated, and scored without artificial caps
+
 ### UX Optimization & Conversion Enhancement (October 2, 2025)
 - **Background Pattern Fix**: Optimized visual hierarchy with professional alternating grey/white backgrounds
   - Removed `bg-muted` from ProblemSolution for better section separation

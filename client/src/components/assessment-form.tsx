@@ -881,6 +881,8 @@ const IllummaaAssessmentForm = () => {
             newErrors.unitCount = 'Please enter a valid number (minimum 1 unit)';
           } else if (!Number.isInteger(Number(formData.unitCount))) {
             newErrors.unitCount = 'Please enter a whole number (no decimals)';
+          } else if (unitCount > 1000000) {
+            newErrors.unitCount = 'Please verify this number. For projects over 1 million units, contact us directly at partnerships@illummaa.com';
           } else if (unitCount > 0 && unitCount < 10) {
             const confirmRedirect = window.confirm(
               "Projects with fewer than 10 units are better suited for residential services. " +
@@ -1557,7 +1559,7 @@ const IllummaaAssessmentForm = () => {
                         onChange={handleInputChange}
                         min="1"
                         step="1"
-                        placeholder="Enter number of units (e.g., 10, 50, 200)"
+                        placeholder="Enter number of units (e.g., 50, 500, 5000+)"
                         className={`w-full px-4 py-3 rounded-lg border ${
                           errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white`}

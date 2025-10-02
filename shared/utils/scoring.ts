@@ -63,15 +63,15 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   let unitVolumeScore = 0, govScore = 0, indigenousScore = 0, provinceScore = 0,
       esgScore = 0, urgencyBonus = 0;
 
-  // Parse unit count
+  // Parse unit count - accept any positive integer
   let units = 0;
   const unitValue = backendData.projectUnitCount;
   if (unitValue !== undefined && unitValue !== null) {
     if (typeof unitValue === 'string' && unitValue !== '') {
       const parsed = parseInt(unitValue);
-      units = isNaN(parsed) ? 0 : Math.max(0, Math.min(parsed, 10000));
+      units = isNaN(parsed) ? 0 : Math.max(0, parsed); // Removed cap
     } else if (typeof unitValue === 'number') {
-      units = Math.max(0, Math.min(unitValue, 10000));
+      units = Math.max(0, unitValue); // Removed cap
     }
   }
 

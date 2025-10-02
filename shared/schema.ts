@@ -112,7 +112,7 @@ export const assessmentSchema = z.object({
   
   projectUnitCount: z.number()
     .min(0, "Please enter a valid number of units")
-    .max(10000, "Number of units must be 10,000 or less"),
+    .max(1000000, "For projects over 1 million units, please contact our enterprise team"),
   projectUnitRange: z.string().optional(),
   
   decisionTimeline: z.enum([

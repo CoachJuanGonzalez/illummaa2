@@ -588,12 +588,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Optional: Could implement special autoresponder or notification here
       }
       
-      // Range validation
-      if (unitCount < 0 || unitCount > 10000) {
+      // Range validation - accept any positive number
+      if (unitCount < 0) {
         return res.status(400).json({
           success: false,
-          message: 'Unit count must be between 1 and 10,000',
+          message: 'Unit count must be a positive number',
           securityViolation: true
+        });
+      }
+
+      // Sanity check for extremely large numbers (likely input error or DoS attempt)
+      if (unitCount > 1000000) {
+        return res.status(400).json({
+          success: false,
+          message: 'For projects over 1 million units, please contact our enterprise team directly at partnerships@illummaa.com',
+          securityViolation: false // Not a security issue, just routing guidance
         });
       }
       
