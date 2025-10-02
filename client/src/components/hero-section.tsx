@@ -68,7 +68,7 @@ export default function HeroSection() {
               className="btn-primary-hero text-white hero-cta-primary shadow-lg"
               data-testid="button-qualify-partnership"
             >
-              <Handshake className="mr-3 flex-shrink-0" size={18} />
+              <Handshake className="flex-shrink-0" size={18} />
               <span>Join Our Housing Community</span>
             </Button>
             <Button 
@@ -78,7 +78,7 @@ export default function HeroSection() {
               className="hero-secondary-btn-optimized hero-cta-secondary" 
               data-testid="button-view-models"
             >
-              <Home className="mr-2 flex-shrink-0" size={18} style={{color: '#1a365d'}} />
+              <Home className="flex-shrink-0" size={18} style={{color: '#1a365d'}} />
               <span>View Our Models</span>
             </Button>
           </div>

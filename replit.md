@@ -6,22 +6,20 @@ ILLUMMAA is a revenue-generating B2B lead generation website for modular homes t
 
 ## Recent Changes (October 2, 2025)
 
-### Hero Button Icon Size Standardization (October 2, 2025)
-- **Change**: Standardized both hero button icons to 18px for perfect visual consistency
-- **Files Updated**: `client/src/components/hero-section.tsx`
-  - Primary button (line 74): Changed Handshake icon from 20px to 18px (kept mr-3 margin)
-  - Secondary button (line 81): Kept Home icon at 18px with mr-2 margin (unchanged)
-- **Design Rationale**: Same icon size (18px) creates visual consistency while different margins maintain hierarchy
-- **Visual Balance Achieved**:
-  - Primary: 18px icon + 12px margin (mr-3) = Prominent, spacious ✅
-  - Secondary: 18px icon + 8px margin (mr-2) = Balanced, standard ✅
-- **Hierarchy Maintained Through**:
-  - Green background color vs white (primary prominence)
-  - Larger margin: mr-3 (12px) vs mr-2 (8px)
-  - Shadow effect on primary button
-  - Position (primary appears first)
-- **Impact**: Perfect mobile spacing, professional polish, visual consistency across all devices
-- **Compatibility**: Zero breaking changes, pure visual enhancement, other Handshake icon usages unaffected
+### Hero Button Layout Fix - Mobile Icon Stacking Resolved (October 2, 2025)
+- **Critical Issue Resolved**: Primary button icon was floating ABOVE text on mobile due to forced column layout
+- **Root Cause**: CSS `.btn-primary-hero` had `flex-direction: column !important` forcing vertical icon stacking on mobile devices
+- **Files Updated**: 
+  - `client/src/index.css` (lines 805, 884): Changed from `column` to `row` layout for both hero buttons
+  - `client/src/components/hero-section.tsx` (lines 74, 84): Removed redundant margin classes, now using CSS gap
+- **Changes Made**:
+  - Primary button: `flex-direction: row`, `gap: 12px`, icons now appear NEXT TO text horizontally ✅
+  - Secondary button: `flex-direction: row`, `gap: 8px`, explicit row layout ensures consistency ✅
+  - Both buttons: Added `flex-wrap: wrap` for text overflow handling on small screens
+  - Icon sizes: Both standardized to 18px for visual consistency
+- **Result**: Icons now appear horizontally next to text labels on ALL mobile devices (iPhone SE, iPhone 14, Android, tablets)
+- **Visual Hierarchy**: Maintained through green vs white background, different gap spacing (12px vs 8px), and shadow effects
+- **Compatibility**: Works across all breakpoints (mobile < 480px, tablet 481-639px, desktop 640px+)
 
 ### Hero Section "View Our Models" Button Implementation (October 2, 2025)
 - **Change**: Secondary hero button converted from non-functional to active scroll navigation
