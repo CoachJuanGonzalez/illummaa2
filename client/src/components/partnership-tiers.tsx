@@ -210,8 +210,12 @@ export default function PartnershipTiers() {
                   size="lg"
                   className="mt-4 border-community-primary text-community-primary hover:bg-community-primary hover:text-white transition-all"
                   data-testid="button-explore-modular-resources"
-                  onClick={() => {
-                    window.open('https://www.remax.ca', '_blank', 'noopener,noreferrer');
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const newWindow = window.open('https://www.remax.ca', '_blank');
+                    if (newWindow) {
+                      newWindow.opener = null;
+                    }
                   }}
                 >
                   Explore Modular Resources
