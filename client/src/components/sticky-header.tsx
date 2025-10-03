@@ -26,32 +26,65 @@ export default function StickyHeader() {
   const scrollToSection = (id: string, sectionName?: string) => {
     // Track navigation click
     trackHeaderNavClick(sectionName || id, id);
-    
-    const element = document.getElementById(id);
-    if (element) {
-      // Close mobile menu first to get accurate header height
-      setMobileMenuOpen(false);
-      
-      // Wait a frame for menu to close, then calculate scroll position
-      requestAnimationFrame(() => {
-        // Get the actual sticky bar height (not including expanded menu)
-        const header = document.querySelector('header');
-        const headerHeight = header ? header.offsetHeight : 80; // Fallback to 80px
-        
-        // Add extra offset for mobile devices to ensure proper positioning
-        const isMobile = window.innerWidth < 768; // md breakpoint
-        const extraOffset = isMobile ? 24 : 10; // Slightly larger offset for mobile
-        
-        // Calculate the target scroll position using getBoundingClientRect for accuracy
-        const elementRect = element.getBoundingClientRect();
-        const targetPosition = elementRect.top + window.scrollY - headerHeight - extraOffset;
-        
-        // Scroll to the calculated position
-        window.scrollTo({
-          top: Math.max(0, targetPosition), // Ensure we don't scroll past the top
-          behavior: "smooth"
+
+    // Close mobile menu first
+    setMobileMenuOpen(false);
+
+    // Check if we're on the home page
+    const isHomePage = location === "/" || location === "";
+
+    if (!isHomePage) {
+      // If not on home page, navigate to home first, then scroll
+      navigate("/");
+
+      // Wait for navigation to complete, then scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          // Get the actual sticky bar height
+          const header = document.querySelector('header');
+          const headerHeight = header ? header.offsetHeight : 80;
+
+          // Add extra offset for mobile devices
+          const isMobile = window.innerWidth < 768;
+          const extraOffset = isMobile ? 24 : 10;
+
+          // Calculate the target scroll position
+          const elementRect = element.getBoundingClientRect();
+          const targetPosition = elementRect.top + window.scrollY - headerHeight - extraOffset;
+
+          // Scroll to the calculated position
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: "smooth"
+          });
+        }
+      }, 100); // Small delay to ensure DOM is updated after navigation
+    } else {
+      // Already on home page, just scroll to section
+      const element = document.getElementById(id);
+      if (element) {
+        // Wait a frame for menu to close, then calculate scroll position
+        requestAnimationFrame(() => {
+          // Get the actual sticky bar height
+          const header = document.querySelector('header');
+          const headerHeight = header ? header.offsetHeight : 80;
+
+          // Add extra offset for mobile devices
+          const isMobile = window.innerWidth < 768;
+          const extraOffset = isMobile ? 24 : 10;
+
+          // Calculate the target scroll position
+          const elementRect = element.getBoundingClientRect();
+          const targetPosition = elementRect.top + window.scrollY - headerHeight - extraOffset;
+
+          // Scroll to the calculated position
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: "smooth"
+          });
         });
-      });
+      }
     }
   };
 
