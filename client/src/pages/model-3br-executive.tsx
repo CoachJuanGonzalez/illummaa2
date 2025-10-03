@@ -7,11 +7,10 @@ import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
 import exteriorImage from "@assets/3bedroom-1_1757890999523.jpg";
 import interiorImage from "@assets/3bedroom-2_1757891004660.jpg";
+import floorPlanImage from "@assets/3bedroom-3_1757891009839.jpg";
 
-// Technical plan images (1400px, 300 DPI, 100% quality, architect info removed)
-import floorPlanImage from "@assets/3br-technical-plans/floor-plan-main.jpg";
-import techCoverPage from "@assets/3br-technical-plans/cover-page.jpg";
-import techElevationsFR from "@assets/3br-technical-plans/elevations-front-rear.jpg";
+// PDF path for technical plans
+const technicalPlansPDF = "/attached_assets/3-bedroom-technical-plans_1759503916090.pdf";
 
 export default function Model3BRExecutive() {
   const [location, navigate] = useLocation();
@@ -270,22 +269,16 @@ export default function Model3BRExecutive() {
         bathrooms="2"
         floorPlans={[
           {
-            id: "ground-floor",
-            title: "Ground Floor Plan",
+            id: "2d",
+            title: "2D Floor Plan",
             type: "2d",
             imageUrl: floorPlanImage,
           },
           {
-            id: "cover",
-            title: "Cover Page",
+            id: "technical",
+            title: "Technical Plans (PDF)",
             type: "2d",
-            imageUrl: techCoverPage,
-          },
-          {
-            id: "elevations-fr",
-            title: "Elevations (Front/Rear)",
-            type: "2d",
-            imageUrl: techElevationsFR,
+            pdfUrl: technicalPlansPDF,
           },
           {
             id: "3d",
