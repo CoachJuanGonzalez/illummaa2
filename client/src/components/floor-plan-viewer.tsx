@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ZoomIn, ZoomOut, Maximize2, Download, Grid3x3 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, Download, Grid3x3, FileText, Box, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ImagePlaceholder from "./image-placeholder";
@@ -42,6 +42,22 @@ export default function FloorPlanViewer({
 
   const handleReset = () => {
     setZoomLevel(100);
+  };
+
+  const getTabIcon = (planId: string) => {
+    if (planId.includes('2d')) return <Grid3x3 className="w-4 h-4" />;
+    if (planId.includes('technical')) return <FileText className="w-4 h-4" />;
+    if (planId.includes('3d')) return <Box className="w-4 h-4" />;
+    if (planId.includes('dimensions')) return <Ruler className="w-4 h-4" />;
+    return null;
+  };
+
+  const getMobileLabel = (title: string) => {
+    if (title.includes('Technical')) return 'Technical PDF';
+    if (title.includes('3D')) return '3D View';
+    if (title.includes('Dimensions')) return 'Dimensions';
+    if (title.includes('2D')) return '2D Plan';
+    return title;
   };
 
   return (
@@ -95,23 +111,31 @@ export default function FloorPlanViewer({
 
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <div className="border-b border-gray-200 px-6 py-4">
-                <TabsList className="w-full justify-start">
+              <div className="border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 overflow-x-auto">
+                <TabsList className="w-full md:w-auto justify-start flex-nowrap md:flex-wrap min-h-[48px] gap-2">
                   {floorPlans.map((plan) => (
-                    <TabsTrigger key={plan.id} value={plan.id}>
-                      {plan.title}
+                    <TabsTrigger 
+                      key={plan.id} 
+                      value={plan.id}
+                      className="flex items-center gap-2 whitespace-nowrap px-4 md:px-6 py-3 min-h-[44px] data-[state=active]:bg-community-primary data-[state=active]:text-white transition-all"
+                      data-testid={`tab-${plan.id}`}
+                    >
+                      <span className="hidden md:inline">{getTabIcon(plan.id)}</span>
+                      <span className="md:hidden text-sm font-medium">{getMobileLabel(plan.title)}</span>
+                      <span className="hidden md:inline text-sm font-medium">{plan.title}</span>
                     </TabsTrigger>
                   ))}
                 </TabsList>
               </div>
 
-              <div className="p-6">
-                <div className="flex justify-end gap-2 mb-4">
+              <div className="p-4 md:p-6">
+                <div className="hidden md:flex justify-end gap-2 mb-4">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleZoomOut}
                     disabled={zoomLevel <= 50}
+                    data-testid="button-zoom-out"
                   >
                     <ZoomOut className="w-4 h-4" />
                   </Button>
@@ -119,6 +143,7 @@ export default function FloorPlanViewer({
                     variant="outline"
                     size="sm"
                     onClick={handleReset}
+                    data-testid="button-zoom-reset"
                   >
                     <Maximize2 className="w-4 h-4" />
                     <span className="ml-2">{zoomLevel}%</span>
@@ -128,10 +153,11 @@ export default function FloorPlanViewer({
                     size="sm"
                     onClick={handleZoomIn}
                     disabled={zoomLevel >= 200}
+                    data-testid="button-zoom-in"
                   >
                     <ZoomIn className="w-4 h-4" />
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" data-testid="button-download">
                     <Download className="w-4 h-4" />
                     <span className="ml-2">Download</span>
                   </Button>
