@@ -74,12 +74,13 @@ Preferred communication style: Simple, everyday language.
 ## Replit Environment Setup
 
 ### Current Configuration (October 3, 2025)
-- **Storage**: Using in-memory storage (MemStorage) - no database required
+- **Storage**: PostgreSQL database (Neon-backed) via Replit's built-in database
 - **Port**: Application runs on port 5000 (both frontend and backend on same port)
 - **Host**: Server binds to 0.0.0.0 to work with Replit's proxy
 - **Vite Configuration**: `allowedHosts: true` configured for Replit iframe preview
-- **Workflow**: "Start application" runs `npm run dev` and waits for port 5000
+- **Workflow**: "Start application" runs `npm run dev` and waits for port 5000 with webview output
 - **Deployment**: Configured for autoscale deployment with `npm run build` and `npm start`
+- **Database Schema**: Pushed to PostgreSQL using `npm run db:push`
 
 ### Development
 - Run `npm run dev` to start the development server
