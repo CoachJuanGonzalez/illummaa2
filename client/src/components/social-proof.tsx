@@ -26,26 +26,26 @@ export default function SocialProof() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto" data-testid="container-value-props">
           {/* Cost Efficiency */}
           <div className="card-hover bg-card rounded-2xl p-8 shadow-lg" data-testid="card-cost-efficiency">
-            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-              <DollarSign className="text-primary" size={32} />
+            <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6">
+              <DollarSign className="text-emerald-600" size={32} />
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-cost-efficiency">Cost Efficiency</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-cost-description">
               Factory-precision manufacturing delivers 30-40% cost savings versus traditional construction. Economies of scale maximize your project ROI while maintaining premium quality standards.
             </p>
-            <div className="text-primary font-semibold" data-testid="text-cost-metric">30-40% More Affordable</div>
+            <div className="text-emerald-600 font-semibold" data-testid="text-cost-metric">30-40% More Affordable</div>
           </div>
           
           {/* Speed of Construction */}
           <div className="card-hover bg-card rounded-2xl p-8 shadow-lg" data-testid="card-speed-construction">
-            <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mb-6">
-              <Zap className="text-accent" size={32} />
+            <div className="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mb-6">
+              <Zap className="text-yellow-600" size={32} />
             </div>
             <h3 className="font-display font-bold text-2xl mb-4" data-testid="heading-speed-construction">Speed of Construction</h3>
             <p className="text-muted-foreground text-lg mb-4" data-testid="text-speed-construction-description">
               Factory-controlled construction enables faster project delivery regardless of weather conditions. Meet tight deadlines and accelerate revenue generation with proven industrial timelines.
             </p>
-            <div className="text-accent font-semibold" data-testid="text-speed-construction-metric">Faster Build Times</div>
+            <div className="text-yellow-600 font-semibold" data-testid="text-speed-construction-metric">Faster Build Times</div>
           </div>
           
           {/* Consistency and Quality Control */}
@@ -74,7 +74,7 @@ export default function SocialProof() {
           
           {/* Sustainability - Centered in grid */}
           <div className="card-hover bg-card rounded-2xl p-8 shadow-lg md:col-span-2 md:max-w-lg md:mx-auto" data-testid="card-sustainability">
-            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 mx-auto md:mx-0">
+            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
               <Leaf className="text-green-600" size={32} />
             </div>
             <h3 className="font-display font-bold text-2xl mb-4 text-center md:text-left" data-testid="heading-sustainability">Sustainability</h3>

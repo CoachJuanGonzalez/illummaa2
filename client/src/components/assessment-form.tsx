@@ -2119,7 +2119,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-sms"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Required for SMS compliance)
+                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Required for SMS compliance) <span className="text-red-500">*</span>
                     </span>
                   </label>
                   {errors.consentSMS && (
@@ -2142,7 +2142,7 @@ const IllummaaAssessmentForm = () => {
                       <a href="/privacy" target="_blank" className="text-indigo-600 underline hover:text-indigo-700" data-testid="link-privacy-policy">
                         Privacy Policy
                       </a>
-                      {' '}(Required by PIPEDA)
+                      {' '}(Required by PIPEDA) <span className="text-red-500">*</span>
                     </span>
                   </label>
                   {errors.privacyPolicy && (
@@ -2161,7 +2161,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-age-verification"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I confirm that I am 18 years of age or older and have the legal capacity to provide consent
+                      I confirm that I am 18 years of age or older and have the legal capacity to provide consent <span className="text-red-500">*</span>
                     </span>
                   </label>
                   {errors.ageVerification && (
