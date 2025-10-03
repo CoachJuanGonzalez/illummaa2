@@ -70,3 +70,22 @@ Preferred communication style: Simple, everyday language.
 - **Multi-touch email automation**: For lead nurturing.
 - **Assessment result delivery**: And follow-up communications.
 - **Developer-specific messaging**: Based on qualification tier.
+
+## Replit Environment Setup
+
+### Current Configuration (October 3, 2025)
+- **Storage**: Using in-memory storage (MemStorage) - no database required
+- **Port**: Application runs on port 5000 (both frontend and backend on same port)
+- **Host**: Server binds to 0.0.0.0 to work with Replit's proxy
+- **Vite Configuration**: `allowedHosts: true` configured for Replit iframe preview
+- **Workflow**: "Start application" runs `npm run dev` and waits for port 5000
+- **Deployment**: Configured for autoscale deployment with `npm run build` and `npm start`
+
+### Development
+- Run `npm run dev` to start the development server
+- The Vite dev server and Express backend are integrated on the same port
+- Hot Module Replacement (HMR) is enabled for instant updates
+
+### Production Build
+- `npm run build` - Builds both frontend (Vite) and backend (esbuild)
+- `npm start` - Runs the production server from dist/index.js
