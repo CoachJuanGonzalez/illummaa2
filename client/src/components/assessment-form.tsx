@@ -333,6 +333,7 @@ const IllummaaAssessmentForm = () => {
   const [startTime] = useState(Date.now());
   const [selectedCountry, setSelectedCountry] = useState<string>('CA'); // Default to Canada
   const [phoneInput, setPhoneInput] = useState<string>('');
+  const previousPhoneInputRef = useRef<string>(''); // Track previous input for deletion detection
   
   // Debounce timer reference for real-time scoring
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -615,24 +616,53 @@ const IllummaaAssessmentForm = () => {
   // Handle phone number formatting as user types - FIXED for delete/backspace
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
+    const previousInput = previousPhoneInputRef.current;
 
     // Extract only digits from user input (allows proper deletion)
     const digitsOnly = input.replace(/\D/g, '');
+    const previousDigits = previousInput.replace(/\D/g, '');
+
+    // Detect if user is deleting (fewer digits OR shorter input length - catches formatting char deletion)
+    const isDeleting = digitsOnly.length < previousDigits.length || input.length < previousInput.length;
 
     try {
       if (digitsOnly.length === 0) {
         // If all deleted, clear everything
         setPhoneInput('');
         setFormData(prev => ({ ...prev, phone: '' }));
+        previousPhoneInputRef.current = '';
         return;
       }
 
-      // Format for display using digits only
+      // If user is deleting, just update with current input without re-formatting
+      // This allows backspace/delete to work properly
+      if (isDeleting) {
+        setPhoneInput(input);
+        previousPhoneInputRef.current = input;
+
+        // Still update form data with digits
+        try {
+          const parsed = parsePhoneNumber(digitsOnly, selectedCountry as any);
+          if (parsed && parsed.isValid()) {
+            setFormData(prev => ({ ...prev, phone: parsed.number }));
+          } else {
+            const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
+            setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
+          }
+        } catch {
+          const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
+          setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
+        }
+        return;
+      }
+
+      // User is adding digits - apply formatting
       const formatter = new AsYouType(selectedCountry as any);
       const formatted = formatter.input(digitsOnly);
 
       // Update display with formatted version
       setPhoneInput(formatted);
+      previousPhoneInputRef.current = formatted;
 
       // Try to parse to E.164 format for form storage
       try {
@@ -652,7 +682,8 @@ const IllummaaAssessmentForm = () => {
       }
     } catch {
       // Fallback: just use raw input
-      setPhoneInput(digitsOnly);
+      setPhoneInput(input);
+      previousPhoneInputRef.current = input;
       const countryCode = ALL_COUNTRIES.find(c => c.code === selectedCountry)?.callingCode || '+1';
       setFormData(prev => ({ ...prev, phone: `${countryCode}${digitsOnly}` }));
     }
@@ -677,6 +708,7 @@ const IllummaaAssessmentForm = () => {
             // If no digits, clear everything
             setPhoneInput('');
             setFormData(prev => ({ ...prev, phone: '' }));
+            previousPhoneInputRef.current = ''; // Reset ref when clearing
             validateStep(currentStep);
             return;
           }
@@ -687,6 +719,7 @@ const IllummaaAssessmentForm = () => {
           
           // Update display input
           setPhoneInput(formatted);
+          previousPhoneInputRef.current = formatted; // Reset ref after country change
 
           // Parse to E.164 format for form storage
           try {
@@ -709,12 +742,14 @@ const IllummaaAssessmentForm = () => {
           setPhoneInput('');
           setFormData(prev => ({ ...prev, phone: '' }));
           setErrors(prev => ({ ...prev, phone: '' }));
+          previousPhoneInputRef.current = ''; // Reset ref when clearing
         }
       } catch {
         // On validation error, clear to allow fresh input
         setPhoneInput('');
         setFormData(prev => ({ ...prev, phone: '' }));
         setErrors(prev => ({ ...prev, phone: '' }));
+        previousPhoneInputRef.current = ''; // Reset ref when clearing
       }
     }
     
