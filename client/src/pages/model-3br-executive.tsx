@@ -97,31 +97,6 @@ export default function Model3BRExecutive() {
         </div>
       </section>
 
-      {/* Floor Plan Section */}
-      <section className="py-16 bg-background" data-testid="section-floor-plan">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-floor-plan">
-              Technical Floor Plan
-            </h2>
-            <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
-              <img 
-                src={floorPlanImage} 
-                alt="3BR Executive floor plan - 1200 sq ft technical drawing" 
-                className="model-floorplan-image max-w-3xl mx-auto"
-                loading="lazy"
-                decoding="async"
-                data-testid="img-floor-plan"
-                onClick={() => window.open(floorPlanImage, '_blank')}
-              />
-            </div>
-            <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
-              1200 sq ft • 3 bedrooms • 2 bathrooms • Optimized for developments and family living
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* Exterior Rendering Section */}
       <section className="py-16 bg-muted" data-testid="section-exterior">
         <div className="container mx-auto px-6">
