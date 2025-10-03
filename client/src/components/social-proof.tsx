@@ -74,14 +74,14 @@ export default function SocialProof() {
           
           {/* Sustainability - Centered in grid */}
           <div className="card-hover bg-card rounded-2xl p-8 shadow-lg md:col-span-2 md:max-w-lg md:mx-auto" data-testid="card-sustainability">
-            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
-              <Leaf className="text-green-600" size={32} />
+            <div className="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-6">
+              <Leaf className="text-teal-600" size={32} />
             </div>
-            <h3 className="font-display font-bold text-2xl mb-4 text-center md:text-left" data-testid="heading-sustainability">Sustainability</h3>
-            <p className="text-muted-foreground text-lg mb-4 text-center md:text-left" data-testid="text-sustainability-description">
+            <h3 className="font-display font-bold text-2xl mb-4 text-left" data-testid="heading-sustainability">Sustainability</h3>
+            <p className="text-muted-foreground text-lg mb-4 text-left" data-testid="text-sustainability-description">
               Meet federal sustainability requirements and qualify for green building incentives. Align with Canada's Net Zero goals while delivering market-leading efficiency.
             </p>
-            <div className="text-green-600 font-semibold text-center md:text-left" data-testid="text-sustainability-metric">Eco-Friendly Design</div>
+            <div className="text-teal-600 font-semibold text-left" data-testid="text-sustainability-metric">Eco-Friendly Design</div>
           </div>
         </div>
       </div>
