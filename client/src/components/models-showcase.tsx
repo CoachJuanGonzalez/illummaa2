@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import compactModelImage from "@assets/1_1759537017768.png";
+import familyModelImage from "@assets/2_1759537264530.png";
 import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
 import ImagePlaceholder from "./image-placeholder";
 
@@ -30,8 +31,8 @@ export default function ModelsShowcase() {
       size: "900 sq ft",
       description: "Ideal for young families",
       price: "Starting from $169K CAD",
-      image: null,
-      hasRealImage: false,
+      image: familyModelImage,
+      hasRealImage: true,
       features: [
         "Two spacious bedrooms",
         "Full kitchen & dining",
