@@ -190,6 +190,7 @@ export async function validateFormData(rawData: any): Promise<{
       constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
       developerType: sanitizeOptionalEnum(rawData.developerType),
       governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
+      buildCanadaEligible: sanitizeOptionalEnum(rawData.buildCanadaEligible),
       // B2B-only: Remove explorer-specific fields for pure B2B focus
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
@@ -356,11 +357,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     priorityLevel: getPriorityLevel(priorityScore)
   };
 
-  // Calculate Build Canada eligibility
+  // Use user's self-certified Build Canada value (now preserved from form)
   const units = parseInt(formData.projectUnitCount.toString());
-  const buildCanadaEligible = units >= 300 || 
-    (units >= 200 && (formData.developerType === "Government/Municipal Developer" || 
-                     formData.developerType?.includes("Government")));
+  // formData.buildCanadaEligible contains "Yes", "No", or "I don't know" from user's selection
 
   // Transform readiness value with enhanced timeframe display
   const readinessValue = getReadinessWithTimeframe(formData.readiness || "");
@@ -404,7 +403,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // Scoring & Routing Fields (4 - removed redundant priority_level from webhook)
     ai_priority_score: priorityData.score,
     customer_tier: customerTier,
-    build_canada_eligible: buildCanadaEligible ? "Yes" : "No",
+    build_canada_eligible: formData.buildCanadaEligible || "I don't know",
     tags_array: tags,
 
     // SLA Field (1)
