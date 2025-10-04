@@ -44,7 +44,7 @@ export default function HeroSection() {
   return (
     <section className="relative hero-layout-proportions hero-cross-device-beauty" data-testid="section-hero">
       {/* Responsive Background Images with Overlay */}
-      <div className="absolute inset-0 z-0 bg-gray-300">
+      <div className="absolute inset-0 z-0">
         {/* Desktop Image - Hidden on Mobile */}
         <img
           src={heroDesktopImage}
