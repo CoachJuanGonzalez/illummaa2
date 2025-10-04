@@ -194,36 +194,9 @@ export const assessmentSchema = z.object({
   projectDescription: z.string()
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
-}).superRefine((data, ctx) => {
-  // B2B-ONLY: All users must provide business-related fields (no Explorer tier)
-  // Minimum 10 units required for B2B partnership track
-    if (!data.decisionTimeline) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['decisionTimeline'],
-        message: 'Please select a delivery timeline'
-      });
-    }
-    
-    if (!data.constructionProvince) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['constructionProvince'],
-        message: 'Please select an installation province'
-      });
-    }
-    
-    // Developer type is optional - backend handles missing values with fallback to null/empty string
-    // Removed required validation to fix "Validation error: Validation failed" bug after form submission
-    
-    if (!data.governmentPrograms) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['governmentPrograms'],
-        message: 'Please select government program participation'
-      });
-    }
 });
+// Removed superRefine validation - all optional fields are properly marked with .optional()
+// Backend handles missing values with appropriate fallbacks via sanitizeOptionalEnum
 
 export type AssessmentFormData = z.infer<typeof assessmentSchema>;
 
