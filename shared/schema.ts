@@ -13,11 +13,11 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   phone: text("phone").notNull(),
   company: text("company").notNull(),
   projectUnitCount: integer("project_unit_count").notNull(),
-  decisionTimeline: text("decision_timeline"),
-  constructionProvince: text("construction_province"),
-  developerType: text("developer_type"),
-  governmentPrograms: text("government_programs"),
-  buildCanadaEligible: text("build_canada_eligible"),
+  decisionTimeline: text("decision_timeline").notNull(),
+  constructionProvince: text("construction_province").notNull(),
+  developerType: text("developer_type").notNull(),
+  governmentPrograms: text("government_programs").notNull(),
+  buildCanadaEligible: text("build_canada_eligible").notNull(),
   // B2B-only: Removed Explorer fields (learningInterest, informationPreference)
   agentSupport: text("agent_support"),
   consentMarketing: boolean("consent_marketing").default(false),
@@ -107,8 +107,8 @@ export const assessmentSchema = z.object({
     }),
   
   company: z.string()
-    .max(100, "Company name must be less than 100 characters")
-    .optional(),
+    .min(1, "Company/Organization name is required")
+    .max(100, "Company name must be less than 100 characters"),
   
   projectUnitCount: z.number()
     .min(0, "Please enter a valid number of units")
@@ -120,7 +120,7 @@ export const assessmentSchema = z.object({
     "Short-term (3-6 months)",
     "Medium-term (6-12 months)", 
     "Long-term (12+ months)"
-  ]).optional(),
+  ], { required_error: "Please select a delivery timeline" }),
   
   constructionProvince: z.enum([
     "Ontario",
@@ -136,7 +136,7 @@ export const assessmentSchema = z.object({
     "Northwest Territories",
     "Nunavut",
     "Yukon"
-  ]).optional(),
+  ], { required_error: "Please select a construction province/territory" }),
   
   developerType: z.enum([
     "Indigenous Community/Organization",
@@ -145,18 +145,20 @@ export const assessmentSchema = z.object({
     "Non-Profit Housing Developer",
     "Private Developer (Medium Projects)",
     "Individual/Family Developer"
-  ]).optional(),
+  ], { required_error: "Please select a developer type" }),
   
   governmentPrograms: z.enum([
     "Participating in government programs",
     "Not participating"
-  ]).optional().describe("Government housing program participation status"),
+  ], { required_error: "Please select government program participation" })
+    .describe("Government housing program participation status"),
   
   buildCanadaEligible: z.enum([
     "Yes",
     "No",
     "I don't know"
-  ]).optional().describe("User self-certification of Build Canada eligibility"),
+  ], { required_error: "Please select Build Canada eligibility status" })
+    .describe("User self-certification of Build Canada eligibility"),
   
   // B2B-only: Explorer education fields removed for pure B2B focus
   
@@ -195,8 +197,11 @@ export const assessmentSchema = z.object({
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
 });
-// Removed superRefine validation - all optional fields are properly marked with .optional()
-// Backend handles missing values with appropriate fallbacks via sanitizeOptionalEnum
+// B2B REQUIRED FIELDS VALIDATION:
+// All 12 required fields are now properly enforced at the schema level:
+// - readiness, projectUnitCount, firstName, lastName, email, phone (already required)
+// - company, decisionTimeline, constructionProvince, developerType, governmentPrograms, buildCanadaEligible (now required)
+// This ensures complete B2B data for every submission and eliminates validation conflicts
 
 export type AssessmentFormData = z.infer<typeof assessmentSchema>;
 

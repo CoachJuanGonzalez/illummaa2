@@ -55,11 +55,11 @@ export class MemStorage implements IStorage {
       marketingConsent: insertAssessment.marketingConsent ?? false,
       ageVerification: insertAssessment.ageVerification ?? false,
       tags: insertAssessment.tags ?? null,
-      decisionTimeline: insertAssessment.decisionTimeline || null,
-      constructionProvince: insertAssessment.constructionProvince || null,
-      developerType: insertAssessment.developerType || null,
-      governmentPrograms: insertAssessment.governmentPrograms || null,
-      buildCanadaEligible: insertAssessment.buildCanadaEligible || null,
+      decisionTimeline: insertAssessment.decisionTimeline,
+      constructionProvince: insertAssessment.constructionProvince,
+      developerType: insertAssessment.developerType,
+      governmentPrograms: insertAssessment.governmentPrograms,
+      buildCanadaEligible: insertAssessment.buildCanadaEligible,
       // B2B-only: Explorer fields removed
       priorityScore: insertAssessment.priorityScore ?? null,
     };
@@ -183,14 +183,14 @@ export async function validateFormData(rawData: any): Promise<{
       email: DOMPurify.sanitize(rawData.email || '').trim().toLowerCase(),
       phone: sanitizedPhone,
       
-      company: DOMPurify.sanitize(rawData.company || '').trim(),
+      company: DOMPurify.sanitize(rawData.company).trim(),
       projectUnitCount,
       projectUnitRange: DOMPurify.sanitize(rawData.projectUnitRange || '').trim(),
-      decisionTimeline: sanitizeOptionalEnum(rawData.decisionTimeline),
-      constructionProvince: sanitizeOptionalEnum(rawData.constructionProvince),
-      developerType: sanitizeOptionalEnum(rawData.developerType),
-      governmentPrograms: sanitizeOptionalEnum(rawData.governmentPrograms),
-      buildCanadaEligible: sanitizeOptionalEnum(rawData.buildCanadaEligible),
+      decisionTimeline: DOMPurify.sanitize(rawData.decisionTimeline).trim(),
+      constructionProvince: DOMPurify.sanitize(rawData.constructionProvince).trim(),
+      developerType: DOMPurify.sanitize(rawData.developerType).trim(),
+      governmentPrograms: DOMPurify.sanitize(rawData.governmentPrograms).trim(),
+      buildCanadaEligible: DOMPurify.sanitize(rawData.buildCanadaEligible).trim(),
       // B2B-only: Remove explorer-specific fields for pure B2B focus
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
@@ -395,16 +395,16 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
 
     // Core Project Fields (6)
     project_unit_count: units,
-    delivery_timeline: formData.decisionTimeline || "",
-    construction_province: formData.constructionProvince || "",
-    developer_type: formData.developerType || "",
-    government_programs: formData.governmentPrograms || "",
+    delivery_timeline: formData.decisionTimeline,
+    construction_province: formData.constructionProvince,
+    developer_type: formData.developerType,
+    government_programs: formData.governmentPrograms,
     project_description: sanitizeInput(formData.projectDescription || ""),
 
     // Scoring & Routing Fields (4 - removed redundant priority_level from webhook)
     ai_priority_score: priorityData.score,
     customer_tier: customerTier,
-    build_canada_eligible: formData.buildCanadaEligible || "I don't know",
+    build_canada_eligible: formData.buildCanadaEligible,
     tags_array: tags,
 
     // SLA Field (1)
