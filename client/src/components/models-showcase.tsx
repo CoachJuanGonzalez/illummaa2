@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import compactModelImage from "@assets/1_1759537017768.png";
 import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
 import ImagePlaceholder from "./image-placeholder";
 
@@ -16,8 +17,8 @@ export default function ModelsShowcase() {
       size: "600 sq ft",
       description: "Perfect for urban density",
       price: "Starting from $129K CAD",
-      image: null,
-      hasRealImage: false,
+      image: compactModelImage,
+      hasRealImage: true,
       features: [
         "Open concept living",
         "Energy efficient appliances",
