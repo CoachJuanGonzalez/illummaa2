@@ -89,6 +89,9 @@ export default function StickyHeader() {
   };
 
   const handleLogoClick = (e: React.MouseEvent) => {
+    // Close mobile menu first
+    setMobileMenuOpen(false);
+
     // Track logo click
     analytics.trackNavigation({
       action: 'logo_click',
