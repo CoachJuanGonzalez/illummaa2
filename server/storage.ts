@@ -472,9 +472,10 @@ function getAssignedTo(score: number): string {
 }
 
 function getResponseTime(score: number): string {
-  if (score >= 100) return "1 hour";
-  if (score >= 50) return "4 hours";
-  return "24 hours";
+  if (score >= 80) return "2 hours";   // Critical: 80-100
+  if (score >= 60) return "6 hours";   // High: 60-79
+  if (score >= 40) return "24 hours";  // Standard: 40-59
+  return "72 hours";                    // Low: 0-39
 }
 
 function getPriorityLevel(score: number): string {
@@ -509,6 +510,15 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
   const priorityProvinces = ['Alberta', 'British Columbia', 'Ontario', 'Northwest Territories'];
   if (priorityProvinces.includes(data.constructionProvince || '')) {
     tags.push('Priority-Province');
+  }
+
+  // ESG Tag Debug - helps identify why tag might not be added
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 [ESG TAG DEBUG]:', {
+      buildCanadaEligible: data.buildCanadaEligible,
+      type: typeof data.buildCanadaEligible,
+      willAddTag: data.buildCanadaEligible === 'Yes'
+    });
   }
 
   if (data.buildCanadaEligible === 'Yes') {
