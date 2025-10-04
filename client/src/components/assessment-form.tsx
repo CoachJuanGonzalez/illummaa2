@@ -470,8 +470,11 @@ const IllummaaAssessmentForm = () => {
     const checked = (e.target as HTMLInputElement).checked;
     
     const rawValue = type === 'checkbox' ? checked : value;
-    // Don't sanitize company field here - it has its own handler that preserves spaces
-    const sanitizedValue = type === 'checkbox' ? rawValue : (name === 'company' ? value : sanitizeInput(value));
+    // Preserve spaces in name fields during typing (sanitization happens on backend)
+    // This allows multi-part names like "Mary Ann", "Van Der Berg", etc.
+    const nameFields = ['firstName', 'lastName', 'company'];
+    const sanitizedValue = type === 'checkbox' ? rawValue :
+      (nameFields.includes(name) ? value : sanitizeInput(value));
     
     // Handle readiness field changes
     if (name === 'readiness') {
