@@ -551,12 +551,12 @@ const IllummaaAssessmentForm = () => {
         calculatePriorityScoreWith({ ...formData, unitCount: sanitized });
       }
     }
-    // Handle SMS consent
-    else if (name === 'consentSMS' && checked) {
+    // Handle SMS consent (both checking and unchecking)
+    else if (name === 'consentSMS') {
       setFormData(prev => ({
         ...prev,
-        consentSMS: true,
-        consentSMSTimestamp: new Date().toISOString()
+        consentSMS: checked,
+        consentSMSTimestamp: checked ? new Date().toISOString() : undefined
       }));
     }
     // Handle company name - preserve spaces while maintaining security
