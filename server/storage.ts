@@ -401,10 +401,9 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     government_programs: formData.governmentPrograms || "",
     project_description: sanitizeInput(formData.projectDescription || ""),
 
-    // Scoring & Routing Fields (5 including priority_level)
+    // Scoring & Routing Fields (4 - removed redundant priority_level from webhook)
     ai_priority_score: priorityData.score,
     customer_tier: customerTier,
-    priority_level: priorityData.priorityLevel, // KEPT FOR PHASE 1
     build_canada_eligible: buildCanadaEligible ? "Yes" : "No",
     tags_array: tags,
 
@@ -494,10 +493,8 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
   else if (units >= 50) tags.push('Preferred');
   else if (units >= 10) tags.push('Pioneer');
 
-  // 2. Priority tag (using existing priorityLevel parameter)
-  if (priorityLevel === 'HIGH') tags.push('Priority-High');
-  else if (priorityLevel === 'MEDIUM') tags.push('Priority-Medium');
-  else tags.push('Priority-Low');
+  // 2. Priority tags removed - use ai_priority_score in GHL workflows instead
+  // (priorityLevel parameter kept for backward compatibility but not used for tags)
 
   // 3. Conditional tags
   if (data.developerType?.includes('Indigenous')) {
