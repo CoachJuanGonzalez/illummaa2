@@ -145,7 +145,7 @@ export const assessmentSchema = z.object({
     "Non-Profit Housing Developer",
     "Private Developer (Medium Projects)",
     "Individual/Family Developer"
-  ]),
+  ]).optional(),
   
   governmentPrograms: z.enum([
     "Participating in government programs",
@@ -213,13 +213,8 @@ export const assessmentSchema = z.object({
       });
     }
     
-    if (!data.developerType) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['developerType'],
-        message: 'Please select a developer type'
-      });
-    }
+    // Developer type is optional - backend handles missing values with fallback to null/empty string
+    // Removed required validation to fix "Validation error: Validation failed" bug after form submission
     
     if (!data.governmentPrograms) {
       ctx.addIssue({
