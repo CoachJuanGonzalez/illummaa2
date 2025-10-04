@@ -167,11 +167,17 @@ export default function FloorPlanViewer({
                   <TabsContent key={plan.id} value={plan.id} className="mt-0">
                     <div className="flex justify-center items-center min-h-[400px] bg-gray-50 rounded-lg overflow-auto">
                       {plan.pdfUrl ? (
-                        <a 
-                          href={plan.pdfUrl} 
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <div 
+                          onClick={() => window.open(plan.pdfUrl, '_blank', 'noopener,noreferrer')}
                           className="block w-full bg-gradient-to-br from-green-50 to-blue-50 rounded-lg p-12 hover:shadow-xl transition-all cursor-pointer border-2 border-green-200 hover:border-green-300 text-center"
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              window.open(plan.pdfUrl, '_blank', 'noopener,noreferrer');
+                            }
+                          }}
                         >
                           <div className="text-6xl mb-4">📐</div>
                           <h3 className="text-2xl font-bold text-gray-900 mb-2">View Technical Floor Plan</h3>
@@ -179,7 +185,7 @@ export default function FloorPlanViewer({
                           <span className="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
                             Open Floor Plan PDF
                           </span>
-                        </a>
+                        </div>
                       ) : plan.imageUrl ? (
                         <div
                           className="transition-transform duration-300"
