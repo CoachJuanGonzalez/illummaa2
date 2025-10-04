@@ -194,6 +194,7 @@ export async function validateFormData(rawData: any): Promise<{
       // B2B-only: Remove explorer-specific fields for pure B2B focus
       agentSupport: sanitizeOptionalEnum(rawData.agentSupport),
       consentMarketing: Boolean(rawData.consentMarketing),
+      consentSMS: Boolean(rawData.consentSMS), // A2P 10DLC SMS consent
       marketingConsent: Boolean(rawData.marketingConsent), // ENTERPRISE SECURITY: Add optional marketing consent to validation
       ageVerification: Boolean(rawData.ageVerification),
       projectDescriptionText: (rawData.projectDescriptionText || rawData.projectDescription) ? 
