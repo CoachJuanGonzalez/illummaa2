@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import compactModelImage from "@assets/onebr_1759539133138.png";
 import familyModelImage from "@assets/twobr_1759539819723.png";
-import executiveModelImage from "@assets/3bedroom-1_1757868718224.jpg";
+import executiveModelImage from "@assets/3brs_1759540307580.png";
 import ImagePlaceholder from "./image-placeholder";
 
 export default function ModelsShowcase() {
