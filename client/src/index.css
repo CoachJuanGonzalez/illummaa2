@@ -1082,16 +1082,9 @@
   /* Balance text-to-image ratio for optimal impact */
   .hero-layout-proportions {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     position: relative;
-  }
-  
-  /* Desktop: Move content to top (sky area) */
-  @media (min-width: 768px) {
-    .hero-layout-proportions {
-      align-items: flex-start;
-    }
   }
   
   .hero-content-width {
