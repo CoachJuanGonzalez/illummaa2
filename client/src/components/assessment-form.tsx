@@ -2155,11 +2155,10 @@ const IllummaaAssessmentForm = () => {
                       checked={formData.consentSMS || false}
                       onChange={handleInputChange}
                       className="mt-0.5 w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
-                      required
                       data-testid="checkbox-consent-sms"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Required for SMS compliance) <span className="text-red-500">*</span>
+                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Optional)
                     </span>
                   </label>
                   {errors.consentSMS && (
