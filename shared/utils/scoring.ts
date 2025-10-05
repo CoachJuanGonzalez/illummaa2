@@ -80,7 +80,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
   let tier = '';
   if (units >= 200) {
     tier = 'elite';
-  } else if (units >= 50 && units <= 200) {  // FIXED: Upper bound 199 → 200
+  } else if (units >= 50 && units <= 200) {  // Preferred: 50-199 units (200 assigned to Elite above)
     tier = 'preferred';
   } else if (units >= 10 && units <= 49) {
     tier = 'pioneer';
@@ -103,7 +103,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
       unitVolumeScore = 15;
       score += 15;
       break;
-    case 'preferred':    // 50-200 units (FIXED: range corrected)
+    case 'preferred':    // 50-199 units
       unitVolumeScore = 40;  // FIXED: Changed from 30 to 40 per matrix
       score += 40;           // FIXED: Changed from 30 to 40 per matrix
       break;
@@ -187,7 +187,7 @@ export function calculatePriorityScore(data: AssessmentFormData | FrontendFormDa
 // Customer tier determination - 3 TIERS ONLY (B2B Partnership System)
 export function determineCustomerTier(units: number): 'pioneer' | 'preferred' | 'elite' {
   if (units >= 200) return 'elite';
-  if (units >= 50 && units <= 200) return 'preferred';  // FIXED: Upper bound 199 → 200
+  if (units >= 50 && units <= 200) return 'preferred';  // Preferred: 50-199 units (200 assigned to Elite above)
   if (units >= 10 && units <= 49) return 'pioneer';
 
   // Should not reach here - redirect to Remax

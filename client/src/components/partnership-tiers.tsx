@@ -73,7 +73,7 @@ export default function PartnershipTiers() {
     },
     {
       name: "Preferred",
-      units: "50-200 units",
+      units: "50-199 units",
       icon: <Star className="text-primary" size={32} />,
       iconBg: "bg-primary/10",
       accentColor: "border-primary",
