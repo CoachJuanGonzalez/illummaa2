@@ -167,14 +167,14 @@
   
   @media (min-width: 768px) and (max-width: 1023px) {
     .hero-content-spacing {
-      padding-top: clamp(4rem, 22vh, 8rem);
+      padding-top: clamp(3rem, 12vh, 7rem);
       padding-bottom: 80px;
     }
   }
   
   @media (min-width: 1024px) {
     .hero-content-spacing {
-      padding-top: clamp(5rem, 28vh, 9rem);
+      padding-top: clamp(3rem, 8vh, 6rem);
       padding-bottom: 80px;
     }
   }
