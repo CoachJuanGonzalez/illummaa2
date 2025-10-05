@@ -504,25 +504,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Enhanced SMS consent validation
-      
-      // More flexible SMS consent validation (handle both string and boolean)
-      const consentSMSValue = String(req.body.consentSMS).toLowerCase();
-      if (!req.body.consentSMS || (consentSMSValue !== 'true' && req.body.consentSMS !== true)) {
-        console.warn('SMS consent security validation failed:', {
-          ip: req.ip,
-          consentSMS: req.body.consentSMS,
-          consentSMSValue,
-          type: typeof req.body.consentSMS,
-          timestamp: new Date().toISOString()
-        });
-        
-        return res.status(400).json({ 
-          success: false, 
-          error: 'SMS consent validation failed',
-          message: 'SMS consent security validation failed'
-        });
-      }
+      // SMS consent is OPTIONAL (A2P 10DLC compliance - must be opt-in, not forced)
+      // Only validate timestamp if consent is provided
 
       // Validate SMS consent timestamp for security
       if (req.body.consentSMSTimestamp) {

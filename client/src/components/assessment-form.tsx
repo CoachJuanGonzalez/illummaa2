@@ -1018,9 +1018,7 @@ const IllummaaAssessmentForm = () => {
         if (!formData.consentCommunications) {
           newErrors.consentCommunications = 'Communication consent is required by CASL';
         }
-        if (!formData.consentSMS) {
-          newErrors.consentSMS = 'SMS consent is required for text messaging';
-        }
+        // SMS consent is OPTIONAL (A2P 10DLC compliance - must be opt-in, not forced)
         if (!formData.privacyPolicy) {
           newErrors.privacyPolicy = 'Privacy policy acceptance is required by PIPEDA';
         }
