@@ -2140,7 +2140,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-communications"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to CASL compliance (Required for SMS) <span className="text-red-500">*</span>
+                      I consent to receive communications from ILLUMMAA (Required by CASL) <span className="text-red-500">*</span>
                     </span>
                   </label>
                   {errors.consentCommunications && (

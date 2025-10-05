@@ -126,6 +126,8 @@ function mapFrontendToBackend(frontendData: any): any {
     // ENTERPRISE SECURITY: Correct separation of required CASL consent from optional marketing consent
     // Required CASL consent (always true for form submissions)
     consentMarketing: Boolean(frontendData.consentCommunications === true || frontendData.consentCommunications === 'true'),
+    // Optional SMS consent (A2P 10DLC compliance - opt-in only)
+    consentSMS: Boolean(frontendData.consentSMS === true || frontendData.consentSMS === 'true'),
     // Optional marketing consent (only when user explicitly opts in)
     marketingConsent: Boolean(frontendData.marketingConsent === true || frontendData.marketingConsent === 'true'),
     
