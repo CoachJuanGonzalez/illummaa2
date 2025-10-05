@@ -478,13 +478,16 @@ const IllummaaAssessmentForm = () => {
     
     // Handle readiness field changes
     if (name === 'readiness') {
-      // Immediate redirect for market researchers - NO confirmation dialog
+      // Open Remax.ca in new tab for market researchers (like "Explore Modular Resources" button)
       if (value === 'researching') {
         if (process.env.NODE_ENV === 'development') {
-          console.log('Market researcher detected - redirecting to Remax.ca');
+          console.log('Market researcher detected - opening Remax.ca in new tab');
         }
-        window.location.href = 'https://www.remax.ca/';
-        return; // Stop processing
+        const newWindow = window.open('https://www.remax.ca', '_blank');
+        if (newWindow) {
+          newWindow.opener = null; // Security: prevent new tab from accessing parent window
+        }
+        // Don't return - allow user to change selection and continue with form
       }
       setFormData(prev => ({
         ...prev,
@@ -922,19 +925,18 @@ const IllummaaAssessmentForm = () => {
           } else if (unitCount > 1000000) {
             newErrors.unitCount = 'Please verify this number. For projects over 1 million units, contact us directly at partnerships@illummaa.com';
           } else if (unitCount > 0 && unitCount < 10) {
-            const confirmRedirect = window.confirm(
-              "Projects with fewer than 10 units are better suited for residential services. " +
-              "Would you like to be redirected to Remax.ca for residential options?"
-            );
-            if (confirmRedirect) {
-              window.location.href = 'https://www.remax.ca/';
-              return false;
-            } else {
-              if (process.env.NODE_ENV === 'development') {
-                console.log('User declined redirect for <10 units, continuing with form');
-              }
-              newErrors.unitCount = 'Minimum 10 units required for B2B partnerships';
+            // Open Remax.ca in new tab for <10 units (like "Explore Modular Resources" button)
+            const newWindow = window.open('https://www.remax.ca', '_blank');
+            if (newWindow) {
+              newWindow.opener = null; // Security: prevent new tab from accessing parent window
             }
+
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Units < 10: Opened Remax.ca in new tab, showing validation error');
+            }
+
+            // Still show validation error to prevent B2B form submission with <10 units
+            newErrors.unitCount = 'Minimum 10 units required for B2B partnerships. Remax.ca (opened in new tab) can help with residential projects.';
           }
         }
         break;
@@ -1035,20 +1037,22 @@ const IllummaaAssessmentForm = () => {
   // Navigation
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      // Check for low unit count and offer redirect option
+      // Open Remax.ca in new tab for low unit count (<10 units)
       if (currentStep === 1 && formData.unitCount) {
         const units = parseInt(formData.unitCount);
         if (units > 0 && units < 10) {
-          const confirmRedirect = window.confirm(
-            "Projects with fewer than 10 units are better suited for residential services. " +
-            "Would you like to be redirected to Remax.ca for residential options?"
-          );
-
-          if (confirmRedirect) {
-            window.location.href = 'https://www.remax.ca/';
-            return; // Stop form progression
+          // Open Remax.ca in new tab (like "Explore Modular Resources" button)
+          const newWindow = window.open('https://www.remax.ca', '_blank');
+          if (newWindow) {
+            newWindow.opener = null; // Security: prevent new tab from accessing parent window
           }
-          // If declined, proceed with next step
+
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Units < 10: Opened Remax.ca in new tab, user can continue form if desired');
+          }
+
+          // Note: Form will show validation error on next step attempt
+          // This allows user to explore Remax.ca while keeping form open
         }
       }
       
@@ -1611,7 +1615,7 @@ const IllummaaAssessmentForm = () => {
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
                           <p className="text-sm text-yellow-800">
                             <strong>Note:</strong> B2B partnerships typically start at 10 units. For residential projects under 10 units,
-                            you may want to visit <a href="https://remax.ca" className="underline">Remax.ca</a> for better assistance.
+                            you may want to visit <a href="https://remax.ca" target="_blank" rel="noopener noreferrer" className="underline">Remax.ca</a> for better assistance.
                           </p>
                         </div>
                       )}
