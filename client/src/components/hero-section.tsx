@@ -76,13 +76,23 @@ export default function HeroSection() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="hero-content-width hero-content-spacing">
-          <div>
-            <h1 className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4" data-testid="heading-hero-title" style={{color: '#000000', fontWeight: 800}}>
-              Building Homes, Strengthening Communities
-            </h1>
-            <p className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8" data-testid="text-hero-subtitle" style={{color: '#000000'}}>
-              Your Partner in Community-First Housing Solutions
-            </p>
+          <div className="hero-text-contrast-overlay">
+            <div>
+              <h1
+                className="font-display hero-title-typography hero-title-responsive hero-title-enhanced hero-text-spacing text-gray-900 mb-4"
+                data-testid="heading-hero-title"
+                style={{color: '#1a1a1a', fontWeight: 800}}
+              >
+                Building Homes, Strengthening Communities
+              </h1>
+              <p
+                className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8"
+                data-testid="text-hero-subtitle"
+                style={{color: '#2d3748', fontWeight: 500}}
+              >
+                Your Partner in Community-First Housing Solutions
+              </p>
+            </div>
           </div>
 
           {/* Enhanced CTAs with improved hierarchy */}

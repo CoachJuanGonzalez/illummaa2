@@ -46,31 +46,30 @@ export default function Footer() {
                 data-testid="footer-company-name"
               />
             </div>
-            <p className="text-base mb-8 max-w-lg leading-relaxed" style={{color: '#000000'}} data-testid="footer-company-description">
+            <p className="text-base mb-8 max-w-lg leading-relaxed" style={{color: '#1a202c'}} data-testid="footer-company-description">
               Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.
             </p>
             <div className="flex space-x-6" data-testid="social-links">
               <a href="#" onClick={() => trackSocialClick('LinkedIn')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-linkedin" aria-label="LinkedIn" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
-                <Linkedin style={{color: '#000000'}} size={22} />
+                <Linkedin style={{color: '#1a202c'}} size={22} />
               </a>
               <a href="#" onClick={() => trackSocialClick('Twitter')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-twitter" aria-label="Twitter" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
-                <Twitter style={{color: '#000000'}} size={22} />
+                <Twitter style={{color: '#1a202c'}} size={22} />
               </a>
               <a href="#" onClick={() => trackSocialClick('Instagram')} className="min-w-[48px] min-h-[48px] bg-white/10 rounded-lg flex items-center justify-center hover:bg-primary/20 hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2" data-testid="link-instagram" aria-label="Instagram" style={{backgroundColor: 'rgba(0,0,0,0.1)'}}>
-                <Instagram style={{color: '#000000'}} size={22} />
+                <Instagram style={{color: '#1a202c'}} size={22} />
               </a>
             </div>
           </div>
           
           {/* Quick Links */}
           <div data-testid="section-quick-links">
-            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#000000'}} data-testid="heading-quick-links">Quick Links</h3>
+            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-quick-links">Quick Links</h3>
             <ul className="space-y-4">
               <li>
                 <button 
                   onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
-                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  style={{color: '#000000'}}
+                  className="footer-link-enhanced text-left w-full rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   data-testid="link-footer-partnership-application"
                 >
                   Partnership Application
@@ -79,8 +78,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("why", "Why ILLUMMAA")} 
-                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  style={{color: '#000000'}}
+                  className="footer-link-enhanced text-left w-full rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   data-testid="link-footer-why"
                 >
                   Why ILLUMMAA
@@ -89,8 +87,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("models", "Models")} 
-                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  style={{color: '#000000'}}
+                  className="footer-link-enhanced text-left w-full rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   data-testid="link-footer-models"
                 >
                   Models
@@ -99,8 +96,7 @@ export default function Footer() {
               <li>
                 <button 
                   onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
-                  className="transition-colors text-left min-h-[44px] py-2 px-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2"
-                  style={{color: '#000000'}}
+                  className="footer-link-enhanced text-left w-full rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   data-testid="link-footer-partnership"
                 >
                   Partnership
@@ -111,26 +107,26 @@ export default function Footer() {
           
           {/* Contact */}
           <div data-testid="section-contact-info">
-            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#000000'}} data-testid="heading-contact">Contact</h3>
+            <h3 className="font-semibold text-lg mb-8 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-contact">Contact</h3>
             <ul className="space-y-5">
-              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-phone">
-                <Phone className="mr-2" size={16} style={{color: '#000000'}} />
+              <li className="flex items-center" style={{color: '#1a202c'}} data-testid="contact-phone">
+                <Phone className="mr-2" size={16} style={{color: '#1a202c'}} />
                 (514) 532-1733
               </li>
-              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-email">
-                <Mail className="mr-2" size={16} style={{color: '#000000'}} />
-                <a href="mailto:info@illummaa.com" className="transition-colors" style={{color: '#000000'}}>
+              <li className="flex items-center" style={{color: '#1a202c'}} data-testid="contact-email">
+                <Mail className="mr-2" size={16} style={{color: '#1a202c'}} />
+                <a href="mailto:info@illummaa.com" className="transition-colors" style={{color: '#1a202c'}}>
                   info@illummaa.com
                 </a>
               </li>
-              <li className="flex items-center" style={{color: '#000000'}} data-testid="contact-location">
-                <MapPin className="mr-2" size={16} style={{color: '#000000'}} />
+              <li className="flex items-center" style={{color: '#1a202c'}} data-testid="contact-location">
+                <MapPin className="mr-2" size={16} style={{color: '#1a202c'}} />
                 <a 
                   href="https://maps.google.com/?q=17550+2nd+Floor+Trans-Canada+Hwy,+Kirkland,+Quebec,+H9J+3A3" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="transition-colors"
-                  style={{color: '#000000'}}
+                  style={{color: '#1a202c'}}
                 >
                   17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3
                 </a>
@@ -140,12 +136,12 @@ export default function Footer() {
         </div>
         
         <div className="border-t mt-16 pt-12 flex flex-col md:flex-row justify-between items-center" style={{borderColor: 'rgba(0,0,0,0.2)'}} data-testid="footer-bottom">
-          <p className="text-sm mb-4 md:mb-0" style={{color: '#000000'}} data-testid="copyright">
+          <p className="text-sm mb-4 md:mb-0" style={{color: '#1a202c'}} data-testid="copyright">
             &copy; 2025 ILLUMMAA. All rights reserved.
           </p>
           <div className="flex space-x-6 text-sm">
-            <a href="#" className="transition-colors" style={{color: '#000000'}}>Privacy Policy</a>
-            <a href="#" className="transition-colors" style={{color: '#000000'}}>Terms of Service</a>
+            <a href="#" className="transition-colors" style={{color: '#1a202c'}}>Privacy Policy</a>
+            <a href="#" className="transition-colors" style={{color: '#1a202c'}}>Terms of Service</a>
           </div>
         </div>
       </div>
