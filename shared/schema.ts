@@ -190,6 +190,11 @@ export const assessmentSchema = z.object({
       message: "LEGAL REQUIREMENT: Age verification (18+) is required. Only adults can provide valid consent under Canadian law."
     }),
   
+  privacyPolicy: z.boolean()
+    .refine((val) => val === true, {
+      message: "LEGAL REQUIREMENT: You must accept the Privacy Policy to continue. This is required under Canadian privacy law (PIPEDA)."
+    }),
+  
   projectDescriptionText: z.string()
     .max(1000, "Project description must be less than 1000 characters")
     .optional(),
