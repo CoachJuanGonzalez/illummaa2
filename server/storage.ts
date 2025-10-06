@@ -416,7 +416,7 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     // Consent fields
     ...(formData.consentMarketing && {
       casl_consent: true,
-      consent_timestamp: new Date().toISOString()
+      casl_timestamp: new Date().toISOString()
     }),
     ...(formData.consentSMS && {
       sms_consent: true,
