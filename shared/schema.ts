@@ -24,6 +24,7 @@ export const assessmentSubmissions = pgTable("assessment_submissions", {
   consentSMS: boolean("consent_sms").default(false),
   marketingConsent: boolean("marketing_consent").default(false),
   ageVerification: boolean("age_verification").default(false),
+  privacyPolicy: boolean("privacy_policy").default(false),
   projectDescription: text("project_description"),
   priorityScore: integer("priority_score"),
   customerTier: text("customer_tier").notNull(),
