@@ -197,6 +197,7 @@ export async function validateFormData(rawData: any): Promise<{
       consentSMS: Boolean(rawData.consentSMS), // A2P 10DLC SMS consent
       marketingConsent: Boolean(rawData.marketingConsent), // ENTERPRISE SECURITY: Add optional marketing consent to validation
       ageVerification: Boolean(rawData.ageVerification),
+      privacyPolicy: Boolean(rawData.privacyPolicy),
       projectDescriptionText: (rawData.projectDescriptionText || rawData.projectDescription) ? 
         DOMPurify.sanitize((rawData.projectDescriptionText || rawData.projectDescription)).trim().slice(0, 1000) : 
         undefined,
