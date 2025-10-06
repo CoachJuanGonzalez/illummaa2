@@ -54,6 +54,7 @@ export class MemStorage implements IStorage {
       consentSMS: insertAssessment.consentSMS ?? false,
       marketingConsent: insertAssessment.marketingConsent ?? false,
       ageVerification: insertAssessment.ageVerification ?? false,
+      privacyPolicy: insertAssessment.privacyPolicy ?? false,
       tags: insertAssessment.tags ?? null,
       decisionTimeline: insertAssessment.decisionTimeline,
       constructionProvince: insertAssessment.constructionProvince,
