@@ -426,6 +426,16 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     ...(formData.marketingConsent && {
       marketing_consent: true,
       marketing_timestamp: new Date().toISOString()
+    }),
+
+    // Legal consent fields (Privacy Policy & Age Verification)
+    ...(formData.privacyPolicy && {
+      privacy_policy_accepted: true,
+      privacy_policy_timestamp: new Date().toISOString()
+    }),
+    ...(formData.ageVerification && {
+      age_verification18plus_consent: true,
+      age_verification18plus_timestamp: new Date().toISOString()
     })
   };
 
