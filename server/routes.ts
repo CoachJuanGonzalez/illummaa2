@@ -139,8 +139,8 @@ function mapFrontendToBackend(frontendData: any): any {
     // Age verification (direct mapping)
     ageVerification: frontendData.ageVerification,
     
-    // Privacy Policy acceptance (direct mapping - handles both string and boolean)
-    privacyPolicy: frontendData.privacyPolicyConsent === 'true' || frontendData.privacyPolicy === true,
+    // Privacy Policy acceptance (returns true if accepted, undefined if missing - Zod refinement will reject undefined)
+    privacyPolicy: (frontendData.privacyPolicyConsent === true || frontendData.privacyPolicyConsent === 'true' || frontendData.privacyPolicy === true) ? true : undefined,
     
     // Optional fields that may not be present (convert empty strings to undefined)
     developerType: emptyToUndefined(frontendData.developerType ? normalizeDeveloperType(frontendData.developerType) : frontendData.developerType),
