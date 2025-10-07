@@ -546,6 +546,10 @@ function generateCustomerTags(data: AssessmentFormData, customerTier: string, pr
   if (data.consentSMS === true) tags.push('SMS-Opted-In');
   if (data.marketingConsent === true) tags.push('Marketing-Opted-In');
 
+  // Legal compliance tags (Privacy Policy & Age Verification)
+  if (data.privacyPolicy === true) tags.push('Privacy-Verified');
+  if (data.ageVerification === true) tags.push('Age-Verified');
+
   // Remove legacy tags
   const legacyTags = new Set([
     'optimized-tags', 'agent-yes', 'no-agent', 'no-direct',
