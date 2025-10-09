@@ -1962,26 +1962,7 @@ button > .icon,
   }
 }
 
-/* Tablet navigation optimization */
-@media (min-width: 640px) and (max-width: 1023px) {
-  .nav-desktop button {
-    font-size: 14px;
-    padding: 8px 12px;
-    white-space: nowrap;
-  }
-}
-
-/* Ensure all nav items fit on tablet */
-@media (min-width: 640px) and (max-width: 768px) {
-  .nav-desktop {
-    gap: 8px;
-  }
-
-  .nav-desktop button {
-    font-size: 13px;
-    padding: 8px 10px;
-  }
-}
+/* Tablet navigation optimization - removed to preserve original spacing */
 
 } /* Close @layer components */
 
