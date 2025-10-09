@@ -945,9 +945,13 @@ const IllummaaAssessmentForm = () => {
         if (!formData.readiness) {
           newErrors.readiness = 'Please select your journey stage';
         }
-        // Skip all validation if researching - they'll be redirected
+        // Block progression if researching - they should only contact us via email
         if (formData.readiness === 'researching') {
-          return true;
+          // Email client opens automatically when they select this option
+          // Don't allow form progression - set error to prevent advancing
+          newErrors.readiness = 'For market research inquiries, please contact us via email. The email client should have opened automatically.';
+          setErrors(newErrors);
+          return false; // BLOCK progression to Step 2
         }
         if (!formData.unitCount || formData.unitCount === '') {
           newErrors.unitCount = 'Please enter the number of units needed';
