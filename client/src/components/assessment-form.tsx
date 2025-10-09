@@ -515,7 +515,10 @@ const IllummaaAssessmentForm = () => {
         if (process.env.NODE_ENV === 'development') {
           console.log('Market researcher detected - opening email client');
         }
-        window.location.href = 'mailto:info@illummaa.com';
+        // Use setTimeout to ensure mailto: executes properly
+        setTimeout(() => {
+          window.location.href = 'mailto:info@illummaa.com';
+        }, 100);
         // Don't return - allow user to change selection and continue with form
       }
       setFormData(prev => ({
@@ -954,8 +957,10 @@ const IllummaaAssessmentForm = () => {
           } else if (unitCount > 1000000) {
             newErrors.unitCount = 'Please verify this number. For projects over 1 million units, contact us directly at partnerships@illummaa.com';
           } else if (unitCount > 0 && unitCount < 10) {
-            // Open email client for <10 units to contact ILLUMMAA
-            window.location.href = 'mailto:info@illummaa.com';
+            // Open email client for <10 units to contact ILLUMMAA (use setTimeout to ensure it executes)
+            setTimeout(() => {
+              window.location.href = 'mailto:info@illummaa.com';
+            }, 100);
 
             if (process.env.NODE_ENV === 'development') {
               console.log('Units < 10: Opening email client, showing validation error');
@@ -1065,8 +1070,10 @@ const IllummaaAssessmentForm = () => {
       if (currentStep === 1 && formData.unitCount) {
         const units = parseInt(formData.unitCount);
         if (units > 0 && units < 10) {
-          // Open email client to contact ILLUMMAA
-          window.location.href = 'mailto:info@illummaa.com';
+          // Open email client to contact ILLUMMAA (use setTimeout to ensure it executes)
+          setTimeout(() => {
+            window.location.href = 'mailto:info@illummaa.com';
+          }, 100);
 
           if (process.env.NODE_ENV === 'development') {
             console.log('Units < 10: Opening email client, user can continue form if desired');
