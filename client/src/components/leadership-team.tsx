@@ -91,7 +91,7 @@ export default function LeadershipTeam() {
             Leadership Team
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-leadership-subtitle">
-            Experienced executives driving Canada's modular construction transformation
+            Building the Future of Canadian Housing
           </p>
         </div>
         
