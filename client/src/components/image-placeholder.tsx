@@ -16,48 +16,36 @@ export default function ImagePlaceholder({
   const getIcon = () => {
     switch (type) {
       case "photo":
-        return <Camera className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-community-primary/30 transition-all" />;
+        return <Camera className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 text-community-primary/40 transition-all hover:scale-110 hover:text-community-primary/60 duration-500" />;
       case "floorplan":
-        return <ImageOff className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-community-accent/30 transition-all" />;
+        return <ImageOff className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 text-community-accent/40 transition-all hover:scale-110 hover:text-community-accent/60 duration-500" />;
       default:
-        return <ImageOff className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-community-primary/30 transition-all" />;
+        return <ImageOff className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 text-community-primary/40 transition-all hover:scale-110 hover:text-community-primary/60 duration-500" />;
     }
   };
 
   return (
     <div
-      className={`relative w-full bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden ${className}`}
-      style={{ minHeight: "280px" }}
+      className={`w-full flex flex-col items-center justify-center text-center py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 md:px-8 ${className}`}
     >
-      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 text-center">
-        <div className="mb-3 sm:mb-4 md:mb-6 transform transition-transform hover:scale-105 duration-300">
-          {getIcon()}
-        </div>
-        
-        <h3 className="font-semibold text-base sm:text-lg md:text-xl text-gray-800 mb-2 px-2 max-w-xs sm:max-w-sm md:max-w-md">
-          {title}
-        </h3>
-        
-        <p className="text-xs sm:text-sm md:text-base text-gray-600 max-w-[280px] sm:max-w-sm md:max-w-md px-2 leading-relaxed">
-          {subtitle}
-        </p>
-        
-        <div className="mt-4 sm:mt-5 md:mt-6 inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-community-primary/5 border border-community-primary/20 rounded-full backdrop-blur-sm transition-all hover:bg-community-primary/10">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-community-primary animate-pulse"></div>
-          <span className="text-[10px] sm:text-xs font-medium text-community-primary">
-            In Production
-          </span>
-        </div>
+      <div className="mb-4 sm:mb-6 md:mb-8 transform transition-all duration-500">
+        {getIcon()}
       </div>
-
-      <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/20 pointer-events-none"></div>
       
-      <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
-        style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,0,0,0.15) 1px, transparent 0)',
-          backgroundSize: '32px 32px'
-        }}
-      ></div>
+      <h3 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-900 mb-3 sm:mb-4 max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl">
+        {title}
+      </h3>
+      
+      <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-[280px] sm:max-w-md md:max-w-lg leading-relaxed mb-6 sm:mb-8">
+        {subtitle}
+      </p>
+      
+      <div className="inline-flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 bg-community-primary/10 border-2 border-community-primary/30 rounded-full transition-all hover:bg-community-primary/20 hover:border-community-primary/50 hover:scale-105 duration-300">
+        <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-community-primary animate-pulse"></div>
+        <span className="text-xs sm:text-sm md:text-base font-semibold text-community-primary">
+          In Production
+        </span>
+      </div>
     </div>
   );
 }
