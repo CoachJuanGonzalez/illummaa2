@@ -3,24 +3,24 @@ import { User } from "lucide-react";
 export default function LeadershipTeam() {
   const executives = [
     {
-      name: "Baillargeon-Kemener Family Office",
+      name: "Baillargeon-Kemener Office",
       title: "Chairman",
       category: "Leadership"
     },
     {
       name: "Howard Smolar",
-      title: "Operating Manager", 
+      title: "Managing Director", 
       category: "Operations"
     },
     {
       name: "Marvin Garellek",
-      title: "Major Accounts and Business Development",
-      category: "Business Development"
+      title: "Vice-President of Sales and Investments",
+      category: "Finance"
     },
     {
-      name: "Juan Grey",
-      title: "Chief Vision & Expansion Officer",
-      category: "Brand & Creative Direction"
+      name: "Dan Hatahat",
+      title: "Corporate Development",
+      category: "Business Development"
     },
     {
       name: "Ian Lajoie",
