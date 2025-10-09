@@ -338,7 +338,16 @@ const IllummaaAssessmentForm = () => {
   // Debounce timer reference for real-time scoring
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   
+  // Refs to track current step and start time for abandonment tracking
+  const currentStepRef = useRef(currentStep);
+  const startTimeRef = useRef(startTime);
+  
   const TOTAL_STEPS = 5;
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+  }, [currentStep]);
 
   // Fetch CSRF token on mount and track assessment start
   useEffect(() => {
@@ -357,17 +366,23 @@ const IllummaaAssessmentForm = () => {
       }
     };
     fetchCSRFToken();
+  }, []);
 
-    // Track abandonment on page unload
+  // Track abandonment on page unload (runs only once on mount)
+  useEffect(() => {
     const handleBeforeUnload = () => {
       const stepNames = ['', 'readiness_units', 'project_details', 'contact_info', 'consent_review'];
-      const timeSpent = Math.round((Date.now() - startTime) / 1000);
-      analytics.trackAssessmentAbandonment(currentStep, stepNames[currentStep] || 'unknown', timeSpent);
+      const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
+      analytics.trackAssessmentAbandonment(
+        currentStepRef.current, 
+        stepNames[currentStepRef.current] || 'unknown', 
+        timeSpent
+      );
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [currentStep, startTime]);
+  }, []); // Empty deps - only runs once on mount
 
   // Auto-scroll to success message when form is completed
   useEffect(() => {

@@ -1,0 +1,72 @@
+2025-10-09 15:28:05.12
+[vite] hot updated: /src/index.css?v=fxWIEMaPkeLcqTj2VjsKO
+2025-10-09 15:28:07.29
+[vite] hot updated: /src/components/footer.tsx
+2025-10-09 15:28:07.29
+[vite] hot updated: /src/index.css?v=fxWIEMaPkeLcqTj2VjsKO
+2025-10-09 15:29:35.46
+GA4 Event:
+navigation_click
+{event_category: "Navigation", action: "header_nav_click", section_name: "Contact", navigation_type: "header", click_text: "Contact"…}
+2025-10-09 15:29:51.90
+GA4 Event:
+navigation_click
+{event_category: "Navigation", action: "header_nav_click", section_name: "Partnership Application", navigation_type: "header", click_text: "Partnership Application"…}
+2025-10-09 15:30:00.76
+GA4 Event:
+navigation_click
+{event_category: "Navigation", action: "logo_click", section_name: "Logo", navigation_type: "header", click_text: "ILLUMMAA Logo"…}
+2025-10-09 15:37:23.33
+[vite] hot updated: /src/components/footer.tsx
+2025-10-09 15:37:23.33
+[vite] hot updated: /src/index.css?v=fxWIEMaPkeLcqTj2VjsKO
+2025-10-09 15:38:33.72
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:35.49
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:45.16
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:45.91
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:46.41
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:47.46
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:48.71
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:49.05
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+2025-10-09 15:38:49.59
+GA4 Event:
+assessment_abandonment
+{event_category: "Assessment Form", action: "form_abandonment", step_number: 1, step_name: "readiness_units", abandonment_point: "readiness_units"…}
+event_category: "Assessment Form"
+action: "form_abandonment"
+step_number: 1
+step_name: "readiness_units"
+abandonment_point: "readiness_units"
+time_spent_seconds: 874
+completion_percentage: 20
+page_title: ""
+page_location: "https://f5055915-cfba-4a09-8c4a-6fea60b1b8b9-00-2y8fgq5lgxg73.worf.replit.dev/"
+page_path: "/"
+timestamp: "2025-10-09T19:38:49.663Z"
+user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+screen_resolution: "1920x1080"
+language: "en-US"
