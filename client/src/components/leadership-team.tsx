@@ -23,29 +23,29 @@ export default function LeadershipTeam() {
       category: "Business Development"
     },
     {
+      name: "Lili Zunhua",
+      title: "Director and Production Partner",
+      category: "Manufacturing and Sourcing"
+    },
+    {
       name: "Ian Lajoie",
-      title: "Global Business Development",
-      category: "Business Development"
+      title: "Global Partnership Development",
+      category: "Representation"
     },
     {
       name: "Choukhrate Rasoulev",
-      title: "Corporate Sales Manager",
+      title: "International Sales Director and Representation",
       category: "Business Development"
     },
     {
-      name: "Lili Zunhua",
-      title: "Quality and Production and International Relations",
-      category: "Operations"
+      name: "Juan Grey",
+      title: "Chief Vision & Expansion Officer",
+      category: "Brand & Creative Direction"
     },
     {
       name: "Coach Juan Gonzalez",
       title: "Chief Technology Officer & AI Innovation Strategist",
       category: "Innovation"
-    },
-    {
-      name: "Dan Hatahet",
-      title: "Business Development",
-      category: "Business Development"
     }
   ];
 
