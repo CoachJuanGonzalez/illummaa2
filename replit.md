@@ -45,11 +45,23 @@ Preferred communication style: Simple, everyday language.
 
 ### Styling and Design System
 - **Theming**: CSS custom properties for design tokens.
-- **Responsiveness**: Mobile-first design approach.
+- **Responsiveness**: Mobile-first design approach with comprehensive device support (320px to 2560px+).
 - **Components**: shadcn/ui library for accessible UI.
 - **Branding**: ILLUMMAA primary green, eco-green, sky-blue, sand-beige palette.
 - **Fonts**: Google Fonts (Inter, Montserrat, Architects Daughter, DM Sans, Fira Code, Geist Mono).
 - **Assets**: Unsplash images, custom SVG logo and iconography.
+- **Design Philosophy**: Modern frameless UI with subtle elevation, no heavy shadows or borders.
+- **Device Coverage**: 
+  - Extra Small Mobile (320px-374px): iPhone SE, older Android
+  - Small Mobile (375px-639px): iPhone 12/13/14, modern Android
+  - Tablet (768px-1023px): iPad, tablet landscape
+  - Desktop (1024px-1919px): Standard displays
+  - Large Display (1920px+): 4K monitors
+  - Ultra-Wide (2560px+): Ultra-wide displays
+  - Foldable Devices: Galaxy Z Fold, Surface Duo
+- **Accessibility**: WCAG AA compliance, touch-friendly (48px minimum targets), keyboard navigation support.
+- **Performance**: GPU acceleration, smooth scrolling, optimized for Retina/HiDPI displays.
+- **Future-Proof**: Container queries, aspect ratio locks, legacy browser fallbacks (Flexbox for no-grid support).
 
 ## External Dependencies
 
