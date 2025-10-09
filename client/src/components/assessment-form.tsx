@@ -341,6 +341,7 @@ const IllummaaAssessmentForm = () => {
   // Refs to track current step and start time for abandonment tracking
   const currentStepRef = useRef(currentStep);
   const startTimeRef = useRef(startTime);
+  const formSubmittedRef = useRef(false); // Track if form was successfully submitted
   
   const TOTAL_STEPS = 5;
 
@@ -370,14 +371,30 @@ const IllummaaAssessmentForm = () => {
 
   // Track abandonment on page unload (runs only once on mount)
   useEffect(() => {
-    const handleBeforeUnload = () => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Don't track abandonment if form was successfully submitted
+      if (formSubmittedRef.current) {
+        return;
+      }
+
+      // Don't track abandonment for mailto: links or other non-navigation events
+      // Check if there's a related target (indicates internal action, not true navigation)
+      const relatedTarget = (event as any).relatedTarget;
+      if (relatedTarget) {
+        return;
+      }
+
       const stepNames = ['', 'readiness_units', 'project_details', 'contact_info', 'consent_review'];
       const timeSpent = Math.round((Date.now() - startTimeRef.current) / 1000);
-      analytics.trackAssessmentAbandonment(
-        currentStepRef.current, 
-        stepNames[currentStepRef.current] || 'unknown', 
-        timeSpent
-      );
+      
+      // Only track if user spent meaningful time (>5 seconds) to avoid false positives
+      if (timeSpent > 5) {
+        analytics.trackAssessmentAbandonment(
+          currentStepRef.current, 
+          stepNames[currentStepRef.current] || 'unknown', 
+          timeSpent
+        );
+      }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -1374,6 +1391,8 @@ const IllummaaAssessmentForm = () => {
         buildCanadaEligible: formData.buildCanadaEligible === "Yes"
       });
       
+      // Mark form as successfully submitted to prevent false abandonment tracking
+      formSubmittedRef.current = true;
       setShowSuccess(true);
       
     } catch (error) {
