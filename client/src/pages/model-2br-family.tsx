@@ -84,7 +84,7 @@ export default function Model2BRFamily() {
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
               <div className="text-lg text-muted-foreground" data-testid="text-model-specs">
-                900 sq ft • Ideal for young families
+                1179 sq ft • Ideal for young families
               </div>
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
                 Starting from $169K CAD
@@ -188,7 +188,7 @@ export default function Model2BRFamily() {
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
               <img 
                 src={floorPlanImage} 
-                alt="2BR Family floor plan - 900 sq ft technical drawing" 
+                alt="2BR Family floor plan - 1179 sq ft technical drawing" 
                 className="model-floorplan-image max-w-4xl mx-auto cursor-pointer"
                 loading="lazy"
                 decoding="async"
@@ -200,7 +200,7 @@ export default function Model2BRFamily() {
               </p>
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
-              900 sq ft • 2 bedrooms • 2 bathrooms • Ideal for young families
+              1179 sq ft • 2 bedrooms • 2 bathrooms • Ideal for young families
             </p>
           </div>
         </div>
@@ -228,7 +228,7 @@ export default function Model2BRFamily() {
 
       <FloorPlanViewer
         modelName="2BR Family"
-        squareFootage="900 sq ft"
+        squareFootage="1179 sq ft"
         bedrooms="2"
         bathrooms="2"
         floorPlans={[

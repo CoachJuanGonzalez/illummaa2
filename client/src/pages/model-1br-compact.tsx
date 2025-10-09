@@ -84,7 +84,7 @@ export default function Model1BRCompact() {
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
               <div className="text-lg text-muted-foreground" data-testid="text-model-specs">
-                600 sq ft • Perfect for urban density
+                937 sq ft • Perfect for urban density
               </div>
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
                 Starting from $129K CAD
@@ -104,7 +104,7 @@ export default function Model1BRCompact() {
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
               <img 
                 src={floorPlanImage} 
-                alt="1BR Compact floor plan - 600 sq ft technical drawing" 
+                alt="1BR Compact floor plan - 937 sq ft technical drawing" 
                 className="model-floorplan-image max-w-4xl mx-auto cursor-pointer"
                 loading="lazy"
                 decoding="async"
@@ -116,7 +116,7 @@ export default function Model1BRCompact() {
               </p>
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
-              600 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
+              937 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
             </p>
           </div>
         </div>
@@ -222,7 +222,7 @@ export default function Model1BRCompact() {
 
       <FloorPlanViewer
         modelName="1BR Compact"
-        squareFootage="600 sq ft"
+        squareFootage="937 sq ft"
         bedrooms="1"
         bathrooms="1.5"
         floorPlans={[

@@ -83,7 +83,7 @@ export default function Model3BRExecutive() {
               3BR Executive
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6" data-testid="text-model-subtitle">
-              1200 sq ft • Premium family living • Volume pricing available for qualified developers
+              1360 sq ft • Premium family living • Volume pricing available for qualified developers
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
@@ -264,7 +264,7 @@ export default function Model3BRExecutive() {
 
       <FloorPlanViewer
         modelName="3BR Executive"
-        squareFootage="1200 sq ft"
+        squareFootage="1360 sq ft"
         bedrooms="3"
         bathrooms="2"
         floorPlans={[

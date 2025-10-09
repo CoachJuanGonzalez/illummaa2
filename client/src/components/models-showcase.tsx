@@ -15,7 +15,7 @@ export default function ModelsShowcase() {
   const models = [
     {
       title: "1BR Compact",
-      size: "600 sq ft",
+      size: "937 sq ft",
       description: "Perfect for urban density",
       price: "Starting from $129K CAD",
       image: compactModelImage,
@@ -28,7 +28,7 @@ export default function ModelsShowcase() {
     },
     {
       title: "2BR Family",
-      size: "900 sq ft",
+      size: "1179 sq ft",
       description: "Ideal for young families",
       price: "Starting from $169K CAD",
       image: familyModelImage,
@@ -41,7 +41,7 @@ export default function ModelsShowcase() {
     },
     {
       title: "3BR Executive",
-      size: "1200 sq ft",
+      size: "1360 sq ft",
       description: "Premium family living",
       price: "Starting from $199K CAD",
       image: executiveModelImage,
