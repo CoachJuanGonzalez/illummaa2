@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { analytics } from "@/lib/analytics";
 import compactModelImage from "@assets/onebr_1759539133138.png";
 import familyModelImage from "@assets/twobr_1759539819723.png";
 import executiveModelImage from "@assets/3brs_1759540307580.png";
@@ -10,6 +11,11 @@ export default function ModelsShowcase() {
   const getModelRoute = (index: number) => {
     const routes = ["/models/1br-compact", "/models/2br-family", "/models/3br-executive"];
     return routes[index];
+  };
+
+  const handleModelClick = (modelTitle: string, modelRoute: string) => {
+    // Track model navigation click
+    analytics.trackModelNavigation(modelTitle, 'homepage_models_section');
   };
 
   const models = [
@@ -111,7 +117,11 @@ export default function ModelsShowcase() {
                   ))}
                 </ul>
                 <Link href={getModelRoute(index)}>
-                  <Button className="w-full btn-primary" data-testid={`button-model-${index + 1}-details`}>
+                  <Button 
+                    className="w-full btn-primary" 
+                    data-testid={`button-model-${index + 1}-details`}
+                    onClick={() => handleModelClick(model.title, getModelRoute(index))}
+                  >
                     View Details
                   </Button>
                 </Link>

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import { analytics } from "@/lib/analytics";
 import floorPlanImage from "@assets/1br-compact-floorplan.jpg";
 
 const floorPlanPDF = "/attached_assets/1 BEDROOM 1.5 BATH_1759197665520.pdf";
@@ -23,10 +24,26 @@ export default function Model1BRCompact() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
+    
+    // Track model page view
+    analytics.trackModelPageView('1BR Compact', '/models/1br-compact');
   }, []);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {
+    // Track back navigation
+    analytics.trackNavigation({
+      action: 'back_to_models_click',
+      category: 'Model Navigation',
+      section_name: 'Back to Models',
+      navigation_type: 'model',
+      label: 'Back to Models from 1BR Compact',
+      custom_parameters: {
+        source_model: '1BR Compact',
+        target_section: 'models'
+      }
+    });
+    
     navigate('/');
     
     // Wait for navigation to complete, then scroll to models section

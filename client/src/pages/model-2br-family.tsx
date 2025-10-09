@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import { analytics } from "@/lib/analytics";
 import floorPlanImage from "@assets/2br-family-floorplan.jpg";
 
 const floorPlanPDF = "/attached_assets/2 BEDROOM PLAN_1759198774311.pdf";
@@ -23,10 +24,26 @@ export default function Model2BRFamily() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
+    
+    // Track model page view
+    analytics.trackModelPageView('2BR Family', '/models/2br-family');
   }, []);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {
+    // Track back navigation
+    analytics.trackNavigation({
+      action: 'back_to_models_click',
+      category: 'Model Navigation',
+      section_name: 'Back to Models',
+      navigation_type: 'model',
+      label: 'Back to Models from 2BR Family',
+      custom_parameters: {
+        source_model: '2BR Family',
+        target_section: 'models'
+      }
+    });
+    
     navigate('/');
     
     // Wait for navigation to complete, then scroll to models section

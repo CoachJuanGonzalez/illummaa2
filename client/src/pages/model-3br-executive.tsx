@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
+import { analytics } from "@/lib/analytics";
 import exteriorImage from "@assets/3bedroom-1_1757890999523.jpg";
 import interiorImage from "@assets/3bedroom-2_1757891004660.jpg";
 import floorPlanImage from "@assets/3bedroom-3_1757891009839.jpg";
@@ -26,10 +27,26 @@ export default function Model3BRExecutive() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
+    
+    // Track model page view
+    analytics.trackModelPageView('3BR Executive', '/models/3br-executive');
   }, []);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {
+    // Track back navigation
+    analytics.trackNavigation({
+      action: 'back_to_models_click',
+      category: 'Model Navigation',
+      section_name: 'Back to Models',
+      navigation_type: 'model',
+      label: 'Back to Models from 3BR Executive',
+      custom_parameters: {
+        source_model: '3BR Executive',
+        target_section: 'models'
+      }
+    });
+    
     navigate('/');
     
     // Wait for navigation to complete, then scroll to models section
