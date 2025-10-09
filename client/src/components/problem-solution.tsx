@@ -41,7 +41,7 @@ export default function ProblemSolution() {
                 title="ILLUMMAA Modular Construction"
                 subtitle="Professional photography of our factory production and on-site installation coming soon"
                 type="photo"
-                className="rounded-2xl shadow-2xl w-full min-h-[400px]"
+                className="rounded-xl sm:rounded-2xl w-full min-h-[300px] sm:min-h-[350px] md:min-h-[400px]"
               />
             </div>
           </div>
