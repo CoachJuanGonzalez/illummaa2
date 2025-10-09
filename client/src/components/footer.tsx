@@ -64,8 +64,8 @@ export default function Footer() {
           
           {/* Quick Links */}
           <div data-testid="section-quick-links">
-            <h3 className="font-semibold text-lg mb-5 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-quick-links">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="font-semibold text-lg mb-5 md:mb-4 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-quick-links">Quick Links</h3>
+            <ul className="space-y-2 md:space-y-1">
               <li>
                 <button 
                   onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
@@ -107,8 +107,8 @@ export default function Footer() {
           
           {/* Contact */}
           <div data-testid="section-contact-info">
-            <h3 className="font-semibold text-lg mb-5 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-contact">Contact</h3>
-            <ul className="space-y-3">
+            <h3 className="font-semibold text-lg mb-5 md:mb-4 tracking-wide" style={{color: '#1a202c'}} data-testid="heading-contact">Contact</h3>
+            <ul className="space-y-3 md:space-y-1.5">
               <li className="flex items-center" style={{color: '#1a202c'}} data-testid="contact-phone">
                 <Phone className="mr-2" size={16} style={{color: '#1a202c'}} />
                 (514) 532-1733
