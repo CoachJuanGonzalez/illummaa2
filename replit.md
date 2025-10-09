@@ -22,6 +22,7 @@ Preferred communication style: Simple, everyday language.
 - **Middleware**: CORS, Helmet for security, and rate limiting.
 - **Security**: Input sanitization using DOMPurify and Zod schemas.
 - **Lead Qualification**: Priority scoring system (0-150 points) based on project details, with a minimum of 50 units for developer track.
+- **Webhook Reliability**: Exponential backoff retry system for GoHighLevel webhook deliveries (3 attempts: 0s, 5s, 30s delays). Only retries on non-200 responses to prevent duplicates.
 
 ### Database
 - **ORM**: Drizzle ORM for PostgreSQL.
