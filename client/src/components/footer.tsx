@@ -115,7 +115,12 @@ export default function Footer() {
               </li>
               <li className="flex items-center" style={{color: '#1a202c'}} data-testid="contact-email">
                 <Mail className="mr-2" size={16} style={{color: '#1a202c'}} />
-                <a href="mailto:info@illummaa.com" className="transition-colors" style={{color: '#1a202c'}}>
+                <a 
+                  href="mailto:info@illummaa.com" 
+                  className="transition-colors hover:text-primary hover:underline cursor-pointer" 
+                  style={{color: '#1a202c'}}
+                  data-testid="link-email"
+                >
                   info@illummaa.com
                 </a>
               </li>
