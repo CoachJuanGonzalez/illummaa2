@@ -307,9 +307,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Apply security middleware
-  // TEMPORARILY DISABLED: Rate limiters causing blocking cycle
-  // app.use('/api', strictLimiter);
-  // app.use('/api', speedLimiter);
+  // ENABLED: Production-ready rate limiting
+  app.use('/api', strictLimiter);
+  app.use('/api', speedLimiter);
 
   // SMS-specific rate limiting for enhanced security
   const smsConsentLimiter = rateLimit({
@@ -443,8 +443,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Enhanced assessment submission with SMS security compliance
-  // TEMPORARILY DISABLED: Rate limiters causing form submission blocking
-  app.post("/api/submit-assessment", /* smsConsentLimiter, enhancedStrictLimiter, */ bruteforce.prevent, async (req, res) => {
+  // ENABLED: Production-ready rate limiting with SMS and form abuse protection
+  app.post("/api/submit-assessment", smsConsentLimiter, enhancedStrictLimiter, bruteforce.prevent, async (req, res) => {
     const requestStart = Date.now();
     
     // Method check first
@@ -862,11 +862,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // (Duplicate SMS rate limiters removed - moved earlier in file for proper scope)
 
   // CSRF Token endpoint for enhanced security (FIXED)
-  // TEMPORARILY DISABLED: Rate limiter causing blocking
-  app.get('/api/csrf-token', /* rateLimit({
+  // ENABLED: Production-ready rate limiting
+  app.get('/api/csrf-token', rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 20, // 20 requests per minute
-  }), */ (req, res) => {
+  }), (req, res) => {
     try {
       // Generate a secure CSRF token using proper ES module import
       const csrfToken = crypto.randomBytes(32).toString('hex');
@@ -888,11 +888,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Health check endpoint (minimal exposure)
-  // TEMPORARILY DISABLED: Rate limiter causing blocking
-  app.get('/api/health', /* rateLimit({
+  // ENABLED: Production-ready rate limiting
+  app.get('/api/health', rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 10, // 10 requests per minute
-  }), */ (req, res) => {
+  }), (req, res) => {
     res.json({ 
       status: 'healthy', 
       timestamp: new Date().toISOString(),
