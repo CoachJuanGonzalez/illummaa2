@@ -70,7 +70,7 @@ export default function ModelsShowcase() {
           {models.map((model, index) => (
             <div 
               key={index} 
-              className="card-hover bg-card rounded-2xl overflow-hidden shadow-xl"
+              className="card-hover bg-card rounded-xl sm:rounded-2xl overflow-hidden subtle-elevation subtle-elevation-hover transition-all duration-300"
               data-testid={`card-model-${index + 1}`}
             >
               <div className="model-image-container">
