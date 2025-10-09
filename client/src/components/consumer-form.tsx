@@ -164,15 +164,15 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
 
   const handleRemaxSelection = () => {
     setResidentialPathway('remax');
-    // Redirect to external Remax website
+    // Open email client to contact ILLUMMAA
     toast({
-      title: "Remax Partnership",
-      description: "Redirecting you to our Remax partnership program...",
+      title: "Contact ILLUMMAA",
+      description: "Opening email to contact our team...",
     });
-    // Perform actual external redirect
+    // Open email client
     setTimeout(() => {
-      window.open('https://www.remax.ca/', '_blank');
-      onOpenChange(false); // Close the modal after redirect
+      window.location.href = 'mailto:info@illummaa.com';
+      onOpenChange(false); // Close the modal
     }, 1000);
   };
 

@@ -212,10 +212,7 @@ export default function PartnershipTiers() {
                   data-testid="button-explore-modular-resources"
                   onClick={(e) => {
                     e.preventDefault();
-                    const newWindow = window.open('https://www.remax.ca', '_blank');
-                    if (newWindow) {
-                      newWindow.opener = null;
-                    }
+                    window.location.href = 'mailto:info@illummaa.com';
                   }}
                 >
                   Explore Modular Resources
