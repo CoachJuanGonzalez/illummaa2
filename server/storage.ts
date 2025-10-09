@@ -451,29 +451,57 @@ export async function submitToGoHighLevel(formData: AssessmentFormData, priority
     console.log(`[WEBHOOK] Optimized payload: ${Math.round(payloadSize/1024)}KB with ${tags.length} tags`);
   }
 
-  // Webhook delivery (single attempt - GHL ignores Idempotency-Key)
-  try {
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'ILLUMMAA-Assessment/1.0',
-        'X-Source': 'ILLUMMAA-Website'
-      },
-      body: JSON.stringify(webhookPayload),
-    });
+  // Webhook delivery with exponential backoff retry (3 attempts: 0s, 5s, 30s)
+  const delays = [0, 5000, 30000]; // Delays in milliseconds
+  let lastError: any = null;
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+  for (let attempt = 0; attempt < delays.length; attempt++) {
+    try {
+      // Wait before retry (skip on first attempt)
+      if (attempt > 0) {
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+        console.log(`[WEBHOOK RETRY] Attempt ${attempt + 1}/${delays.length} after ${delays[attempt]/1000}s delay`);
+      }
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Successfully delivered to GoHighLevel`);
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'ILLUMMAA-Assessment/1.0',
+          'X-Source': 'ILLUMMAA-Website'
+        },
+        body: JSON.stringify(webhookPayload),
+      });
+
+      // Success - only retry if NOT 200 OK
+      if (response.ok) {
+        if (process.env.NODE_ENV === 'development' || attempt > 0) {
+          console.log(`[WEBHOOK SUCCESS] Delivered to GoHighLevel on attempt ${attempt + 1}/${delays.length}`);
+        }
+        return; // Success - stop retrying
+      }
+
+      // Non-200 response - will retry
+      lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+      console.error(`[WEBHOOK FAILED] Attempt ${attempt + 1}/${delays.length} - ${lastError.message}`);
+
+      // If this was the last attempt, don't continue
+      if (attempt === delays.length - 1) {
+        throw lastError;
+      }
+
+    } catch (error) {
+      lastError = error;
+      console.error(`[WEBHOOK ERROR] Attempt ${attempt + 1}/${delays.length}:`, error);
+
+      // If this was the last attempt, log final failure
+      if (attempt === delays.length - 1) {
+        console.error(`[WEBHOOK FINAL FAILURE] All ${delays.length} attempts failed. Last error:`, error);
+        // Don't throw - let form submission succeed even if webhook fails
+        return;
+      }
+      // Otherwise, continue to next retry attempt
     }
-    return;
-  } catch (error) {
-    console.error(`GoHighLevel webhook failed:`, error);
-    // Don't throw - let form submission succeed even if webhook fails
   }
 }
 
@@ -583,29 +611,55 @@ export async function submitToGoHighLevelResidential(data: any): Promise<any> {
     submission_timestamp: data.submission_timestamp
   };
   
-  // Webhook delivery (single attempt - GHL ignores Idempotency-Key)
-  try {
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'ILLUMMAA-Residential/1.0',
-        'X-Source': 'ILLUMMAA-Website-Residential'
-      },
-      body: JSON.stringify(webhookPayload)
-    });
+  // Webhook delivery with exponential backoff retry (3 attempts: 0s, 5s, 30s)
+  const delays = [0, 5000, 30000]; // Delays in milliseconds
+  let lastError: any = null;
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  for (let attempt = 0; attempt < delays.length; attempt++) {
+    try {
+      // Wait before retry (skip on first attempt)
+      if (attempt > 0) {
+        await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+        console.log(`[RESIDENTIAL WEBHOOK RETRY] Attempt ${attempt + 1}/${delays.length} after ${delays[attempt]/1000}s delay`);
+      }
+
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'ILLUMMAA-Residential/1.0',
+          'X-Source': 'ILLUMMAA-Website-Residential'
+        },
+        body: JSON.stringify(webhookPayload)
+      });
+
+      // Success - only retry if NOT 200 OK
+      if (response.ok) {
+        if (process.env.NODE_ENV === 'development' || attempt > 0) {
+          console.log(`[RESIDENTIAL WEBHOOK SUCCESS] Delivered to GoHighLevel on attempt ${attempt + 1}/${delays.length}`);
+        }
+        return await response.json();
+      }
+
+      // Non-200 response - will retry
+      lastError = new Error(`HTTP ${response.status}: ${response.statusText}`);
+      console.error(`[RESIDENTIAL WEBHOOK FAILED] Attempt ${attempt + 1}/${delays.length} - ${lastError.message}`);
+
+      // If this was the last attempt, throw error
+      if (attempt === delays.length - 1) {
+        throw lastError;
+      }
+
+    } catch (error) {
+      lastError = error;
+      console.error(`[RESIDENTIAL WEBHOOK ERROR] Attempt ${attempt + 1}/${delays.length}:`, error);
+
+      // If this was the last attempt, throw error (residential throws to match expected behavior)
+      if (attempt === delays.length - 1) {
+        console.error(`[RESIDENTIAL WEBHOOK FINAL FAILURE] All ${delays.length} attempts failed. Last error:`, error);
+        throw error;
+      }
+      // Otherwise, continue to next retry attempt
     }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Successfully delivered residential lead to GoHighLevel`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error(`GoHighLevel residential webhook failed:`, error);
-    throw error; // Residential throws to match expected behavior
   }
 }
