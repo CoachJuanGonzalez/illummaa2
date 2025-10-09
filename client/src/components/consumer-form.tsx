@@ -169,9 +169,14 @@ export default function ConsumerForm({ open, onOpenChange, onSuccess }: Consumer
       title: "Contact ILLUMMAA",
       description: "Opening email to contact our team...",
     });
-    // Open email client
+    // Open email client - use anchor tag (most reliable method)
     setTimeout(() => {
-      window.location.href = 'mailto:info@illummaa.com';
+      const mailtoLink = document.createElement('a');
+      mailtoLink.href = 'mailto:info@illummaa.com';
+      mailtoLink.style.display = 'none';
+      document.body.appendChild(mailtoLink);
+      mailtoLink.click();
+      document.body.removeChild(mailtoLink);
       onOpenChange(false); // Close the modal
     }, 1000);
   };

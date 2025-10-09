@@ -212,7 +212,13 @@ export default function PartnershipTiers() {
                   data-testid="button-explore-modular-resources"
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = 'mailto:info@illummaa.com';
+                    // Use anchor tag click - most reliable method across all browsers
+                    const mailtoLink = document.createElement('a');
+                    mailtoLink.href = 'mailto:info@illummaa.com';
+                    mailtoLink.style.display = 'none';
+                    document.body.appendChild(mailtoLink);
+                    mailtoLink.click();
+                    document.body.removeChild(mailtoLink);
                   }}
                 >
                   Explore Modular Resources

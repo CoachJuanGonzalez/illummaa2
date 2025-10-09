@@ -515,10 +515,13 @@ const IllummaaAssessmentForm = () => {
         if (process.env.NODE_ENV === 'development') {
           console.log('Market researcher detected - opening email client');
         }
-        // Use setTimeout to ensure mailto: executes properly
-        setTimeout(() => {
-          window.location.href = 'mailto:info@illummaa.com';
-        }, 100);
+        // Use anchor tag click - most reliable method across all browsers
+        const mailtoLink = document.createElement('a');
+        mailtoLink.href = 'mailto:info@illummaa.com';
+        mailtoLink.style.display = 'none';
+        document.body.appendChild(mailtoLink);
+        mailtoLink.click();
+        document.body.removeChild(mailtoLink);
         // Don't return - allow user to change selection and continue with form
       }
       setFormData(prev => ({
@@ -957,10 +960,13 @@ const IllummaaAssessmentForm = () => {
           } else if (unitCount > 1000000) {
             newErrors.unitCount = 'Please verify this number. For projects over 1 million units, contact us directly at partnerships@illummaa.com';
           } else if (unitCount > 0 && unitCount < 10) {
-            // Open email client for <10 units to contact ILLUMMAA (use setTimeout to ensure it executes)
-            setTimeout(() => {
-              window.location.href = 'mailto:info@illummaa.com';
-            }, 100);
+            // Open email client for <10 units to contact ILLUMMAA - use anchor tag (most reliable)
+            const mailtoLink = document.createElement('a');
+            mailtoLink.href = 'mailto:info@illummaa.com';
+            mailtoLink.style.display = 'none';
+            document.body.appendChild(mailtoLink);
+            mailtoLink.click();
+            document.body.removeChild(mailtoLink);
 
             if (process.env.NODE_ENV === 'development') {
               console.log('Units < 10: Opening email client, showing validation error');
@@ -1070,10 +1076,13 @@ const IllummaaAssessmentForm = () => {
       if (currentStep === 1 && formData.unitCount) {
         const units = parseInt(formData.unitCount);
         if (units > 0 && units < 10) {
-          // Open email client to contact ILLUMMAA (use setTimeout to ensure it executes)
-          setTimeout(() => {
-            window.location.href = 'mailto:info@illummaa.com';
-          }, 100);
+          // Open email client to contact ILLUMMAA - use anchor tag (most reliable)
+          const mailtoLink = document.createElement('a');
+          mailtoLink.href = 'mailto:info@illummaa.com';
+          mailtoLink.style.display = 'none';
+          document.body.appendChild(mailtoLink);
+          mailtoLink.click();
+          document.body.removeChild(mailtoLink);
 
           if (process.env.NODE_ENV === 'development') {
             console.log('Units < 10: Opening email client, user can continue form if desired');
@@ -1645,7 +1654,19 @@ const IllummaaAssessmentForm = () => {
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
                           <p className="text-sm text-yellow-800">
                             <strong>Note:</strong> B2B partnerships typically start at 10 units. For residential projects under 10 units,
-                            you may want to <a href="mailto:info@illummaa.com" className="underline">contact us</a> for better assistance.
+                            you may want to <a 
+                              href="mailto:info@illummaa.com" 
+                              className="underline cursor-pointer"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                const mailtoLink = document.createElement('a');
+                                mailtoLink.href = 'mailto:info@illummaa.com';
+                                mailtoLink.style.display = 'none';
+                                document.body.appendChild(mailtoLink);
+                                mailtoLink.click();
+                                document.body.removeChild(mailtoLink);
+                              }}
+                            >contact us</a> for better assistance.
                           </p>
                         </div>
                       )}
