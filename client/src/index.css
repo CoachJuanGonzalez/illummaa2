@@ -1877,6 +1877,14 @@ button > span,
   text-align: center !important;
 }
 
+/* Navigation buttons - preserve text without breaking */
+[data-testid^="nav-"] {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  word-wrap: normal !important;
+}
+
 /* Icon Protection */
 button > svg,
 .btn > svg,
