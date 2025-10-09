@@ -101,16 +101,16 @@ export default function LeadershipTeam() {
         </div>
 
         {/* Vision, Innovation & Market Leadership Subsection */}
-        <div className="mt-16">
-          <div className="text-center mb-12">
-            <h3 className="font-display font-bold text-3xl text-foreground" data-testid="heading-vision-subsection">
+        <div className="mt-12 md:mt-16">
+          <div className="text-center mb-8 md:mb-12">
+            <h3 className="font-display font-bold text-2xl md:text-3xl text-foreground px-4" data-testid="heading-vision-subsection">
               Vision, Innovation & Market Leadership
             </h3>
           </div>
           
           {/* Vision Executives - Centered Grid */}
           <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full md:max-w-2xl">
               {visionExecutives.map((executive, index) => renderExecutiveCard(executive, index + 7))}
             </div>
           </div>
