@@ -15,7 +15,7 @@ export default function LeadershipTeam() {
     {
       name: "Marvin Garellek",
       title: "Vice-President of Sales and Investments",
-      category: "Finance"
+      category: "Investments"
     },
     {
       name: "Dan Hatahat",
@@ -35,7 +35,7 @@ export default function LeadershipTeam() {
     {
       name: "Choukhrate Rasoulev",
       title: "International Sales Director and Representation",
-      category: "Business Development"
+      category: "Sales Development"
     },
     {
       name: "Juan Grey",
