@@ -5,7 +5,7 @@ import ProblemSolution from "@/components/problem-solution";
 import LeadershipTeam from "@/components/leadership-team";
 import AssessmentForm from "@/components/assessment-form";
 import ModelsShowcase from "@/components/models-showcase";
-import CommunityTestimonials from "@/components/community-testimonials";
+// import CommunityTestimonials from "@/components/community-testimonials"; // TEMPORARILY HIDDEN - Will re-enable when real testimonials are collected
 import PartnershipTiers from "@/components/partnership-tiers";
 import GovernmentPrograms from "@/components/government-programs";
 import MovementSection from "@/components/movement-section";
@@ -22,7 +22,7 @@ export default function Home() {
         <ProblemSolution />
         <SocialProof />
         <ModelsShowcase />
-        <CommunityTestimonials />
+        {/* <CommunityTestimonials /> */} {/* TEMPORARILY HIDDEN - Will re-enable when real testimonials are collected */}
         <LeadershipTeam />
         <GovernmentPrograms />
         <PartnershipTiers />
