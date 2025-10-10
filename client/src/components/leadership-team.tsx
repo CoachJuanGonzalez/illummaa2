@@ -18,7 +18,7 @@ export default function LeadershipTeam() {
       category: "Investments"
     },
     {
-      name: "Dan Hatahat",
+      name: "Dan Hatahet",
       title: "Corporate Development",
       category: "Business Development"
     },
