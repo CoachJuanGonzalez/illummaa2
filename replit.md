@@ -3,7 +3,12 @@
 ## Overview
 ILLUMMAA is a revenue-generating B2B lead generation website for modular homes, targeting Canadian developers and builders. Its primary purpose is to qualify prospects, nurture leads, and drive business growth through an assessment-based funnel system. The project aims to generate 15+ qualified Canadian developer inquiries monthly with an 80% lead quality rate, focusing on developers managing 50-500+ units with projects valued at $5M+. The website aims to blend "Tesla industrial confidence" with "Apple sophistication" in its design and user experience.
 
-## Recent Changes (October 9, 2025)
+## Recent Changes (October 10, 2025)
+- **Hybrid Duplicate Prevention System**: Implemented session-based tracking for unknown IPs to prevent spam while maintaining accessibility. Known IPs use 24-hour IP blocking, unknown IPs (VPNs, mobile networks) use 8-hour session blocking. Production-ready with architect approval.
+- **Enhanced Mobile Focus States**: Added 150+ lines of accessibility CSS (lines 2632-2778) with enhanced focus rings (3px desktop, 4px mobile), high contrast mode support, and reduced motion compatibility.
+- **Image Flash Fix**: Removed redundant Unsplash background-image causing visual flash before hero section loads.
+
+## Previous Changes (October 9, 2025)
 - **Favicon Implementation**: Created professional multi-format favicon suite using ILLUMMAA "ü" logo with primary green background. Includes standard favicons (ICO, PNG in 6 sizes), Apple Touch Icon, and PWA manifest with theme color configuration.
 - **Security Fix**: Removed duplicate X-Frame-Options meta tag from HTML (already configured in Helmet middleware), eliminating browser console warning.
 - **Leadership Team Updates**: Restructured team with updated names, titles, and categories (9 executives total).
@@ -36,10 +41,19 @@ Preferred communication style: Simple, everyday language.
 
 ### Security
 - **Headers**: Helmet.js for security headers and Content Security Policy.
-- **Rate Limiting**: 100 requests per 15 minutes per IP.
+- **Rate Limiting**: Multi-tier protection with 4 layers:
+  - API-wide: 5,000 req/15min (production), 10,000 (dev)
+  - Form submission: 200 req/10min with SMS consent limiter (100 req/5min)
+  - CSRF token: 20 req/minute
+  - Health check: 10 req/minute
+- **Duplicate Prevention**: Hybrid IP + Session tracking system:
+  - Known IPs: 24-hour blocking per IP address
+  - Unknown IPs (VPNs, mobile): 8-hour blocking per session (30s in dev)
+  - Automatic cleanup every 6 hours
 - **CORS**: Configured with environment-specific origins.
 - **XSS Prevention**: DOMPurify for input sanitization.
 - **Validation**: Comprehensive Zod schemas for form data.
+- **Brute Force Protection**: 3 attempts then temporary lockout.
 
 ### Lead Generation System
 - **Process**: Multi-step assessment form with progressive profiling.
