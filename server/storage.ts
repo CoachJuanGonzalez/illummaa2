@@ -12,6 +12,14 @@ interface IPSubmissionRecord {
   timestamp: Date;
 }
 
+// Session Submission tracking interface for unknown IP protection
+interface SessionSubmissionRecord {
+  sessionId: string;
+  submissionId: string;
+  customerTier: string;
+  timestamp: Date;
+}
+
 export interface IStorage {
   createAssessment(assessment: InsertAssessment): Promise<AssessmentSubmission>;
   getAssessment(id: string): Promise<AssessmentSubmission | undefined>;
@@ -23,22 +31,37 @@ export interface IStorage {
   recordIPSubmission(ipAddress: string, submissionId: string, customerTier: string): void;
   getIPSubmissionDetails(ipAddress: string): IPSubmissionRecord | undefined;
   cleanupExpiredIPRecords(): void;
+  
+  // Session-based duplicate submission prevention (for unknown IPs)
+  canSubmitFromSession(sessionId: string): boolean;
+  recordSessionSubmission(sessionId: string, submissionId: string, customerTier: string): void;
+  getSessionSubmissionDetails(sessionId: string): SessionSubmissionRecord | undefined;
+  cleanupExpiredSessionRecords(): void;
 }
 
 export class MemStorage implements IStorage {
   private assessments: Map<string, AssessmentSubmission>;
   private ipSubmissions: Map<string, IPSubmissionRecord>;
+  private sessionSubmissions: Map<string, SessionSubmissionRecord>;
+  
   private readonly IP_BLOCK_DURATION_MS = process.env.NODE_ENV === 'development' 
     ? parseInt(process.env.IP_BLOCK_DURATION_MS || '10000') // 10 seconds for dev testing
     : 24 * 60 * 60 * 1000; // 24 hours for production
+  
+  // Session block duration: 8 hours (production), 30 seconds (development)
+  private readonly SESSION_BLOCK_DURATION_MS = process.env.NODE_ENV === 'development'
+    ? 30 * 1000 // 30 seconds for dev testing
+    : 8 * 60 * 60 * 1000; // 8 hours for production
 
   constructor() {
     this.assessments = new Map();
     this.ipSubmissions = new Map();
+    this.sessionSubmissions = new Map();
     
-    // Automatic cleanup every 6 hours
+    // Automatic cleanup every 6 hours for both IP and session records
     setInterval(() => {
       this.cleanupExpiredIPRecords();
+      this.cleanupExpiredSessionRecords();
     }, 6 * 60 * 60 * 1000);
   }
 
@@ -137,6 +160,59 @@ export class MemStorage implements IStorage {
     if (cleanedCount > 0) {
       if (process.env.NODE_ENV === 'development') {
         console.log(`[IP-SECURITY] Cleaned up ${cleanedCount} expired IP records`);
+      }
+    }
+  }
+
+  // Session-based duplicate submission prevention methods (for unknown IPs)
+  canSubmitFromSession(sessionId: string): boolean {
+    this.cleanupExpiredSessionRecords();
+    const existingRecord = this.sessionSubmissions.get(sessionId);
+    
+    if (!existingRecord) {
+      return true; // No previous submission from this session
+    }
+
+    const timeSinceSubmission = Date.now() - existingRecord.timestamp.getTime();
+    return timeSinceSubmission >= this.SESSION_BLOCK_DURATION_MS;
+  }
+
+  recordSessionSubmission(sessionId: string, submissionId: string, customerTier: string): void {
+    const record: SessionSubmissionRecord = {
+      sessionId,
+      submissionId,
+      customerTier,
+      timestamp: new Date()
+    };
+    
+    this.sessionSubmissions.set(sessionId, record);
+    
+    // Log for monitoring (with partial session ID masking for privacy)
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[SESSION-SECURITY] Recorded submission from session: ${sessionId.substring(0, 8)}*** - Tier: ${customerTier}`);
+    }
+  }
+
+  getSessionSubmissionDetails(sessionId: string): SessionSubmissionRecord | undefined {
+    return this.sessionSubmissions.get(sessionId);
+  }
+
+  cleanupExpiredSessionRecords(): void {
+    const now = Date.now();
+    let cleanedCount = 0;
+
+    Array.from(this.sessionSubmissions.entries()).forEach(([sessionId, record]) => {
+      const timeSinceSubmission = now - record.timestamp.getTime();
+      
+      if (timeSinceSubmission >= this.SESSION_BLOCK_DURATION_MS) {
+        this.sessionSubmissions.delete(sessionId);
+        cleanedCount++;
+      }
+    });
+
+    if (cleanedCount > 0) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[SESSION-SECURITY] Cleaned up ${cleanedCount} expired session records`);
       }
     }
   }

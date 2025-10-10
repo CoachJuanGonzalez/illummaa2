@@ -1,5 +1,6 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request } from "express";
 import { createServer, type Server } from "http";
+import session from "express-session";
 import rateLimit from "express-rate-limit";
 import slowDown from "express-slow-down";
 import ExpressBrute from "express-brute";
@@ -461,8 +462,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[IP-DEBUG] Normalized client IP: ${clientIP} (length: ${clientIP?.length})`);
     }
     
-    // SECURITY HARDENING: Skip IP blocking if IP is unknown to prevent over-blocking multiple users
+    // HYBRID DUPLICATE PREVENTION: IP-based for known IPs, Session-based for unknown IPs
     if (clientIP && clientIP !== 'unknown') {
+      // Known IP: Use IP-based duplicate prevention (24-hour block)
       const canSubmit = storage.canSubmitFromIP(clientIP);
       if (process.env.NODE_ENV === 'development') {
         console.log(`[IP-DEBUG] Can submit from IP ${clientIP.substring(0, 8)}***: ${canSubmit}`);
@@ -486,8 +488,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
     } else {
+      // Unknown IP: Use session-based duplicate prevention (8-hour block)
+      const sessionId = req.sessionID;
+      
       if (process.env.NODE_ENV === 'development') {
-        console.log(`[IP-DEBUG] Unknown IP detected, bypassing duplicate protection for security`);
+        console.log(`[SESSION-DEBUG] Unknown IP detected, using session-based tracking. Session ID: ${sessionId?.substring(0, 8)}***`);
+      }
+      
+      if (sessionId) {
+        const canSubmit = storage.canSubmitFromSession(sessionId);
+        
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[SESSION-DEBUG] Can submit from session ${sessionId.substring(0, 8)}***: ${canSubmit}`);
+        }
+        
+        if (!canSubmit) {
+          const existingSubmission = storage.getSessionSubmissionDetails(sessionId);
+          
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`[SECURITY] Duplicate submission blocked from session: ${sessionId.substring(0, 8)}***`);
+          }
+          
+          return res.status(429).json({
+            success: false,
+            error: 'Assessment already completed',
+            message: 'An assessment has already been completed from this session. Please clear your browser data or wait before submitting again.',
+            completedAt: existingSubmission?.timestamp,
+            previousTier: existingSubmission?.customerTier,
+            canRetry: false,
+            action: 'clear_session_or_wait'
+          });
+        }
+      } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[SESSION-DEBUG] No session ID available - allowing submission (will create session on success)`);
+        }
       }
     }
 
@@ -690,11 +725,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tags: tags!
       });
 
-      // Record IP submission for duplicate prevention
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`[IP-DEBUG] Recording IP submission: ${clientIP.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
+      // Record IP and/or Session submission for duplicate prevention
+      if (clientIP && clientIP !== 'unknown') {
+        // Known IP: Record IP submission (24-hour block)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`[IP-DEBUG] Recording IP submission: ${clientIP.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
+        }
+        storage.recordIPSubmission(clientIP, submission.id, customerTier!);
+      } else {
+        // Unknown IP: Record session submission (8-hour block)
+        const sessionId = req.sessionID;
+        if (sessionId) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`[SESSION-DEBUG] Recording session submission: ${sessionId.substring(0, 8)}*** - Submission ID: ${submission.id} - Tier: ${customerTier}`);
+          }
+          storage.recordSessionSubmission(sessionId, submission.id, customerTier!);
+        }
       }
-      storage.recordIPSubmission(clientIP, submission.id, customerTier!);
 
       // Submit to GoHighLevel webhook with proper journey stage mapping
       try {
