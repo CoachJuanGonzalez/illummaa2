@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  IMPORTANT: Before deploying to production, replace all instances of 
-  "REPLACE_WITH_YOUR_DOMAIN" with your actual production domain.
-  
-  For illummaa.com production: https://illummaa.com
-  For Replit development: https://your-replit-project.replit.app
-  
-  Update lastmod dates when content changes.
--->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
@@ -15,38 +6,38 @@
 
   <!-- Homepage - Highest Priority -->
   <url>
-    <loc>REPLACE_WITH_YOUR_DOMAIN/</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
+    <loc>https://illummaa.com/</loc>
+    <lastmod>2025-10-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Model Pages - High Priority -->
   <url>
-    <loc>REPLACE_WITH_YOUR_DOMAIN/models/1br-compact</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
+    <loc>https://illummaa.com/models/1br-compact</loc>
+    <lastmod>2025-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>REPLACE_WITH_YOUR_DOMAIN/models/2br-family</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
+    <loc>https://illummaa.com/models/2br-family</loc>
+    <lastmod>2025-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>REPLACE_WITH_YOUR_DOMAIN/models/3br-executive</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
+    <loc>https://illummaa.com/models/3br-executive</loc>
+    <lastmod>2025-10-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Privacy Policy - Lower Priority -->
   <url>
-    <loc>REPLACE_WITH_YOUR_DOMAIN/privacy-policy</loc>
-    <lastmod>YYYY-MM-DD</lastmod>
+    <loc>https://illummaa.com/privacy-policy</loc>
+    <lastmod>2025-10-10</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
