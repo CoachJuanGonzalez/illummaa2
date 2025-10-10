@@ -1,0 +1,24 @@
+# ILLUMMAA Modular Homes - robots.txt
+# Generated: 2025-10-10
+# Purpose: Allow all search engines to crawl, point to sitemap
+#
+# IMPORTANT: Before deploying to production, update the Sitemap URL below
+# with your actual domain (e.g., https://illummaa.com/sitemap.xml)
+
+# Allow all search engines
+User-agent: *
+Allow: /
+Allow: /models/
+Allow: /models/1br-compact
+Allow: /models/2br-family
+Allow: /models/3br-executive
+
+# Sitemap location (UPDATE BEFORE DEPLOYMENT)
+Sitemap: REPLACE_WITH_YOUR_DOMAIN/sitemap.xml
+
+# Rate limit known bot crawlers (optional)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
