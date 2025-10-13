@@ -1,10 +1,13 @@
 import { Handshake, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import heroDesktopImage from "../assets/hero-desktop.png";
 import heroMobileImage from "../assets/hero-mobile.png";
 
 export default function HeroSection() {
+  const { t } = useTranslation();
+
   // Preload critical hero images for faster initial paint
   useEffect(() => {
     const link1 = document.createElement('link');
@@ -48,7 +51,7 @@ export default function HeroSection() {
         {/* Desktop Image - Hidden on Mobile */}
         <img
           src={heroDesktopImage}
-          alt="Canadian modular housing partnership opportunities with proven development success"
+          alt={t('hero.imageAlt')}
           className="hidden md:block w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           loading="eager"
           style={{
@@ -60,7 +63,7 @@ export default function HeroSection() {
         {/* Mobile Image - Hidden on Desktop */}
         <img
           src={heroMobileImage}
-          alt="Canadian modular housing partnership opportunities with proven development success"
+          alt={t('hero.imageAlt')}
           className="block md:hidden w-full h-full object-cover hero-enterprise-layout hero-retina-quality hero-fluid-transitions"
           loading="eager"
           style={{
@@ -82,14 +85,14 @@ export default function HeroSection() {
               data-testid="heading-hero-title"
               style={{color: '#1a1a1a', fontWeight: 800}}
             >
-              Building Homes, Strengthening Communities
+              {t('hero.title')}
             </h1>
             <p
               className="hero-subtitle-typography hero-subtitle-responsive hero-subtitle-enhanced hero-subtitle-spacing mb-8"
               data-testid="text-hero-subtitle"
               style={{color: '#2d3748', fontWeight: 500}}
             >
-              Your Partner in Community-First Housing Solutions
+              {t('hero.subtitle')}
             </p>
           </div>
 
@@ -102,7 +105,7 @@ export default function HeroSection() {
               data-testid="button-qualify-partnership"
             >
               <Handshake className="flex-shrink-0" size={18} />
-              <span>Join Our Housing Community</span>
+              <span>{t('hero.ctaPrimary')}</span>
             </Button>
             <Button
               onClick={scrollToModels}
@@ -112,7 +115,7 @@ export default function HeroSection() {
               data-testid="button-view-models"
             >
               <Home className="flex-shrink-0" size={18} style={{color: '#1a365d'}} />
-              <span>View Our Models</span>
+              <span>{t('hero.ctaSecondary')}</span>
             </Button>
           </div>
         </div>

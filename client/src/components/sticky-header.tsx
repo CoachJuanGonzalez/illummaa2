@@ -3,8 +3,11 @@ import { Menu, X } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { trackHeaderNavClick, analytics } from "../lib/analytics";
 import logoUrl from "@assets/logo-logotype_1758569347527.png";
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from "./language-switcher";
 
 export default function StickyHeader() {
+  const { t } = useTranslation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location, navigate] = useLocation();
   const [isMobile, setIsMobile] = useState(false);
@@ -157,63 +160,64 @@ export default function StickyHeader() {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4 lg:space-x-8" data-testid="nav-desktop">
-            <button 
-              onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
+            <button
+              onClick={() => scrollToSection("developer-qualification", t('navigation.partnershipApplication'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-partnership-application"
             >
-              Partnership Application
+              {t('navigation.partnershipApplication')}
             </button>
-            <button 
-              onClick={() => scrollToSection("why", "Why")} 
+            <button
+              onClick={() => scrollToSection("why", t('navigation.why'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-why"
             >
-              Why
+              {t('navigation.why')}
             </button>
-            <button 
-              onClick={() => scrollToSection("leadership", "Leadership")} 
+            <button
+              onClick={() => scrollToSection("leadership", t('navigation.leadership'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-leadership"
             >
-              Leadership
+              {t('navigation.leadership')}
             </button>
-            <button 
-              onClick={() => scrollToSection("models", "Models")} 
+            <button
+              onClick={() => scrollToSection("models", t('navigation.models'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-models"
             >
-              Models
+              {t('navigation.models')}
             </button>
-            <button 
-              onClick={() => scrollToSection("developer-qualification", "Developers")} 
+            <button
+              onClick={() => scrollToSection("developer-qualification", t('navigation.developers'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-developers"
             >
-              Developers
+              {t('navigation.developers')}
             </button>
-            <button 
-              onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
+            <button
+              onClick={() => scrollToSection("partnership-tiers", t('navigation.partnership'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-partnership"
             >
-              Partnership
+              {t('navigation.partnership')}
             </button>
-            <button 
-              onClick={() => scrollToSection("contact", "Contact")} 
+            <button
+              onClick={() => scrollToSection("contact", t('navigation.contact'))}
               className="text-foreground hover:text-primary transition-colors min-h-[44px] px-2 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
               data-testid="nav-contact"
             >
-              Contact
+              {t('navigation.contact')}
             </button>
+            <LanguageSwitcher />
           </div>
           
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             data-testid="button-mobile-menu"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileMenuOpen ? t('navigation.menuClose') : t('navigation.menuOpen')}
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -223,55 +227,58 @@ export default function StickyHeader() {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-border" data-testid="nav-mobile">
             <div className="flex flex-col space-y-2 pt-4">
-              <button 
-                onClick={() => scrollToSection("developer-qualification", "Partnership Application")} 
+              <button
+                onClick={() => scrollToSection("developer-qualification", t('navigation.partnershipApplication'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-partnership-application"
               >
-                Partnership Application
+                {t('navigation.partnershipApplication')}
               </button>
-              <button 
-                onClick={() => scrollToSection("why", "Why")} 
+              <button
+                onClick={() => scrollToSection("why", t('navigation.why'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-why"
               >
-                Why
+                {t('navigation.why')}
               </button>
-              <button 
-                onClick={() => scrollToSection("leadership", "Leadership")} 
+              <button
+                onClick={() => scrollToSection("leadership", t('navigation.leadership'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-leadership"
               >
-                Leadership
+                {t('navigation.leadership')}
               </button>
-              <button 
-                onClick={() => scrollToSection("models", "Models")} 
+              <button
+                onClick={() => scrollToSection("models", t('navigation.models'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-models"
               >
-                Models
+                {t('navigation.models')}
               </button>
-              <button 
-                onClick={() => scrollToSection("developer-qualification", "Developers")} 
+              <button
+                onClick={() => scrollToSection("developer-qualification", t('navigation.developers'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-developers"
               >
-                Developers
+                {t('navigation.developers')}
               </button>
-              <button 
-                onClick={() => scrollToSection("partnership-tiers", "Partnership")} 
+              <button
+                onClick={() => scrollToSection("partnership-tiers", t('navigation.partnership'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-partnership"
               >
-                Partnership
+                {t('navigation.partnership')}
               </button>
-              <button 
-                onClick={() => scrollToSection("contact", "Contact")} 
+              <button
+                onClick={() => scrollToSection("contact", t('navigation.contact'))}
                 className="nav-button-mobile text-left text-foreground hover:text-primary transition-colors rounded px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 data-testid="nav-mobile-contact"
               >
-                Contact
+                {t('navigation.contact')}
               </button>
+              <div className="px-4 py-3 border-t border-border mt-2">
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
         )}

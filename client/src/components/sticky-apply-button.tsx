@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { analytics } from "../lib/analytics";
+import { useTranslation } from "react-i18next";
 
 export default function StickyApplyButton() {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -79,7 +81,7 @@ export default function StickyApplyButton() {
           data-testid="button-sticky-apply"
         >
           <Handshake className="mr-3" size={24} />
-          Apply Now
+          {t('stickyButton.desktop')}
         </Button>
       </div>
 
@@ -95,7 +97,7 @@ export default function StickyApplyButton() {
           data-testid="button-sticky-apply-mobile"
         >
           <Handshake className="mr-3" size={24} />
-          Apply for Partnership
+          {t('stickyButton.mobile')}
         </Button>
       </div>
     </>

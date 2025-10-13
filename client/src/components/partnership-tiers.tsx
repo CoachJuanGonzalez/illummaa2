@@ -2,8 +2,10 @@ import { Home, Rocket, Star, Crown, Check, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import ConsumerForm from "@/components/consumer-form";
+import { useTranslation } from "react-i18next";
 
 export default function PartnershipTiers() {
+  const { t } = useTranslation();
   const [showConsumerForm, setShowConsumerForm] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isFormUsed, setIsFormUsed] = useState(false);
@@ -52,65 +54,39 @@ export default function PartnershipTiers() {
 
   const tiers = [
     {
-      name: "Pioneer",
-      units: "10-49 units",
+      name: t('partnershipTiers.pioneer.name'),
+      units: t('partnershipTiers.pioneer.units'),
       icon: <Rocket className="text-blue-600" size={32} />,
       iconBg: "bg-blue-100",
       accentColor: "border-blue-200",
-      features: [
-        "Priority partnership handling",
-        "Dedicated project support",
-        "30-40% cost savings vs traditional",
-        "Housing Accelerator Fund assistance",
-        "Custom modification options",
-        "Multi-unit coordination",
-        "Factory queue priority"
-      ],
+      features: t('partnershipTiers.pioneer.features', { returnObjects: true }) as string[],
       buttonVariant: "outline" as const,
-      buttonText: "Apply for Partnership",
+      buttonText: t('partnershipTiers.pioneer.cta'),
       action: scrollToAssessment,
       disabled: false
     },
     {
-      name: "Preferred",
-      units: "50-199 units",
+      name: t('partnershipTiers.preferred.name'),
+      units: t('partnershipTiers.preferred.units'),
       icon: <Star className="text-primary" size={32} />,
       iconBg: "bg-primary/10",
       accentColor: "border-primary",
-      features: [
-        "All Pioneer benefits",
-        "Expedited senior team attention",
-        "Enhanced customization options",
-        "Fast-track project timeline",
-        "Municipal code compliance support",
-        "Volume optimization pricing",
-        "Advanced partnership proposals",
-        "ROI analysis tools"
-      ],
+      features: t('partnershipTiers.preferred.features', { returnObjects: true }) as string[],
       buttonVariant: "default" as const,
-      buttonText: "Apply for Partnership",
+      buttonText: t('partnershipTiers.preferred.cta'),
       popular: true,
       action: scrollToAssessment,
       disabled: false
     },
     {
-      name: "Elite", 
-      units: "200+ units",
+      name: t('partnershipTiers.elite.name'),
+      units: t('partnershipTiers.elite.units'),
       icon: <Crown className="text-yellow-600" size={32} />,
       iconBg: "bg-yellow-100",
       accentColor: "border-yellow-200",
-      features: [
-        "All Preferred benefits",
-        "Executive partnership team",
-        "VIP priority handling",
-        "Build Canada Homes eligibility",
-        "Co-development opportunities",
-        "Strategic enterprise pricing",
-        "Government liaison assistance",
-        "Coordinated 3-month timeline"
-      ],
+      features: t('partnershipTiers.elite.features', { returnObjects: true }) as string[],
       buttonVariant: "outline" as const,
-      buttonText: "Apply for Partnership",
+      buttonText: t('partnershipTiers.elite.cta'),
       action: scrollToAssessment,
       disabled: false
     }
@@ -121,10 +97,10 @@ export default function PartnershipTiers() {
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-partnership-title">
-            Developer Partnership Tiers
+            {t('partnershipTiers.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-partnership-subtitle">
-            From 10-unit projects to large community developments, choose the partnership level that matches your scale and unlock proven modular construction expertise.
+            {t('partnershipTiers.subtitle')}
           </p>
         </div>
         
@@ -140,7 +116,7 @@ export default function PartnershipTiers() {
               {tier.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2" data-testid="badge-most-popular">
                   <span className="bg-primary text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Most Popular
+                    {t('partnershipTiers.preferred.badge')}
                   </span>
                 </div>
               )}
@@ -179,10 +155,10 @@ export default function PartnershipTiers() {
             </div>
           ))}
         </div>
-        
+
         <div className="text-center mt-8 mb-12">
           <p className="text-sm text-muted-foreground italic" data-testid="text-partnership-disclaimer">
-            *Partnership support levels based on project complexity and current volume. Urgent projects receive priority attention across all tiers.
+            {t('partnershipTiers.disclaimer')}
           </p>
         </div>
         
@@ -198,10 +174,10 @@ export default function PartnershipTiers() {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                      New to Modular Construction?
+                      {t('partnershipTiers.educationalBanner.title')}
                     </h3>
                     <p className="text-gray-600 text-base leading-relaxed">
-                      Learn about modular housing benefits, construction timelines, cost savings, and Canadian success stories before starting your project.
+                      {t('partnershipTiers.educationalBanner.description')}
                     </p>
                   </div>
                 </div>
@@ -221,7 +197,7 @@ export default function PartnershipTiers() {
                     document.body.removeChild(mailtoLink);
                   }}
                 >
-                  Explore Modular Resources
+                  {t('partnershipTiers.educationalBanner.cta')}
                   <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -231,22 +207,12 @@ export default function PartnershipTiers() {
               {/* Right Side - Quick Links (40%) */}
               <div className="md:col-span-2">
                 <ul className="space-y-3">
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <Check className="text-community-primary flex-shrink-0" size={20} />
-                    <span>Cost Savings Analysis</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <Check className="text-community-primary flex-shrink-0" size={20} />
-                    <span>Build Process Overview</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <Check className="text-community-primary flex-shrink-0" size={20} />
-                    <span>Design Options Gallery</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-gray-700">
-                    <Check className="text-community-primary flex-shrink-0" size={20} />
-                    <span>Success Case Studies</span>
-                  </li>
+                  {(t('partnershipTiers.educationalBanner.quickLinks', { returnObjects: true }) as string[]).map((link, index) => (
+                    <li key={index} className="flex items-center gap-2 text-gray-700">
+                      <Check className="text-community-primary flex-shrink-0" size={20} />
+                      <span>{link}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -254,13 +220,13 @@ export default function PartnershipTiers() {
         </div>
         
         <div className="text-center mt-12 px-4">
-          <Button 
-            onClick={scrollToAssessment} 
+          <Button
+            onClick={scrollToAssessment}
             size="lg"
             className="btn-primary text-white font-semibold text-sm xs:text-base sm:text-lg w-full max-w-xs xs:max-w-sm sm:max-w-md mx-auto rounded-2xl hero-cta-mobile whitespace-normal leading-tight"
             data-testid="button-apply-partnership"
           >
-Apply for Partnership
+            {t('partnershipTiers.mainCta')}
           </Button>
         </div>
         

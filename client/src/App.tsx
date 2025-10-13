@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { analytics } from "./lib/analytics";
+import "./i18n"; // Initialize i18next
 
 // Performance: Lazy load route components for code splitting (40% bundle reduction)
 const Home = lazy(() => import("@/pages/home"));
@@ -35,10 +36,19 @@ function Router() {
       </div>
     }>
       <Switch>
+        {/* Language-prefixed routes */}
+        <Route path="/:lang(en|fr)/" component={Home} />
+        <Route path="/:lang(en|fr)/models/1br-compact" component={Model1BRCompact} />
+        <Route path="/:lang(en|fr)/models/2br-family" component={Model2BRFamily} />
+        <Route path="/:lang(en|fr)/models/3br-executive" component={Model3BRExecutive} />
+
+        {/* Legacy routes without language prefix - redirect to /en */}
         <Route path="/" component={Home} />
         <Route path="/models/1br-compact" component={Model1BRCompact} />
         <Route path="/models/2br-family" component={Model2BRFamily} />
         <Route path="/models/3br-executive" component={Model3BRExecutive} />
+
+        {/* 404 */}
         <Route component={NotFound} />
       </Switch>
     </Suspense>

@@ -1,54 +1,56 @@
 import { User } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function LeadershipTeam() {
+  const { t } = useTranslation();
   const coreExecutives = [
     {
       name: "Baillargeon-Kemener Office",
-      title: "Chairman",
-      category: "Leadership"
+      title: t('leadership.executives.executive0.title'),
+      category: t('leadership.executives.executive0.department')
     },
     {
       name: "Howard Smolar",
-      title: "Managing Director", 
-      category: "Operations"
+      title: t('leadership.executives.executive1.title'),
+      category: t('leadership.executives.executive1.department')
     },
     {
       name: "Marvin Garellek",
-      title: "Vice-President of Sales and Investments",
-      category: "Investments"
+      title: t('leadership.executives.executive2.title'),
+      category: t('leadership.executives.executive2.department')
     },
     {
       name: "Dan Hatahet",
-      title: "Corporate Development",
-      category: "Business Development"
+      title: t('leadership.executives.executive3.title'),
+      category: t('leadership.executives.executive3.department')
     },
     {
       name: "Lili Zunhua",
-      title: "Director and Production Partner",
-      category: "Manufacturing and Sourcing"
+      title: t('leadership.executives.executive4.title'),
+      category: t('leadership.executives.executive4.department')
     },
     {
       name: "Ian Lajoie",
-      title: "Global Partnership Development",
-      category: "Representation"
+      title: t('leadership.executives.executive5.title'),
+      category: t('leadership.executives.executive5.department')
     },
     {
       name: "Choukhrate Rasoulev",
-      title: "International Sales Director and Representation",
-      category: "Sales Development"
+      title: t('leadership.executives.executive6.title'),
+      category: t('leadership.executives.executive6.department')
     }
   ];
 
   const visionExecutives = [
     {
       name: "Juan Grey",
-      title: "Chief Vision & Expansion Officer",
-      category: "Brand & Creative Direction"
+      title: t('leadership.executives.executive7.title'),
+      category: t('leadership.executives.executive7.department')
     },
     {
       name: "Coach Juan Gonzalez",
-      title: "Chief Technology Officer & AI Innovation Strategist",
-      category: "Innovation"
+      title: t('leadership.executives.executive8.title'),
+      category: t('leadership.executives.executive8.department')
     }
   ];
 
@@ -88,10 +90,10 @@ export default function LeadershipTeam() {
         {/* Main Leadership Team Heading */}
         <div className="text-center mb-16">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-6" data-testid="heading-leadership-title">
-            Leadership Team
+            {t('leadership.title')}
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto" data-testid="text-leadership-subtitle">
-            Building the Future of Canadian Housing
+            {t('leadership.subtitle')}
           </p>
         </div>
         
@@ -104,7 +106,7 @@ export default function LeadershipTeam() {
         <div className="mt-12 md:mt-16">
           <div className="text-center mb-8 md:mb-12">
             <h3 className="font-display font-bold text-2xl md:text-3xl text-foreground px-4" data-testid="heading-vision-subsection">
-              Vision, Innovation & Market Leadership
+              {t('leadership.badge')}
             </h3>
           </div>
           

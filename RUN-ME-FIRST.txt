@@ -1,0 +1,124 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║              🚀 RUN THIS FIRST - COMPLETE FIX GUIDE                  ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+📍 YOU ARE HERE:
+   C:\Users\Juan Gonzalez\Documents\PVRPOSE AI\ILLUMMAA\illummaa-github
+
+🎯 THREE ISSUES TO FIX:
+   1. ❌ Extra button click on Technical Plans tab
+   2. ❌ Architect contact info visible
+   3. ❌ Wrong image on "2D Floor Plan" tab
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: INSTALL PYTHON LIBRARIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open Command Prompt (search for "cmd" in Windows Start menu)
+
+Then run ONE of these commands (try in order until one works):
+
+   pip install PyMuPDF Pillow
+
+   OR
+
+   python -m pip install PyMuPDF Pillow
+
+   OR
+
+   python3 -m pip install PyMuPDF Pillow
+
+You'll see:
+   "Successfully installed PyMuPDF-X.XX.X Pillow-X.X.X"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: RUN THE PYTHON SCRIPT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+In Command Prompt, run these TWO commands:
+
+   cd "C:\Users\Juan Gonzalez\Documents\PVRPOSE AI\ILLUMMAA\illummaa-github"
+
+   python extract_and_crop_technical_plans.py
+
+If "python" doesn't work, try:
+
+   python3 extract_and_crop_technical_plans.py
+
+You'll see:
+   ======================================================================
+   🔧 3BR Technical Plans - Extract & Crop Tool
+   ======================================================================
+   ...
+   🎉 SUCCESS! Processed 6 pages
+   ======================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: VERIFY FOLDER WAS CREATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Check if the folder exists:
+
+   dir "attached_assets\3br-technical-plans"
+
+You should see 6 JPG files:
+   ✅ cover-page.jpg
+   ✅ floor-plan-main.jpg          ← THIS IS THE GROUND FLOOR PLAN
+   ✅ elevations-front-rear.jpg
+   ✅ elevations-left-right.jpg
+   ✅ foundation-plan.jpg
+   ✅ roof-framing-plan.jpg
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 4: UPLOAD TO REPLIT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Open this file in Notepad:
+   documentation\REPLIT-COMPLETE-FIX.md
+
+Scroll to "STEP 3: PASTE THIS PROMPT INTO REPLIT AI CHAT"
+
+Copy EVERYTHING between the ``` marks
+
+Paste into Replit AI chat
+
+Then attach all 6 JPG files from:
+   attached_assets\3br-technical-plans\
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 DONE! ALL 3 ISSUES WILL BE FIXED!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RESULT:
+   ✅ "Ground Floor Plan" tab shows correct GROUND FLOOR PLAN image
+   ✅ All technical plans appear IMMEDIATELY (no button click)
+   ✅ Architect contact info completely removed
+   ✅ Maximum quality: 1400px width, 300 DPI, 100% quality
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ NEED HELP?
+
+"Python not found":
+   → Install Python from python.org
+   → Or enable Python in Windows Store
+
+"Module not found":
+   → Run: pip install PyMuPDF Pillow
+
+"Folder not visible":
+   → Run the Python script first (Step 2)
+   → Refresh File Explorer (press F5)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️ TIME: 20 minutes total
+
+🚀 START HERE: Open Command Prompt and run Step 1!
+
+╚══════════════════════════════════════════════════════════════════════╝

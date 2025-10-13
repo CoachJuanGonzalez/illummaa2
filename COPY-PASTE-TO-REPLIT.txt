@@ -1,0 +1,91 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║          🚀 COPY & PASTE TO REPLIT - FIXES EVERYTHING!              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+🎯 THIS ONE PROMPT FIXES ALL 3 ISSUES:
+
+   ✅ Removes extra button click
+   ✅ Removes architect contact info
+   ✅ Fixes "2D Floor Plan" to show correct GROUND FLOOR PLAN
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 INSTRUCTIONS (2 STEPS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: OPEN THE PROMPT FILE
+──────────────────────────────────────────────────────────────────────
+
+Open this file in Notepad:
+
+   documentation\REPLIT-ALL-IN-ONE-FIX.md
+
+Scroll to the section that says:
+   "COPY EVERYTHING BELOW AND PASTE INTO REPLIT AI CHAT"
+
+Select ALL the text between the ``` marks (the big code block)
+
+Copy it (Ctrl+C)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: PASTE INTO REPLIT
+──────────────────────────────────────────────────────────────────────
+
+1. Go to your Replit project
+2. Open Replit AI chat (right sidebar)
+3. Paste the prompt (Ctrl+V)
+4. Press Enter
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🤖 WHAT REPLIT AI WILL DO AUTOMATICALLY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ⚙️  Install Python libraries (PyMuPDF, Pillow)
+2. 📝 Create Python script (extract_and_crop_technical_plans.py)
+3. ▶️  Run the script automatically
+4. 📐 Extract 6 pages from PDF
+5. ✂️  Crop 300px from right (remove architect contact info)
+6. 🎨 Resize to 1400px @ 300 DPI, 100% quality
+7. 💾 Save 6 JPG files to attached_assets/3br-technical-plans/
+8. 📝 Update model-3br-executive.tsx code
+9. ✅ Test and verify everything works
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏱️ TIME: ~5 minutes (Replit does everything)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You just: Copy → Paste → Wait
+
+Replit AI handles the rest! 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ EXPECTED RESULT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After Replit finishes, visit: /models/3br-executive
+
+You'll see:
+   ✅ "Ground Floor Plan" tab shows correct GROUND FLOOR PLAN
+   ✅ Images appear IMMEDIATELY (no button click)
+   ✅ 6 technical plan tabs (Cover, Floor Plan, Elevations, etc.)
+   ✅ NO architect contact information visible
+   ✅ High quality: 1400px, 300 DPI, 100% JPG
+   ✅ Zoom controls work perfectly
+   ✅ Mobile responsive
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 START HERE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Open: documentation\REPLIT-ALL-IN-ONE-FIX.md
+2. Copy the big code block between the ``` marks
+3. Paste into Replit AI chat
+4. Press Enter
+5. Done! ✨
+
+╚══════════════════════════════════════════════════════════════════════╝

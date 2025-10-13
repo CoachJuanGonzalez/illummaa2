@@ -1,12 +1,15 @@
 import { AlertTriangle, Lightbulb } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function ProblemSolution() {
+  const { t } = useTranslation();
+
   return (
     <section className="py-20" data-testid="section-problem-solution">
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-foreground mb-8 text-center" data-testid="heading-housing-crisis">
-            The Housing Crisis Demands Industrial Solutions
+            {t('problemSolution.title')}
           </h2>
           <div className="space-y-6">
             <div className="flex items-start space-x-4" data-testid="container-problem">
@@ -14,9 +17,9 @@ export default function ProblemSolution() {
                 <AlertTriangle className="text-red-600" size={24} />
               </div>
               <div>
-                <h3 className="font-semibold text-xl mb-2" data-testid="heading-problem">The Problem</h3>
+                <h3 className="font-semibold text-xl mb-2" data-testid="heading-problem">{t('problemSolution.problemTitle')}</h3>
                 <p className="text-muted-foreground text-lg" data-testid="text-problem-description">
-                  Canadian housing shortage: 500,000+ annual shortfall. Traditional construction can't meet demand.
+                  {t('problemSolution.problemText')}
                 </p>
               </div>
             </div>
@@ -25,9 +28,9 @@ export default function ProblemSolution() {
                 <Lightbulb className="text-green-600" size={24} />
               </div>
               <div>
-                <h3 className="font-semibold text-xl mb-2" data-testid="heading-solution">The Solution</h3>
+                <h3 className="font-semibold text-xl mb-2" data-testid="heading-solution">{t('problemSolution.solutionTitle')}</h3>
                 <p className="text-muted-foreground text-lg" data-testid="text-solution-description">
-                  Industrial modular: 4x faster construction, 30-40% cost savings, predictable timelines.
+                  {t('problemSolution.solutionText')}
                 </p>
               </div>
             </div>

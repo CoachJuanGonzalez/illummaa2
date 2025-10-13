@@ -1,0 +1,488 @@
+{
+  "navigation": {
+    "partnershipApplication": "Partnership Application",
+    "why": "Why",
+    "leadership": "Leadership",
+    "models": "Models",
+    "developers": "Developers",
+    "partnership": "Partnership",
+    "contact": "Contact",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "logoAlt": "ü ILLUMMAA logo"
+  },
+  "hero": {
+    "title": "Building Homes, Strengthening Communities",
+    "subtitle": "Your Partner in Community-First Housing Solutions",
+    "ctaPrimary": "Join Our Housing Community",
+    "ctaSecondary": "View Our Models",
+    "imageAlt": "Canadian modular housing partnership opportunities with proven development success"
+  },
+  "problemSolution": {
+    "title": "The Housing Crisis Demands Industrial Solutions",
+    "problemTitle": "The Problem",
+    "problemText": "Canadian housing shortage: 500,000+ annual shortfall. Traditional construction can't meet demand.",
+    "solutionTitle": "The Solution",
+    "solutionText": "Industrial modular: 4x faster construction, 30-40% cost savings, predictable timelines."
+  },
+  "socialProof": {
+    "badge": "Canada's Modular Leader",
+    "title": "Why Partner with ILLUMMAA",
+    "subtitle": "Proven advantages that position ILLUMMAA as your strategic construction partner for large-scale development.",
+    "costEfficiency": {
+      "title": "Cost Efficiency",
+      "description": "Factory-precision manufacturing delivers 30-40% cost savings versus traditional construction. Economies of scale maximize your project ROI while maintaining premium quality standards.",
+      "metric": "30-40% More Affordable"
+    },
+    "speed": {
+      "title": "Speed of Construction",
+      "description": "Factory-controlled construction enables faster project delivery regardless of weather conditions. Meet tight deadlines and accelerate revenue generation with proven industrial timelines.",
+      "metric": "Faster Build Times"
+    },
+    "quality": {
+      "title": "Consistency and Quality Control",
+      "description": "ISO-certified factory production ensures consistent quality across every unit. Minimize on-site variables and eliminate costly construction delays.",
+      "metric": "Factory Precision"
+    },
+    "flexibility": {
+      "title": "Flexibility and Customization",
+      "description": "Scalable design system adapts from 50-unit projects to 500+ unit developments. Customize specifications while maintaining production efficiency.",
+      "metric": "Diverse Designs"
+    },
+    "sustainability": {
+      "title": "Sustainability",
+      "description": "Meet federal sustainability requirements and qualify for green building incentives. Align with Canada's Net Zero goals while delivering market-leading efficiency.",
+      "metric": "Eco-Friendly Design"
+    }
+  },
+  "leadership": {
+    "badge": "Building the Future of Canadian Housing",
+    "title": "Leadership Team",
+    "subtitle": "Vision, Innovation & Market Leadership",
+    "executives": {
+      "chairman": {
+        "name": "Baillargeon-Kemener Office",
+        "title": "Chairman",
+        "department": "Leadership"
+      },
+      "managingDirector": {
+        "name": "Howard Smolar",
+        "title": "Managing Director",
+        "department": "Operations"
+      },
+      "vicePresident": {
+        "name": "Marvin Garellek",
+        "title": "Vice-President of Sales and Investments",
+        "department": "Investments"
+      },
+      "corporateDevelopment": {
+        "name": "Dan Hatahet",
+        "title": "Corporate Development",
+        "department": "Business Development"
+      },
+      "director": {
+        "name": "Lili Zunhua",
+        "title": "Director and Production Partner",
+        "department": "Manufacturing and Sourcing"
+      },
+      "globalPartnership": {
+        "name": "Ian Lajoie",
+        "title": "Global Partnership Development",
+        "department": "Representation"
+      },
+      "internationalSales": {
+        "name": "Choukhrate Rasoulev",
+        "title": "International Sales Director and Representation",
+        "department": "Sales Development"
+      },
+      "chiefVision": {
+        "name": "Juan Grey",
+        "title": "Chief Vision & Expansion Officer",
+        "department": "Brand & Creative Direction"
+      },
+      "cto": {
+        "name": "Coach Juan Gonzalez",
+        "title": "Chief Technology Officer & AI Innovation Strategist",
+        "department": "Innovation"
+      }
+    }
+  },
+  "models": {
+    "title": "Our Model Collection",
+    "subtitle": "Precision-engineered homes designed for Canadian living. Starting prices for qualified developers.",
+    "disclaimer": "Pricing shown for qualified developers. Volume discounts and custom modifications available.",
+    "model1br": {
+      "name": "1BR Compact",
+      "size": "937 sq ft",
+      "description": "Perfect for urban density",
+      "price": "Starting from $129K CAD",
+      "features": [
+        "Open concept living",
+        "Energy efficient appliances",
+        "Premium finishes"
+      ],
+      "imageAlt": "1BR Compact exterior view"
+    },
+    "model2br": {
+      "name": "2BR Family",
+      "size": "1179 sq ft",
+      "description": "Ideal for young families",
+      "price": "Starting from $169K CAD",
+      "features": [
+        "Two spacious bedrooms",
+        "Full kitchen & dining",
+        "Private outdoor space ready"
+      ],
+      "imageAlt": "2BR Family exterior view"
+    },
+    "model3br": {
+      "name": "3BR Executive",
+      "size": "1360 sq ft",
+      "description": "Premium family living",
+      "price": "Starting from $199K CAD",
+      "features": [
+        "Master suite with ensuite",
+        "Open concept design",
+        "Smart home ready"
+      ],
+      "imageAlt": "3BR Executive exterior view"
+    },
+    "viewDetails": "View Details"
+  },
+  "partnershipTiers": {
+    "title": "Developer Partnership Tiers",
+    "subtitle": "From 10-unit projects to large community developments, choose the partnership level that matches your scale and unlock proven modular construction expertise.",
+    "disclaimer": "*Partnership support levels based on project complexity and current volume. Urgent projects receive priority attention across all tiers.",
+    "educationalBanner": {
+      "title": "New to Modular Construction?",
+      "description": "Learn about modular housing benefits, construction timelines, cost savings, and Canadian success stories before starting your project.",
+      "quickLinks": [
+        "Cost Savings Analysis",
+        "Build Process Overview",
+        "Design Options Gallery",
+        "Success Case Studies"
+      ],
+      "cta": "Explore Modular Resources"
+    },
+    "pioneer": {
+      "name": "Pioneer",
+      "units": "10-49 units",
+      "features": [
+        "Priority partnership handling",
+        "Dedicated project support",
+        "30-40% cost savings vs traditional",
+        "Housing Accelerator Fund assistance",
+        "Custom modification options",
+        "Multi-unit coordination",
+        "Factory queue priority"
+      ],
+      "cta": "Apply for Partnership"
+    },
+    "preferred": {
+      "name": "Preferred",
+      "units": "50-199 units",
+      "badge": "Most Popular",
+      "features": [
+        "All Pioneer benefits",
+        "Expedited senior team attention",
+        "Enhanced customization options",
+        "Fast-track project timeline",
+        "Municipal code compliance support",
+        "Volume optimization pricing",
+        "Advanced partnership proposals",
+        "ROI analysis tools"
+      ],
+      "cta": "Apply for Partnership"
+    },
+    "elite": {
+      "name": "Elite",
+      "units": "200+ units",
+      "features": [
+        "All Preferred benefits",
+        "Executive partnership team",
+        "VIP priority handling",
+        "Build Canada Homes eligibility",
+        "Co-development opportunities",
+        "Strategic enterprise pricing",
+        "Government liaison assistance",
+        "Coordinated 3-month timeline"
+      ],
+      "cta": "Apply for Partnership"
+    },
+    "mainCta": "Apply for Partnership"
+  },
+  "governmentPrograms": {
+    "title": "Government-Approved Housing Solutions",
+    "subtitle": "Access billions in government funding with our certified modular solutions.",
+    "programs": {
+      "accelerator": {
+        "name": "Housing Accelerator Fund",
+        "description": "$4.4B program compatibility"
+      },
+      "buildCanada": {
+        "name": "Build Canada Homes",
+        "description": "$6B+ program eligibility"
+      },
+      "provincial": {
+        "name": "Provincial Programs",
+        "description": "Regional incentive programs"
+      },
+      "municipal": {
+        "name": "Municipal Fast-Track",
+        "description": "Expedited approvals"
+      }
+    },
+    "imageAlt": "Government housing project with multiple modular buildings"
+  },
+  "movement": {
+    "title": "Building Canada's Housing Future",
+    "description": "From housing shortage to housing abundance. From traditional delays to industrial precision. Join the movement transforming how Canada builds homes.",
+    "highlights": [
+      "500,000+ homes needed annually",
+      "Industrial modular: The scalable solution",
+      "Your opportunity to lead the transformation"
+    ],
+    "cta": "Explore Partnership Opportunities",
+    "ctaTitle": "Learn More",
+    "imageAlt": "Commercial partnership opportunities for large-scale modular development projects across Canada"
+  },
+  "assessmentForm": {
+    "badge": "Partner with ILLUMMAA",
+    "title": "Developer Partnership Application",
+    "subtitle": "B2B Modular Housing Partnership Qualification",
+    "progress": {
+      "step": "Step {{current}} of {{total}}",
+      "percentage": "{{percentage}}% Complete"
+    },
+    "step1": {
+      "title": "Project Readiness & Scale",
+      "readiness": {
+        "label": "Where are you in your modular home journey? *",
+        "placeholder": "Please select...",
+        "options": {
+          "researching": "Just researching the market",
+          "planning": "Planning to buy in 12+ months",
+          "looking": "Actively looking (6-12 months)",
+          "ready": "Ready to move forward (3-6 months)",
+          "urgent": "I need a solution now (0-3 months)"
+        }
+      },
+      "units": {
+        "label": "Number of units needed *",
+        "placeholder": "Enter number of units (e.g., 50, 500, 5000+)",
+        "note": "Note: B2B partnerships typically start at 10 units. For residential projects under 10 units,",
+        "contactLink": "contact us",
+        "noteEnd": "for better assistance.",
+        "tierDisplay": {
+          "pioneer": "{{units}} units (Pioneer Tier Range)",
+          "preferred": "{{units}} units (Preferred Tier Range)",
+          "elite": "{{units}}+ units (Elite Tier Range)"
+        }
+      }
+    },
+    "step2": {
+      "title": "Project Details & Timeline",
+      "companyName": {
+        "label": "Company/Organization Name *",
+        "placeholder": "e.g., PVRPOSE AI, ABC Corporation"
+      },
+      "developerType": {
+        "label": "Developer Type *",
+        "placeholder": "Select developer type...",
+        "options": {
+          "indigenous": "Indigenous Community/Organization",
+          "commercial": "Commercial Developer (Large Projects)",
+          "government": "Government/Municipal Developer",
+          "nonprofit": "Non-Profit Housing Developer",
+          "private": "Private Developer (Medium Projects)",
+          "individual": "Individual/Family Developer"
+        }
+      },
+      "province": {
+        "label": "Construction Province/Territory *",
+        "placeholder": "Select province/territory...",
+        "options": {
+          "AB": "Alberta",
+          "BC": "British Columbia",
+          "MB": "Manitoba",
+          "NB": "New Brunswick",
+          "NL": "Newfoundland and Labrador",
+          "NT": "Northwest Territories",
+          "NS": "Nova Scotia",
+          "NU": "Nunavut",
+          "ON": "Ontario",
+          "PE": "Prince Edward Island",
+          "QC": "Quebec",
+          "SK": "Saskatchewan",
+          "YT": "Yukon"
+        }
+      },
+      "timeline": {
+        "label": "Delivery Timeline *",
+        "placeholder": "Select timeline...",
+        "options": {
+          "immediate": "Immediate (0-3 months)",
+          "short": "Short-term (3-6 months)",
+          "medium": "Medium-term (6-12 months)",
+          "long": "Long-term (12+ months)"
+        }
+      }
+    },
+    "step3": {
+      "title": "Government Programs & Funding",
+      "governmentPrograms": {
+        "label": "Government Housing Program Participation *",
+        "placeholder": "Select participation status...",
+        "options": {
+          "participating": "Participating in government programs",
+          "not": "Not participating"
+        }
+      },
+      "buildCanada": {
+        "label": "Are you Build Canada eligible? *",
+        "placeholder": "Select eligibility...",
+        "options": {
+          "yes": "Yes - Meets net-zero and affordability criteria",
+          "no": "No - Does not meet criteria",
+          "unknown": "I don't know - Need more information"
+        }
+      },
+      "projectDescription": {
+        "label": "Project Description (Optional)",
+        "placeholder": "Describe your modular housing project, timeline, special requirements, or any other details..."
+      }
+    },
+    "step4": {
+      "title": "Your Contact Information",
+      "firstName": {
+        "label": "First Name *"
+      },
+      "lastName": {
+        "label": "Last Name *"
+      },
+      "email": {
+        "label": "Email Address *"
+      },
+      "phone": {
+        "label": "Phone Number *"
+      }
+    },
+    "step5": {
+      "title": "Review & Legal Consent",
+      "summaryTitle": "Assessment Summary",
+      "contactDetails": "Contact Details",
+      "projectScope": "Project Scope",
+      "locationProfile": "Location & Profile",
+      "projectVision": "Project Vision",
+      "summaryLabels": {
+        "name": "Name:",
+        "email": "Email:",
+        "phone": "Phone:",
+        "company": "Company:",
+        "projectTimeline": "Project Timeline:",
+        "units": "Units:",
+        "deliveryTimeline": "Delivery Timeline:",
+        "province": "Province:",
+        "developerType": "Developer Type:",
+        "governmentPrograms": "Government Programs:"
+      },
+      "partnershipTier": {
+        "title": "Partnership Tier",
+        "pioneer": "B2B partnership development (10-49 units)",
+        "preferred": "Enhanced B2B partnership (50-199 units)",
+        "elite": "Executive B2B partnership (200+ units)"
+      },
+      "responseCommitment": {
+        "enhanced": "Enhanced Partnership Priority",
+        "executive": "Executive Partnership Track",
+        "vip": "VIP Implementation Support",
+        "descriptions": {
+          "enhanced": "Priority partnership coordination with dedicated team attention",
+          "executive": "Expedited processing with senior team engagement",
+          "vip": "Executive-level partnership with comprehensive project support"
+        }
+      },
+      "buildCanada": {
+        "title": "Build Canada Homes Eligible",
+        "description": "Your project scope qualifies for enhanced federal partnership opportunities."
+      },
+      "legalConsent": {
+        "title": "Legal Consent & Privacy",
+        "casl": "I consent to receive communications from ILLUMMAA (Required by CASL) *",
+        "sms": "I consent to receive SMS text messages (Optional, A2P 10DLC compliant)",
+        "privacy": "I acknowledge that I have read and agree to the Privacy Policy (Required by PIPEDA) *",
+        "age": "I confirm that I am 18 years of age or older and have the legal capacity to provide consent *",
+        "marketing": "I agree to receive marketing communications about ILLUMMAA products and services (Optional)"
+      },
+      "legalDisclaimer": {
+        "title": "Your Rights & Our Commitment:",
+        "text": "You may withdraw consent at any time via unsubscribe links, replying STOP to texts, or contacting info@illummaa.ca. Your information is protected under Canadian privacy laws (PIPEDA/provincial equivalents). ILLUMMAA complies with CASL requirements, maintains A2P 10DLC registration for SMS, and keeps consent records as required by law."
+      },
+      "submit": "Submit Partnership Application",
+      "submitting": "Submitting...",
+      "securityBadges": {
+        "encrypted": "Secure Encrypted",
+        "casl": "CASL Compliant",
+        "pipeda": "PIPEDA Protected"
+      }
+    },
+    "success": {
+      "title": "Thank You for Your Partnership Application!",
+      "subtitle": "Your developer assessment has been received. Here's what happens next:",
+      "nextStepsTitle": "What's Next?",
+      "partnershipTier": "Partnership Tier",
+      "verifiedAssessment": "Verified Assessment",
+      "complianceTitle": "Compliance",
+      "complianceBadge": "CASL & PIPEDA Verified",
+      "complianceDescription": "Enterprise-grade privacy compliance",
+      "steps": {
+        "confirmation": {
+          "title": "Confirmation Email Sent",
+          "description": "Assessment results and next steps delivered to your inbox"
+        },
+        "consultation": {
+          "title": "Personalized Consultation",
+          "description": "Project-specific recommendations and partnership details"
+        }
+      },
+      "buildCanadaBadge": {
+        "title": "Build Canada Eligible",
+        "description": "Your project qualifies for Build Canada funding programs"
+      }
+    }
+  },
+  "footer": {
+    "description": "Industrial modular homes for Canada's housing future. Building faster, smarter, and more sustainably.",
+    "quickLinks": {
+      "title": "Quick Links",
+      "partnershipApplication": "Partnership Application",
+      "why": "Why ILLUMMAA",
+      "models": "Models",
+      "partnership": "Partnership"
+    },
+    "contact": {
+      "title": "Contact",
+      "phone": "(514) 532-1733",
+      "email": "info@illummaa.com",
+      "address": "17550 2nd Floor Trans-Canada Hwy, Kirkland, Quebec, H9J 3A3"
+    },
+    "copyright": "© 2025 ILLUMMAA. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "socialLabels": {
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "instagram": "Instagram"
+    }
+  },
+  "stickyButton": {
+    "desktop": "Apply Now",
+    "mobile": "Apply for Partnership"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "required": "Required field",
+    "optional": "Optional"
+  }
+}

@@ -1,0 +1,488 @@
+{
+  "navigation": {
+    "partnershipApplication": "Demande de partenariat",
+    "why": "Pourquoi",
+    "leadership": "Direction",
+    "models": "Modèles",
+    "developers": "Promoteurs",
+    "partnership": "Partenariat",
+    "contact": "Contact",
+    "menuOpen": "Ouvrir le menu",
+    "menuClose": "Fermer le menu",
+    "logoAlt": "Logo ü ILLUMMAA"
+  },
+  "hero": {
+    "title": "Bâtir des maisons, renforcer les communautés",
+    "subtitle": "Votre partenaire en solutions d'habitation communautaires",
+    "ctaPrimary": "Rejoignez notre communauté d'habitation",
+    "ctaSecondary": "Voir nos modèles",
+    "imageAlt": "Opportunités de partenariat en habitation modulaire canadienne avec succès de développement prouvé"
+  },
+  "problemSolution": {
+    "title": "La crise du logement exige des solutions industrielles",
+    "problemTitle": "Le problème",
+    "problemText": "Pénurie de logements au Canada : plus de 500 000 unités manquantes annuellement. La construction traditionnelle ne peut répondre à la demande.",
+    "solutionTitle": "La solution",
+    "solutionText": "Modulaire industriel : construction 4x plus rapide, économies de 30 à 40 %, échéanciers prévisibles."
+  },
+  "socialProof": {
+    "badge": "Chef de file modulaire au Canada",
+    "title": "Pourquoi s'associer à ILLUMMAA",
+    "subtitle": "Des avantages éprouvés qui positionnent ILLUMMAA comme votre partenaire stratégique en construction pour les projets de grande envergure.",
+    "costEfficiency": {
+      "title": "Efficacité des coûts",
+      "description": "La fabrication de précision en usine offre des économies de 30 à 40 % par rapport à la construction traditionnelle. Les économies d'échelle maximisent le rendement de votre projet tout en maintenant des normes de qualité supérieures.",
+      "metric": "30 à 40 % plus abordable"
+    },
+    "speed": {
+      "title": "Vitesse de construction",
+      "description": "La construction contrôlée en usine permet une livraison de projet plus rapide, peu importe les conditions météorologiques. Respectez les échéanciers serrés et accélérez la génération de revenus grâce à des délais industriels éprouvés.",
+      "metric": "Délais de construction plus rapides"
+    },
+    "quality": {
+      "title": "Cohérence et contrôle de la qualité",
+      "description": "La production en usine certifiée ISO assure une qualité constante pour chaque unité. Minimisez les variables sur le chantier et éliminez les retards de construction coûteux.",
+      "metric": "Précision d'usine"
+    },
+    "flexibility": {
+      "title": "Flexibilité et personnalisation",
+      "description": "Le système de conception modulaire s'adapte des projets de 50 unités aux développements de plus de 500 unités. Personnalisez les spécifications tout en maintenant l'efficacité de production.",
+      "metric": "Conceptions diversifiées"
+    },
+    "sustainability": {
+      "title": "Durabilité",
+      "description": "Répondez aux exigences fédérales en matière de durabilité et qualifiez-vous pour les incitatifs de construction écologique. Alignez-vous avec les objectifs carboneutres du Canada tout en offrant une efficacité de premier plan sur le marché.",
+      "metric": "Conception écoresponsable"
+    }
+  },
+  "leadership": {
+    "badge": "Bâtir l'avenir de l'habitation canadienne",
+    "title": "Équipe de direction",
+    "subtitle": "Vision, innovation et leadership sur le marché",
+    "executives": {
+      "chairman": {
+        "name": "Bureau Baillargeon-Kemener",
+        "title": "Président du conseil",
+        "department": "Direction"
+      },
+      "managingDirector": {
+        "name": "Howard Smolar",
+        "title": "Directeur général",
+        "department": "Opérations"
+      },
+      "vicePresident": {
+        "name": "Marvin Garellek",
+        "title": "Vice-président des ventes et des investissements",
+        "department": "Investissements"
+      },
+      "corporateDevelopment": {
+        "name": "Dan Hatahet",
+        "title": "Développement corporatif",
+        "department": "Développement des affaires"
+      },
+      "director": {
+        "name": "Lili Zunhua",
+        "title": "Directrice et partenaire de production",
+        "department": "Fabrication et approvisionnement"
+      },
+      "globalPartnership": {
+        "name": "Ian Lajoie",
+        "title": "Développement de partenariats mondiaux",
+        "department": "Représentation"
+      },
+      "internationalSales": {
+        "name": "Choukhrate Rasoulev",
+        "title": "Directeur des ventes internationales et représentation",
+        "department": "Développement des ventes"
+      },
+      "chiefVision": {
+        "name": "Juan Grey",
+        "title": "Chef de la vision et de l'expansion",
+        "department": "Marque et direction créative"
+      },
+      "cto": {
+        "name": "Coach Juan Gonzalez",
+        "title": "Directeur de la technologie et stratège en innovation IA",
+        "department": "Innovation"
+      }
+    }
+  },
+  "models": {
+    "title": "Notre collection de modèles",
+    "subtitle": "Maisons conçues avec précision pour la vie canadienne. Prix de départ pour promoteurs qualifiés.",
+    "disclaimer": "Prix indiqués pour promoteurs qualifiés. Rabais de volume et modifications personnalisées disponibles.",
+    "model1br": {
+      "name": "1 chambre compacte",
+      "size": "937 pi²",
+      "description": "Parfait pour la densité urbaine",
+      "price": "À partir de 129 000 $ CAD",
+      "features": [
+        "Espace de vie à aire ouverte",
+        "Électroménagers écoénergétiques",
+        "Finitions haut de gamme"
+      ],
+      "imageAlt": "Vue extérieure du modèle 1 chambre compacte"
+    },
+    "model2br": {
+      "name": "2 chambres familiale",
+      "size": "1 179 pi²",
+      "description": "Idéal pour les jeunes familles",
+      "price": "À partir de 169 000 $ CAD",
+      "features": [
+        "Deux chambres spacieuses",
+        "Cuisine et salle à manger complètes",
+        "Espace extérieur privé prêt"
+      ],
+      "imageAlt": "Vue extérieure du modèle 2 chambres familiale"
+    },
+    "model3br": {
+      "name": "3 chambres exécutive",
+      "size": "1 360 pi²",
+      "description": "Vie familiale de prestige",
+      "price": "À partir de 199 000 $ CAD",
+      "features": [
+        "Suite principale avec salle de bain attenante",
+        "Conception à aire ouverte",
+        "Prêt pour la maison intelligente"
+      ],
+      "imageAlt": "Vue extérieure du modèle 3 chambres exécutive"
+    },
+    "viewDetails": "Voir les détails"
+  },
+  "partnershipTiers": {
+    "title": "Paliers de partenariat pour promoteurs",
+    "subtitle": "Des projets de 10 unités aux grands développements communautaires, choisissez le niveau de partenariat qui correspond à votre envergure et accédez à une expertise éprouvée en construction modulaire.",
+    "disclaimer": "*Les niveaux de soutien au partenariat sont basés sur la complexité du projet et le volume actuel. Les projets urgents reçoivent une attention prioritaire à tous les paliers.",
+    "educationalBanner": {
+      "title": "Nouveau dans la construction modulaire?",
+      "description": "Renseignez-vous sur les avantages de l'habitation modulaire, les délais de construction, les économies de coûts et les réussites canadiennes avant de démarrer votre projet.",
+      "quickLinks": [
+        "Analyse des économies de coûts",
+        "Aperçu du processus de construction",
+        "Galerie d'options de conception",
+        "Études de cas de réussite"
+      ],
+      "cta": "Explorer les ressources modulaires"
+    },
+    "pioneer": {
+      "name": "Pionnier",
+      "units": "10 à 49 unités",
+      "features": [
+        "Traitement de partenariat prioritaire",
+        "Soutien de projet dédié",
+        "Économies de 30 à 40 % vs traditionnel",
+        "Aide au Fonds pour accélérer la construction de logements",
+        "Options de modification personnalisées",
+        "Coordination multi-unités",
+        "Priorité dans la file d'usine"
+      ],
+      "cta": "Postuler pour un partenariat"
+    },
+    "preferred": {
+      "name": "Privilégié",
+      "units": "50 à 199 unités",
+      "badge": "Le plus populaire",
+      "features": [
+        "Tous les avantages Pionnier",
+        "Attention accélérée de l'équipe senior",
+        "Options de personnalisation améliorées",
+        "Échéancier de projet accéléré",
+        "Soutien à la conformité aux codes municipaux",
+        "Tarification optimisée par volume",
+        "Propositions de partenariat avancées",
+        "Outils d'analyse du rendement du capital investi"
+      ],
+      "cta": "Postuler pour un partenariat"
+    },
+    "elite": {
+      "name": "Élite",
+      "units": "200+ unités",
+      "features": [
+        "Tous les avantages Privilégié",
+        "Équipe de partenariat exécutif",
+        "Traitement prioritaire VIP",
+        "Admissibilité à Construire des maisons au Canada",
+        "Opportunités de codéveloppement",
+        "Tarification d'entreprise stratégique",
+        "Assistance de liaison gouvernementale",
+        "Échéancier coordonné de 3 mois"
+      ],
+      "cta": "Postuler pour un partenariat"
+    },
+    "mainCta": "Postuler pour un partenariat"
+  },
+  "governmentPrograms": {
+    "title": "Solutions d'habitation approuvées par le gouvernement",
+    "subtitle": "Accédez à des milliards de dollars en financement gouvernemental grâce à nos solutions modulaires certifiées.",
+    "programs": {
+      "accelerator": {
+        "name": "Fonds pour accélérer la construction de logements",
+        "description": "Compatibilité avec le programme de 4,4 G$"
+      },
+      "buildCanada": {
+        "name": "Construire des maisons au Canada",
+        "description": "Admissibilité au programme de plus de 6 G$"
+      },
+      "provincial": {
+        "name": "Programmes provinciaux",
+        "description": "Programmes d'incitatifs régionaux"
+      },
+      "municipal": {
+        "name": "Accélération municipale",
+        "description": "Approbations accélérées"
+      }
+    },
+    "imageAlt": "Projet de logement gouvernemental avec plusieurs bâtiments modulaires"
+  },
+  "movement": {
+    "title": "Bâtir l'avenir du logement au Canada",
+    "description": "De la pénurie de logements à l'abondance de logements. Des retards traditionnels à la précision industrielle. Rejoignez le mouvement qui transforme la façon dont le Canada construit des maisons.",
+    "highlights": [
+      "Plus de 500 000 maisons nécessaires annuellement",
+      "Modulaire industriel : la solution évolutive",
+      "Votre opportunité de mener la transformation"
+    ],
+    "cta": "Explorer les opportunités de partenariat",
+    "ctaTitle": "En savoir plus",
+    "imageAlt": "Opportunités de partenariat commercial pour des projets de développement modulaires à grande échelle partout au Canada"
+  },
+  "assessmentForm": {
+    "badge": "Partenaire avec ILLUMMAA",
+    "title": "Demande de partenariat pour promoteurs",
+    "subtitle": "Qualification de partenariat en habitation modulaire B2B",
+    "progress": {
+      "step": "Étape {{current}} de {{total}}",
+      "percentage": "{{percentage}} % complétée"
+    },
+    "step1": {
+      "title": "État de préparation du projet et envergure",
+      "readiness": {
+        "label": "Où en êtes-vous dans votre parcours de maison modulaire? *",
+        "placeholder": "Veuillez sélectionner...",
+        "options": {
+          "researching": "Simplement en train de faire des recherches sur le marché",
+          "planning": "Planification d'achat dans plus de 12 mois",
+          "looking": "Recherche active (6 à 12 mois)",
+          "ready": "Prêt à aller de l'avant (3 à 6 mois)",
+          "urgent": "J'ai besoin d'une solution maintenant (0 à 3 mois)"
+        }
+      },
+      "units": {
+        "label": "Nombre d'unités nécessaires *",
+        "placeholder": "Entrez le nombre d'unités (p. ex., 50, 500, 5 000+)",
+        "note": "Remarque : Les partenariats B2B commencent généralement à 10 unités. Pour les projets résidentiels de moins de 10 unités,",
+        "contactLink": "contactez-nous",
+        "noteEnd": "pour une meilleure assistance.",
+        "tierDisplay": {
+          "pioneer": "{{units}} unités (gamme palier Pionnier)",
+          "preferred": "{{units}} unités (gamme palier Privilégié)",
+          "elite": "{{units}}+ unités (gamme palier Élite)"
+        }
+      }
+    },
+    "step2": {
+      "title": "Détails du projet et échéancier",
+      "companyName": {
+        "label": "Nom de l'entreprise/organisation *",
+        "placeholder": "p. ex., PVRPOSE AI, Corporation ABC"
+      },
+      "developerType": {
+        "label": "Type de promoteur *",
+        "placeholder": "Sélectionnez le type de promoteur...",
+        "options": {
+          "indigenous": "Communauté/organisation autochtone",
+          "commercial": "Promoteur commercial (grands projets)",
+          "government": "Promoteur gouvernemental/municipal",
+          "nonprofit": "Promoteur de logements sans but lucratif",
+          "private": "Promoteur privé (projets moyens)",
+          "individual": "Promoteur individuel/familial"
+        }
+      },
+      "province": {
+        "label": "Province/territoire de construction *",
+        "placeholder": "Sélectionnez la province/territoire...",
+        "options": {
+          "AB": "Alberta",
+          "BC": "Colombie-Britannique",
+          "MB": "Manitoba",
+          "NB": "Nouveau-Brunswick",
+          "NL": "Terre-Neuve-et-Labrador",
+          "NT": "Territoires du Nord-Ouest",
+          "NS": "Nouvelle-Écosse",
+          "NU": "Nunavut",
+          "ON": "Ontario",
+          "PE": "Île-du-Prince-Édouard",
+          "QC": "Québec",
+          "SK": "Saskatchewan",
+          "YT": "Yukon"
+        }
+      },
+      "timeline": {
+        "label": "Échéancier de livraison *",
+        "placeholder": "Sélectionnez l'échéancier...",
+        "options": {
+          "immediate": "Immédiat (0 à 3 mois)",
+          "short": "Court terme (3 à 6 mois)",
+          "medium": "Moyen terme (6 à 12 mois)",
+          "long": "Long terme (plus de 12 mois)"
+        }
+      }
+    },
+    "step3": {
+      "title": "Programmes gouvernementaux et financement",
+      "governmentPrograms": {
+        "label": "Participation au programme de logement gouvernemental *",
+        "placeholder": "Sélectionnez le statut de participation...",
+        "options": {
+          "participating": "Participe à des programmes gouvernementaux",
+          "not": "Ne participe pas"
+        }
+      },
+      "buildCanada": {
+        "label": "Êtes-vous admissible à Construire des maisons au Canada? *",
+        "placeholder": "Sélectionnez l'admissibilité...",
+        "options": {
+          "yes": "Oui - Répond aux critères carboneutres et d'abordabilité",
+          "no": "Non - Ne répond pas aux critères",
+          "unknown": "Je ne sais pas - Besoin de plus d'informations"
+        }
+      },
+      "projectDescription": {
+        "label": "Description du projet (facultatif)",
+        "placeholder": "Décrivez votre projet de logement modulaire, l'échéancier, les exigences particulières ou tout autre détail..."
+      }
+    },
+    "step4": {
+      "title": "Vos coordonnées",
+      "firstName": {
+        "label": "Prénom *"
+      },
+      "lastName": {
+        "label": "Nom de famille *"
+      },
+      "email": {
+        "label": "Adresse courriel *"
+      },
+      "phone": {
+        "label": "Numéro de téléphone *"
+      }
+    },
+    "step5": {
+      "title": "Révision et consentement juridique",
+      "summaryTitle": "Sommaire de l'évaluation",
+      "contactDetails": "Coordonnées",
+      "projectScope": "Portée du projet",
+      "locationProfile": "Emplacement et profil",
+      "projectVision": "Vision du projet",
+      "summaryLabels": {
+        "name": "Nom :",
+        "email": "Courriel :",
+        "phone": "Téléphone :",
+        "company": "Entreprise :",
+        "projectTimeline": "Échéancier du projet :",
+        "units": "Unités :",
+        "deliveryTimeline": "Échéancier de livraison :",
+        "province": "Province :",
+        "developerType": "Type de promoteur :",
+        "governmentPrograms": "Programmes gouvernementaux :"
+      },
+      "partnershipTier": {
+        "title": "Palier de partenariat",
+        "pioneer": "Développement de partenariat B2B (10 à 49 unités)",
+        "preferred": "Partenariat B2B amélioré (50 à 199 unités)",
+        "elite": "Partenariat B2B exécutif (200+ unités)"
+      },
+      "responseCommitment": {
+        "enhanced": "Priorité de partenariat amélioré",
+        "executive": "Parcours de partenariat exécutif",
+        "vip": "Soutien de mise en œuvre VIP",
+        "descriptions": {
+          "enhanced": "Coordination de partenariat prioritaire avec attention dédiée de l'équipe",
+          "executive": "Traitement accéléré avec engagement de l'équipe senior",
+          "vip": "Partenariat au niveau exécutif avec soutien de projet complet"
+        }
+      },
+      "buildCanada": {
+        "title": "Admissible à Construire des maisons au Canada",
+        "description": "La portée de votre projet vous qualifie pour des opportunités de partenariat fédéral améliorées."
+      },
+      "legalConsent": {
+        "title": "Consentement juridique et confidentialité",
+        "casl": "Je consens à recevoir des communications d'ILLUMMAA (exigé par la LCAP) *",
+        "sms": "Je consens à recevoir des messages texte SMS (facultatif, conforme A2P 10DLC)",
+        "privacy": "Je reconnais avoir lu et accepté la Politique de confidentialité (exigé par la LPRPDE) *",
+        "age": "Je confirme que j'ai 18 ans ou plus et que j'ai la capacité juridique de donner mon consentement *",
+        "marketing": "J'accepte de recevoir des communications marketing sur les produits et services d'ILLUMMAA (facultatif)"
+      },
+      "legalDisclaimer": {
+        "title": "Vos droits et notre engagement :",
+        "text": "Vous pouvez retirer votre consentement à tout moment via les liens de désabonnement, en répondant ARRÊT aux textos ou en communiquant avec info@illummaa.ca. Vos renseignements sont protégés en vertu des lois canadiennes sur la protection des renseignements personnels (LPRPDE/équivalents provinciaux). ILLUMMAA respecte les exigences de la LCAP, maintient l'enregistrement A2P 10DLC pour les SMS et conserve les dossiers de consentement tel qu'exigé par la loi."
+      },
+      "submit": "Soumettre la demande de partenariat",
+      "submitting": "Envoi en cours...",
+      "securityBadges": {
+        "encrypted": "Sécurisé et chiffré",
+        "casl": "Conforme LCAP",
+        "pipeda": "Protégé LPRPDE"
+      }
+    },
+    "success": {
+      "title": "Merci pour votre demande de partenariat!",
+      "subtitle": "Votre évaluation de promoteur a été reçue. Voici les prochaines étapes :",
+      "nextStepsTitle": "Prochaines étapes",
+      "partnershipTier": "Palier de partenariat",
+      "verifiedAssessment": "Évaluation vérifiée",
+      "complianceTitle": "Conformité",
+      "complianceBadge": "LCAP et LPRPDE vérifiés",
+      "complianceDescription": "Conformité à la protection des renseignements personnels de niveau entreprise",
+      "steps": {
+        "confirmation": {
+          "title": "Courriel de confirmation envoyé",
+          "description": "Résultats de l'évaluation et prochaines étapes livrés dans votre boîte de réception"
+        },
+        "consultation": {
+          "title": "Consultation personnalisée",
+          "description": "Recommandations spécifiques au projet et détails du partenariat"
+        }
+      },
+      "buildCanadaBadge": {
+        "title": "Admissible à Construire des maisons au Canada",
+        "description": "Votre projet se qualifie pour les programmes de financement Construire des maisons au Canada"
+      }
+    }
+  },
+  "footer": {
+    "description": "Maisons modulaires industrielles pour l'avenir du logement au Canada. Bâtir plus rapidement, plus intelligemment et de façon plus durable.",
+    "quickLinks": {
+      "title": "Liens rapides",
+      "partnershipApplication": "Demande de partenariat",
+      "why": "Pourquoi ILLUMMAA",
+      "models": "Modèles",
+      "partnership": "Partenariat"
+    },
+    "contact": {
+      "title": "Contact",
+      "phone": "(514) 532-1733",
+      "email": "info@illummaa.com",
+      "address": "17550 2e étage Trans-Canadienne, Kirkland, Québec, H9J 3A3"
+    },
+    "copyright": "© 2025 ILLUMMAA. Tous droits réservés.",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "socialLabels": {
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter",
+      "instagram": "Instagram"
+    }
+  },
+  "stickyButton": {
+    "desktop": "Postuler maintenant",
+    "mobile": "Postuler pour un partenariat"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "required": "Champ obligatoire",
+    "optional": "Facultatif"
+  }
+}

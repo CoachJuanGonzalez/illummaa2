@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { 
-  analytics, 
-  trackAssessmentStart, 
+import { useTranslation } from 'react-i18next';
+import {
+  analytics,
+  trackAssessmentStart,
   trackAssessmentStepComplete,
   trackAssessmentComplete,
   trackCustomerTierDetermination,
   trackUnitCountSelection
 } from "../lib/analytics";
-import { 
-  calculatePriorityScore, 
+import {
+  calculatePriorityScore,
   determineCustomerTier as determineCustomerTierShared,
-  isBuildCanadaEligible 
+  isBuildCanadaEligible
 } from "../../../shared/utils/scoring";
 import { parsePhoneNumber, AsYouType, isValidPhoneNumber } from "libphonenumber-js";
 
@@ -320,6 +321,9 @@ const DISPLAY_COUNTRIES = [
 ];
 
 const IllummaaAssessmentForm = () => {
+  // Translation hook
+  const { t } = useTranslation();
+
   // State management
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({});
@@ -421,25 +425,25 @@ const IllummaaAssessmentForm = () => {
   const getTierInfo = (tier: TierType) => {
     const tierInfo = {
       'pioneer': {
-        name: 'Pioneer',
+        name: t('assessmentForm.step5.partnershipTier.pioneer').split(' (')[0], // Extract "Pioneer" from full text
         icon: '🚀',
         color: 'purple',
-        description: 'B2B partnership development (10-49 units)',
-        submitText: 'Submit Partnership Application'
+        description: t('assessmentForm.step5.partnershipTier.pioneer'),
+        submitText: t('assessmentForm.step5.submit')
       },
       'preferred': {
-        name: 'Preferred',
+        name: t('assessmentForm.step5.partnershipTier.preferred').split(' (')[0], // Extract "Preferred" from full text
         icon: '⭐',
         color: 'orange',
-        description: 'Enhanced B2B partnership (50-199 units)',
-        submitText: 'Submit Partnership Application'
+        description: t('assessmentForm.step5.partnershipTier.preferred'),
+        submitText: t('assessmentForm.step5.submit')
       },
       'elite': {
-        name: 'Elite',
+        name: t('assessmentForm.step5.partnershipTier.elite').split(' (')[0], // Extract "Elite" from full text
         icon: '👑',
         color: 'red',
-        description: 'Executive B2B partnership (200+ units)',
-        submitText: 'Submit Partnership Application'
+        description: t('assessmentForm.step5.partnershipTier.elite'),
+        submitText: t('assessmentForm.step5.submit')
       }
     };
     return tierInfo[tier] || tierInfo['pioneer'];
@@ -449,20 +453,20 @@ const IllummaaAssessmentForm = () => {
   // RESPONSE COMMITMENT FUNCTIONS - Professional Service Levels (No Numerical Scoring)
   const getResponseCommitmentLevel = (tier: TierType) => {
     const levels = {
-      'pioneer': 'Enhanced Partnership Priority',
-      'preferred': 'Executive Partnership Track',
-      'elite': 'VIP Implementation Support'
+      'pioneer': t('assessmentForm.step5.responseCommitment.enhanced'),
+      'preferred': t('assessmentForm.step5.responseCommitment.executive'),
+      'elite': t('assessmentForm.step5.responseCommitment.vip')
     };
-    return levels[tier] || 'Enhanced Partnership Priority';
+    return levels[tier] || t('assessmentForm.step5.responseCommitment.enhanced');
   };
 
   const getResponseDescription = (tier: TierType) => {
     const descriptions = {
-      'pioneer': 'Priority partnership coordination with dedicated team attention',
-      'preferred': 'Expedited processing with senior team engagement',
-      'elite': 'Executive-level partnership with comprehensive project support'
+      'pioneer': t('assessmentForm.step5.responseCommitment.descriptions.enhanced'),
+      'preferred': t('assessmentForm.step5.responseCommitment.descriptions.executive'),
+      'elite': t('assessmentForm.step5.responseCommitment.descriptions.vip')
     };
-    return descriptions[tier] || 'Priority partnership coordination with dedicated team attention';
+    return descriptions[tier] || t('assessmentForm.step5.responseCommitment.descriptions.enhanced');
   };
 
   // Legacy function for backward compatibility
@@ -1460,10 +1464,10 @@ const IllummaaAssessmentForm = () => {
                 </svg>
               </div>
               <h1 className="text-4xl font-bold text-gray-900 mb-4" data-testid="success-title">
-                Assessment Complete!
+                {t('assessmentForm.success.title')}
               </h1>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto" data-testid="success-subtitle">
-                {getResponseCommitment(customerTier)}
+                {t('assessmentForm.success.subtitle')}
               </p>
             </div>
 
@@ -1475,7 +1479,7 @@ const IllummaaAssessmentForm = () => {
                   <div className="text-4xl mb-3" data-testid="tier-icon">
                     {getTierInfo(customerTier).icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Partnership Tier</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('assessmentForm.success.partnershipTier')}</h3>
                   <p className="text-2xl font-bold text-indigo-600" data-testid="tier-display">
                     {getTierInfo(customerTier).name}
                   </p>
@@ -1492,22 +1496,22 @@ const IllummaaAssessmentForm = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Compliance</h3>
-                  <p className="text-sm font-medium text-green-600 mb-1">CASL & PIPEDA Verified</p>
-                  <p className="text-xs text-gray-600">Enterprise-grade privacy compliance</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('assessmentForm.success.complianceTitle')}</h3>
+                  <p className="text-sm font-medium text-green-600 mb-1">{t('assessmentForm.success.complianceBadge')}</p>
+                  <p className="text-xs text-gray-600">{t('assessmentForm.success.complianceDescription')}</p>
                 </div>
               </div>
             </div>
 
             {/* Next Steps Section */}
             <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-8 mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">What's Next?</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">{t('assessmentForm.success.nextStepsTitle')}</h2>
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Confirmation Email Sent</h4>
-                    <p className="text-gray-600 text-sm">Assessment results and next steps delivered to your inbox</p>
+                    <h4 className="font-semibold text-gray-900">{t('assessmentForm.success.steps.confirmation.title')}</h4>
+                    <p className="text-gray-600 text-sm">{t('assessmentForm.success.steps.confirmation.description')}</p>
                   </div>
                 </div>
 
@@ -1522,9 +1526,9 @@ const IllummaaAssessmentForm = () => {
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Personalized Consultation</h4>
+                    <h4 className="font-semibold text-gray-900">{t('assessmentForm.success.steps.consultation.title')}</h4>
                     <p className="text-gray-600 text-sm">
-                      Direct consultation with our B2B partnership team
+                      {t('assessmentForm.success.steps.consultation.description')}
                     </p>
                   </div>
                 </div>
@@ -1534,8 +1538,8 @@ const IllummaaAssessmentForm = () => {
                   <div className="flex items-start space-x-4 bg-green-50 p-4 rounded-lg border border-green-200">
                     <div className="flex-shrink-0 w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">★</div>
                     <div>
-                      <h4 className="font-semibold text-green-900">Build Canada Eligible</h4>
-                      <p className="text-green-700 text-sm">Your project qualifies for Build Canada funding programs</p>
+                      <h4 className="font-semibold text-green-900">{t('assessmentForm.success.buildCanadaBadge.title')}</h4>
+                      <p className="text-green-700 text-sm">{t('assessmentForm.success.buildCanadaBadge.description')}</p>
                     </div>
                   </div>
                 )}
@@ -1559,22 +1563,22 @@ const IllummaaAssessmentForm = () => {
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium mb-4" data-testid="badge-partner">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                Build Canada Homes Partner
+                {t('assessmentForm.badge')}
               </div>
-              
+
               <h1 className="text-4xl font-bold text-gray-900 mb-3" data-testid="title-main">
-                Developer Partnership Application
+                {t('assessmentForm.title')}
               </h1>
               <p className="text-gray-600" data-testid="text-subtitle">
-                Start your partnership with Canada's modular housing leader. Tell us about your project.
+                {t('assessmentForm.subtitle')}
               </p>
             </div>
 
             {/* Progress Bar */}
             <div className="mb-8" data-testid="progress-container">
               <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                <span data-testid="text-step">Step {currentStep} of {TOTAL_STEPS}</span>
-                <span data-testid="text-progress">{Math.round((currentStep / TOTAL_STEPS) * 100)}% Complete</span>
+                <span data-testid="text-step">{t('assessmentForm.progress.step', { current: currentStep, total: TOTAL_STEPS })}</span>
+                <span data-testid="text-progress">{t('assessmentForm.progress.percentage', { percentage: Math.round((currentStep / TOTAL_STEPS) * 100) })}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
@@ -1595,12 +1599,12 @@ const IllummaaAssessmentForm = () => {
             {currentStep === 1 && (
               <div className="space-y-6" data-testid="step-1">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-1">
-                  Your Modular Journey
+                  {t('assessmentForm.step1.title')}
                 </h2>
-                
+
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-readiness">
-                    Where are you in your modular home journey? <span className="text-red-500">*</span>
+                    {t('assessmentForm.step1.readiness.label')}
                   </label>
                   <select
                     name="readiness"
@@ -1619,12 +1623,12 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-readiness"
                   >
-                    <option value="">Please select...</option>
-                    <option value="researching">Just researching the market</option>
-                    <option value="planning-long">Planning to buy in 12+ months</option>
-                    <option value="planning-medium">Actively looking (6-12 months)</option>
-                    <option value="planning-short">Ready to move forward (3-6 months)</option>
-                    <option value="immediate">I need a solution now (0-3 months)</option>
+                    <option value="">{t('assessmentForm.step1.readiness.placeholder')}</option>
+                    <option value="researching">{t('assessmentForm.step1.readiness.options.researching')}</option>
+                    <option value="planning-long">{t('assessmentForm.step1.readiness.options.planning')}</option>
+                    <option value="planning-medium">{t('assessmentForm.step1.readiness.options.looking')}</option>
+                    <option value="planning-short">{t('assessmentForm.step1.readiness.options.ready')}</option>
+                    <option value="immediate">{t('assessmentForm.step1.readiness.options.urgent')}</option>
                   </select>
                   {errors.readiness && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-readiness">{errors.readiness}</p>
@@ -1635,7 +1639,7 @@ const IllummaaAssessmentForm = () => {
                 {formData.readiness && formData.readiness !== 'researching' && (
                   <div>
                       <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-units">
-                        Number of units needed <span className="text-red-500">*</span>
+                        {t('assessmentForm.step1.units.label')}
                       </label>
                       <input
                         type="number"
@@ -1644,7 +1648,7 @@ const IllummaaAssessmentForm = () => {
                         onChange={handleInputChange}
                         min="1"
                         step="1"
-                        placeholder="Enter number of units (e.g., 50, 500, 5000+)"
+                        placeholder={t('assessmentForm.step1.units.placeholder')}
                         className={`w-full px-4 py-3 rounded-lg border ${
                           errors.unitCount ? 'border-red-300 bg-red-50' : 'border-gray-300'
                         } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none bg-white`}
@@ -1657,9 +1661,9 @@ const IllummaaAssessmentForm = () => {
                       {formData.unitCount && parseInt(formData.unitCount) > 0 && parseInt(formData.unitCount) < 10 && (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-2">
                           <p className="text-sm text-yellow-800">
-                            <strong>Note:</strong> B2B partnerships typically start at 10 units. For residential projects under 10 units,
-                            you may want to <a 
-                              href="mailto:info@illummaa.com" 
+                            {t('assessmentForm.step1.units.note')}{' '}
+                            <a
+                              href="mailto:info@illummaa.com"
                               className="underline cursor-pointer"
                               onClick={(e) => {
                                 e.preventDefault();
@@ -1670,7 +1674,8 @@ const IllummaaAssessmentForm = () => {
                                 mailtoLink.click();
                                 document.body.removeChild(mailtoLink);
                               }}
-                            >contact us</a> for better assistance.
+                            >{t('assessmentForm.step1.units.contactLink')}</a>{' '}
+                            {t('assessmentForm.step1.units.noteEnd')}
                           </p>
                         </div>
                       )}
@@ -1700,20 +1705,20 @@ const IllummaaAssessmentForm = () => {
             {currentStep === 2 && (
               <div className="space-y-6" data-testid="step-2">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-2">
-                  Company Profile
+                  {t('assessmentForm.step2.title')}
                 </h2>
 
                 {/* Company with SECURITY */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-company">
-                    Company/Organization Name <span className="text-red-500">*</span>
+                    {t('assessmentForm.step2.companyName.label')}
                   </label>
                   <input
                     type="text"
                     name="company"
                     value={formData.company || ''}
                     onChange={handleInputChange}
-                    placeholder="e.g., PVRPOSE AI, ABC Corporation"
+                    placeholder={t('assessmentForm.step2.companyName.placeholder')}
                     className={`w-full px-4 py-3 rounded-lg border ${
                       errors.company ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none`}
@@ -1728,7 +1733,7 @@ const IllummaaAssessmentForm = () => {
                 {/* Developer Type */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-developer-type">
-                    Developer Type <span className="text-red-500">*</span>
+                    {t('assessmentForm.step2.developerType.label')}
                   </label>
                   <select
                     name="developerType"
@@ -1747,13 +1752,13 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-developer-type"
                   >
-                    <option value="">Select developer type...</option>
-                    <option value="Indigenous Community/Organization">Indigenous Community/Organization</option>
-                    <option value="Commercial Developer (Large Projects)">Commercial Developer (Large Projects)</option>
-                    <option value="Government/Municipal Developer">Government/Municipal Developer</option>
-                    <option value="Non-Profit Housing Developer">Non-Profit Housing Developer</option>
-                    <option value="Private Developer (Medium Projects)">Private Developer (Medium Projects)</option>
-                    <option value="Individual/Family Developer">Individual/Family Developer</option>
+                    <option value="">{t('assessmentForm.step2.developerType.placeholder')}</option>
+                    <option value="Indigenous Community/Organization">{t('assessmentForm.step2.developerType.options.indigenous')}</option>
+                    <option value="Commercial Developer (Large Projects)">{t('assessmentForm.step2.developerType.options.commercial')}</option>
+                    <option value="Government/Municipal Developer">{t('assessmentForm.step2.developerType.options.government')}</option>
+                    <option value="Non-Profit Housing Developer">{t('assessmentForm.step2.developerType.options.nonprofit')}</option>
+                    <option value="Private Developer (Medium Projects)">{t('assessmentForm.step2.developerType.options.private')}</option>
+                    <option value="Individual/Family Developer">{t('assessmentForm.step2.developerType.options.individual')}</option>
                   </select>
                   {errors.developerType && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-developer-type">{errors.developerType}</p>
@@ -1763,7 +1768,7 @@ const IllummaaAssessmentForm = () => {
                 {/* Province */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-province">
-                    Construction Province/Territory <span className="text-red-500">*</span>
+                    {t('assessmentForm.step2.province.label')}
                   </label>
                   <select
                     name="province"
@@ -1782,20 +1787,20 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-province"
                   >
-                    <option value="">Select province/territory...</option>
-                    <option value="Alberta">Alberta</option>
-                    <option value="British Columbia">British Columbia</option>
-                    <option value="Manitoba">Manitoba</option>
-                    <option value="New Brunswick">New Brunswick</option>
-                    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                    <option value="Northwest Territories">Northwest Territories</option>
-                    <option value="Nova Scotia">Nova Scotia</option>
-                    <option value="Nunavut">Nunavut</option>
-                    <option value="Ontario">Ontario</option>
-                    <option value="Prince Edward Island">Prince Edward Island</option>
-                    <option value="Quebec">Quebec</option>
-                    <option value="Saskatchewan">Saskatchewan</option>
-                    <option value="Yukon">Yukon</option>
+                    <option value="">{t('assessmentForm.step2.province.placeholder')}</option>
+                    <option value="Alberta">{t('assessmentForm.step2.province.options.AB')}</option>
+                    <option value="British Columbia">{t('assessmentForm.step2.province.options.BC')}</option>
+                    <option value="Manitoba">{t('assessmentForm.step2.province.options.MB')}</option>
+                    <option value="New Brunswick">{t('assessmentForm.step2.province.options.NB')}</option>
+                    <option value="Newfoundland and Labrador">{t('assessmentForm.step2.province.options.NL')}</option>
+                    <option value="Northwest Territories">{t('assessmentForm.step2.province.options.NT')}</option>
+                    <option value="Nova Scotia">{t('assessmentForm.step2.province.options.NS')}</option>
+                    <option value="Nunavut">{t('assessmentForm.step2.province.options.NU')}</option>
+                    <option value="Ontario">{t('assessmentForm.step2.province.options.ON')}</option>
+                    <option value="Prince Edward Island">{t('assessmentForm.step2.province.options.PE')}</option>
+                    <option value="Quebec">{t('assessmentForm.step2.province.options.QC')}</option>
+                    <option value="Saskatchewan">{t('assessmentForm.step2.province.options.SK')}</option>
+                    <option value="Yukon">{t('assessmentForm.step2.province.options.YT')}</option>
                   </select>
                   {errors.province && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-province">{errors.province}</p>
@@ -1805,7 +1810,7 @@ const IllummaaAssessmentForm = () => {
                 {/* Timeline */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-timeline">
-                    Delivery Timeline <span className="text-red-500">*</span>
+                    {t('assessmentForm.step2.timeline.label')}
                   </label>
                   <select
                     name="timeline"
@@ -1824,11 +1829,11 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-timeline"
                   >
-                    <option value="">Select timeline...</option>
-                    <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
-                    <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
-                    <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
-                    <option value="Long-term (12+ months)">Long-term (12+ months)</option>
+                    <option value="">{t('assessmentForm.step2.timeline.placeholder')}</option>
+                    <option value="Immediate (0-3 months)">{t('assessmentForm.step2.timeline.options.immediate')}</option>
+                    <option value="Short-term (3-6 months)">{t('assessmentForm.step2.timeline.options.short')}</option>
+                    <option value="Medium-term (6-12 months)">{t('assessmentForm.step2.timeline.options.medium')}</option>
+                    <option value="Long-term (12+ months)">{t('assessmentForm.step2.timeline.options.long')}</option>
                   </select>
                   {errors.timeline && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-timeline">{errors.timeline}</p>
@@ -1841,12 +1846,12 @@ const IllummaaAssessmentForm = () => {
             {currentStep === 3 && (
               <div className="space-y-6" data-testid="step-3">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-3">
-                  Partnership Opportunities
+                  {t('assessmentForm.step3.title')}
                 </h2>
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-government-programs">
-                    Government Housing Program Participation <span className="text-red-500">*</span>
+                    {t('assessmentForm.step3.governmentPrograms.label')}
                   </label>
                   <select
                     name="governmentPrograms"
@@ -1865,9 +1870,9 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-government-programs"
                   >
-                    <option value="">Select participation status...</option>
-                    <option value="Participating in government programs">Participating in government programs</option>
-                    <option value="Not participating">Not participating</option>
+                    <option value="">{t('assessmentForm.step3.governmentPrograms.placeholder')}</option>
+                    <option value="Participating in government programs">{t('assessmentForm.step3.governmentPrograms.options.participating')}</option>
+                    <option value="Not participating">{t('assessmentForm.step3.governmentPrograms.options.not')}</option>
                   </select>
                   {errors.governmentPrograms && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-government-programs">{errors.governmentPrograms}</p>
@@ -1876,7 +1881,7 @@ const IllummaaAssessmentForm = () => {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-buildcanada">
-                    Are you Build Canada eligible? <span className="text-red-500">*</span>
+                    {t('assessmentForm.step3.buildCanada.label')}
                   </label>
                   <p className="text-sm font-bold text-gray-700 mb-2">
                     Select 'Yes' only if your project meets net-zero emissions (&lt;20% baseline)
@@ -1900,10 +1905,10 @@ const IllummaaAssessmentForm = () => {
                     required
                     data-testid="select-buildcanada"
                   >
-                    <option value="">Select eligibility...</option>
-                    <option value="Yes">Yes - Meets net-zero and affordability criteria</option>
-                    <option value="No">No - Does not meet criteria</option>
-                    <option value="I don't know">I don't know - Need more information</option>
+                    <option value="">{t('assessmentForm.step3.buildCanada.placeholder')}</option>
+                    <option value="Yes">{t('assessmentForm.step3.buildCanada.options.yes')}</option>
+                    <option value="No">{t('assessmentForm.step3.buildCanada.options.no')}</option>
+                    <option value="I don't know">{t('assessmentForm.step3.buildCanada.options.unknown')}</option>
                   </select>
                   {errors.buildCanadaEligible && (
                     <p className="text-red-500 text-xs mt-1" data-testid="error-buildcanada">
@@ -1915,14 +1920,14 @@ const IllummaaAssessmentForm = () => {
                 {/* Project Description - Optional field */}
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-project-description">
-                    Project Description <span className="text-gray-500 font-normal">(Optional)</span>
+                    {t('assessmentForm.step3.projectDescription.label')}
                   </label>
                   <textarea
                     name="projectDescription"
                     value={formData.projectDescription || ''}
                     onChange={handleInputChange}
                     rows={4}
-                    placeholder="Describe your modular housing project, timeline, special requirements, or any other details..."
+                    placeholder={t('assessmentForm.step3.projectDescription.placeholder')}
                     className={`w-full px-4 py-3 rounded-lg border ${
                       errors.projectDescription ? 'border-red-300 bg-red-50' : 'border-gray-300'
                     } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none resize-none bg-white`}      
@@ -1940,13 +1945,13 @@ const IllummaaAssessmentForm = () => {
             {currentStep === 4 && (
               <div className="space-y-6" data-testid="step-4">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-4">
-                  Contact Information
+                  {t('assessmentForm.step4.title')}
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-firstname">
-                      First Name <span className="text-red-500">*</span>
+                      {t('assessmentForm.step4.firstName.label')}
                     </label>
                     <input
                       type="text"
@@ -1966,7 +1971,7 @@ const IllummaaAssessmentForm = () => {
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-lastname">
-                      Last Name <span className="text-red-500">*</span>
+                      {t('assessmentForm.step4.lastName.label')}
                     </label>
                     <input
                       type="text"
@@ -1987,7 +1992,7 @@ const IllummaaAssessmentForm = () => {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-email">
-                    Email Address <span className="text-red-500">*</span>
+                    {t('assessmentForm.step4.email.label')}
                   </label>
                   <input
                     type="email"
@@ -2007,7 +2012,7 @@ const IllummaaAssessmentForm = () => {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-1.5" data-testid="label-phone">
-                    Phone Number <span className="text-red-500">*</span>
+                    {t('assessmentForm.step4.phone.label')}
                   </label>
 
                   {/* Match First Name/Last Name grid layout for equal-width "bubbles" */}
@@ -2069,12 +2074,12 @@ const IllummaaAssessmentForm = () => {
             {currentStep === 5 && (
               <div className="space-y-6" data-testid="step-5">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6" data-testid="title-step-5">
-                  Review & Submit
+                  {t('assessmentForm.step5.title')}
                 </h2>
-                
+
                 {/* DYNAMIC ASSESSMENT SUMMARY */}
                 <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Assessment Summary</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('assessmentForm.step5.summaryTitle')}</h3>
                   
                   <div className="grid md:grid-cols-2 gap-6">
                     {/* Contact Information Card */}
@@ -2085,13 +2090,13 @@ const IllummaaAssessmentForm = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
-                        <h4 className="font-semibold text-gray-900">Contact Details</h4>
+                        <h4 className="font-semibold text-gray-900">{t('assessmentForm.step5.contactDetails')}</h4>
                       </div>
                       <div className="space-y-2 text-sm">
-                        <p><span className="text-gray-600">Name:</span> <span className="font-medium">{formData.firstName} {formData.lastName}</span></p>
-                        <p><span className="text-gray-600">Email:</span> <span className="font-medium">{formData.email}</span></p>
-                        <p><span className="text-gray-600">Phone:</span> <span className="font-medium">{formData.phone}</span></p>
-                        {formData.company && <p><span className="text-gray-600">Company:</span> <span className="font-medium">{formData.company}</span></p>}
+                        <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.name')}</span> <span className="font-medium">{formData.firstName} {formData.lastName}</span></p>
+                        <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.email')}</span> <span className="font-medium">{formData.email}</span></p>
+                        <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.phone')}</span> <span className="font-medium">{formData.phone}</span></p>
+                        {formData.company && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.company')}</span> <span className="font-medium">{formData.company}</span></p>}
                       </div>
                     </div>
 
@@ -2103,14 +2108,14 @@ const IllummaaAssessmentForm = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                           </svg>
                         </div>
-                        <h4 className="font-semibold text-gray-900">Project Scope</h4>
+                        <h4 className="font-semibold text-gray-900">{t('assessmentForm.step5.projectScope')}</h4>
                       </div>
                       <div className="space-y-2 text-sm">
-                        {formData.readiness && <p><span className="text-gray-600">Project Timeline:</span> <span className="font-medium">{formData.readiness === 'planning-long' ? 'Long-term (12+ months)' : formData.readiness === 'planning-medium' ? 'Medium-term (6-12 months)' : formData.readiness === 'planning-short' ? 'Short-term (3-6 months)' : formData.readiness === 'immediate' ? 'Immediate (0-3 months)' : formData.readiness}</span></p>}
-                        
+                        {formData.readiness && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.projectTimeline')}</span> <span className="font-medium">{formData.readiness === 'planning-long' ? 'Long-term (12+ months)' : formData.readiness === 'planning-medium' ? 'Medium-term (6-12 months)' : formData.readiness === 'planning-short' ? 'Short-term (3-6 months)' : formData.readiness === 'immediate' ? 'Immediate (0-3 months)' : formData.readiness}</span></p>}
+
                         {/* B2B Project Information - Always Show */}
-                        {formData.unitCount && <p><span className="text-gray-600">Units:</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
-                        {formData.timeline && <p><span className="text-gray-600">Delivery Timeline:</span> <span className="font-medium">{formData.timeline}</span></p>}
+                        {formData.unitCount && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.units')}</span> <span className="font-medium">{getDisplayUnitText(formData.unitCount)}</span></p>}
+                        {formData.timeline && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.deliveryTimeline')}</span> <span className="font-medium">{formData.timeline}</span></p>}
                       </div>
                     </div>
                   </div>
@@ -2124,15 +2129,15 @@ const IllummaaAssessmentForm = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-gray-900">Location & Profile</h4>
+                      <h4 className="font-semibold text-gray-900">{t('assessmentForm.step5.locationProfile')}</h4>
                     </div>
                     <div className="grid md:grid-cols-2 gap-4 text-sm">
                       <div className="space-y-2">
-                        {formData.province && <p><span className="text-gray-600">Province:</span> <span className="font-medium">{formData.province}</span></p>}
-                        {formData.developerType && <p><span className="text-gray-600">Developer Type:</span> <span className="font-medium">{formData.developerType}</span></p>}
+                        {formData.province && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.province')}</span> <span className="font-medium">{formData.province}</span></p>}
+                        {formData.developerType && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.developerType')}</span> <span className="font-medium">{formData.developerType}</span></p>}
                       </div>
                       <div className="space-y-2">
-                        {formData.governmentPrograms && <p><span className="text-gray-600">Government Programs:</span> <span className="font-medium">{formData.governmentPrograms}</span></p>}
+                        {formData.governmentPrograms && <p><span className="text-gray-600">{t('assessmentForm.step5.summaryLabels.governmentPrograms')}</span> <span className="font-medium">{formData.governmentPrograms}</span></p>}
                       </div>
                     </div>
                   </div>
@@ -2146,7 +2151,7 @@ const IllummaaAssessmentForm = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
                         </div>
-                        <h4 className="font-semibold text-gray-900">Project Vision</h4>
+                        <h4 className="font-semibold text-gray-900">{t('assessmentForm.step5.projectVision')}</h4>
                       </div>
                       <p className="text-sm text-gray-700 bg-white rounded-lg p-3 border border-gray-200">"{formData.projectDescription}"</p>
                     </div>
@@ -2163,7 +2168,7 @@ const IllummaaAssessmentForm = () => {
                         <p className="text-sm text-gray-700">{getResponseDescription(customerTier)}</p>
                       </div>
                       <div className="text-right">
-                        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">Verified Assessment</div>
+                        <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{t('assessmentForm.step5.partnershipTier.title')}</div>
                       </div>
                     </div>
                   </div>
@@ -2173,8 +2178,8 @@ const IllummaaAssessmentForm = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">🍁</span>
                         <div>
-                          <h4 className="font-semibold text-green-800">Build Canada Homes Eligible</h4>
-                          <p className="text-sm text-green-700">Your project scope qualifies for enhanced federal partnership opportunities.</p>
+                          <h4 className="font-semibold text-green-800">{t('assessmentForm.step5.buildCanada.title')}</h4>
+                          <p className="text-sm text-green-700">{t('assessmentForm.step5.buildCanada.description')}</p>
                         </div>
                       </div>
                     </div>
@@ -2183,8 +2188,8 @@ const IllummaaAssessmentForm = () => {
 
                 {/* Legal Consent & Privacy Section */}
                 <div className="bg-gray-50 rounded-xl p-6 space-y-4" data-testid="legal-consent-section">
-                  <h3 className="font-semibold text-gray-900 mb-4" data-testid="title-legal-consent">Legal Consent & Privacy</h3>
-                  
+                  <h3 className="font-semibold text-gray-900 mb-4" data-testid="title-legal-consent">{t('assessmentForm.step5.legalConsent.title')}</h3>
+
                   {/* Communication Consent */}
                   <label className="flex items-start gap-3 cursor-pointer group" data-testid="label-consent-communications">
                     <input
@@ -2197,7 +2202,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-communications"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive communications from ILLUMMAA (Required by CASL) <span className="text-red-500">*</span>
+                      {t('assessmentForm.step5.legalConsent.casl')}
                     </span>
                   </label>
                   {errors.consentCommunications && (
@@ -2215,7 +2220,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-consent-sms"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive SMS text messages from ILLUMMAA for time-sensitive updates and project coordination. (Optional)
+                      {t('assessmentForm.step5.legalConsent.sms')}
                     </span>
                   </label>
                   {errors.consentSMS && (
@@ -2234,11 +2239,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-privacy-policy"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I have read and accept the{' '}
-                      <a href="/privacy" target="_blank" className="text-indigo-600 underline hover:text-indigo-700" data-testid="link-privacy-policy">
-                        Privacy Policy
-                      </a>
-                      {' '}(Required by PIPEDA) <span className="text-red-500">*</span>
+                      {t('assessmentForm.step5.legalConsent.privacy')}
                     </span>
                   </label>
                   {errors.privacyPolicy && (
@@ -2257,7 +2258,7 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-age-verification"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I confirm that I am 18 years of age or older and have the legal capacity to provide consent <span className="text-red-500">*</span>
+                      {t('assessmentForm.step5.legalConsent.age')}
                     </span>
                   </label>
                   {errors.ageVerification && (
@@ -2275,13 +2276,13 @@ const IllummaaAssessmentForm = () => {
                       data-testid="checkbox-marketing-consent"
                     />
                     <span className="text-sm text-gray-700 leading-relaxed">
-                      I consent to receive marketing communications (Optional)
+                      {t('assessmentForm.step5.legalConsent.marketing')}
                     </span>
                   </label>
 
                   <div className="text-xs text-gray-600 bg-white p-4 rounded border-l-4 border-indigo-400 mt-4" data-testid="legal-disclaimer">
-                    <p className="font-semibold mb-2">Your Rights & Our Commitment:</p>
-                    <p>You may withdraw consent at any time via unsubscribe links, replying STOP to texts, or contacting info@illummaa.ca. Your information is protected under Canadian privacy laws (PIPEDA/provincial equivalents). ILLUMMAA complies with CASL requirements, maintains A2P 10DLC registration for SMS, and keeps consent records as required by law.</p>
+                    <p className="font-semibold mb-2">{t('assessmentForm.step5.legalDisclaimer.title')}</p>
+                    <p>{t('assessmentForm.step5.legalDisclaimer.text')}</p>
                   </div>
                 </div>
               </div>
