@@ -840,16 +840,22 @@
     }
   }
 
-  /* DESKTOP: Normal button behavior */
+  /* DESKTOP: Enhanced button behavior for long text (bilingual support) */
   @media (min-width: 640px) {
     .btn-primary-hero {
       width: auto;
+      max-width: 500px; /* Prevent excessive width on ultra-wide screens */
       padding: 16px 28px;
       min-height: 52px;
       font-size: 16px;
-      white-space: nowrap;
+      /* Allow wrapping for long text (French translations) */
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
       flex-direction: row;
       gap: 8px;
+      text-align: center;
+      line-height: 1.4;
     }
   }
   
@@ -895,17 +901,27 @@
     .hero-secondary-btn-optimized {
       padding: 14px 24px;
       font-size: 14px;
-      white-space: nowrap;
+      /* Allow wrapping for tablet - French text can be long */
+      white-space: normal;
+      word-wrap: break-word;
+      text-align: center;
+      line-height: 1.4;
     }
   }
 
   @media (min-width: 640px) {
     .hero-secondary-btn-optimized {
       width: auto;
+      max-width: 400px; /* Prevent excessive width on ultra-wide screens */
       padding: 16px 28px;
       min-height: 52px;
       font-size: 16px;
-      white-space: nowrap;
+      /* Allow wrapping for long text (French translations) */
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      text-align: center;
+      line-height: 1.4;
     }
   }
   
@@ -1874,12 +1890,27 @@ button > span,
   text-align: center !important;
 }
 
-/* Navigation buttons - preserve text without breaking */
+/* Navigation buttons - allow wrapping for bilingual support */
 [data-testid^="nav-"] {
-  white-space: nowrap !important;
+  white-space: normal !important;
   word-break: normal !important;
-  overflow-wrap: normal !important;
-  word-wrap: normal !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+}
+
+/* Desktop navigation - prefer single line but allow wrapping if needed */
+@media (min-width: 768px) {
+  [data-testid^="nav-"] {
+    white-space: nowrap !important;
+    max-width: 200px !important;
+  }
+
+  /* If text overflows, allow it to wrap gracefully */
+  [data-testid^="nav-"]:has(span) {
+    white-space: normal !important;
+  }
 }
 
 /* Icon Protection */

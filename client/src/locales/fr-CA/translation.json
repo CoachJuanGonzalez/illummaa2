@@ -484,5 +484,81 @@
     "error": "Une erreur s'est produite",
     "required": "Champ obligatoire",
     "optional": "Facultatif"
+  },
+  "breadcrumbs": {
+    "home": "Accueil",
+    "models": "Modèles"
+  },
+  "modelPages": {
+    "common": {
+      "yourHome": "Votre maison. Votre style de vie.",
+      "backToModels": "Retour aux modèles",
+      "floorPlanTitle": "Plan d'étage technique",
+      "floorPlanClickInstructions": "Cliquez pour voir le PDF en taille réelle dans un nouvel onglet",
+      "affordableLuxuryTitle": "Luxe abordable sans compromis",
+      "affordableLuxuryText": "Pourquoi choisir entre qualité et abordabilité? Illummaa combine design intelligent, construction efficace et pratiques durables pour vous offrir plus de maison pour votre argent. Chaque détail, des matériaux écoénergétiques aux finitions intemporelles, est conçu pour vous rendre fier de l'endroit où vous vivez.",
+      "designedTitle": "Conçu pour inspirer confiance",
+      "designedIntro": "Qu'il s'agisse de votre première maison, d'une amélioration familiale ou d'une retraite moderne, les maisons Illummaa sont :",
+      "designedFeatures": [
+        "Magnifiquement conçues avec des lignes épurées et de la lumière naturelle.",
+        "Flexibles pour convenir à différents budgets, familles et styles de vie.",
+        "Construites avec intégrité, pour que vous puissiez vous sentir en sécurité quant à votre investissement."
+      ],
+      "storyIntro": "Illummaa ne se limite pas à construire des maisons, il s'agit de créer des espaces où votre histoire se déroule :",
+      "storyFeatures": [
+        "Moments en famille autour de la table de cuisine.",
+        "Matins tranquilles avec la lumière qui traverse les grandes fenêtres.",
+        "Une cour qui semble être une extension de votre salon."
+      ],
+      "storyConclusion": "Nos maisons sont construites pour s'adapter à vous, et non l'inverse."
+    },
+    "model1br": {
+      "title": "1 chambre compacte",
+      "subtitle": "Votre maison. Votre style de vie.",
+      "specs": "937 pi² • Parfait pour la densité urbaine",
+      "price": "À partir de 129 000 $ CAD",
+      "floorPlanCaption": "937 pi² • 1 chambre • 1,5 salle de bain • Optimisé pour la densité urbaine et la vie efficace",
+      "featuresTitle": "Caractéristiques du modèle 1 chambre compacte",
+      "features": [
+        "Espace de vie à aire ouverte",
+        "Électroménagers écoénergétiques",
+        "Finitions haut de gamme"
+      ]
+    },
+    "model2br": {
+      "title": "2 chambres familiale",
+      "subtitle": "Votre maison. Votre style de vie.",
+      "specs": "1 179 pi² • Idéal pour les jeunes familles",
+      "price": "À partir de 169 000 $ CAD",
+      "floorPlanCaption": "1 179 pi² • 2 chambres • 2 salles de bain • Idéal pour les jeunes familles",
+      "featuresTitle": "Caractéristiques du modèle 2 chambres familiale",
+      "features": [
+        "Deux chambres spacieuses",
+        "Cuisine et salle à manger complètes",
+        "Espace extérieur privé prêt"
+      ]
+    },
+    "model3br": {
+      "title": "3 chambres exécutive",
+      "subtitle": "1 360 pi² • Vie familiale de prestige • Tarification de volume disponible pour les promoteurs qualifiés",
+      "price": "À partir de 199 000 $ CAD",
+      "volumePricing": "Rabais de volume pour 50+ unités",
+      "exteriorTitle": "Design extérieur moderne",
+      "exteriorCaption": "Design moderne parfait pour les communautés et les familles individuelles",
+      "partnershipAdvantagesTitle": "Avantages du partenariat",
+      "partnershipAdvantages": [
+        "Délai d'assemblage de 72 heures par unité pour un développement rapide",
+        "Rabais de tarification de volume (économies de 30 à 40 % par rapport à la construction traditionnelle)",
+        "Fabrication de précision en usine avec contrôle de qualité supérieur"
+      ],
+      "interiorTitle": "Vie intérieure de prestige",
+      "interiorCaption": "Finitions intérieures de prestige et conception à aire ouverte pour la vie moderne",
+      "featuresTitle": "Caractéristiques du modèle 3 chambres exécutive",
+      "features": [
+        "Suite principale avec salle de bain attenante (confort familial + efficacité de développement)",
+        "Conception à aire ouverte (attrait du style de vie + optimisation de la construction)",
+        "Prêt pour la maison intelligente (vie moderne + évolutivité communautaire)"
+      ]
+    }
   }
 }

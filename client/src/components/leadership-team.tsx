@@ -5,52 +5,52 @@ export default function LeadershipTeam() {
   const { t } = useTranslation();
   const coreExecutives = [
     {
-      name: "Baillargeon-Kemener Office",
-      title: t('leadership.executives.executive0.title'),
-      category: t('leadership.executives.executive0.department')
+      name: t('leadership.executives.chairman.name'),
+      title: t('leadership.executives.chairman.title'),
+      category: t('leadership.executives.chairman.department')
     },
     {
-      name: "Howard Smolar",
-      title: t('leadership.executives.executive1.title'),
-      category: t('leadership.executives.executive1.department')
+      name: t('leadership.executives.managingDirector.name'),
+      title: t('leadership.executives.managingDirector.title'),
+      category: t('leadership.executives.managingDirector.department')
     },
     {
-      name: "Marvin Garellek",
-      title: t('leadership.executives.executive2.title'),
-      category: t('leadership.executives.executive2.department')
+      name: t('leadership.executives.vicePresident.name'),
+      title: t('leadership.executives.vicePresident.title'),
+      category: t('leadership.executives.vicePresident.department')
     },
     {
-      name: "Dan Hatahet",
-      title: t('leadership.executives.executive3.title'),
-      category: t('leadership.executives.executive3.department')
+      name: t('leadership.executives.corporateDevelopment.name'),
+      title: t('leadership.executives.corporateDevelopment.title'),
+      category: t('leadership.executives.corporateDevelopment.department')
     },
     {
-      name: "Lili Zunhua",
-      title: t('leadership.executives.executive4.title'),
-      category: t('leadership.executives.executive4.department')
+      name: t('leadership.executives.director.name'),
+      title: t('leadership.executives.director.title'),
+      category: t('leadership.executives.director.department')
     },
     {
-      name: "Ian Lajoie",
-      title: t('leadership.executives.executive5.title'),
-      category: t('leadership.executives.executive5.department')
+      name: t('leadership.executives.globalPartnership.name'),
+      title: t('leadership.executives.globalPartnership.title'),
+      category: t('leadership.executives.globalPartnership.department')
     },
     {
-      name: "Choukhrate Rasoulev",
-      title: t('leadership.executives.executive6.title'),
-      category: t('leadership.executives.executive6.department')
+      name: t('leadership.executives.internationalSales.name'),
+      title: t('leadership.executives.internationalSales.title'),
+      category: t('leadership.executives.internationalSales.department')
     }
   ];
 
   const visionExecutives = [
     {
-      name: "Juan Grey",
-      title: t('leadership.executives.executive7.title'),
-      category: t('leadership.executives.executive7.department')
+      name: t('leadership.executives.chiefVision.name'),
+      title: t('leadership.executives.chiefVision.title'),
+      category: t('leadership.executives.chiefVision.department')
     },
     {
-      name: "Coach Juan Gonzalez",
-      title: t('leadership.executives.executive8.title'),
-      category: t('leadership.executives.executive8.department')
+      name: t('leadership.executives.cto.name'),
+      title: t('leadership.executives.cto.title'),
+      category: t('leadership.executives.cto.department')
     }
   ];
 

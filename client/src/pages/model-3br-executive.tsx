@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Check, ArrowLeft, Home } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
@@ -15,6 +16,7 @@ const technicalPlansPDF = "/attached_assets/3-bedroom-technical-plans_1759503916
 
 export default function Model3BRExecutive() {
   const [location, navigate] = useLocation();
+  const { t } = useTranslation();
 
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
@@ -83,12 +85,12 @@ export default function Model3BRExecutive() {
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" data-testid="breadcrumbs">
           <Link href="/" className="flex items-center hover:text-primary transition-colors">
             <Home size={16} className="mr-1" />
-            Home
+            {t('breadcrumbs.home')}
           </Link>
           <span>&gt;</span>
-          <span>Models</span>
+          <span>{t('breadcrumbs.models')}</span>
           <span>&gt;</span>
-          <span className="text-foreground">3BR Executive</span>
+          <span className="text-foreground">{t('modelPages.model3br.title')}</span>
         </nav>
       </div>
 
@@ -97,17 +99,17 @@ export default function Model3BRExecutive() {
         <div className="container mx-auto px-6">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="font-display font-bold text-4xl md:text-6xl text-foreground mb-4" data-testid="heading-model-title">
-              3BR Executive
+              {t('modelPages.model3br.title')}
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6" data-testid="text-model-subtitle">
-              1360 sq ft • Premium family living • Volume pricing available for qualified developers
+              {t('modelPages.model3br.subtitle')}
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
-                Starting from $199K CAD
+                {t('modelPages.model3br.price')}
               </div>
               <div className="text-xl font-medium text-accent" data-testid="text-volume-pricing">
-                Volume discounts for 50+ units
+                {t('modelPages.model3br.volumePricing')}
               </div>
             </div>
           </div>
@@ -119,12 +121,12 @@ export default function Model3BRExecutive() {
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-exterior">
-              Modern Exterior Design
+              {t('modelPages.model3br.exteriorTitle')}
             </h2>
             <div className="model-image-container rounded-2xl overflow-hidden shadow-xl mb-6">
-              <img 
-                src={exteriorImage} 
-                alt="3BR Executive exterior rendering - modern single-story modular home" 
+              <img
+                src={exteriorImage}
+                alt="3BR Executive exterior rendering - modern single-story modular home"
                 className="model-detail-image h-[400px] md:h-[500px]"
                 loading="lazy"
                 decoding="async"
@@ -132,7 +134,7 @@ export default function Model3BRExecutive() {
               />
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-exterior-caption">
-              Modern design perfect for communities and individual families
+              {t('modelPages.model3br.exteriorCaption')}
             </p>
           </div>
         </div>
@@ -144,92 +146,74 @@ export default function Model3BRExecutive() {
           <div className="max-w-4xl mx-auto">
             <div className="prose prose-lg max-w-none mb-12">
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Partnership Advantages
+                {t('modelPages.model3br.partnershipAdvantagesTitle')}
               </h2>
-              
+
               <ul className="space-y-3 mb-8 text-lg">
-                <li className="flex items-start">
-                  <span className="text-accent mr-3">•</span>
-                  72-hour assembly timeline per unit for rapid development
-                </li>
-                <li className="flex items-start">
-                  <span className="text-accent mr-3">•</span>
-                  Volume pricing discounts (30-40% cost savings vs traditional construction)
-                </li>
-                <li className="flex items-start">
-                  <span className="text-accent mr-3">•</span>
-                  Factory precision manufacturing with superior quality control
-                </li>
+                {t('modelPages.model3br.partnershipAdvantages', { returnObjects: true }).map((advantage: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-accent mr-3">•</span>
+                    {advantage}
+                  </li>
+                ))}
               </ul>
 
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Your Home. Your Lifestyle.
+                {t('modelPages.common.yourHome')}
               </h2>
-              
+
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-                Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:
+                {t('modelPages.common.storyIntro')}
               </p>
-              
+
               <ul className="space-y-3 mb-8 text-lg">
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Family moments around the kitchen table.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Quiet mornings with light streaming through oversized windows.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  A backyard that feels like an extension of your living room.
-                </li>
+                {t('modelPages.common.storyFeatures', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-primary mr-3">•</span>
+                    {feature}
+                  </li>
+                ))}
               </ul>
-              
+
               <p className="text-lg text-muted-foreground mb-12">
-                Our homes are built to adapt to you, not the other way around.
+                {t('modelPages.common.storyConclusion')}
               </p>
 
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Affordable Luxury Without Compromise
+                {t('modelPages.common.affordableLuxuryTitle')}
               </h2>
-              
+
               <p className="text-lg text-muted-foreground mb-8">
-                Why choose between quality and affordability? Illummaa combines smart design, efficient construction, and sustainable practices to give you more home for your money. Every detail from energy-efficient materials to timeless finishes is crafted to make you proud of where you live.
+                {t('modelPages.common.affordableLuxuryText')}
               </p>
 
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Designed to Inspire Confidence
+                {t('modelPages.common.designedTitle')}
               </h2>
-              
+
               <p className="text-lg text-muted-foreground mb-6">
-                Whether it's your first home, a family upgrade, or a modern retreat, Illummaa homes are:
+                {t('modelPages.common.designedIntro')}
               </p>
-              
+
               <ul className="space-y-3 mb-12 text-lg">
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Beautifully designed with clean lines and natural light.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Flexible to suit different budgets, families, and lifestyles.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Built with integrity, so you can feel secure about your investment.
-                </li>
+                {t('modelPages.common.designedFeatures', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-primary mr-3">•</span>
+                    {feature}
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Interior Lifestyle Section */}
             <div className="mb-12">
               <h2 className="font-display font-bold text-3xl text-foreground mb-6 text-center" data-testid="heading-interior">
-                Premium Interior Living
+                {t('modelPages.model3br.interiorTitle')}
               </h2>
               <div className="model-image-container rounded-2xl overflow-hidden shadow-xl mb-6">
-                <img 
-                  src={interiorImage} 
-                  alt="3BR Executive interior - premium kitchen and living area" 
+                <img
+                  src={interiorImage}
+                  alt="3BR Executive interior - premium kitchen and living area"
                   className="model-detail-image h-[400px] md:h-[500px]"
                   loading="lazy"
                   decoding="async"
@@ -237,42 +221,36 @@ export default function Model3BRExecutive() {
                 />
               </div>
               <p className="text-lg text-muted-foreground text-center" data-testid="text-interior-caption">
-                Premium interior finishes and open concept design for modern living
+                {t('modelPages.model3br.interiorCaption')}
               </p>
             </div>
 
             {/* Model Features */}
             <div className="bg-muted rounded-2xl p-8 mb-12">
               <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-model-features">
-                3BR Executive Features
+                {t('modelPages.model3br.featuresTitle')}
               </h3>
               <ul className="space-y-3 text-lg" data-testid="list-model-features">
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Master suite with ensuite (family comfort + development efficiency)</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Open concept design (lifestyle appeal + construction optimization)</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Smart home ready (modern living + community scalability)</span>
-                </li>
+                {t('modelPages.model3br.features', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-center">
+                    <Check className="text-green-500 mr-3" size={20} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Back Navigation */}
             <div className="flex justify-center py-6">
-              <Button 
+              <Button
                 onClick={goBackToModels}
-                variant="outline" 
-                size="lg" 
-                className="min-h-[44px] px-6 mx-4" 
+                variant="outline"
+                size="lg"
+                className="min-h-[44px] px-6 mx-4"
                 data-testid="button-back"
               >
                 <ArrowLeft className="mr-2" size={20} />
-                Back to Models
+                {t('modelPages.common.backToModels')}
               </Button>
             </div>
           </div>

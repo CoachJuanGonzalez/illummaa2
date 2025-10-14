@@ -484,5 +484,81 @@
     "error": "An error occurred",
     "required": "Required field",
     "optional": "Optional"
+  },
+  "breadcrumbs": {
+    "home": "Home",
+    "models": "Models"
+  },
+  "modelPages": {
+    "common": {
+      "yourHome": "Your Home. Your Lifestyle.",
+      "backToModels": "Back to Models",
+      "floorPlanTitle": "Technical Floor Plan",
+      "floorPlanClickInstructions": "Click to view full-size PDF in new tab",
+      "affordableLuxuryTitle": "Affordable Luxury Without Compromise",
+      "affordableLuxuryText": "Why choose between quality and affordability? Illummaa combines smart design, efficient construction, and sustainable practices to give you more home for your money. Every detail from energy-efficient materials to timeless finishes is crafted to make you proud of where you live.",
+      "designedTitle": "Designed to Inspire Confidence",
+      "designedIntro": "Whether it's your first home, a family upgrade, or a modern retreat, Illummaa homes are:",
+      "designedFeatures": [
+        "Beautifully designed with clean lines and natural light.",
+        "Flexible to suit different budgets, families, and lifestyles.",
+        "Built with integrity, so you can feel secure about your investment."
+      ],
+      "storyIntro": "Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:",
+      "storyFeatures": [
+        "Family moments around the kitchen table.",
+        "Quiet mornings with light streaming through oversized windows.",
+        "A backyard that feels like an extension of your living room."
+      ],
+      "storyConclusion": "Our homes are built to adapt to you, not the other way around."
+    },
+    "model1br": {
+      "title": "1BR Compact",
+      "subtitle": "Your Home. Your Lifestyle.",
+      "specs": "937 sq ft • Perfect for urban density",
+      "price": "Starting from $129K CAD",
+      "floorPlanCaption": "937 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living",
+      "featuresTitle": "1BR Compact Features",
+      "features": [
+        "Open concept living",
+        "Energy efficient appliances",
+        "Premium finishes"
+      ]
+    },
+    "model2br": {
+      "title": "2BR Family",
+      "subtitle": "Your Home. Your Lifestyle.",
+      "specs": "1179 sq ft • Ideal for young families",
+      "price": "Starting from $169K CAD",
+      "floorPlanCaption": "1179 sq ft • 2 bedrooms • 2 bathrooms • Ideal for young families",
+      "featuresTitle": "2BR Family Features",
+      "features": [
+        "Two spacious bedrooms",
+        "Full kitchen & dining",
+        "Private outdoor space ready"
+      ]
+    },
+    "model3br": {
+      "title": "3BR Executive",
+      "subtitle": "1360 sq ft • Premium family living • Volume pricing available for qualified developers",
+      "price": "Starting from $199K CAD",
+      "volumePricing": "Volume discounts for 50+ units",
+      "exteriorTitle": "Modern Exterior Design",
+      "exteriorCaption": "Modern design perfect for communities and individual families",
+      "partnershipAdvantagesTitle": "Partnership Advantages",
+      "partnershipAdvantages": [
+        "72-hour assembly timeline per unit for rapid development",
+        "Volume pricing discounts (30-40% cost savings vs traditional construction)",
+        "Factory precision manufacturing with superior quality control"
+      ],
+      "interiorTitle": "Premium Interior Living",
+      "interiorCaption": "Premium interior finishes and open concept design for modern living",
+      "featuresTitle": "3BR Executive Features",
+      "features": [
+        "Master suite with ensuite (family comfort + development efficiency)",
+        "Open concept design (lifestyle appeal + construction optimization)",
+        "Smart home ready (modern living + community scalability)"
+      ]
+    }
   }
 }

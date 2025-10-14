@@ -33,8 +33,8 @@ export default function StickyHeader() {
     // Close mobile menu first
     setMobileMenuOpen(false);
 
-    // Check if we're on the home page
-    const isHomePage = location === "/" || location === "";
+    // Check if we're on the home page (supports both /en and /fr)
+    const isHomePage = location === "/" || location === "" || location === "/en" || location === "/en/" || location === "/fr" || location === "/fr/";
 
     if (!isHomePage) {
       // If not on home page, navigate to home first, then scroll
@@ -95,6 +95,9 @@ export default function StickyHeader() {
     // Close mobile menu first
     setMobileMenuOpen(false);
 
+    // Check if we're on the home page (supports both /en and /fr)
+    const isHomePage = location === "/" || location === "" || location === "/en" || location === "/en/" || location === "/fr" || location === "/fr/";
+
     // Track logo click
     analytics.trackNavigation({
       action: 'logo_click',
@@ -104,12 +107,12 @@ export default function StickyHeader() {
       label: 'ILLUMMAA Logo',
       custom_parameters: {
         current_location: location,
-        action_type: location === "/" || location === "" ? 'scroll_to_top' : 'navigate_home'
+        action_type: isHomePage ? 'scroll_to_top' : 'navigate_home'
       }
     });
-    
+
     // If already on home page, scroll to top instead of navigating
-    if (location === "/" || location === "") {
+    if (isHomePage) {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {

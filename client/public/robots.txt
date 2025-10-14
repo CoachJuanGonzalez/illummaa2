@@ -1,11 +1,11 @@
 # ILLUMMAA Modular Homes - robots.txt
-# Generated: 2025-10-10
+# Updated: 2025-01-13 (Bilingual Support)
 # Purpose: Allow all search engines to crawl, point to sitemap
 
 User-agent: *
 Allow: /
 
-# Sitemap location
+# Sitemap location (includes bilingual URLs)
 Sitemap: https://illummaa.com/sitemap.xml
 
 # Block known bad bots (optional)
@@ -15,9 +15,25 @@ Crawl-delay: 10
 User-agent: SemrushBot
 Crawl-delay: 10
 
-# Allow all other paths
+# Allow all paths - English
 User-agent: *
 Allow: /
+Allow: /en
+Allow: /en/
+Allow: /en/models/
+Allow: /en/models/1br-compact
+Allow: /en/models/2br-family
+Allow: /en/models/3br-executive
+
+# Allow all paths - French
+Allow: /fr
+Allow: /fr/
+Allow: /fr/models/
+Allow: /fr/models/1br-compact
+Allow: /fr/models/2br-family
+Allow: /fr/models/3br-executive
+
+# Legacy paths (for backward compatibility)
 Allow: /models/
 Allow: /models/1br-compact
 Allow: /models/2br-family

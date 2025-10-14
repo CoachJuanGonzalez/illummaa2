@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Check, ArrowLeft, Home } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
@@ -12,6 +13,7 @@ const floorPlanPDF = "/attached_assets/1 BEDROOM 1.5 BATH_1759197665520.pdf";
 
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
+  const { t } = useTranslation();
 
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
@@ -80,12 +82,12 @@ export default function Model1BRCompact() {
         <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6" data-testid="breadcrumbs">
           <Link href="/" className="flex items-center hover:text-primary transition-colors">
             <Home size={16} className="mr-1" />
-            Home
+            {t('breadcrumbs.home')}
           </Link>
           <span>&gt;</span>
-          <span>Models</span>
+          <span>{t('breadcrumbs.models')}</span>
           <span>&gt;</span>
-          <span className="text-foreground">1BR Compact</span>
+          <span className="text-foreground">{t('modelPages.model1br.title')}</span>
         </nav>
       </div>
 
@@ -94,17 +96,17 @@ export default function Model1BRCompact() {
         <div className="container mx-auto px-6">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="font-display font-bold text-4xl md:text-6xl text-foreground mb-4" data-testid="heading-model-title">
-              1BR Compact
+              {t('modelPages.model1br.title')}
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6" data-testid="text-model-subtitle">
-              Your Home. Your Lifestyle.
+              {t('modelPages.model1br.subtitle')}
             </p>
             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8">
               <div className="text-lg text-muted-foreground" data-testid="text-model-specs">
-                937 sq ft • Perfect for urban density
+                {t('modelPages.model1br.specs')}
               </div>
               <div className="text-3xl font-bold text-primary" data-testid="text-model-price">
-                Starting from $129K CAD
+                {t('modelPages.model1br.price')}
               </div>
             </div>
           </div>
@@ -116,12 +118,12 @@ export default function Model1BRCompact() {
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="font-display font-bold text-3xl md:text-4xl text-foreground mb-6" data-testid="heading-floor-plan">
-              Technical Floor Plan
+              {t('modelPages.common.floorPlanTitle')}
             </h2>
             <div className="bg-white rounded-2xl p-8 shadow-lg mb-6">
-              <img 
-                src={floorPlanImage} 
-                alt="1BR Compact floor plan - 937 sq ft technical drawing" 
+              <img
+                src={floorPlanImage}
+                alt="1BR Compact floor plan - 937 sq ft technical drawing"
                 className="model-floorplan-image max-w-4xl mx-auto cursor-pointer"
                 loading="lazy"
                 decoding="async"
@@ -129,11 +131,11 @@ export default function Model1BRCompact() {
                 onClick={() => window.open(floorPlanPDF, '_blank')}
               />
               <p className="text-sm text-muted-foreground mt-4 text-center">
-                Click to view full-size PDF in new tab
+                {t('modelPages.common.floorPlanClickInstructions')}
               </p>
             </div>
             <p className="text-lg text-muted-foreground" data-testid="text-floor-plan-caption">
-              937 sq ft • 1 bedroom • 1.5 bathrooms • Optimized for urban density and efficient living
+              {t('modelPages.model1br.floorPlanCaption')}
             </p>
           </div>
         </div>
@@ -145,78 +147,60 @@ export default function Model1BRCompact() {
           <div className="max-w-4xl mx-auto">
             <div className="prose prose-lg max-w-none mb-12">
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-                Illummaa isn't just about building houses, it's about creating spaces where your story unfolds:
+                {t('modelPages.common.storyIntro')}
               </p>
-              
+
               <ul className="space-y-3 mb-8 text-lg">
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Family moments around the kitchen table.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Quiet mornings with light streaming through oversized windows.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  A backyard that feels like an extension of your living room.
-                </li>
+                {t('modelPages.common.storyFeatures', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-primary mr-3">•</span>
+                    {feature}
+                  </li>
+                ))}
               </ul>
-              
+
               <p className="text-lg text-muted-foreground mb-12">
-                Our homes are built to adapt to you, not the other way around.
+                {t('modelPages.common.storyConclusion')}
               </p>
 
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Affordable Luxury Without Compromise
+                {t('modelPages.common.affordableLuxuryTitle')}
               </h2>
-              
+
               <p className="text-lg text-muted-foreground mb-8">
-                Why choose between quality and affordability? Illummaa combines smart design, efficient construction, and sustainable practices to give you more home for your money. Every detail from energy-efficient materials to timeless finishes is crafted to make you proud of where you live.
+                {t('modelPages.common.affordableLuxuryText')}
               </p>
 
               <h2 className="font-display font-bold text-3xl text-foreground mb-6">
-                Designed to Inspire Confidence
+                {t('modelPages.common.designedTitle')}
               </h2>
-              
+
               <p className="text-lg text-muted-foreground mb-6">
-                Whether it's your first home, a family upgrade, or a modern retreat, Illummaa homes are:
+                {t('modelPages.common.designedIntro')}
               </p>
-              
+
               <ul className="space-y-3 mb-12 text-lg">
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Beautifully designed with clean lines and natural light.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Flexible to suit different budgets, families, and lifestyles.
-                </li>
-                <li className="flex items-start">
-                  <span className="text-primary mr-3">•</span>
-                  Built with integrity, so you can feel secure about your investment.
-                </li>
+                {t('modelPages.common.designedFeatures', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-primary mr-3">•</span>
+                    {feature}
+                  </li>
+                ))}
               </ul>
             </div>
 
             {/* Model Features */}
             <div className="bg-muted rounded-2xl p-8 mb-12">
               <h3 className="font-display font-bold text-2xl mb-6" data-testid="heading-model-features">
-                1BR Compact Features
+                {t('modelPages.model1br.featuresTitle')}
               </h3>
               <ul className="space-y-3 text-lg" data-testid="list-model-features">
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Open concept living</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Energy efficient appliances</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="text-green-500 mr-3" size={20} />
-                  <span>Premium finishes</span>
-                </li>
+                {t('modelPages.model1br.features', { returnObjects: true }).map((feature: string, index: number) => (
+                  <li key={index} className="flex items-center">
+                    <Check className="text-green-500 mr-3" size={20} />
+                    <span>{feature}</span>
+                  </li>
+                ))}
               </ul>
             </div>
 
@@ -230,7 +214,7 @@ export default function Model1BRCompact() {
                 data-testid="button-back"
               >
                 <ArrowLeft className="mr-2" size={20} />
-                Back to Models
+                {t('modelPages.common.backToModels')}
               </Button>
             </div>
           </div>

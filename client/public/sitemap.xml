@@ -1,45 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- Homepage - Highest Priority -->
+  <!-- Homepage - English -->
   <url>
-    <loc>https://illummaa.com/</loc>
-    <lastmod>2025-10-10</lastmod>
+    <loc>https://illummaa.com/en</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
   </url>
 
-  <!-- Model Pages - High Priority -->
+  <!-- Homepage - French -->
   <url>
-    <loc>https://illummaa.com/models/1br-compact</loc>
-    <lastmod>2025-10-10</lastmod>
+    <loc>https://illummaa.com/fr</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
+  </url>
+
+  <!-- Homepage - Default (language auto-detection) -->
+  <url>
+    <loc>https://illummaa.com/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
+  </url>
+
+  <!-- Model Pages - English -->
+  <url>
+    <loc>https://illummaa.com/en/models/1br-compact</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/1br-compact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/1br-compact"/>
+  </url>
+
+  <url>
+    <loc>https://illummaa.com/en/models/2br-family</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/2br-family"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/2br-family"/>
+  </url>
+
+  <url>
+    <loc>https://illummaa.com/en/models/3br-executive</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/3br-executive"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/3br-executive"/>
+  </url>
+
+  <!-- Model Pages - French -->
+  <url>
+    <loc>https://illummaa.com/fr/models/1br-compact</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/1br-compact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/1br-compact"/>
+  </url>
+
+  <url>
+    <loc>https://illummaa.com/fr/models/2br-family</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/2br-family"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/2br-family"/>
+  </url>
+
+  <url>
+    <loc>https://illummaa.com/fr/models/3br-executive</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/3br-executive"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/3br-executive"/>
+  </url>
+
+  <!-- Legacy Model Pages (for backward compatibility) -->
+  <url>
+    <loc>https://illummaa.com/models/1br-compact</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://illummaa.com/models/2br-family</loc>
-    <lastmod>2025-10-10</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://illummaa.com/models/3br-executive</loc>
-    <lastmod>2025-10-10</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 
-  <!-- Privacy Policy - Lower Priority -->
+  <!-- Privacy Policy - English -->
   <url>
-    <loc>https://illummaa.com/privacy-policy</loc>
-    <lastmod>2025-10-10</lastmod>
+    <loc>https://illummaa.com/en/privacy-policy</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/privacy-policy"/>
+  </url>
+
+  <!-- Privacy Policy - French -->
+  <url>
+    <loc>https://illummaa.com/fr/privacy-policy</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/privacy-policy"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/privacy-policy"/>
+  </url>
+
+  <!-- Legacy Privacy Policy (for backward compatibility) -->
+  <url>
+    <loc>https://illummaa.com/privacy-policy</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
   </url>
 
 </urlset>
