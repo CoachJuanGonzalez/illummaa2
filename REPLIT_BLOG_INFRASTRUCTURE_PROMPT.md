@@ -4,9 +4,11 @@
 I need to **assess the feasibility** of integrating a complete blog infrastructure into an existing B2B modular housing website (ILLUMMAA) and want to understand if Replit can handle the full technical stack.
 
 **IMPORTANT:**
-- This is a **feasibility assessment request** - I'm asking for recommendations and guidance on **how** this could be implemented, not requesting implementation yet.
+- This is a **FEASIBILITY ASSESSMENT REQUEST ONLY** - I'm asking for recommendations and guidance on **how** this could be implemented, not requesting implementation yet.
+- **DO NOT IMPLEMENT ANY CODE** - I only want detailed analysis, recommendations, and implementation guidance.
 - This would NOT be a standalone blog project. This would be a blog section added to an existing production website.
 - I want to understand the technical approach, limitations, costs, and implementation roadmap before proceeding.
+- **I will implement the code myself after reviewing your feasibility assessment.**
 
 ### Existing Website Infrastructure
 
@@ -35,6 +37,107 @@ I need to **assess the feasibility** of integrating a complete blog infrastructu
 {/* 404 - catch-all */}
 <Route component={NotFound} />
 ```
+
+---
+
+## 🚨 TECH STACK CONSTRAINTS (DO NOT DEVIATE)
+
+**CRITICAL:** The following technologies are ALREADY WORKING in production. **DO NOT recommend alternatives or suggest migrations.** Your feasibility assessment must work WITHIN these constraints.
+
+### **✅ LOCKED TECHNOLOGIES (Must Use):**
+
+**Database:**
+- ✅ **Neon PostgreSQL** (already provisioned, connected via DATABASE_URL)
+- ✅ **Drizzle ORM 0.39.1** (NOT Prisma, NOT TypeORM, NOT Sequelize)
+- ⚠️ **NEVER suggest switching to:** Prisma, TypeORM, MongoDB, Firebase, Supabase
+
+**Router:**
+- ✅ **Wouter 3.3.5** (NOT Next.js App Router, NOT React Router, NOT Remix)
+- ⚠️ **NEVER suggest switching to:** Next.js, Remix, TanStack Router, React Router v6
+
+**Build Tool:**
+- ✅ **Vite 5.4.20** (NOT Next.js, NOT Webpack, NOT Turbopack)
+- ⚠️ **NEVER suggest switching to:** Next.js, Create React App, Webpack
+
+**Internationalization:**
+- ✅ **i18next 25.6.0 + react-i18next 16.0.1** (fully configured, working)
+- ⚠️ **NEVER suggest:** Rebuilding i18n from scratch, using next-i18next, or other i18n libraries
+
+**UI Framework:**
+- ✅ **Radix UI (25 components) + Tailwind CSS 3.4.17** (design system established)
+- ⚠️ **NEVER suggest switching to:** Material UI, Chakra UI, Ant Design, Bootstrap
+
+**Deployment:**
+- ✅ **Replit-compatible** (with `@replit/vite-plugin-cartographer` plugin)
+- ✅ **Railway** (alternative deployment option)
+- ⚠️ **NEVER suggest:** Vercel (Next.js-optimized), Netlify (JAMstack focus)
+
+### **⚠️ CRITICAL: Why These Constraints Exist**
+
+**If you recommend Prisma instead of Drizzle:**
+- ❌ Would require rewriting entire database layer (40+ files)
+- ❌ Would break existing assessment form, AI scoring, analytics
+- ❌ Would cause 2-3 weeks of migration work + testing
+- ❌ Would introduce risk to production-critical lead generation system
+
+**If you recommend Next.js instead of Wouter:**
+- ❌ Would require complete application rewrite (entire frontend)
+- ❌ Would break existing routing, analytics tracking, session management
+- ❌ Would require migrating from Vite to Next.js build system
+- ❌ Would cause 4-6 weeks of migration work + QA regression testing
+
+**If you recommend rebuilding i18n:**
+- ❌ Existing i18next setup is fully configured and working
+- ❌ Would waste time rebuilding what already exists
+- ❌ Would introduce bugs in existing bilingual functionality
+
+### **✅ CORRECT: Focus Your Recommendations On**
+
+1. **Blog-specific additions** (rich text editor, image storage, admin auth)
+2. **Schema extensions** (how to add blog tables via Drizzle migrations)
+3. **Routing additions** (how to add `/blog` routes to existing Wouter router)
+4. **Integration strategies** (how blog integrates with existing i18next, analytics, security)
+5. **Performance optimizations** (code splitting blog routes separately)
+6. **SEO implementations** (schema markup, meta tags, sitemap updates)
+
+### **❌ INCORRECT: Do NOT Recommend**
+
+1. ❌ "Migrate to Next.js for better SSR support"
+2. ❌ "Use Prisma instead of Drizzle for easier schema management"
+3. ❌ "Switch to React Router for more features"
+4. ❌ "Move to Vercel for automatic deployments"
+5. ❌ "Rebuild i18n with next-i18next for better performance"
+6. ❌ "Consider Supabase for easier database management"
+
+### **✅ EXAMPLE: Correct Drizzle Syntax (NOT Prisma)**
+
+```typescript
+// ✅ CORRECT (Drizzle ORM syntax - this is what I'm using):
+import { pgTable, text, uuid, timestamp } from 'drizzle-orm/pg-core';
+
+export const posts = pgTable('posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  slug_en: text('slug_en').notNull().unique(),
+  slug_fr: text('slug_fr').notNull().unique(),
+  title_en: text('title_en').notNull(),
+  title_fr: text('title_fr').notNull(),
+  published_at: timestamp('published_at'),
+});
+
+// ❌ WRONG (Prisma syntax - DO NOT USE THIS):
+model Post {
+  id         String   @id @default(uuid())
+  slug_en    String   @unique
+  slug_fr    String   @unique
+  title_en   String
+  title_fr   String
+  publishedAt DateTime?
+}
+```
+
+**If you provide Prisma syntax in your assessment, I cannot use it.** Please only provide Drizzle ORM code examples.
+
+---
 
 **🚨 CRITICAL: BILINGUAL INFRASTRUCTURE ALREADY EXISTS**
 
@@ -738,6 +841,200 @@ What works best in Replit for securing an admin panel within the existing archit
 ---
 
 ## 🚨 CRITICAL CLARIFICATIONS NEEDED
+
+### 0. **ZERO-RISK GUARANTEE: PROTECTING EXISTING FUNCTIONALITY**
+
+**🚨 MOST CRITICAL SECTION - READ FIRST**
+
+**Context:**
+- Existing website is production-ready (QA: 98/100)
+- Assessment form is lead generation engine (revenue-critical)
+- Google Analytics 4 tracks 8 event types (marketing ROI measurement)
+- AI priority scoring algorithm (competitive advantage)
+- Enterprise security (legal compliance: CASL, PIPEDA, TCPA)
+
+**ABSOLUTE REQUIREMENTS FOR BLOG INTEGRATION:**
+
+#### **🔒 Protected Systems (MUST NOT BE MODIFIED)**
+
+**1. Google Analytics 4 Tracking (`client/src/lib/analytics.ts` - 392 lines):**
+- ✅ All 8 existing event types MUST continue firing correctly:
+  1. `navigation_click` (header/footer nav)
+  2. `assessment_step_start` (form tracking)
+  3. `assessment_step_complete` (step progression)
+  4. `assessment_complete` (full submission)
+  5. `assessment_abandonment` (exit intent)
+  6. `conversion` (qualified lead)
+  7. `generate_lead` (form submission)
+  8. `page_view` (SPA route changes)
+- ✅ Blog should ADD new events (blog_post_view, reading_progress, social_share)
+- ❌ Blog MUST NOT modify existing analytics.ts code
+- ❌ Blog MUST NOT break existing event tracking
+
+**2. AI Priority Scoring Algorithm (`shared/utils/scoring.ts` - 217 lines):**
+- ✅ 5-factor scoring calculation MUST remain unchanged:
+  1. Unit Volume (50 points max: 15/40/50 for Pioneer/Preferred/Elite)
+  2. Government Programs (20 points)
+  3. Indigenous Communities (15 points)
+  4. Priority Provinces (10 points)
+  5. ESG/Build Canada (5 points)
+  6. Urgency Bonus (5 points)
+- ❌ Blog MUST NOT modify scoring.ts in any way
+- ❌ Blog database migrations MUST NOT affect assessment_submissions table
+
+**3. Enterprise Security (`server/routes.ts` lines 218-352):**
+- ✅ Helmet security headers MUST remain active (CSP, HSTS, noSniff, XSS filter)
+- ✅ Rate limiting MUST remain active (5000/15min, 100/5min SMS, 200/10min)
+- ✅ Brute force protection MUST remain active (3 retries, 5-60 min lockout)
+- ✅ CSRF token generation MUST remain unchanged
+- ❌ Blog admin routes should EXTEND (not replace) existing security
+- ❌ Blog MUST NOT weaken existing security measures
+
+**4. Assessment Form Functionality:**
+- ✅ All 12 required B2B fields MUST continue working
+- ✅ CASL/PIPEDA consent checkboxes MUST remain functional
+- ✅ Form validation (Zod schema with libphonenumber-js) MUST remain unchanged
+- ✅ Form submission to database MUST continue working
+- ❌ Blog MUST NOT interfere with form state, validation, or submission
+
+**5. Legal Compliance (Canadian Privacy Laws):**
+- ✅ CASL consent (required) MUST remain functional
+- ✅ PIPEDA privacy policy acceptance MUST remain functional
+- ✅ A2P 10DLC SMS consent (optional) MUST remain functional
+- ✅ WCAG AA accessibility MUST be maintained (100/100 baseline)
+- ❌ Blog MUST NOT introduce accessibility regressions
+- ❌ Blog MUST NOT violate CASL/PIPEDA requirements
+
+#### **📱 Responsive Design Requirements (Mobile + Desktop)**
+
+**Current Baseline (MUST MAINTAIN OR EXCEED):**
+- ✅ Responsive design score: 100/100 (QA report)
+- ✅ Supported viewports: 320px (iPhone SE) to 4K+ (3840px)
+- ✅ Breakpoints: Mobile (320-768px), Tablet (768-1024px), Desktop (1024px+)
+- ✅ Touch-friendly targets (44×44px minimum)
+- ✅ Readable fonts (16px minimum on mobile)
+
+**Blog MUST Support ALL Devices:**
+
+**Mobile Optimization (320px - 768px):**
+- ✅ Blog landing page: Card layout stacks vertically
+- ✅ Blog post page: Single column, full-width images
+- ✅ Reading experience: Optimized line length (50-75 characters)
+- ✅ Table of Contents: Collapsible/hidden by default on mobile
+- ✅ Social share buttons: Touch-friendly, bottom sheet or sticky footer
+- ✅ Admin panel: Fully functional on mobile (rich text editor must work)
+
+**Tablet Optimization (768px - 1024px):**
+- ✅ Blog landing page: 2-column card grid
+- ✅ Blog post page: Sidebar navigation (sticky on scroll)
+- ✅ Table of Contents: Visible in sidebar
+- ✅ Admin panel: Side-by-side EN/FR editors
+
+**Desktop Optimization (1024px+):**
+- ✅ Blog landing page: 3-column card grid (or 2-column with sidebar)
+- ✅ Blog post page: Content max-width 720px (readability), sidebars for TOC/related posts
+- ✅ Table of Contents: Always visible, sticky position
+- ✅ Admin panel: Full-featured, side-by-side EN/FR editors
+
+**Performance Requirements (Maintain Lighthouse 95+):**
+- ✅ First Contentful Paint (FCP): < 1.8s (mobile), < 1.5s (desktop)
+- ✅ Largest Contentful Paint (LCP): < 2.5s (mobile), < 2.0s (desktop)
+- ✅ Time to Interactive (TTI): < 3.8s (mobile), < 3.0s (desktop)
+- ✅ Cumulative Layout Shift (CLS): < 0.1
+- ✅ Mobile Lighthouse score: 90+ (target: 95+)
+- ✅ Desktop Lighthouse score: 95+ (current baseline)
+
+**Critical Question for Your Assessment:**
+1. How will blog code splitting ensure blog routes don't slow down main site?
+2. Will blog images (via Cloudinary CDN) maintain LCP < 2.5s on 3G mobile?
+3. How do we test responsive design across all viewports before launch?
+4. What's the strategy for ensuring admin panel works on mobile devices?
+
+#### **🛡️ Enterprise Security Preservation**
+
+**Your assessment MUST address how blog maintains/extends existing security:**
+
+**1. Admin Panel Authentication:**
+- How does admin auth integrate with existing `express-session` + `connect-pg-simple`?
+- Should admin routes use SAME rate limiting or STRICTER limits?
+- How do we implement role-based access (Admin/Editor/Author) without weakening security?
+- Should 2FA/MFA be required for admin accounts?
+
+**2. Content Security (XSS Prevention):**
+- How does rich text editor prevent XSS attacks in blog content?
+- What HTML sanitization library should be used? (DOMPurify already used for assessment form)
+- How do we validate uploaded images to prevent malicious files?
+- Should we implement Content Security Policy (CSP) rules for blog routes?
+
+**3. CSRF Token Protection:**
+- How does admin panel form submission use existing CSRF tokens?
+- Should blog API endpoints (`POST /api/blog/posts`) require CSRF validation?
+- How do we prevent CSRF attacks on blog admin actions?
+
+**4. SQL Injection Prevention:**
+- Confirm Drizzle ORM parameterized queries prevent SQL injection
+- How do we validate blog search queries to prevent injection attacks?
+- Should we implement additional input validation for blog admin forms?
+
+**5. Rate Limiting for Blog Routes:**
+- Should blog API have separate rate limits from main site?
+- Recommended limits for: Blog reading (GET), Blog admin writes (POST/PUT/DELETE)
+- How do we prevent DDoS attacks on blog landing page?
+
+**6. WCAG AA Accessibility (Maintain 100/100):**
+- How does blog maintain semantic HTML (headings, landmarks, ARIA)?
+- How does rich text editor output accessible HTML?
+- How do we ensure color contrast (4.5:1 minimum) in blog design?
+- How do we test keyboard navigation for blog + admin panel?
+
+**Critical Question for Your Assessment:**
+1. Provide security checklist for blog implementation
+2. Identify any security risks introduced by blog (and mitigation strategies)
+3. Recommend security testing tools/procedures before launch
+4. Confirm blog maintains existing 100/100 security baseline
+
+#### **🧪 Testing & Validation Requirements**
+
+**Before blog goes to production, we need:**
+
+**1. Functional Testing:**
+- ✅ All existing routes still work (`/`, `/models/*`)
+- ✅ Assessment form still submits correctly
+- ✅ Google Analytics events still fire (verify in GA4 dashboard)
+- ✅ AI scoring still calculates correctly (test with known inputs)
+- ✅ All blog routes work (`/blog`, `/blog/:slug`, `/admin`)
+
+**2. Performance Testing:**
+- ✅ Lighthouse score maintained: Mobile 90+, Desktop 95+
+- ✅ Bundle size increase acceptable: < 20% increase (current: ~660KB)
+- ✅ Blog landing page loads in < 2.5s (3G mobile)
+- ✅ Individual blog post loads in < 3s (3G mobile)
+
+**3. Security Testing:**
+- ✅ Admin panel requires authentication (unauthorized access blocked)
+- ✅ CSRF tokens validated on all admin forms
+- ✅ Rate limiting active on all routes (test with curl/Postman)
+- ✅ XSS prevention: Test HTML injection in rich text editor
+- ✅ SQL injection prevention: Test with malicious inputs
+
+**4. Accessibility Testing:**
+- ✅ Keyboard navigation works (Tab through blog, admin panel)
+- ✅ Screen reader announces headings, links, buttons correctly
+- ✅ Color contrast passes WCAG AA (test with Axe DevTools)
+- ✅ Focus indicators visible on all interactive elements
+
+**5. Responsive Testing:**
+- ✅ Test on physical devices: iPhone SE, iPad, Desktop
+- ✅ Test on Chrome DevTools device emulation (all breakpoints)
+- ✅ Test admin panel on mobile (can editor create/edit posts?)
+
+**Critical Question for Your Assessment:**
+1. Recommend testing tools/frameworks for blog validation
+2. Provide testing checklist before production deployment
+3. How long should testing phase last? (1 week? 2 weeks?)
+4. Should we use staging environment (Neon database branch) for testing?
+
+---
 
 ### 1. **REPLIT CORE TIER REQUIREMENTS**
 
@@ -1476,4 +1773,44 @@ If you determine that Replit CANNOT handle this (or has significant limitations)
 
 ---
 
+## 🚨 FINAL REMINDER: THIS IS FEASIBILITY ASSESSMENT ONLY
+
+**IMPORTANT CLARIFICATIONS:**
+
+### **What I'm Asking For:**
+✅ **Feasibility analysis** - Can Replit handle this blog infrastructure?
+✅ **Implementation guidance** - How would I implement this? (architecture, code examples)
+✅ **Cost estimates** - Replit Core + Neon + Cloudinary costs for different traffic scenarios
+✅ **Timeline estimates** - Realistic implementation time (weeks? months?)
+✅ **Risk assessment** - What could go wrong? How to prevent breaking existing functionality?
+✅ **Best practices** - Recommended approach for Drizzle migrations, Wouter routing, security
+✅ **Code examples** - Sample Drizzle schema, Wouter routes, admin auth middleware
+✅ **Recommendations** - Rich text editor, image storage, testing strategy
+
+### **What I'm NOT Asking For:**
+❌ **Implementation** - Do NOT write full blog code, do NOT create files
+❌ **Deployment** - Do NOT deploy anything, do NOT modify production
+❌ **Database changes** - Do NOT run migrations, do NOT create tables
+❌ **Coding assistance** - Save that for AFTER I review your feasibility assessment
+
+### **My Next Steps After Receiving Your Assessment:**
+1. 📋 **Review your feasibility assessment** (Is Replit suitable? Are costs acceptable?)
+2. 🤔 **Decide whether to proceed** (Based on your cost/timeline/risk analysis)
+3. 💬 **Ask follow-up questions** (If I need clarification on any recommendations)
+4. 🚀 **Request implementation assistance** (ONLY if I decide to proceed after review)
+
+### **Why This Matters:**
+- I need to **validate the approach** before committing weeks of implementation time
+- I need to **understand costs** before committing to Replit Core + Neon Pro + Cloudinary
+- I need to **assess risks** before modifying production-critical website
+- I need to **get stakeholder buy-in** (show feasibility assessment to business owner)
+
+---
+
 Thank you for your comprehensive assessment! This will help me **plan and decide** whether to build a truly cutting-edge, future-proof blog infrastructure that supports the complete 7-phase SEO roadmap and LLM/AEO optimization for 2025 and beyond.
+
+**After I review your assessment, I'll make an informed decision about whether to:**
+- ✅ Proceed with implementation (and then I'll ask for your coding assistance)
+- 🔄 Modify the approach (based on your recommendations)
+- ❌ Use alternative platform (if Replit has significant limitations)
+- ⏸️ Delay implementation (if costs/timeline are prohibitive)
