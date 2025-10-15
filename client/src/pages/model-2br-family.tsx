@@ -7,6 +7,9 @@ import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
 import { analytics } from "@/lib/analytics";
+import { useSEO } from "@/hooks/useSEO";
+import { getSEOConfig, getBreadcrumbConfig } from "@/lib/seo-config";
+import { getProductSchema, getBreadcrumbSchema, injectMultipleSchemas } from "@/lib/schema";
 import floorPlanImage from "@assets/2br-family-floorplan.jpg";
 
 const floorPlanPDF = "/attached_assets/2 BEDROOM PLAN_1759198774311.pdf";
@@ -14,6 +17,17 @@ const floorPlanPDF = "/attached_assets/2 BEDROOM PLAN_1759198774311.pdf";
 export default function Model2BRFamily() {
   const [location, navigate] = useLocation();
   const { t } = useTranslation();
+  const language = location.startsWith('/fr') ? 'fr' : 'en';
+  const seoData = getSEOConfig('model2BR', language);
+
+  // Apply SEO meta tags
+  useSEO({
+    title: seoData.title,
+    description: seoData.description,
+    keywords: seoData.keywords,
+    ogImage: seoData.ogImage,
+    language: language
+  });
 
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
@@ -26,10 +40,31 @@ export default function Model2BRFamily() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
-    
+
     // Track model page view
     analytics.trackModelPageView('2BR Family', '/models/2br-family');
   }, []);
+
+  // Inject Product and Breadcrumb schemas
+  useEffect(() => {
+    const productSchema = getProductSchema(
+      language === 'fr' ? "Maison modulaire 2 chambres familiale" : "2BR Family Modular Home",
+      language === 'fr'
+        ? "Maison modulaire familiale 2 chambres: 1 247 pi², à partir de 179K$ CAD. Idéal pour familles croissantes. Aménagement spacieux, commodités modernes, certifié Energy Star. Pour développeurs (10+ unités)."
+        : "1,247 sq ft family modular home: 2 bedrooms, 2 bathrooms. Starting from $179,000 CAD. Ideal for growing families with spacious layout, modern amenities, and energy star certification. For qualified developers (10+ units).",
+      "https://illummaa.com/models/2br-family-image.png",
+      "179000",
+      `https://illummaa.com/${language}/models/2br-family`,
+      language
+    );
+
+    const breadcrumbSchema = getBreadcrumbSchema(getBreadcrumbConfig('model2BR', language));
+
+    injectMultipleSchemas([
+      { schema: productSchema, id: 'product' },
+      { schema: breadcrumbSchema, id: 'breadcrumb' }
+    ]);
+  }, [language]);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {

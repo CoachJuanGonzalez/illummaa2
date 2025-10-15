@@ -7,6 +7,9 @@ import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
 import { analytics } from "@/lib/analytics";
+import { useSEO } from "@/hooks/useSEO";
+import { getSEOConfig, getBreadcrumbConfig } from "@/lib/seo-config";
+import { getProductSchema, getBreadcrumbSchema, injectMultipleSchemas } from "@/lib/schema";
 import exteriorImage from "@assets/3bedroom-1_1757890999523.jpg";
 import interiorImage from "@assets/3bedroom-2_1757891004660.jpg";
 import floorPlanImage from "@assets/3bedroom-3_1757891009839.jpg";
@@ -17,6 +20,17 @@ const technicalPlansPDF = "/attached_assets/3-bedroom-technical-plans_1759503916
 export default function Model3BRExecutive() {
   const [location, navigate] = useLocation();
   const { t } = useTranslation();
+  const language = location.startsWith('/fr') ? 'fr' : 'en';
+  const seoData = getSEOConfig('model3BR', language);
+
+  // Apply SEO meta tags
+  useSEO({
+    title: seoData.title,
+    description: seoData.description,
+    keywords: seoData.keywords,
+    ogImage: seoData.ogImage,
+    language: language
+  });
 
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
@@ -29,10 +43,31 @@ export default function Model3BRExecutive() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
-    
+
     // Track model page view
     analytics.trackModelPageView('3BR Executive', '/models/3br-executive');
   }, []);
+
+  // Inject Product and Breadcrumb schemas
+  useEffect(() => {
+    const productSchema = getProductSchema(
+      language === 'fr' ? "Maison modulaire 3 chambres exécutive" : "3BR Executive Modular Home",
+      language === 'fr'
+        ? "Maison modulaire exécutive 3 chambres: 1 687 pi², à partir de 249K$ CAD. Finitions haut de gamme, commodités luxueuses, espace bureau. Conçu pour développeurs exigeants (10+ unités)."
+        : "1,687 sq ft executive modular home: 3 bedrooms, 2 bathrooms. Starting from $249,000 CAD. Premium finishes, luxury amenities, dedicated home office space. Designed for discerning developers (10+ units).",
+      "https://illummaa.com/models/3br-executive-image.png",
+      "249000",
+      `https://illummaa.com/${language}/models/3br-executive`,
+      language
+    );
+
+    const breadcrumbSchema = getBreadcrumbSchema(getBreadcrumbConfig('model3BR', language));
+
+    injectMultipleSchemas([
+      { schema: productSchema, id: 'product' },
+      { schema: breadcrumbSchema, id: 'breadcrumb' }
+    ]);
+  }, [language]);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {

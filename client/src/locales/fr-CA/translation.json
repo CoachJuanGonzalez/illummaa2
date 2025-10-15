@@ -560,5 +560,26 @@
         "Prêt pour la maison intelligente (vie moderne + évolutivité communautaire)"
       ]
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Perspectives sur le logement modulaire, la durabilité et les programmes canadiens de logement",
+    "readMore": "Lire la suite",
+    "backToBlog": "Retour au blog",
+    "readingTime": "{{minutes}} min de lecture",
+    "publishedOn": "Publié le {{date}}",
+    "updatedOn": "Mis à jour le {{date}}",
+    "writtenBy": "Écrit par",
+    "inCategory": "dans {{category}}",
+    "relatedPosts": "Articles connexes",
+    "categories": "Catégories",
+    "tags": "Étiquettes",
+    "allPosts": "Tous les articles",
+    "noPosts": "Aucun article de blog trouvé.",
+    "loadMore": "Charger plus",
+    "share": "Partager",
+    "shareOn": "Partager sur {{platform}}",
+    "copyLink": "Copier le lien",
+    "linkCopied": "Lien copié dans le presse-papiers !"
   }
 }

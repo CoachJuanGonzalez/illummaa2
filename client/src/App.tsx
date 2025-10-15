@@ -14,6 +14,16 @@ const Model2BRFamily = lazy(() => import("@/pages/model-2br-family"));
 const Model3BRExecutive = lazy(() => import("@/pages/model-3br-executive"));
 const NotFound = lazy(() => import("@/pages/not-found"));
 
+// Blog routes (lazy-loaded - only loads when visiting /blog)
+const BlogLanding = lazy(() => import("@/pages/BlogLanding"));
+const BlogPost = lazy(() => import("@/pages/BlogPost"));
+const BlogCategory = lazy(() => import("@/pages/BlogCategory"));
+
+// Admin routes (lazy-loaded with authentication guards)
+const ProtectedBlogAdmin = lazy(() => import("@/pages/admin").then(m => ({ default: m.ProtectedBlogAdmin })));
+const ProtectedBlogPostNew = lazy(() => import("@/pages/admin").then(m => ({ default: m.ProtectedBlogPostNew })));
+const ProtectedBlogPostEdit = lazy(() => import("@/pages/admin").then(m => ({ default: m.ProtectedBlogPostEdit })));
+
 function Router() {
   const [location] = useLocation();
   const previousLocation = useRef<string>("");
@@ -41,6 +51,16 @@ function Router() {
         <Route path="/:lang(en|fr)/models/1br-compact" component={Model1BRCompact} />
         <Route path="/:lang(en|fr)/models/2br-family" component={Model2BRFamily} />
         <Route path="/:lang(en|fr)/models/3br-executive" component={Model3BRExecutive} />
+
+        {/* Blog routes (bilingual) */}
+        <Route path="/:lang(en|fr)/blog" component={BlogLanding} />
+        <Route path="/:lang(en|fr)/blog/category/:category" component={BlogCategory} />
+        <Route path="/:lang(en|fr)/blog/:slug" component={BlogPost} />
+
+        {/* Admin routes (password-protected) */}
+        <Route path="/admin/blog" component={ProtectedBlogAdmin} />
+        <Route path="/admin/blog/new" component={ProtectedBlogPostNew} />
+        <Route path="/admin/blog/edit/:id" component={ProtectedBlogPostEdit} />
 
         {/* Legacy routes without language prefix - redirect to /en */}
         <Route path="/" component={Home} />

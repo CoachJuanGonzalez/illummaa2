@@ -980,6 +980,684 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================
+  // BLOG API ROUTES (Added: 2025-10-14)
+  // SAFE: Added AFTER line 642 - does NOT modify protected security code (lines 218-352)
+  // ============================================
+
+  /**
+   * GET /api/blog/posts
+   * Fetch published blog posts (paginated, filterable by language/category)
+   */
+  app.get('/api/blog/posts', async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { desc, eq, and, sql } = await import("drizzle-orm");
+      const { blogPosts, authors, blogCategories } = await import("@shared/schema");
+
+      const lang = (req.query.lang as string) || 'en';
+      const category = req.query.category as string;
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const offset = (page - 1) * limit;
+
+      const conditions = [
+        eq(blogPosts.status, 'published'),
+        sql`${blogPosts.published_at} <= NOW()`
+      ];
+
+      if (category) {
+        const categoryRecord = await db
+          .select()
+          .from(blogCategories)
+          .where(
+            lang === 'fr'
+              ? eq(blogCategories.slug_fr, category)
+              : eq(blogCategories.slug_en, category)
+          )
+          .limit(1);
+
+        if (categoryRecord.length > 0) {
+          conditions.push(eq(blogPosts.category_id, categoryRecord[0].id));
+        }
+      }
+
+      const posts = await db
+        .select({
+          id: blogPosts.id,
+          slug: lang === 'fr' ? blogPosts.slug_fr : blogPosts.slug_en,
+          title: lang === 'fr' ? blogPosts.title_fr : blogPosts.title_en,
+          excerpt: lang === 'fr' ? blogPosts.excerpt_fr : blogPosts.excerpt_en,
+          featuredImage: blogPosts.featured_image_url,
+          featuredImageAlt: lang === 'fr' ? blogPosts.featured_image_alt_fr : blogPosts.featured_image_alt_en,
+          publishedAt: blogPosts.published_at,
+          readingTime: blogPosts.reading_time_minutes,
+          viewCount: blogPosts.view_count,
+          authorName: authors.name,
+          authorAvatar: authors.avatar_url,
+          categoryName: lang === 'fr' ? blogCategories.name_fr : blogCategories.name_en,
+          categorySlug: lang === 'fr' ? blogCategories.slug_fr : blogCategories.slug_en
+        })
+        .from(blogPosts)
+        .leftJoin(authors, eq(blogPosts.author_id, authors.id))
+        .leftJoin(blogCategories, eq(blogPosts.category_id, blogCategories.id))
+        .where(and(...conditions))
+        .orderBy(desc(blogPosts.published_at))
+        .limit(limit)
+        .offset(offset);
+
+      const totalCount = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(blogPosts)
+        .where(and(...conditions));
+
+      res.json({
+        posts,
+        pagination: {
+          page,
+          limit,
+          total: totalCount[0].count,
+          totalPages: Math.ceil(totalCount[0].count / limit)
+        }
+      });
+    } catch (error: any) {
+      console.error('Error fetching blog posts:', error);
+      res.status(500).json({ error: 'Failed to fetch blog posts' });
+    }
+  });
+
+  /**
+   * GET /api/blog/posts/:slug
+   * Fetch single blog post by slug (bilingual)
+   */
+  app.get('/api/blog/posts/:slug', async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { eq, and, sql } = await import("drizzle-orm");
+      const { blogPosts, authors, blogCategories } = await import("@shared/schema");
+
+      const { slug } = req.params;
+      const lang = (req.query.lang as string) || 'en';
+
+      const post = await db
+        .select({
+          id: blogPosts.id,
+          slug: lang === 'fr' ? blogPosts.slug_fr : blogPosts.slug_en,
+          title: lang === 'fr' ? blogPosts.title_fr : blogPosts.title_en,
+          content: lang === 'fr' ? blogPosts.content_fr : blogPosts.content_en,
+          excerpt: lang === 'fr' ? blogPosts.excerpt_fr : blogPosts.excerpt_en,
+          metaTitle: lang === 'fr' ? blogPosts.meta_title_fr : blogPosts.meta_title_en,
+          metaDescription: lang === 'fr' ? blogPosts.meta_description_fr : blogPosts.meta_description_en,
+          featuredImage: blogPosts.featured_image_url,
+          featuredImageAlt: lang === 'fr' ? blogPosts.featured_image_alt_fr : blogPosts.featured_image_alt_en,
+          ogImage: blogPosts.og_image_url,
+          publishedAt: blogPosts.published_at,
+          updatedAt: blogPosts.updated_at,
+          readingTime: blogPosts.reading_time_minutes,
+          viewCount: blogPosts.view_count,
+          authorId: authors.id,
+          authorName: authors.name,
+          authorBio: lang === 'fr' ? authors.bio_fr : authors.bio_en,
+          authorTitle: lang === 'fr' ? authors.title_fr : authors.title_en,
+          authorAvatar: authors.avatar_url,
+          authorLinkedIn: authors.linkedin_url,
+          categoryName: lang === 'fr' ? blogCategories.name_fr : blogCategories.name_en,
+          categorySlug: lang === 'fr' ? blogCategories.slug_fr : blogCategories.slug_en
+        })
+        .from(blogPosts)
+        .leftJoin(authors, eq(blogPosts.author_id, authors.id))
+        .leftJoin(blogCategories, eq(blogPosts.category_id, blogCategories.id))
+        .where(
+          and(
+            lang === 'fr'
+              ? eq(blogPosts.slug_fr, slug)
+              : eq(blogPosts.slug_en, slug),
+            eq(blogPosts.status, 'published')
+          )
+        )
+        .limit(1);
+
+      if (post.length === 0) {
+        return res.status(404).json({ error: 'Blog post not found' });
+      }
+
+      // Increment view count (async, don't wait)
+      db.update(blogPosts)
+        .set({ view_count: sql`${blogPosts.view_count} + 1` })
+        .where(eq(blogPosts.id, post[0].id))
+        .execute()
+        .catch(err => console.error('Failed to update view count:', err));
+
+      res.json(post[0]);
+    } catch (error: any) {
+      console.error('Error fetching blog post:', error);
+      res.status(500).json({ error: 'Failed to fetch blog post' });
+    }
+  });
+
+  /**
+   * GET /api/blog/categories
+   * Fetch all blog categories (bilingual)
+   */
+  app.get('/api/blog/categories', async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { blogCategories } = await import("@shared/schema");
+
+      const lang = (req.query.lang as string) || 'en';
+
+      const categories = await db
+        .select({
+          id: blogCategories.id,
+          slug: lang === 'fr' ? blogCategories.slug_fr : blogCategories.slug_en,
+          name: lang === 'fr' ? blogCategories.name_fr : blogCategories.name_en,
+          description: lang === 'fr' ? blogCategories.description_fr : blogCategories.description_en
+        })
+        .from(blogCategories)
+        .orderBy(lang === 'fr' ? blogCategories.name_fr : blogCategories.name_en);
+
+      res.json(categories);
+    } catch (error: any) {
+      console.error('Error fetching categories:', error);
+      res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+  });
+
+  /**
+   * GET /en/rss.xml and /fr/rss.xml
+   * Generate RSS feeds for blog posts (bilingual)
+   */
+  function escapeXml(unsafe: string): string {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+  }
+
+  app.get('/en/rss.xml', async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { desc, eq } = await import("drizzle-orm");
+      const { blogPosts, authors, blogCategories } = await import("@shared/schema");
+
+      const posts = await db
+        .select({
+          title: blogPosts.title_en,
+          slug: blogPosts.slug_en,
+          excerpt: blogPosts.excerpt_en,
+          content: blogPosts.content_en,
+          publishedAt: blogPosts.published_at,
+          authorName: authors.name,
+          featuredImage: blogPosts.featured_image_url,
+          categoryName: blogCategories.name_en
+        })
+        .from(blogPosts)
+        .leftJoin(authors, eq(blogPosts.author_id, authors.id))
+        .leftJoin(blogCategories, eq(blogPosts.category_id, blogCategories.id))
+        .where(eq(blogPosts.status, 'published'))
+        .orderBy(desc(blogPosts.published_at))
+        .limit(50);
+
+      const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>ILLUMMAA Blog - Modular Housing Insights</title>
+    <link>https://illummaa.com/en/blog</link>
+    <description>Expert insights on modular housing, sustainable construction, and Canadian housing programs</description>
+    <language>en-CA</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="https://illummaa.com/en/rss.xml" rel="self" type="application/rss+xml"/>
+
+    ${posts.map(post => `
+    <item>
+      <title>${escapeXml(post.title)}</title>
+      <link>https://illummaa.com/en/blog/${post.slug}</link>
+      <guid isPermaLink="true">https://illummaa.com/en/blog/${post.slug}</guid>
+      <pubDate>${post.publishedAt ? new Date(post.publishedAt).toUTCString() : ''}</pubDate>
+      <author>${escapeXml(post.authorName)}</author>
+      <category>${escapeXml(post.categoryName || 'Uncategorized')}</category>
+      <description>${escapeXml(post.excerpt || '')}</description>
+      <content:encoded><![CDATA[${post.content}]]></content:encoded>
+      ${post.featuredImage ? `<enclosure url="${escapeXml(post.featuredImage)}" type="image/jpeg"/>` : ''}
+    </item>
+    `).join('')}
+  </channel>
+</rss>`;
+
+      res.header('Content-Type', 'application/rss+xml; charset=UTF-8');
+      res.send(rssXml);
+    } catch (error: any) {
+      console.error('Error generating RSS feed:', error);
+      res.status(500).send('Failed to generate RSS feed');
+    }
+  });
+
+  app.get('/fr/rss.xml', async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { desc, eq } = await import("drizzle-orm");
+      const { blogPosts, authors, blogCategories } = await import("@shared/schema");
+
+      const posts = await db
+        .select({
+          title: blogPosts.title_fr,
+          slug: blogPosts.slug_fr,
+          excerpt: blogPosts.excerpt_fr,
+          content: blogPosts.content_fr,
+          publishedAt: blogPosts.published_at,
+          authorName: authors.name,
+          featuredImage: blogPosts.featured_image_url,
+          categoryName: blogCategories.name_fr
+        })
+        .from(blogPosts)
+        .leftJoin(authors, eq(blogPosts.author_id, authors.id))
+        .leftJoin(blogCategories, eq(blogPosts.category_id, blogCategories.id))
+        .where(eq(blogPosts.status, 'published'))
+        .orderBy(desc(blogPosts.published_at))
+        .limit(50);
+
+      const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>ILLUMMAA Blog - Perspectives sur le logement modulaire</title>
+    <link>https://illummaa.com/fr/blog</link>
+    <description>Perspectives d'experts sur le logement modulaire, la construction durable et les programmes canadiens de logement</description>
+    <language>fr-CA</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <atom:link href="https://illummaa.com/fr/rss.xml" rel="self" type="application/rss+xml"/>
+
+    ${posts.map(post => `
+    <item>
+      <title>${escapeXml(post.title)}</title>
+      <link>https://illummaa.com/fr/blog/${post.slug}</link>
+      <guid isPermaLink="true">https://illummaa.com/fr/blog/${post.slug}</guid>
+      <pubDate>${post.publishedAt ? new Date(post.publishedAt).toUTCString() : ''}</pubDate>
+      <author>${escapeXml(post.authorName)}</author>
+      <category>${escapeXml(post.categoryName || 'Non catégorisé')}</category>
+      <description>${escapeXml(post.excerpt || '')}</description>
+      <content:encoded><![CDATA[${post.content}]]></content:encoded>
+      ${post.featuredImage ? `<enclosure url="${escapeXml(post.featuredImage)}" type="image/jpeg"/>` : ''}
+    </item>
+    `).join('')}
+  </channel>
+</rss>`;
+
+      res.header('Content-Type', 'application/rss+xml; charset=UTF-8');
+      res.send(rssXml);
+    } catch (error: any) {
+      console.error('Error generating RSS feed:', error);
+      res.status(500).send('Failed to generate RSS feed');
+    }
+  });
+
+  // ============================================
+  // ADMIN API ROUTES (Added: 2025-10-14)
+  // Simple password verification for blog admin access
+  // ============================================
+
+  /**
+   * POST /api/admin/verify-password
+   * Verify admin password for blog administration access
+   */
+  app.post('/api/admin/verify-password', rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // 5 attempts per 15 minutes
+    message: { error: 'Too many login attempts. Please try again later.' }
+  }), async (req, res) => {
+    try {
+      const { password } = req.body;
+
+      if (!password) {
+        return res.status(400).json({ error: 'Password required' });
+      }
+
+      // Check against environment variable
+      const adminPassword = process.env.ADMIN_PASSWORD;
+
+      if (!adminPassword) {
+        console.error('[ADMIN] ADMIN_PASSWORD environment variable not set!');
+        return res.status(500).json({
+          error: 'Admin authentication not configured. Please contact support.'
+        });
+      }
+
+      if (password === adminPassword) {
+        // Password correct - allow access
+        res.json({
+          success: true,
+          message: 'Authentication successful'
+        });
+      } else {
+        // Password incorrect
+        res.status(401).json({
+          error: 'Invalid password'
+        });
+      }
+    } catch (error) {
+      console.error('[ADMIN] Password verification error:', error);
+      res.status(500).json({ error: 'Authentication error' });
+    }
+  });
+
+  // ============================================
+  // BLOG ADMIN WRITE ROUTES (Added: 2025-10-15)
+  // Create, Update, Delete blog posts (password-protected)
+  // ============================================
+
+  /**
+   * Admin authentication middleware
+   * Validates admin password from Authorization header
+   */
+  const authenticateAdmin = async (req: any, res: any, next: any) => {
+    try {
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({
+          error: 'Authentication required',
+          message: 'Please provide valid credentials'
+        });
+      }
+
+      const password = authHeader.substring(7); // Remove "Bearer " prefix
+      const adminPassword = process.env.ADMIN_PASSWORD;
+
+      if (!adminPassword) {
+        console.error('[ADMIN] ADMIN_PASSWORD not configured');
+        return res.status(500).json({
+          error: 'Authentication not configured'
+        });
+      }
+
+      if (password !== adminPassword) {
+        return res.status(403).json({
+          error: 'Invalid credentials'
+        });
+      }
+
+      // Authentication successful, proceed
+      next();
+    } catch (error) {
+      console.error('[ADMIN] Authentication middleware error:', error);
+      res.status(500).json({ error: 'Authentication error' });
+    }
+  };
+
+  /**
+   * POST /api/blog/posts
+   * Create a new blog post (admin-only)
+   */
+  app.post('/api/blog/posts', authenticateAdmin, rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 50, // 50 post creations per 15 minutes
+    message: { error: 'Too many posts created. Please try again later.' }
+  }), async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { blogPosts } = await import("@shared/schema");
+
+      // Validate required fields
+      const requiredFields = [
+        'slug_en', 'slug_fr', 'title_en', 'title_fr',
+        'excerpt_en', 'excerpt_fr', 'content_en', 'content_fr',
+        'author_id', 'category_id', 'status'
+      ];
+
+      for (const field of requiredFields) {
+        if (!req.body[field]) {
+          return res.status(400).json({
+            error: 'Validation failed',
+            message: `Missing required field: ${field}`
+          });
+        }
+      }
+
+      // Sanitize HTML content (allow safe HTML tags)
+      const sanitizedContentEn = DOMPurify.sanitize(req.body.content_en, {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
+      });
+
+      const sanitizedContentFr = DOMPurify.sanitize(req.body.content_fr, {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
+      });
+
+      // Create blog post
+      const newPost = await db.insert(blogPosts).values({
+        slug_en: req.body.slug_en.trim().toLowerCase(),
+        slug_fr: req.body.slug_fr.trim().toLowerCase(),
+        title_en: DOMPurify.sanitize(req.body.title_en.trim()),
+        title_fr: DOMPurify.sanitize(req.body.title_fr.trim()),
+        excerpt_en: DOMPurify.sanitize(req.body.excerpt_en.trim()),
+        excerpt_fr: DOMPurify.sanitize(req.body.excerpt_fr.trim()),
+        content_en: sanitizedContentEn,
+        content_fr: sanitizedContentFr,
+        meta_title_en: req.body.meta_title_en ? DOMPurify.sanitize(req.body.meta_title_en.trim()) : null,
+        meta_title_fr: req.body.meta_title_fr ? DOMPurify.sanitize(req.body.meta_title_fr.trim()) : null,
+        meta_description_en: req.body.meta_description_en ? DOMPurify.sanitize(req.body.meta_description_en.trim()) : null,
+        meta_description_fr: req.body.meta_description_fr ? DOMPurify.sanitize(req.body.meta_description_fr.trim()) : null,
+        featured_image_url: req.body.featured_image_url || null,
+        featured_image_alt_en: req.body.featured_image_alt_en || null,
+        featured_image_alt_fr: req.body.featured_image_alt_fr || null,
+        og_image_url: req.body.og_image_url || null,
+        author_id: req.body.author_id,
+        category_id: req.body.category_id,
+        status: req.body.status,
+        published_at: req.body.status === 'published' ? new Date() : null,
+        reading_time_minutes: req.body.reading_time_minutes || 5,
+        view_count: 0
+      }).returning();
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[ADMIN] Blog post created: ${newPost[0].id} - ${newPost[0].title_en}`);
+      }
+
+      res.status(201).json({
+        success: true,
+        message: 'Blog post created successfully',
+        post: newPost[0]
+      });
+    } catch (error: any) {
+      console.error('[ADMIN] Error creating blog post:', error);
+
+      // Check for duplicate slug error
+      if (error.code === '23505') { // PostgreSQL unique violation
+        return res.status(409).json({
+          error: 'Slug already exists',
+          message: 'A post with this slug already exists. Please use a different slug.'
+        });
+      }
+
+      res.status(500).json({
+        error: 'Failed to create blog post',
+        message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  });
+
+  /**
+   * PUT /api/blog/posts/:id
+   * Update an existing blog post (admin-only)
+   */
+  app.put('/api/blog/posts/:id', authenticateAdmin, rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // 100 post updates per 15 minutes
+    message: { error: 'Too many updates. Please try again later.' }
+  }), async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { eq } = await import("drizzle-orm");
+      const { blogPosts } = await import("@shared/schema");
+
+      const postId = req.params.id;
+
+      if (!postId) {
+        return res.status(400).json({
+          error: 'Invalid request',
+          message: 'Post ID is required'
+        });
+      }
+
+      // Check if post exists
+      const existingPost = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.id, postId))
+        .limit(1);
+
+      if (existingPost.length === 0) {
+        return res.status(404).json({
+          error: 'Post not found',
+          message: 'The requested blog post does not exist'
+        });
+      }
+
+      // Build update object with only provided fields
+      const updateData: any = {
+        updated_at: new Date()
+      };
+
+      // Sanitize and update fields if provided
+      if (req.body.slug_en) updateData.slug_en = req.body.slug_en.trim().toLowerCase();
+      if (req.body.slug_fr) updateData.slug_fr = req.body.slug_fr.trim().toLowerCase();
+      if (req.body.title_en) updateData.title_en = DOMPurify.sanitize(req.body.title_en.trim());
+      if (req.body.title_fr) updateData.title_fr = DOMPurify.sanitize(req.body.title_fr.trim());
+      if (req.body.excerpt_en) updateData.excerpt_en = DOMPurify.sanitize(req.body.excerpt_en.trim());
+      if (req.body.excerpt_fr) updateData.excerpt_fr = DOMPurify.sanitize(req.body.excerpt_fr.trim());
+
+      if (req.body.content_en) {
+        updateData.content_en = DOMPurify.sanitize(req.body.content_en, {
+          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+          ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
+        });
+      }
+
+      if (req.body.content_fr) {
+        updateData.content_fr = DOMPurify.sanitize(req.body.content_fr, {
+          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre'],
+          ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class']
+        });
+      }
+
+      if (req.body.meta_title_en !== undefined) updateData.meta_title_en = req.body.meta_title_en ? DOMPurify.sanitize(req.body.meta_title_en.trim()) : null;
+      if (req.body.meta_title_fr !== undefined) updateData.meta_title_fr = req.body.meta_title_fr ? DOMPurify.sanitize(req.body.meta_title_fr.trim()) : null;
+      if (req.body.meta_description_en !== undefined) updateData.meta_description_en = req.body.meta_description_en ? DOMPurify.sanitize(req.body.meta_description_en.trim()) : null;
+      if (req.body.meta_description_fr !== undefined) updateData.meta_description_fr = req.body.meta_description_fr ? DOMPurify.sanitize(req.body.meta_description_fr.trim()) : null;
+      if (req.body.featured_image_url !== undefined) updateData.featured_image_url = req.body.featured_image_url || null;
+      if (req.body.featured_image_alt_en !== undefined) updateData.featured_image_alt_en = req.body.featured_image_alt_en || null;
+      if (req.body.featured_image_alt_fr !== undefined) updateData.featured_image_alt_fr = req.body.featured_image_alt_fr || null;
+      if (req.body.og_image_url !== undefined) updateData.og_image_url = req.body.og_image_url || null;
+      if (req.body.author_id) updateData.author_id = req.body.author_id;
+      if (req.body.category_id) updateData.category_id = req.body.category_id;
+      if (req.body.reading_time_minutes) updateData.reading_time_minutes = req.body.reading_time_minutes;
+
+      // Handle status change (if publishing for first time, set published_at)
+      if (req.body.status) {
+        updateData.status = req.body.status;
+        if (req.body.status === 'published' && !existingPost[0].published_at) {
+          updateData.published_at = new Date();
+        }
+      }
+
+      // Update the post
+      const updatedPost = await db
+        .update(blogPosts)
+        .set(updateData)
+        .where(eq(blogPosts.id, postId))
+        .returning();
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[ADMIN] Blog post updated: ${postId} - ${updatedPost[0].title_en}`);
+      }
+
+      res.json({
+        success: true,
+        message: 'Blog post updated successfully',
+        post: updatedPost[0]
+      });
+    } catch (error: any) {
+      console.error('[ADMIN] Error updating blog post:', error);
+
+      // Check for duplicate slug error
+      if (error.code === '23505') {
+        return res.status(409).json({
+          error: 'Slug already exists',
+          message: 'A post with this slug already exists. Please use a different slug.'
+        });
+      }
+
+      res.status(500).json({
+        error: 'Failed to update blog post',
+        message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  });
+
+  /**
+   * DELETE /api/blog/posts/:id
+   * Delete a blog post (admin-only)
+   */
+  app.delete('/api/blog/posts/:id', authenticateAdmin, rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 30, // 30 post deletions per 15 minutes
+    message: { error: 'Too many deletions. Please try again later.' }
+  }), async (req, res) => {
+    try {
+      const { db } = await import("./storage");
+      const { eq } = await import("drizzle-orm");
+      const { blogPosts } = await import("@shared/schema");
+
+      const postId = req.params.id;
+
+      if (!postId) {
+        return res.status(400).json({
+          error: 'Invalid request',
+          message: 'Post ID is required'
+        });
+      }
+
+      // Check if post exists
+      const existingPost = await db
+        .select()
+        .from(blogPosts)
+        .where(eq(blogPosts.id, postId))
+        .limit(1);
+
+      if (existingPost.length === 0) {
+        return res.status(404).json({
+          error: 'Post not found',
+          message: 'The requested blog post does not exist'
+        });
+      }
+
+      // Delete the post
+      await db.delete(blogPosts).where(eq(blogPosts.id, postId));
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[ADMIN] Blog post deleted: ${postId} - ${existingPost[0].title_en}`);
+      }
+
+      res.json({
+        success: true,
+        message: 'Blog post deleted successfully',
+        deletedPost: {
+          id: existingPost[0].id,
+          title_en: existingPost[0].title_en,
+          title_fr: existingPost[0].title_fr
+        }
+      });
+    } catch (error: any) {
+      console.error('[ADMIN] Error deleting blog post:', error);
+      res.status(500).json({
+        error: 'Failed to delete blog post',
+        message: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

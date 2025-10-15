@@ -7,6 +7,9 @@ import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import FloorPlanViewer from "@/components/floor-plan-viewer";
 import { analytics } from "@/lib/analytics";
+import { useSEO } from "@/hooks/useSEO";
+import { getSEOConfig, getBreadcrumbConfig } from "@/lib/seo-config";
+import { getProductSchema, getBreadcrumbSchema, injectMultipleSchemas } from "@/lib/schema";
 import floorPlanImage from "@assets/1br-compact-floorplan.jpg";
 
 const floorPlanPDF = "/attached_assets/1 BEDROOM 1.5 BATH_1759197665520.pdf";
@@ -14,6 +17,17 @@ const floorPlanPDF = "/attached_assets/1 BEDROOM 1.5 BATH_1759197665520.pdf";
 export default function Model1BRCompact() {
   const [location, navigate] = useLocation();
   const { t } = useTranslation();
+  const language = location.startsWith('/fr') ? 'fr' : 'en';
+  const seoData = getSEOConfig('model1BR', language);
+
+  // Apply SEO meta tags
+  useSEO({
+    title: seoData.title,
+    description: seoData.description,
+    keywords: seoData.keywords,
+    ogImage: seoData.ogImage,
+    language: language
+  });
 
   // Universal scroll-to-top on page load for all devices
   useEffect(() => {
@@ -26,10 +40,31 @@ export default function Model1BRCompact() {
     setTimeout(() => {
       window.scrollTo(0, 0);
     }, 100);
-    
+
     // Track model page view
     analytics.trackModelPageView('1BR Compact', '/models/1br-compact');
   }, []);
+
+  // Inject Product and Breadcrumb schemas
+  useEffect(() => {
+    const productSchema = getProductSchema(
+      language === 'fr' ? "Maison modulaire 1 chambre compacte" : "1BR Compact Modular Home",
+      language === 'fr'
+        ? "Maison modulaire 1 chambre: 937 pi², à partir de 129K$ CAD. Parfait pour densité urbaine. Concept ouvert, écoénergétique, finitions haut de gamme. Pour développeurs qualifiés (10+ unités)."
+        : "937 sq ft modular home perfect for urban density. Open concept living, energy efficient appliances, premium finishes. Starting from $129,000 CAD for qualified developers (10+ units).",
+      "https://illummaa.com/models/1br-compact-image.png",
+      "129000",
+      `https://illummaa.com/${language}/models/1br-compact`,
+      language
+    );
+
+    const breadcrumbSchema = getBreadcrumbSchema(getBreadcrumbConfig('model1BR', language));
+
+    injectMultipleSchemas([
+      { schema: productSchema, id: 'product' },
+      { schema: breadcrumbSchema, id: 'breadcrumb' }
+    ]);
+  }, [language]);
 
   // Custom function to navigate to home and scroll to models section
   const goBackToModels = () => {

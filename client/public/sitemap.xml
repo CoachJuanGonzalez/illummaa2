@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
@@ -8,118 +9,194 @@
   <!-- Homepage - English -->
   <url>
     <loc>https://illummaa.com/en</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
+    <image:image>
+      <image:loc>https://illummaa.com/og-image.png</image:loc>
+      <image:title>ILLUMMAA - Building Homes, Strengthening Communities</image:title>
+      <image:caption>Premium modular homes for Canadian developers</image:caption>
+    </image:image>
   </url>
 
   <!-- Homepage - French -->
   <url>
     <loc>https://illummaa.com/fr</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
+    <image:image>
+      <image:loc>https://illummaa.com/og-image.png</image:loc>
+      <image:title>ILLUMMAA - Construire des maisons, renforcer les communautés</image:title>
+      <image:caption>Maisons modulaires haut de gamme pour les développeurs canadiens</image:caption>
+    </image:image>
   </url>
 
   <!-- Homepage - Default (language auto-detection) -->
   <url>
     <loc>https://illummaa.com/</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://illummaa.com/"/>
+    <image:image>
+      <image:loc>https://illummaa.com/og-image.png</image:loc>
+      <image:title>ILLUMMAA - Building Homes, Strengthening Communities</image:title>
+    </image:image>
   </url>
 
   <!-- Model Pages - English -->
   <url>
     <loc>https://illummaa.com/en/models/1br-compact</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/1br-compact"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/1br-compact"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/1br-compact-image.png</image:loc>
+      <image:title>1BR Compact Model - 937 sq ft Modular Home</image:title>
+      <image:caption>Open concept 1 bedroom modular home perfect for urban density</image:caption>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/en/models/2br-family</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/2br-family"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/2br-family"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/2br-family-image.png</image:loc>
+      <image:title>2BR Family Model - Modular Home for Families</image:title>
+      <image:caption>Spacious 2 bedroom modular home with modern amenities</image:caption>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/en/models/3br-executive</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/3br-executive"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/3br-executive"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/3br-executive-image.png</image:loc>
+      <image:title>3BR Executive Model - Premium Modular Home</image:title>
+      <image:caption>Luxury 3 bedroom modular home with executive finishes</image:caption>
+    </image:image>
   </url>
 
   <!-- Model Pages - French -->
   <url>
     <loc>https://illummaa.com/fr/models/1br-compact</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/1br-compact"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/1br-compact"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/1br-compact-image.png</image:loc>
+      <image:title>Modèle Compact 1 CH - Maison modulaire 937 pi²</image:title>
+      <image:caption>Maison modulaire 1 chambre à concept ouvert parfaite pour la densité urbaine</image:caption>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/fr/models/2br-family</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/2br-family"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/2br-family"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/2br-family-image.png</image:loc>
+      <image:title>Modèle Familial 2 CH - Maison modulaire pour familles</image:title>
+      <image:caption>Maison modulaire 2 chambres spacieuse avec commodités modernes</image:caption>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/fr/models/3br-executive</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/models/3br-executive"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/models/3br-executive"/>
+    <image:image>
+      <image:loc>https://illummaa.com/models/3br-executive-image.png</image:loc>
+      <image:title>Modèle Exécutif 3 CH - Maison modulaire haut de gamme</image:title>
+      <image:caption>Maison modulaire 3 chambres de luxe avec finitions exécutives</image:caption>
+    </image:image>
   </url>
 
   <!-- Legacy Model Pages (for backward compatibility) -->
   <url>
     <loc>https://illummaa.com/models/1br-compact</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://illummaa.com/models/1br-compact-image.png</image:loc>
+      <image:title>1BR Compact Model - 937 sq ft Modular Home</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/models/2br-family</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://illummaa.com/models/2br-family-image.png</image:loc>
+      <image:title>2BR Family Model - Modular Home for Families</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://illummaa.com/models/3br-executive</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <image:image>
+      <image:loc>https://illummaa.com/models/3br-executive-image.png</image:loc>
+      <image:title>3BR Executive Model - Premium Modular Home</image:title>
+    </image:image>
+  </url>
+
+  <!-- Blog Pages - English -->
+  <url>
+    <loc>https://illummaa.com/en/blog</loc>
+    <lastmod>2025-01-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/blog"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/blog"/>
+  </url>
+
+  <!-- Blog Pages - French -->
+  <url>
+    <loc>https://illummaa.com/fr/blog</loc>
+    <lastmod>2025-01-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/blog"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/blog"/>
   </url>
 
   <!-- Privacy Policy - English -->
   <url>
     <loc>https://illummaa.com/en/privacy-policy</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="fr" href="https://illummaa.com/fr/privacy-policy"/>
@@ -129,7 +206,7 @@
   <!-- Privacy Policy - French -->
   <url>
     <loc>https://illummaa.com/fr/privacy-policy</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://illummaa.com/en/privacy-policy"/>
@@ -139,7 +216,7 @@
   <!-- Legacy Privacy Policy (for backward compatibility) -->
   <url>
     <loc>https://illummaa.com/privacy-policy</loc>
-    <lastmod>2025-01-13</lastmod>
+    <lastmod>2025-01-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

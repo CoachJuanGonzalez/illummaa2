@@ -560,5 +560,26 @@
         "Smart home ready (modern living + community scalability)"
       ]
     }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights on modular housing, sustainability, and Canadian housing programs",
+    "readMore": "Read More",
+    "backToBlog": "Back to Blog",
+    "readingTime": "{{minutes}} min read",
+    "publishedOn": "Published on {{date}}",
+    "updatedOn": "Updated on {{date}}",
+    "writtenBy": "Written by",
+    "inCategory": "in {{category}}",
+    "relatedPosts": "Related Posts",
+    "categories": "Categories",
+    "tags": "Tags",
+    "allPosts": "All Posts",
+    "noPosts": "No blog posts found.",
+    "loadMore": "Load More",
+    "share": "Share",
+    "shareOn": "Share on {{platform}}",
+    "copyLink": "Copy Link",
+    "linkCopied": "Link copied to clipboard!"
   }
 }
