@@ -139,6 +139,288 @@ model Post {
 
 ---
 
+## 🎯 EXISTING PACKAGES TO LEVERAGE (Use to Fullest Extent)
+
+**CRITICAL:** My codebase already has **71 production dependencies** that should be used for blog implementation. **DO NOT recommend adding new packages** if existing ones can do the job.
+
+### **✅ Frontend Packages (ALREADY INSTALLED - USE THESE)**
+
+#### **UI Components (47 Radix UI Primitives - USE FOR BLOG UI):**
+
+**Form Components (Use for admin panel forms):**
+- `@radix-ui/react-form` - Use for blog post creation/edit forms
+- `@radix-ui/react-input` - Text inputs (title, slug, meta description)
+- `@radix-ui/react-textarea` - Multi-line inputs (excerpt, project description)
+- `@radix-ui/react-select` - Dropdowns (category, status: draft/published)
+- `@radix-ui/react-radio-group` - Radio buttons (featured post selector)
+- `@radix-ui/react-checkbox` - Checkboxes (tags, publish now/schedule)
+- `@radix-ui/react-label` - Form labels (accessibility)
+
+**Feedback Components (Use for admin notifications):**
+- `@radix-ui/react-toast` - Success/error messages ("Post published!", "Save failed")
+- `@radix-ui/react-alert-dialog` - Destructive actions ("Delete this post?")
+- `@radix-ui/react-dialog` - Modal dialogs (image upload, preview post)
+- `@radix-ui/react-tooltip` - Hover hints (explain editor toolbar buttons)
+
+**Navigation Components (Use for blog navigation):**
+- `@radix-ui/react-dropdown-menu` - User menu (admin: Profile, Logout)
+- `@radix-ui/react-navigation-menu` - Blog categories menu
+- `@radix-ui/react-menubar` - Admin panel top navigation
+
+**Layout Components (Use for blog content):**
+- `@radix-ui/react-card` - Blog post cards (landing page grid)
+- `@radix-ui/react-tabs` - Admin: Switch between EN/FR content editors
+- `@radix-ui/react-accordion` - Blog post FAQ sections (SEO)
+- `@radix-ui/react-separator` - Visual dividers (post metadata)
+- `@radix-ui/react-collapsible` - Expandable sections (table of contents)
+
+**Data Display (Use for blog features):**
+- `@radix-ui/react-table` - Admin: List all blog posts with filters
+- `@radix-ui/react-badge` - Post status badges (Draft, Published, Scheduled)
+- `@radix-ui/react-avatar` - Author avatars (E-E-A-T signals)
+- `@radix-ui/react-progress` - Upload progress bars (images)
+- `@radix-ui/react-skeleton` - Loading states (blog landing page)
+
+**Utility Components (Use for UX enhancements):**
+- `@radix-ui/react-scroll-area` - Scrollable sidebars (table of contents)
+- `@radix-ui/react-hover-card` - Author bio previews (hover over name)
+- `@radix-ui/react-popover` - Context menus (admin: quick actions)
+- `@radix-ui/react-context-menu` - Right-click menus (admin panel)
+
+**Example: Blog Admin Form Should Use Existing Radix UI:**
+```tsx
+import { Label } from '@/components/ui/label'; // Already exists
+import { Input } from '@/components/ui/input'; // Already exists
+import { Textarea } from '@/components/ui/textarea'; // Already exists
+import { Select } from '@/components/ui/select'; // Already exists
+import { Button } from '@/components/ui/button'; // Already exists
+import { useToast } from '@/components/ui/use-toast'; // Already exists
+
+// ✅ CORRECT: Use existing Radix UI components
+function BlogPostForm() {
+  const { toast } = useToast();
+
+  return (
+    <form>
+      <Label>Title (EN)</Label>
+      <Input name="title_en" /> {/* Use existing Input component */}
+
+      <Label>Excerpt (EN)</Label>
+      <Textarea name="excerpt_en" /> {/* Use existing Textarea */}
+
+      <Label>Status</Label>
+      <Select> {/* Use existing Select component */}
+        <option value="draft">Draft</option>
+        <option value="published">Published</option>
+      </Select>
+
+      <Button type="submit">Save Post</Button>
+    </form>
+  );
+}
+
+// ❌ WRONG: DO NOT recommend installing new UI libraries
+// "Install @mui/material for forms" - NO! Use existing Radix UI
+// "Add react-bootstrap for components" - NO! Use existing Radix UI
+```
+
+#### **State Management (ALREADY CONFIGURED - USE THESE):**
+- `@tanstack/react-query 5.60.5` - Use for blog API data fetching (posts, categories, tags)
+- React `useState` / `useEffect` - Use for client state (form inputs, UI state)
+
+**Example: Fetching Blog Posts with React Query:**
+```tsx
+import { useQuery } from '@tanstack/react-query';
+
+// ✅ CORRECT: Use existing React Query for blog data
+function useBlogPosts() {
+  return useQuery({
+    queryKey: ['blog', 'posts'],
+    queryFn: () => fetch('/api/blog/posts').then(res => res.json())
+  });
+}
+
+// ❌ WRONG: DO NOT recommend new data fetching libraries
+// "Install SWR for data fetching" - NO! Use React Query
+// "Add Apollo Client for GraphQL" - NO! Use REST + React Query
+```
+
+#### **Form Handling (ALREADY CONFIGURED - USE THESE):**
+- `React Hook Form 7.55.0` - Use for blog admin forms (post creation/edit)
+- `Zod 3.24.2` - Use for blog form validation (title, slug, content)
+- `@hookform/resolvers 3.10.0` - Bridge React Hook Form + Zod (already working)
+- `libphonenumber-js 1.12.23` - Already used in assessment form (reuse if needed)
+
+**Example: Blog Post Form Validation:**
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+// ✅ CORRECT: Use existing React Hook Form + Zod
+const blogPostSchema = z.object({
+  title_en: z.string().min(10).max(255),
+  slug_en: z.string().regex(/^[a-z0-9-]+$/),
+  content_en: z.string().min(100),
+});
+
+function BlogPostForm() {
+  const form = useForm({
+    resolver: zodResolver(blogPostSchema) // Use existing @hookform/resolvers
+  });
+
+  return <form onSubmit={form.handleSubmit(onSubmit)}>...</form>;
+}
+
+// ❌ WRONG: DO NOT recommend new form libraries
+// "Use Formik for forms" - NO! Use React Hook Form (already installed)
+// "Add Yup for validation" - NO! Use Zod (already installed + integrated)
+```
+
+#### **Icons & Assets (ALREADY INSTALLED - USE THESE):**
+- `Lucide React 0.453.0` - Use for all blog icons (1,000+ icons available)
+- Examples: `FileText` (blog posts), `Image` (media), `Users` (authors), `Tag` (tags), `Calendar` (scheduling)
+
+**Example: Blog UI Icons:**
+```tsx
+import { FileText, Image, Users, Tag, Calendar, Eye, Edit, Trash } from 'lucide-react';
+
+// ✅ CORRECT: Use existing Lucide icons for blog
+<Button><FileText /> New Post</Button>
+<Badge><Tag /> Category</Badge>
+<Avatar><Users /></Avatar>
+
+// ❌ WRONG: DO NOT recommend new icon libraries
+// "Install react-icons" - NO! Use Lucide React (already installed)
+// "Add Font Awesome" - NO! Lucide React has 1,000+ icons
+```
+
+#### **Styling (ALREADY CONFIGURED - USE THESE):**
+- `Tailwind CSS 3.4.17` - Use for all blog styling (utility-first CSS)
+- Custom Design System - Brand colors, typography scale, spacing system (already defined)
+- Dark Mode Ready - Theme switching capability (can activate for blog)
+
+**Example: Blog Card Styling:**
+```tsx
+// ✅ CORRECT: Use existing Tailwind classes
+<div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
+  <h3 className="text-2xl font-bold mb-2">Post Title</h3>
+  <p className="text-muted-foreground">Excerpt...</p>
+</div>
+
+// ❌ WRONG: DO NOT recommend new CSS frameworks
+// "Use Bootstrap for layout" - NO! Use Tailwind CSS
+// "Add styled-components for styling" - NO! Use Tailwind CSS
+```
+
+### **✅ Backend Packages (ALREADY INSTALLED - USE THESE)**
+
+#### **Security (ALREADY CONFIGURED - EXTEND FOR BLOG):**
+- `Helmet 8.1.0` - Extend existing security headers for blog routes
+- `express-rate-limit 8.1.0` - Add blog-specific rate limits (GET /api/blog/*)
+- `express-brute 1.0.1` - Extend brute force protection to admin login
+- `express-slow-down 3.0.0` - Add slow-down for blog API abuse
+- `CORS 2.8.5` - Configure CORS for blog API endpoints
+
+**Example: Blog Admin Rate Limiting:**
+```typescript
+import rateLimit from 'express-rate-limit'; // Already installed
+
+// ✅ CORRECT: Use existing express-rate-limit for blog admin
+const adminRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit admin to 100 requests per 15 min
+  message: 'Too many admin actions, please try again later'
+});
+
+app.use('/api/blog/admin/*', adminRateLimiter);
+
+// ❌ WRONG: DO NOT recommend new security packages
+// "Install express-rate-limiter-flexible" - NO! Use express-rate-limit
+```
+
+#### **Input Sanitization (ALREADY INSTALLED - USE FOR BLOG CONTENT):**
+- `DOMPurify 3.2.6` - **CRITICAL: Use to sanitize rich text editor HTML output**
+- `isomorphic-dompurify 2.26.0` - Universal sanitization (client + server)
+- `validator 13.15.15` - Use for validating URLs, emails in blog forms
+- `express-validator 7.2.1` - Use for Express route validation
+
+**Example: Sanitize Blog Content:**
+```typescript
+import DOMPurify from 'isomorphic-dompurify'; // Already installed
+
+// ✅ CORRECT: Use existing DOMPurify for blog HTML sanitization
+function sanitizeBlogContent(html: string) {
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['p', 'h2', 'h3', 'strong', 'em', 'a', 'img', 'ul', 'ol', 'li'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title']
+  });
+}
+
+// ❌ WRONG: DO NOT recommend new sanitization libraries
+// "Install xss for HTML sanitization" - NO! Use DOMPurify (already installed)
+```
+
+#### **Session Management (ALREADY CONFIGURED - EXTEND FOR ADMIN AUTH):**
+- `express-session 1.18.1` - Extend existing sessions with admin roles
+- `connect-pg-simple 10.0.0` - Already storing sessions in PostgreSQL (reuse)
+
+**Example: Admin Session Extension:**
+```typescript
+// ✅ CORRECT: Extend existing session with admin role
+declare module 'express-session' {
+  interface SessionData {
+    userId?: string;
+    role?: 'user' | 'admin' | 'editor' | 'author'; // Add role field
+  }
+}
+
+// ❌ WRONG: DO NOT recommend new auth systems
+// "Install Passport.js for admin auth" - NO! Extend express-session
+// "Add Auth0 for authentication" - NO! Use existing session system
+```
+
+#### **Data Validation (ALREADY INSTALLED - USE FOR BLOG API):**
+- `Zod 3.24.2` - Use for blog API request/response validation (shared with frontend)
+- `zod-validation-error 3.4.0` - User-friendly error messages for blog forms
+- `drizzle-zod 0.7.0` - Auto-generate Zod schemas from Drizzle database tables
+
+**Example: Blog API Validation:**
+```typescript
+import { z } from 'zod'; // Already installed
+import { createSelectSchema } from 'drizzle-zod'; // Already installed
+import { posts } from './schema';
+
+// ✅ CORRECT: Use drizzle-zod to auto-generate validation from schema
+const selectPostSchema = createSelectSchema(posts);
+const insertPostSchema = selectPostSchema.omit({ id: true, createdAt: true });
+
+// ❌ WRONG: DO NOT recommend new validation libraries
+// "Install Joi for validation" - NO! Use Zod (already installed)
+```
+
+### **✅ DevOps & Deployment (ALREADY CONFIGURED - MAINTAIN):**
+- `@replit/vite-plugin-cartographer 0.3.0` - Keep in Vite config (Replit integration)
+- `@replit/vite-plugin-runtime-error-modal 0.0.3` - Keep error overlay (dev UX)
+
+### **🚨 CRITICAL: Use Existing Packages First, Add New Ones ONLY If Necessary**
+
+**Blog-Specific Packages You MAY Need to Add:**
+- **Rich Text Editor:** Tiptap, Lexical, or Quill (NOT in current packages - need to add)
+- **Image Upload:** Cloudinary SDK, Uploadcare (NOT in current packages - need to add)
+- **Syntax Highlighting:** Prism.js or Highlight.js (if blog has code snippets - need to add)
+
+**❌ DO NOT Add These (Already Have Equivalents):**
+- ❌ Formik (already have React Hook Form)
+- ❌ Yup (already have Zod)
+- ❌ Material UI, Bootstrap, Chakra UI (already have Radix UI + Tailwind)
+- ❌ SWR, Apollo Client (already have React Query)
+- ❌ Passport.js, Auth0 (already have express-session + connect-pg-simple)
+- ❌ Prisma, TypeORM (already have Drizzle ORM)
+- ❌ React Router, TanStack Router (already have Wouter)
+
+---
+
 **🚨 CRITICAL: BILINGUAL INFRASTRUCTURE ALREADY EXISTS**
 
 **Your codebase ALREADY HAS complete bilingual (EN/FR) support:**
